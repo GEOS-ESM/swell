@@ -19,7 +19,7 @@ from swell.utilities.test_cache import get_test_cache
 defaults_dict = {}
 
 marine_default_datetime = '20210701T120000Z'
-atmosphere_default_datetime = '20231010T000000Z'
+atmosphere_default_datetime = '20251230T000000Z'
 compo_default_datetime = '20230805T1800Z'
 
 defaults_dict['3dvar_marine'] = {'datetime': marine_default_datetime,
@@ -52,7 +52,7 @@ defaults_dict['3dvar_cf'] = {'datetime': '20230805T180000Z',
                              'model': 'geos_cf',
                              'executable_type': 'variational'}
 
-defaults_dict['localensembleda'] = {'datetime': atmosphere_default_datetime,
+defaults_dict['localensembleda'] = {'datetime': '20231010T000000Z',
                                     'model': 'geos_atmosphere',
                                     'executable_type': 'localensembleda'}
 

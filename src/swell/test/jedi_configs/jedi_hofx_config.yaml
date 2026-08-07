@@ -1,6 +1,6 @@
 time window:
-  begin: '2023-10-09T21:00:00Z'
-  end: '2023-10-10T03:00:00Z'
+  begin: '2025-12-29T21:00:00Z'
+  end: '2025-12-30T03:00:00Z'
   bound to include: begin
 geometry:
   fms initialization:
@@ -14,7 +14,7 @@ geometry:
   npy: '91'
   npz: '72'
 initial condition:
-  datetime: '2023-10-09T21:00:00Z'
+  datetime: '2025-12-29T21:00:00Z'
   filetype: cube sphere history
   provider: geos
   compute edge pressure from surface pressure: true
@@ -109,7 +109,7 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/aircraft_temperature.20231009T210000Z.nc4
+          obsfile: cycle_dir/aircraft_temperature.20251229T210000Z.nc4
           missing file action: warn
         obsgrouping:
           group variables:
@@ -120,14 +120,14 @@ observations:
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.aircraft_temperature.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.aircraft_temperature.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
       - airTemperature
     obs bias:
-      input file: cycle_dir/aircraft_temperature.20231009T150000Z.acftbias
-      output file: cycle_dir/aircraft_temperature.20231009T210000Z.acftbias
+      input file: cycle_dir/aircraft_temperature.20251229T150000Z.acftbias
+      output file: cycle_dir/aircraft_temperature.20251229T210000Z.acftbias
       bc by record: true
       variational bc:
         predictors:
@@ -145,7 +145,7 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/aircraft_temperature.20231009T150000Z.acftbias_cov
+          input file: cycle_dir/aircraft_temperature.20251229T150000Z.acftbias_cov
           inflation:
             ratio: 1.005
             ratio for small dataset: 2.0
@@ -502,7 +502,7 @@ observations:
             variable: airTemperature
       defer to post: true
     - filter: GOMsaver
-      filename: cycle_dir/aircraft_temperature-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/aircraft_temperature-geovals.20251229T210000Z.nc4
     observation_name: aircraft_temperature
     get values:
       time interpolation: linear
@@ -511,7 +511,7 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/aircraft_wind.20231009T210000Z.nc4
+          obsfile: cycle_dir/aircraft_wind.20251229T210000Z.nc4
           missing file action: warn
         obsgrouping:
           group variables:
@@ -522,7 +522,7 @@ observations:
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.aircraft_wind.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.aircraft_wind.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -551,7 +551,7 @@ observations:
       Transform: SurfaceWindScalingPressure
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/aircraft_wind-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/aircraft_wind-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Perform Action
       filter variables:
@@ -896,12 +896,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/airs_aqua.20231009T210000Z.nc4
+          obsfile: cycle_dir/airs_aqua.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.airs_aqua.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.airs_aqua.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -930,16 +930,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/airs_aqua.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/airs_aqua.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/airs_aqua.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/airs_aqua.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/airs_aqua.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/airs_aqua.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/airs_aqua.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/airs_aqua.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -956,11 +956,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/airs_aqua.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/airs_aqua.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/airs_aqua.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/airs_aqua.20251229T210000Z.satbias_cov.nc4
     obs error:
       covariance model: cross variable covariances
       input file: fv3-jedi/rcov/airs_aqua_119_jedi_rcov.nc4
@@ -1265,7 +1265,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/airs_aqua-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/airs_aqua-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -2007,12 +2007,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsr2_gcom-w1.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsr2_gcom-w1.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsr2_gcom-w1.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsr2_gcom-w1.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -2053,16 +2053,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsr2_gcom-w1.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsr2_gcom-w1.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsr2_gcom-w1.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsr2_gcom-w1.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsr2_gcom-w1.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsr2_gcom-w1.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           var_name: sensorScanPosition
@@ -2083,11 +2083,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsr2_gcom-w1.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsr2_gcom-w1.20251229T210000Z.satbias_cov.nc4
     obs filters:
     - filter: Bounds Check
       filter variables:
@@ -2318,7 +2318,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/amsr2_gcom-w1-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsr2_gcom-w1-geovals.20251229T210000Z.nc4
     observation_name: amsr2_gcom-w1
     get values:
       time interpolation: linear
@@ -2327,12 +2327,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_aqua.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_aqua.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_aqua.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_aqua.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -2361,8 +2361,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_aqua.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_aqua.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -2372,9 +2372,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_aqua.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_aqua.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_aqua.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_aqua.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -2391,11 +2391,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_aqua.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_aqua.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -2420,7 +2420,7 @@ observations:
         - 3.75
         - 6.3
     - filter: GOMsaver
-      filename: cycle_dir/amsua_aqua-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_aqua-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -2586,12 +2586,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_metop-b.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_metop-b.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -2620,8 +2620,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_metop-b.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_metop-b.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -2631,9 +2631,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_metop-b.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_metop-b.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -2650,11 +2650,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_metop-b.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_metop-b.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -2679,7 +2679,7 @@ observations:
         - 5.0
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/amsua_metop-b-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_metop-b-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -2845,12 +2845,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_metop-c.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_metop-c.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -2879,8 +2879,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_metop-c.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_metop-c.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -2890,9 +2890,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_metop-c.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_metop-c.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -2909,11 +2909,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_metop-c.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_metop-c.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -2938,7 +2938,7 @@ observations:
         - 5.0
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/amsua_metop-c-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_metop-c-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -3104,12 +3104,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_n15.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_n15.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_n15.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_n15.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -3138,8 +3138,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_n15.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_n15.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_n15.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -3149,9 +3149,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_n15.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n15.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_n15.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n15.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -3168,11 +3168,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_n15.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_n15.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_n15.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_n15.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -3197,7 +3197,7 @@ observations:
         - 5.0
         - 3.0
     - filter: GOMsaver
-      filename: cycle_dir/amsua_n15-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_n15-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -3363,12 +3363,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_n18.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_n18.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_n18.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_n18.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -3397,8 +3397,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_n18.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_n18.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_n18.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -3408,9 +3408,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_n18.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n18.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_n18.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n18.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -3427,11 +3427,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_n18.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_n18.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_n18.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_n18.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -3456,7 +3456,7 @@ observations:
         - 5.0
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/amsua_n18-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_n18-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -3622,12 +3622,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/amsua_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/amsua_n19.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.amsua_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.amsua_n19.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -3656,8 +3656,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/amsua_n19.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/amsua_n19.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/amsua_n19.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -3667,9 +3667,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/amsua_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n19.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/amsua_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/amsua_n19.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -3686,11 +3686,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/amsua_n19.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/amsua_n19.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/amsua_n19.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/amsua_n19.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -3715,7 +3715,7 @@ observations:
         - 5.0
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/amsua_n19-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/amsua_n19-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -3881,12 +3881,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/atms_n20.20231009T210000Z.nc4
+          obsfile: cycle_dir/atms_n20.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.atms_n20.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.atms_n20.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -3915,8 +3915,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/atms_n20.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/atms_n20.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/atms_n20.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -3926,9 +3926,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/atms_n20.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/atms_n20.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/atms_n20.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/atms_n20.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -3945,11 +3945,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/atms_n20.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/atms_n20.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/atms_n20.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/atms_n20.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -3981,7 +3981,7 @@ observations:
         - 2.5
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/atms_n20-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/atms_n20-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -4154,12 +4154,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/atms_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/atms_npp.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.atms_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.atms_npp.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -4188,8 +4188,8 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/atms_npp.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/atms_npp.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/atms_npp.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
@@ -4199,9 +4199,9 @@ observations:
           clwdif_ch314: 2
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/atms_npp.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/atms_npp.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/atms_npp.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/atms_npp.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -4218,11 +4218,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/atms_npp.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/atms_npp.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/atms_npp.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/atms_npp.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -4254,7 +4254,7 @@ observations:
         - 2.5
         - 2.5
     - filter: GOMsaver
-      filename: cycle_dir/atms_npp-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/atms_npp-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -4427,12 +4427,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/avhrr3_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/avhrr3_metop-b.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.avhrr3_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.avhrr3_metop-b.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -4461,16 +4461,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/avhrr3_metop-b.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/avhrr3_metop-b.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/avhrr3_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_metop-b.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/avhrr3_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_metop-b.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -4487,11 +4487,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/avhrr3_metop-b.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/avhrr3_metop-b.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -4515,7 +4515,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/avhrr3_metop-b-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/avhrr3_metop-b-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -4700,12 +4700,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/avhrr3_n18.20231009T210000Z.nc4
+          obsfile: cycle_dir/avhrr3_n18.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.avhrr3_n18.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.avhrr3_n18.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -4734,16 +4734,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/avhrr3_n18.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/avhrr3_n18.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_n18.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_n18.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -4760,11 +4760,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/avhrr3_n18.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/avhrr3_n18.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -4788,7 +4788,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/avhrr3_n18-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/avhrr3_n18-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -4973,12 +4973,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/avhrr3_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/avhrr3_n19.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.avhrr3_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.avhrr3_n19.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -5007,16 +5007,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/avhrr3_n19.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/avhrr3_n19.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/avhrr3_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_n19.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/avhrr3_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/avhrr3_n19.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -5033,11 +5033,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/avhrr3_n19.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/avhrr3_n19.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -5061,7 +5061,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/avhrr3_n19-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/avhrr3_n19-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -5246,12 +5246,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/cris-fsr_n20.20231009T210000Z.nc4
+          obsfile: cycle_dir/cris-fsr_n20.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.cris-fsr_n20.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.cris-fsr_n20.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -5280,16 +5280,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/cris-fsr_n20.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/cris-fsr_n20.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/cris-fsr_n20.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/cris-fsr_n20.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/cris-fsr_n20.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/cris-fsr_n20.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -5306,11 +5306,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/cris-fsr_n20.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/cris-fsr_n20.20251229T210000Z.satbias_cov.nc4
     obs error:
       covariance model: cross variable covariances
       input file: fv3-jedi/rcov/cris-fsr_108_jedi_rcov.nc4
@@ -5765,7 +5765,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/cris-fsr_n20-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/cris-fsr_n20-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -6808,12 +6808,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/cris-fsr_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/cris-fsr_npp.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.cris-fsr_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.cris-fsr_npp.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -6842,16 +6842,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/cris-fsr_npp.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/cris-fsr_npp.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/cris-fsr_npp.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/cris-fsr_npp.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/cris-fsr_npp.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/cris-fsr_npp.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -6868,11 +6868,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/cris-fsr_npp.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/cris-fsr_npp.20251229T210000Z.satbias_cov.nc4
     obs error:
       covariance model: cross variable covariances
       input file: fv3-jedi/rcov/cris-fsr_108_jedi_rcov.nc4
@@ -7327,7 +7327,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/cris-fsr_npp-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/cris-fsr_npp-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -8370,12 +8370,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/gmi_gpm.20231009T210000Z.nc4
+          obsfile: cycle_dir/gmi_gpm.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.gmi_gpm.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.gmi_gpm.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -8416,28 +8416,28 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/gmi_gpm.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/gmi_gpm.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: cloudWaterContent
           sensor: GMI_GPM
           ch37v: 6
           ch37h: 7
           order: 2
-          tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
         - name: cloudWaterContent
           sensor: GMI_GPM
           ch37v: 6
           ch37h: 7
-          tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
         - name: sensorScanAngle
           var_name: sensorScanPosition
           order: 4
@@ -8457,11 +8457,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/gmi_gpm.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/gmi_gpm.20251229T210000Z.satbias_cov.nc4
     obs filters:
     - filter: Bounds Check
       filter variables:
@@ -8839,7 +8839,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/gmi_gpm-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/gmi_gpm-geovals.20251229T210000Z.nc4
     observation_name: gmi_gpm
     get values:
       time interpolation: linear
@@ -8848,7 +8848,7 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/gps.20231009T210000Z.nc4
+          obsfile: cycle_dir/gps.20251229T210000Z.nc4
           missing file action: warn
         obsgrouping:
           group variables:
@@ -8858,7 +8858,7 @@ observations:
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.gps.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.gps.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -9061,7 +9061,7 @@ observations:
         name: RONBAMErrInflate_GEOS
       defer to post: true
     - filter: GOMsaver
-      filename: cycle_dir/gps-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/gps-geovals.20251229T210000Z.nc4
     observation_name: gps
     get values:
       time interpolation: linear
@@ -9070,12 +9070,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/iasi_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/iasi_metop-b.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.iasi_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.iasi_metop-b.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -9104,16 +9104,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/iasi_metop-b.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/iasi_metop-b.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/iasi_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/iasi_metop-b.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/iasi_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/iasi_metop-b.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -9130,11 +9130,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/iasi_metop-b.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/iasi_metop-b.20251229T210000Z.satbias_cov.nc4
     obs error:
       covariance model: cross variable covariances
       input file: fv3-jedi/rcov/iasi_metop_141_jedi_rcov.nc4
@@ -9774,7 +9774,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/iasi_metop-b-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/iasi_metop-b-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -11188,12 +11188,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/iasi_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/iasi_metop-c.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.iasi_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.iasi_metop-c.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -11222,16 +11222,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/iasi_metop-c.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/iasi_metop-c.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/iasi_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/iasi_metop-c.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/iasi_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/iasi_metop-c.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -11248,11 +11248,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/iasi_metop-c.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/iasi_metop-c.20251229T210000Z.satbias_cov.nc4
     obs error:
       covariance model: cross variable covariances
       input file: fv3-jedi/rcov/iasi_metop_141_jedi_rcov.nc4
@@ -11892,7 +11892,7 @@ observations:
             - name: ObsErrorData/brightnessTemperature
               channels: None
     - filter: GOMsaver
-      filename: cycle_dir/iasi_metop-c-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/iasi_metop-c-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: BlackList
       filter variables:
@@ -13306,12 +13306,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/mhs_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/mhs_metop-b.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.mhs_metop-b.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.mhs_metop-b.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -13352,16 +13352,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/mhs_metop-b.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/mhs_metop-b.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/mhs_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_metop-b.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/mhs_metop-b.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_metop-b.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -13378,11 +13378,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/mhs_metop-b.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/mhs_metop-b.20251229T210000Z.satbias_cov.nc4
     obs filters:
     - filter: Bounds Check
       filter variables:
@@ -13748,7 +13748,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/mhs_metop-b-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/mhs_metop-b-geovals.20251229T210000Z.nc4
     observation_name: mhs_metop-b
     get values:
       time interpolation: linear
@@ -13757,12 +13757,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/mhs_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/mhs_metop-c.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.mhs_metop-c.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.mhs_metop-c.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -13803,16 +13803,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/mhs_metop-c.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/mhs_metop-c.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/mhs_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_metop-c.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/mhs_metop-c.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_metop-c.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -13829,11 +13829,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/mhs_metop-c.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/mhs_metop-c.20251229T210000Z.satbias_cov.nc4
     obs filters:
     - filter: Bounds Check
       filter variables:
@@ -14199,7 +14199,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/mhs_metop-c-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/mhs_metop-c-geovals.20251229T210000Z.nc4
     observation_name: mhs_metop-c
     get values:
       time interpolation: linear
@@ -14208,12 +14208,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/mhs_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/mhs_n19.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.mhs_n19.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.mhs_n19.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -14254,16 +14254,16 @@ observations:
         - 996.0
         - 1170.0
     obs bias:
-      input file: cycle_dir/mhs_n19.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/mhs_n19.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/mhs_n19.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/mhs_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_n19.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/mhs_n19.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/mhs_n19.20251229T150000Z.tlapse.txt
         - name: emissivityJacobian
         - name: sensorScanAngle
           order: 4
@@ -14280,11 +14280,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/mhs_n19.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/mhs_n19.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/mhs_n19.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/mhs_n19.20251229T210000Z.satbias_cov.nc4
     obs filters:
     - filter: Bounds Check
       filter variables:
@@ -14650,7 +14650,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/mhs_n19-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/mhs_n19-geovals.20251229T210000Z.nc4
     observation_name: mhs_n19
     get values:
       time interpolation: linear
@@ -14659,12 +14659,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/mls55_aura.20231009T210000Z.nc4
+          obsfile: cycle_dir/mls55_aura.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.mls55_aura.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.mls55_aura.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -14697,7 +14697,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/mls55_aura-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/mls55_aura-geovals.20251229T210000Z.nc4
     observation_name: mls55_aura
     get values:
       time interpolation: linear
@@ -14706,12 +14706,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/omi_aura.20231009T210000Z.nc4
+          obsfile: cycle_dir/omi_aura.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.omi_aura.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.omi_aura.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -14763,7 +14763,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/omi_aura-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/omi_aura-geovals.20251229T210000Z.nc4
     observation_name: omi_aura
     get values:
       time interpolation: linear
@@ -14772,12 +14772,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/ompsnm_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/ompsnm_npp.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.ompsnm_npp.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.ompsnm_npp.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -14819,7 +14819,7 @@ observations:
       action:
         name: reject
     - filter: GOMsaver
-      filename: cycle_dir/ompsnm_npp-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/ompsnm_npp-geovals.20251229T210000Z.nc4
     observation_name: ompsnm_npp
     get values:
       time interpolation: linear
@@ -14828,7 +14828,7 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/pibal.20231009T210000Z.nc4
+          obsfile: cycle_dir/pibal.20251229T210000Z.nc4
           missing file action: warn
         obsgrouping:
           group variables:
@@ -14839,7 +14839,7 @@ observations:
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.pibal.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.pibal.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -14906,7 +14906,7 @@ observations:
       Transform: SurfaceWindScalingCombined
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/pibal-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/pibal-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -15167,12 +15167,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/satwind.20231009T210000Z.nc4
+          obsfile: cycle_dir/satwind.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.satwind.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.satwind.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -15193,7 +15193,7 @@ observations:
       Transform: SurfaceWindScalingPressure
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/satwind-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/satwind-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: PreQC
       maxvalue: 3
@@ -16187,12 +16187,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/scatwind.20231009T210000Z.nc4
+          obsfile: cycle_dir/scatwind.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.scatwind.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.scatwind.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -16224,7 +16224,7 @@ observations:
       Transform: SurfaceWindScalingHeight
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/scatwind-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/scatwind-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -16430,12 +16430,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/sfcship.20231009T210000Z.nc4
+          obsfile: cycle_dir/sfcship.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.sfcship.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.sfcship.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -16503,7 +16503,7 @@ observations:
       Transform: SurfaceWindScalingHeight
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/sfcship-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/sfcship-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Perform Action
       filter variables:
@@ -17373,12 +17373,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/sfc.20231009T210000Z.nc4
+          obsfile: cycle_dir/sfc.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.sfc.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.sfc.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -17448,7 +17448,7 @@ observations:
       Transform: SurfaceWindScalingHeight
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/sfc-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/sfc-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Bounds Check
       filter variables:
@@ -17705,7 +17705,7 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/sondes.20231009T210000Z.nc4
+          obsfile: cycle_dir/sondes.20251229T210000Z.nc4
           missing file action: error
         obsgrouping:
           group variables:
@@ -17716,7 +17716,7 @@ observations:
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.sondes.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.sondes.20251229T210000Z.nc4
       io pool:
         max pool size: 6
       simulated variables:
@@ -17769,7 +17769,7 @@ observations:
       Transform: SurfaceWindScalingPressure
       SkipWhenNoObs: false
     - filter: GOMsaver
-      filename: cycle_dir/sondes-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/sondes-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Perform Action
       filter variables:
@@ -18620,12 +18620,12 @@ observations:
       obsdatain:
         engine:
           type: H5File
-          obsfile: cycle_dir/ssmis_f17.20231009T210000Z.nc4
+          obsfile: cycle_dir/ssmis_f17.20251229T210000Z.nc4
           missing file action: warn
       obsdataout:
         engine:
           type: H5File
-          obsfile: cycle_dir/experiment_id.ssmis_f17.20231009T210000Z.nc4
+          obsfile: cycle_dir/experiment_id.ssmis_f17.20251229T210000Z.nc4
       simulated variables:
       - brightnessTemperature
       channels: None
@@ -18654,16 +18654,16 @@ observations:
         EndianType: little_endian
         CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
     obs bias:
-      input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias.nc4
-      output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias.nc4
+      input file: cycle_dir/ssmis_f17.20251229T150000Z.satbias.nc4
+      output file: cycle_dir/ssmis_f17.20251229T210000Z.satbias.nc4
       variational bc:
         predictors:
         - name: constant
         - name: lapseRate
           order: 2
-          tlapse: cycle_dir/ssmis_f17.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/ssmis_f17.20251229T150000Z.tlapse.txt
         - name: lapseRate
-          tlapse: cycle_dir/ssmis_f17.20231009T150000Z.tlapse.txt
+          tlapse: cycle_dir/ssmis_f17.20251229T150000Z.tlapse.txt
         - name: cosineOfLatitudeTimesOrbitNode
         - name: sineOfLatitude
         - name: emissivityJacobian
@@ -18686,11 +18686,11 @@ observations:
         step size: 0.0001
         largest analysis variance: 10000.0
         prior:
-          input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias_cov.nc4
+          input file: cycle_dir/ssmis_f17.20251229T150000Z.satbias_cov.nc4
           inflation:
             ratio: 1.1
             ratio for small dataset: 2.0
-        output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias_cov.nc4
+        output file: cycle_dir/ssmis_f17.20251229T210000Z.satbias_cov.nc4
     obs prior filters:
     - filter: Perform Action
       filter variables:
@@ -18724,7 +18724,7 @@ observations:
         - 1.0
         - 1.0
     - filter: GOMsaver
-      filename: cycle_dir/ssmis_f17-geovals.20231009T210000Z.nc4
+      filename: cycle_dir/ssmis_f17-geovals.20251229T210000Z.nc4
     obs post filters:
     - filter: Background Check
       filter variables:
