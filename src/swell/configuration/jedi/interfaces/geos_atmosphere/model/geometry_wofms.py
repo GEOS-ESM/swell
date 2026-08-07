@@ -7,22 +7,27 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_latlon_prior_variance_output(template_dict: Mapping) -> Mapping:
+# geometry wo 'fms initialization' segment
+def geometry_wofms(template_dict: Mapping) -> Mapping:
 
-    ensemble_latlon_prior_variance_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.prior.variance.',
-        'field io names': field_io_names_ensemble
+    npx_proc = template_dict['npx_proc']
+    npy_proc = template_dict['npy_proc']
+
+    horizontal_resolution = template_dict['horizontal_resolution']
+    vertical_resolution = template_dict['vertical_resolution']
+
+    geometry = {
+        'akbk': f'./fv3-jedi/fv3files/akbk{vertical_resolution}.nc4',
+        'layout': [npx_proc, npy_proc],
+        'npx': horizontal_resolution,
+        'npy': horizontal_resolution,
+        'npz': vertical_resolution
     }
 
-    return ensemble_latlon_prior_variance_output
-
+    return geometry
 
 # --------------------------------------------------------------------------------------------------

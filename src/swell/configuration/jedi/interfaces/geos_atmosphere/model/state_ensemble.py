@@ -13,11 +13,12 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 # --------------------------------------------------------------------------------------------------
 
 
-def background_ensemble(template_dict: Mapping) -> Mapping:
-    horizontal_resolution = template_dict['horizontal_resolution']
+def state_ensemble(template_dict: Mapping) -> Mapping:
 
-    background_ensemble = {
-        'date': template_dict['local_background_time_iso'],
+    # full fname including subdir path
+    fn_input = template_dict['ensmeanvariance_spec_item'].get('fn_input')
+
+    state_ensemble_dict = {
         'members from template': {
             'template': {
                 'datetime': template_dict['local_background_time_iso'],
@@ -25,23 +26,17 @@ def background_ensemble(template_dict: Mapping) -> Mapping:
                 'provider': 'geos',
                 'compute edge pressure from surface pressure': True,
                 'max allowable geometry difference': 1e-3,
-                'datapath': '.',
-                'filenames': [
-                    f'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-                    f'fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
-                ],
+                'datapath': template_dict['cycle_dir'],
+                'filename': fn_input,
                 'state variables': state_variables,
                 'field io names': field_io_names
             },
             'pattern': '%mem%',
             'nmembers': template_dict['ensemble_num_members'],
-            'zero padding': 3,
+            'zero padding': 3
         }
     }
 
-    return background_ensemble
-
-# Note: 4D-window
-#        'date': template_dict['window_begin_iso'],
+    return state_ensemble_dict
 
 # --------------------------------------------------------------------------------------------------
