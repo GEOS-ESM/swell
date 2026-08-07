@@ -58,6 +58,10 @@ ioda instrument names:
     full name: ATMS (NOAA-20)
     provider : ncdiag
     inst type: radiance
+  - ioda name: atms_n21
+    full name: ATMS (NOAA-21)
+    provider : ncdiag
+    inst type: radiance
   - ioda name: atms_npp
     full name: ATMS (NPP)
     provider : ncdiag
@@ -88,6 +92,10 @@ ioda instrument names:
     inst type: radiance
   - ioda name: cris-fsr_n20
     full name: CRIS-FSR (NOAA-20)
+    provider : ncdiag
+    inst type: radiance
+  - ioda name: cris-fsr_n21
+    full name: CRIS-FSR (NOAA-21)
     provider : ncdiag
     inst type: radiance
   - ioda name: cris-fsr_npp
@@ -150,6 +158,10 @@ ioda instrument names:
     full name: OMI (AURA)
     provider : ncdiag
     inst type: ozone
+  - ioda name: omieff_aura
+    full name: OMIEFF (AURA)
+    provider : ncdiag
+    inst type: ozone
   - ioda name: ompsnp_npp
     full name: OMPS Nadir Profile (NPP)
     provider : ncdiag
@@ -202,6 +214,9 @@ ioda instrument names:
     full name: SSMIS (DMSP-F17)
     provider : ncdiag
     inst type: radiance
+  - ioda name: tcp
+    full name: Tropical Cyclone central pressure
+    inst type: conventional
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
     provider : ncdiag
