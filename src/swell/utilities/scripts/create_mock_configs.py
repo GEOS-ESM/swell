@@ -52,9 +52,9 @@ defaults_dict['3dvar_cf'] = {'datetime': '20230805T180000Z',
                              'model': 'geos_cf',
                              'executable_type': 'variational'}
 
-defaults_dict['localensembleda'] = {'datetime': '20231010T000000Z',
-                                    'model': 'geos_atmosphere',
-                                    'executable_type': 'localensembleda'}
+# defaults_dict['localensembleda'] = {'datetime': '20231010T000000Z',
+#                                    'model': 'geos_atmosphere',
+#                                    'executable_type': 'localensembleda'}
 
 # --------------------------------------------------------------------------------------------------
 
