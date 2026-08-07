@@ -162,7 +162,6 @@ class GetObservations(taskBase):
         # ------------
         obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
         observation_providers = self.config.observation_providers(default={})
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
@@ -172,6 +171,13 @@ class GetObservations(taskBase):
         # Get model component and translate to R2D2 model name
         model_component = self.get_model()
         r2d2_model = get_r2d2_model_name(model_component)
+
+        observations = self.config.observations()
+
+        # Use the observation specified on the command line, if present
+        parameter = self.get_parameter()
+        if parameter is not None:
+            observations = [parameter]
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))

@@ -54,8 +54,10 @@
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
+            {% for observation in models[model_component]['observations'] %}
+            GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
 
-            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -121,6 +123,12 @@
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+
+    {% for observation in models[model_component]['observations'] %}
+    [[GetObservations-{{observation}}-{{model_component}}]]
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
+        inherit = GetObservations-{{model_component}}
+    {% endfor %}
 
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
