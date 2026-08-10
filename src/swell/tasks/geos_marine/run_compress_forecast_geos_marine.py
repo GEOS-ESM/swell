@@ -9,15 +9,11 @@
 
 
 from datetime import datetime as dt
-import isodate
 import os
 import tarfile
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.compress import compress_file
-from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 

@@ -243,9 +243,6 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[SaveAnalysis-{{model_component}}]]
-        script = "swell task SaveAnalysis $config -d $datetime -m {{model_component}}"
-
     [[RunCompressForecast-{{model_component}}]]
         script = "swell task RunCompressForecast $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
