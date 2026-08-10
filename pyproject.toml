@@ -18,7 +18,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swell"
-version = "20260603"
+version = "20260728"
 authors = [{name = "NASA Global Modeling and Assimilation Office"}]
 description = "Workflow suites, tasks and configuration for coupled data assimilation"
 requires-python = ">=3.11"
