@@ -19,7 +19,7 @@ import subprocess
 def compress_file(source_file: str,
                   algorithm: str = 'gzip',
                   level: int = 6,
-                  num_threads: int = 4) -> str:
+                  num_threads: int = 8) -> str:
 
     if not os.path.isfile(source_file):
         raise FileNotFoundError(f"Source file not found: {source_file}")
@@ -66,8 +66,9 @@ def _compress_pigz(source_file: str, level: int, num_threads: int) -> None:
     # -k  : keep the original file (do not delete it)
     # -p  : number of threads
     # -N  : compression level (1–9)
+    # -f  : Force overwrite, compress .gz, links, and to terminal
     subprocess.run(
-        [pigz_bin, f'-{level}', '-k', f'-p{num_threads}', source_file],
+        [pigz_bin, f'-{level}', '-k', '-f', f'-p{num_threads}', source_file],
         check=True,
     )
 
@@ -104,4 +105,4 @@ def decompress_if_needed(file_path: str) -> str:
 def compressed_extension(original_ext: str) -> str:
     return original_ext + '.gz'
 
-#--------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------

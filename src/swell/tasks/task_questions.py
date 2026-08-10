@@ -820,6 +820,18 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunCompressForecast = QuestionList(
+        list_name="RunCompressForecast",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveForecast = QuestionList(
         list_name="SaveForecast",
         questions=[
@@ -885,18 +897,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    SaveForecastCf = QuestionList(
-        list_name="SaveForecastCf",
-        questions=[
-            qd.forecast_length(),
-            qd.forecast_output_frequency(),
-            qd.horizontal_resolution(),
-            qd.window_length(),
         ]
     )
 
