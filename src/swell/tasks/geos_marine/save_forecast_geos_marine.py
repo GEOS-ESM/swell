@@ -8,14 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from datetime import datetime as dt
-import isodate
 import os
-import tarfile
 from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.compress import compress_file
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -57,6 +53,9 @@ class SaveForecast(taskBase):
         The method loads the R2D2 credentials, determines the active window
         parameters, and uploads each marine model archive that was produced in
         the current cycle.
+
+        The archive files are stored at background time, which changes according to the configured
+        window type (and/or suite type) and length.
         """
 
         self.marine_models = self.config.marine_models(None) or []
@@ -65,8 +64,6 @@ class SaveForecast(taskBase):
         self.horizontal_resolution = self.config.horizontal_resolution()
 
         load_r2d2_credentials(self.logger, self.platform())
-
-        is_4d = window_type == '4D' or 'fgat' in self.suite_name()
 
         self.local_background_time, self.local_background_time_dto = \
             self.da_window_params.local_background_time(self.window_length, window_type, dto=True)

@@ -898,7 +898,6 @@ class TaskQuestions(QuestionContainer, Enum):
         ]
     )
 
-
     # --------------------------------------------------------------------------------------------------
 
     SaveObsDiags = QuestionList(
