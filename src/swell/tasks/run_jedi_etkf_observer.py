@@ -77,12 +77,12 @@ class RunJediEtkfObserver(taskBase):
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Ensemble Localizations
-        self.jedi_rendering.add_key('horizontal_localization_method',
-                                    self.config.horizontal_localization_method())
-        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
-                                    self.config.horizontal_localization_lengthscale())
-        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
-                                    self.config.horizontal_localization_max_nobs())
+#        self.jedi_rendering.add_key('horizontal_localization_method',
+#                                    self.config.horizontal_localization_method())
+#        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
+#                                    self.config.horizontal_localization_lengthscale())
+#        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
+#                                    self.config.horizontal_localization_max_nobs())
         self.jedi_rendering.add_key('vertical_localization_method',
                                     self.config.vertical_localization_method())
         self.jedi_rendering.add_key('vertical_localization_apply_log_transform',

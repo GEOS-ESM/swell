@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    localensembleda_tier1 = QuestionList(
-        list_name="localensembleda",
+    localensembleda_2steps_tier1 = QuestionList(
+        list_name="localensembleda_2steps_tier1",
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -67,8 +67,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-    localensembleda_tier2 = QuestionList(
-        list_name="localensembleda",
+    localensembleda_2steps_tier2 = QuestionList(
+        list_name="localensembleda_2steps_tier2",
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -101,11 +101,42 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.obs_thinning_rej_fraction(0.75),
+            qd.obs_thinning_rej_fraction(0.8),
             qd.observations([
-                "sondes",
-                "sfcship",
+                "aircraft_temperature",
+                "aircraft_wind",
+                "airs_aqua",
+                "amsr2_gcom-w1",
+                "amsua_aqua",
+                "amsua_metop-b",
+                "amsua_metop-c",
+                "amsua_n15",
+                "amsua_n18",
+                "amsua_n19",
                 "atms_n20",
+                "atms_npp",
+                "avhrr3_metop-b",
+                "avhrr3_n18",
+                "avhrr3_n19",
+                "cris-fsr_n20",
+                "cris-fsr_npp",
+                "gmi_gpm",
+                "gps",
+                "iasi_metop-b",
+                "iasi_metop-c",
+                "mhs_metop-b",
+                "mhs_metop-c",
+                "mhs_n19",
+                "mls55_aura",
+                "omi_aura",
+                "ompsnm_npp",
+                "pibal",
+                "satwind",
+                "scatwind",
+                "sfcship",
+                "sfc",
+                "sondes",
+                "ssmis_f17"
             ]),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
@@ -116,10 +147,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    localensembleda = QuestionList(
-        list_name="localensembleda",
+    localensembleda_2steps = QuestionList(
+        list_name="localensembleda_2steps",
         questions=[
-            localensembleda_tier2
+            localensembleda_2steps_tier1
         ]
     )
 
