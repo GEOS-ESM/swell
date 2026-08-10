@@ -14,7 +14,6 @@ from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 import isodate
 import os
 import r2d2
-import tarfile
 
 # --------------------------------------------------------------------------------------------------
 
@@ -143,7 +142,6 @@ class GetBackground(taskBase):
             file_type = fc['file_type']
             target_file_template = fc['filename']
             r2d2_model = fc.get('r2d2_model', get_r2d2_model_name(model_component))
-            explicit_file_extension = fc.get('file_extension')
 
             # Loop over background steps
             # --------------------
@@ -157,10 +155,7 @@ class GetBackground(taskBase):
                 # ---------------------------------------------------
                 target_file = background_time.strftime(target_file_template)
 
-                if explicit_file_extension:
-                    file_extension = explicit_file_extension
-                else:
-                    file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
+                file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
 
                 fetch_kwargs = dict(
                     item='forecast',
@@ -177,14 +172,7 @@ class GetBackground(taskBase):
                     fetch_kwargs['data_store'] = r2d2_datastore
                 r2d2.fetch(**fetch_kwargs)
 
-                # Unpack tar.gz archives; otherwise just fix permissions
-                if target_file.endswith('.tar.gz'):
-                    self.logger.info(f'Unpacking tar archive: {target_file}')
-                    extract_dir = os.path.dirname(target_file)
-                    with tarfile.open(target_file, 'r:gz') as tar:
-                        tar.extractall(path=extract_dir)
-                    os.remove(target_file)
-                else:
-                    os.chmod(target_file, 0o644)
+                # Change permission
+                os.chmod(target_file, 0o644)
 
 # --------------------------------------------------------------------------------------------------
