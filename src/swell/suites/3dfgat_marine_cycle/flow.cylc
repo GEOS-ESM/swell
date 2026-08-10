@@ -106,8 +106,8 @@
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
             {% if not skip_r2d2 %}
-            # Save forecast and TODO:analysis output
-            LinkCoupledGeosOutput-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
+            # Compress forecast on compute node, then store in R2D2 on login node
+            LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
             {% endif %}
 
@@ -245,6 +245,15 @@
 
     [[SaveAnalysis-{{model_component}}]]
         script = "swell task SaveAnalysis $config -d $datetime -m {{model_component}}"
+
+    [[RunCompressForecast-{{model_component}}]]
+        script = "swell task RunCompressForecast $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunCompressForecast"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunCompressForecast"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[SaveForecast-{{model_component}}]]
         script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
