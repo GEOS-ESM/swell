@@ -152,36 +152,7 @@ More detailed instructions and examples for these steps follows in this section.
 
 ### Writing tasks
 
-Swell has a variety of tasks, many of which are shared across suites. Tasks in Swell are defined as classes which extend the `taskBase` parent class, which has many helpful functions and attributes. When a task is run by swell, it calls the `execute` function.
-
-Calls to parameters are made using either functions of `taskBase`, for more common parameters, or using `self.config.<parameter>`.
-
-### Example Swell Task
-```python
-class CloneGeosMksi(taskBase):
-
-    def execute(self) -> None:
-
-        """
-        Generate the satellite channel record from GEOSmksi files
-        """
-
-        # This task should only execute for geos_atmosphere
-        # -------------------------------------------------
-        if self.get_model() != 'geos_atmosphere':
-            self.logger.info('Skipping GenerateObservingSystemRecords for: ' + self.get_model())
-            return
-
-        # Parse config
-        # ------------
-        path_to_geos_mksi = self.config.observing_system_records_mksi_path()
-        tag = self.config.observing_system_records_mksi_path_tag()
-```
-This example shows the basics of writing a task, including task definition and the execute function. The current model is accessed by the `self.get_model()` function, inherited from `taskBase`. The variables `path_to_geos_mksi`, and `tag`, are pulled from the experiment configuration, which is sourced from the `experiment.yaml`.
-
-Tasks that have a slurm requirement need to be specified in `src/swell/utilities/slurm.py`.
-
-For debugging purposes, it may be easier to first create and test some tasks outside of Swell, and then port them to Swell by changing relevant variables and path specifications. Alternatively, `experiment.yaml` can be populated manually and tested using `swell task <task> experiment.yaml`.
+For more information on tasks, see: [Adding Tasks](adding_a_suite.md)
 
 ### Creating the flow.cylc template
 
@@ -208,70 +179,9 @@ The experiment `flow.cylc` file is generated from a suite template using a `jinj
 
 For initial development/testing purposes, it may be easier to create a `flow.cylc` using hard-coded values, then replace these with `jinja2` templated values as the suite nears completion.
 
-## Suite and task questions
-
-### Question Objects
-
-Questions for swell are stored as dataclass instances, in the file `src/swell/utilities/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
-
-```python
-@dataclass
-class SwellQuestion:
-    """Basic dataclass for defining Swell questions for suites and tasks"""
-    default_value: str
-    question_name: str
-    widget_type: WidgetType
-    prompt: str
-    question_type: str = None
-    depends: Optional[dict] = None
-    models: Optional[list] = None
-    ask_question: bool = False
-    options: Optional[str] = None
-```
-Arguments:
-- default_value: default value for the answer
-- question_name: name of the question (should usually match the class).
-- widget_type: A custom enum specifying the data type of the answer, as well as the way the question will be asked on the command line interface. Options include drop lists, check lists, and direct entry.
-- prompt: A sentence or two describing the question.
-- question_type: "task" or "suite", use the `SuiteQuestion` or `TaskQuestion` parent classes to set this automatically.
-- depends: A dictionary specifying default values to be used if certain other questions are asked.
-- models: List of models the question applies to, can also use `["all_models"]` or `None`.
-- ask_question: (Currently unused)
-- options: List of valid options for the answer
-
-An example question class:
-```python
-    @dataclass
-    class existing_jedi_build_directory(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "existing_jedi_build_directory"
-        ask_question: bool = True
-        # Need construct lists and dictionaries using this constructor method because
-        # dataclass fields cannot be initialized to mutable types.
-        # https://docs.python.org/3/library/dataclasses.html#mutable-default-values
-        depends: Dict = mutable_field({
-            "jedi_build_method": "use_existing"
-        })
-        })
-        prompt: str = "What is the path to the existing JEDI build directory?"
-        widget_type: WidgetType = WidgetType.STRING
-```
-Calling `existing_jedi_build_directory()` creates an object matching the default values for the class. The specific values `defer_to_platform`, `defer_to_model`, and `defer_to_code` are special values that will be substituted as follows, depending on the `platform` and `model`: 
-- defer_to_platform: src/swell/deployment/platforms/<platform>
-- defer_to_model: src/swell/configuration/jedi/interfaces/<model>
-- defer_to_code: Set by src/swell/deployment/prepare_config_and_suite/prepare_config_and_suite.py
-
-Alternative values can be set as needed for different applications, using positional or keyword arguments:
-```python
-question = existing_jedi_build_directory('/example')
-```
-```python
-question = existing_jedi_build_directory(options=['example1', 'example2'])
-```
-
 ### Question Lists
 
-Each individual suite and most tasks have an associated list of questions which are used to create the experiment. 
+Each individual suite and most tasks have an associated list of questions which are used to create the experiment. For more on questions themselves, see [Adding questions](adding_questions.md).
 
 Suite question lists are stored in `src/swell/suites/<suite>/suite_config.py`
 Task question lists are stored in `src/swell/tasks/task_questions.py`
