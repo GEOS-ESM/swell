@@ -44,7 +44,7 @@
   - [Atmospheric (Weather) DA](practical_examples/atmosphere/README.md) — _No documentation yet_
     - [LocalEnsembleDA](practical_examples/atmosphere/LocalEnsembleDA.md)
     - [EDA Atmos](practical_examples/atmosphere/eda_atmos.md)
-    - [EDA ControlPert Atmos](practical_examples/atmosphere/eda_controlpert_atmos.md)        
+    - [EDA ControlPert Atmos](practical_examples/atmosphere/eda_controlpert_atmos.md)
   - [GEOS-CF (Composition) DA](practical_examples/geos_cf/README.md) — _No documentation yet_
   - Background Ingestion, Observation Ingestion, and Conversion
     - [Storing Observations and Backgrounds in R2D2](practical_examples/r2d2/r2d2_ingest.md)
