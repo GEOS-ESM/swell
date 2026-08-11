@@ -3,9 +3,9 @@
 ## Table of Contents
 
 1. [What is R2D2?](#what-is-r2d2)
-2. [How R2D2 Works](#how-r2d2-works)
-3. [R2D2 Concepts](#r2d2-concepts)
-4. [How Swell Uses R2D2](#how-swell-uses-r2d2)
+2. [How Swell Uses R2D2](#how-swell-uses-r2d2)
+3. [How R2D2 Works](#how-r2d2-works)
+4. [R2D2 Concepts](#r2d2-concepts)
 5. [Store & Fetch Quick Reference](#store--fetch-quick-reference)
 6. [Storing Observations in R2D2](../practical_examples/r2d2/r2d2_ingest.md)
 
@@ -57,6 +57,21 @@ With R2D2 you can:
 - Automatically track data versions and timestamps
 - Share data securely with authorized users across locations
 - Prevent duplicate storage
+
+---
+
+## How Swell Uses R2D2
+
+When you run a Swell experiment, R2D2 is used behind the scenes in several tasks:
+
+| Swell Task | What it does with R2D2 |
+|------------|------------------------|
+| **Get Observations** | Fetches observation files from R2D2 by `provider`, `observation_type`, `window_start`, `window_length`; falls back to empty observations if not found |
+| **Store Background** | Stores forecast/background files so they can be reused by later cycles |
+| **Get Background** | Fetches background files for the current cycle from R2D2 |
+| **Ingest Obs** | Ingest suite that stores newly processed observations into R2D2 |
+| **Save Obs Diags** | Stores feedback/diagnostic files (`item='feedback'`) |
+| **Save Restart** | Stores forecast and analysis restart files for model components |
 
 ---
 
@@ -178,39 +193,6 @@ A **Compute Host** is our compute environment, it represents a computing environ
                     │  (r2d2-bucket)  │
                     └─────────────────┘
 ```
-
----
-
-## How Swell Uses R2D2
-
-When you run a Swell experiment, R2D2 is used behind the scenes in several tasks:
-
-| Swell Task | What it does with R2D2 |
-|------------|------------------------|
-| **Get Observations** | Fetches observation files from R2D2 by `provider`, `observation_type`, `window_start`, `window_length`; falls back to empty observations if not found |
-| **Store Background** | Stores forecast/background files so they can be reused by later cycles |
-| **Get Background** | Fetches background files for the current cycle from R2D2 |
-| **Ingest Obs** | Ingest suite that stores newly processed observations into R2D2 |
-| **Save Obs Diags** | Stores feedback/diagnostic files (`item='feedback'`) |
-| **Save Restart** | Stores forecast and analysis restart files for model components |
-
-By default, **Get Observations** reads each observation's provider from
-`observation_ioda_names.yaml`. A suite or experiment can override individual providers with a
-model-level mapping:
-
-```yaml
-models:
-  geos_cf:
-    observation_providers:
-      tempo_no2_tropo: nasa_v4
-      tropomi_s5p_no2_tropo: esa
-```
-
-In `suite_config.py`, set the same mapping with
-`qd.observation_providers({...})`. Observations omitted from the mapping continue to use the
-provider in `observation_ioda_names.yaml`.
-
-> **Note**: R2D2 adaptation in Swell is under active development. Task behavior and configuration may change as implementation continues.
 
 ---
 
