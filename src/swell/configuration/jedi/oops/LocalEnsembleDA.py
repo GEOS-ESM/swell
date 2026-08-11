@@ -10,10 +10,24 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
-
 class LocalEnsembleDA(OopsConfig):
 
     def render_oops(self):
+
+        if self.jedi_interface == 'geos_atmosphere':
+            increment_var =  [
+                    'eastward_wind',
+                    'northward_wind',
+                    'air_temperature',
+                    'air_pressure_at_surface',
+                    'air_pressure_levels',
+                    'water_vapor_mixing_ratio_wrt_moist_air',
+                    'cloud_liquid_ice',
+                    'cloud_liquid_water',
+                    'mole_fraction_of_ozone_in_air',
+                ]
+        elif self.jedi_interface == 'geos_atmosphere':
+            increment_var = self.template_dict['analysis_variables']
 
         oops = {
             'geometry': self.interface_model('geometry'),
@@ -22,7 +36,7 @@ class LocalEnsembleDA(OopsConfig):
                 'end': self.template_dict['window_end_iso'],
                 'bound to include': 'begin'
             },
-            'increment variables': self.template_dict['analysis_variables'],
+            'increment variables': increment_var,
             'background': self.interface_model('background_ensemble'),
             'observations': {
                 'get values': self.interface_model('getvalues'),
