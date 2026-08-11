@@ -6,23 +6,24 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
+from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_latlon_prior_variance_output(template_dict: Mapping) -> Mapping:
+class diffstates(OopsConfig):
 
-    ensemble_latlon_prior_variance_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.prior.variance.',
-        'field io names': field_io_names_ensemble
-    }
+    def render_oops(self):
 
-    return ensemble_latlon_prior_variance_output
+        two_states = self.interface_model('two_states')
+        oops = {
+            'state geometry': self.interface_model('geometry'),
+            'increment geometry': self.interface_model('geometry_wofms'),
+            **two_states,
+            'output': self.interface_model('diffstates_output')
+        }
+
+        return oops
 
 
 # --------------------------------------------------------------------------------------------------
