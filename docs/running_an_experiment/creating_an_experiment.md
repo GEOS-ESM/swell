@@ -4,7 +4,7 @@ Once you have installed `swell` and configured `cylc` you should be able to crea
 
 A useful command when using swell is `swell --help`. This will take you through all the options within swell. The help traverses through the applications so you can similarly issue `swell create --help`
 
-- Make sure you've configured `~/.swell/r2d2_credentials.yaml` as described in [R2D2 v3 credentials](../configuration_reference/r2d2_v3_credentials.md). If you don't have R2D2 credentials yet, you can skip this step and pass `-k`/`--skip-r2d2` to `swell create` instead.
+- Make sure you've configured `~/.swell/r2d2_credentials.yaml` as described in [R2D2 v3 credentials](../configuration_reference/r2d2_v3_credentials.md). Most suites still need this even if you pass `-k`/`--skip-r2d2`. That flag only skips registering the experiment and R2D2 store tasks, not tasks that fetch data (e.g. `GetObservations`).
 
 The first step is to create an experiment which is done with
 

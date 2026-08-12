@@ -37,8 +37,8 @@ To see all available arguments use the command `swell create --help`.
  - **SLURM override:**
 It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM directives for different models and each individual task. See [SLURM configuration](../configuration_reference/slurm_configuration.md) section for more details.
 
-- **Skipping R2D2:**
-  The `-k` or `--skip-r2d2` flag skips registering the experiment and storing products in R2D2. This is useful if you don't have [R2D2 credentials](../configuration_reference/r2d2_v3_credentials.md) configured yet, or want to run without touching R2D2 at all:
+- **Skipping R2D2 registration and storage:**
+  The `-k` or `--skip-r2d2` flag skips registering the experiment and skips store tasks (e.g. `SaveObsDiags`) in R2D2. It does **not** skip tasks that fetch data (e.g. `GetObservations`) — those still require [R2D2 credentials](../configuration_reference/r2d2_v3_credentials.md) to be configured:
 
    ```bash
   swell create 3dvar_marine --skip-r2d2
