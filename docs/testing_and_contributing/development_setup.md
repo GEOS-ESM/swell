@@ -1,9 +1,4 @@
 # Development Setup
 
-> Documentation sprint placeholder. This topic is currently marked **Missing**.
+It is highly recommended that developers looking to contribute to Swell try installing it "interactively". This essentially allows for the source location to act as the install location, meaning that any code changes made to the source are applied immediately to the install. This avoids needing to issue commands to rebuild swell after each change. See [Interactive installation with uv](../installation_and_setup/platforms/discover/installing_swell_uv_venv.md) for instructions to install with `uv` on Discover, or [csh interactive installation] for instructions for `csh` users.
 
-## Planned coverage
-
-- Set up a local Swell development environment.
-- Install development dependencies and configure required services.
-- Run initial checks before making changes.
