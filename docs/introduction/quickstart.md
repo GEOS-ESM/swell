@@ -46,7 +46,7 @@ Run `swell create --help` or `swell launch --help` for the full, up-to-date list
 `swell create` prints the exact command to run next, typically:
 
 ```bash
-swell launch --suite_path <experiment_root>/<experiment_id>/<experiment_id>-suite
+swell launch <experiment_root>/<experiment_id>/<experiment_id>-suite
 ```
 
 This instanciates the workflow with `cylc`, runs it, and opens the Cylc Terminal User Interface (TUI). See [Launching an Experiment](../running_an_experiment/launching_an_experiment.md).
