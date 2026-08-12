@@ -67,7 +67,7 @@ models:
     - achem_internal
     - fvcore_internal
     - gocart_internal
-    - ...
+    # - <add additional restart file types as needed>
 
     # Use the Incremental Analysis Update (IAU) procedure for the forecast?
     iau: true
