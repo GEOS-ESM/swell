@@ -14,7 +14,7 @@ Before diving into installation and configuration, it helps to understand the co
 
 ## Suites: An Organized Succession of Tasks
 
-A **suite** is the definition of *what an application is made of* and *in what order it runs*. Concretely, a suite is a directory under `swell/src/swell/suites/` that provides:
+A **suite** is the definition of *what an application is made of* and *in what order it runs*. Concretely, a suite is a directory under `src/swell/suites/` that provides:
 
 - A template describing the tasks and the dependency graph between them (what must finish before what can start, what can run in parallel, what can retry or fall back to another task on failure).
 - A set of suite-level questions describing the parameters needed to configure the application (models involved, cycle times, resolution, etc.). Such parameters can be overriden with a yaml at the suite execution. See section on overrides.
