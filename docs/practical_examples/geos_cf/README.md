@@ -4,7 +4,7 @@ Swell provides three suites for GEOS-CF (atmospheric composition) data assimilat
 JEDI `geos_cf` model interface:
 
 - [HofX GEOS-CF](hofx_cf.md) — non-cycling observation operator only run (no analysis), useful for
-  verifying backgrounds, observations, and the JEDI interface are correctly staged.
+  verifying that backgrounds, observations, and the JEDI interface are correctly staged.
 - [3DVAR GEOS-CF](3dvar_cf.md) — a single non-cycling 3DVar analysis.
 - [3DVAR GEOS-CF Cycle](3dvar_cf_cycle.md) — a cycling 3DVar, where each analysis is followed by a
   short GEOS-CF forecast that produces the background and restarts for the next cycle.
