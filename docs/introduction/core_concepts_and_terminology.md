@@ -2,7 +2,7 @@
 
 ## What Is Swell?
 
-The swell system is developed by NASA's Global Modeling and Assimilation Office. It is used to generate experiments using the JEDI data assimilation system and NASA's Goddard Earth Observing System (GEOS) numerical weather forecast model. 
+The Swell system is developed by NASA's Global Modeling and Assimilation Office. It is used to generate experiments using the JEDI data assimilation system and NASA's Goddard Earth Observing System (GEOS) numerical weather forecast model.
 
 Before diving into installation and configuration, it helps to understand the concepts that Swell is built around: such as **workflow**,  **suite**,  **task**, **question**, and **experiment**.
 
