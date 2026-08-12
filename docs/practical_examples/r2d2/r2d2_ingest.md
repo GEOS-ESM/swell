@@ -1,12 +1,14 @@
-# R2D2 Observation Ingestion Suite
+# R2D2 Observation & Background Ingestion Suite
 
-This suite ingests observation files into R2D2.
-There are two ingestion pipelines depending on where your data lives:
+This suite ingests observation and background files into R2D2. Observations and backgrounds are
+different data types with different pipelines and tasks — pick the row that matches what you're
+ingesting:
 
 | Pipeline | When to use | Tasks run |
 |----------|------------|-----------|
-| **Direct copy** (`cp`) | IODA-formatted files already exist on Discover | `IngestObs` |
-| **Download → Convert → Ingest** | Raw files (e.g. HDF5) need to be fetched from a remote server (NASA GES DISC, etc.) and converted to IODA format first | `DownloadObs → ConvertObsToIoda → IngestObs` |
+| **Direct copy** (`cp`) — observations | IODA-formatted observation files already exist on Discover | `IngestObs` |
+| **Download → Convert → Ingest** — observations | Raw observation files (e.g. HDF5) need to be fetched from a remote server (NASA GES DISC, etc.) and converted to IODA format first | `DownloadObs → ConvertObsToIoda → IngestObs` |
+| **Background ingest** — backgrounds | Background/forecast files already exist on a shared filesystem and just need registering in R2D2 | `SaveBackground` |
 
 ---
 
@@ -220,6 +222,62 @@ swell launch <experiment_path>
 
 ---
 
+## Pipeline 3: Background Ingestion
+
+Background ingestion is a different data type and a different task from the observation
+pipelines above. It uses `SaveBackground` (not `IngestObs`), and there is no download/convert
+step: it stores background/forecast files that already exist on a shared filesystem directly
+into R2D2, as symlinks by default.
+
+`SaveBackground` is built around a single daily forecast run: it expects one forecast
+initialization time per cycle (currently 09Z) and registers each of that forecast's 24 hourly
+steps (`PT0H`–`PT23H`) in R2D2.
+
+### Step 1: Enable the background pipeline in the suite config
+
+Edit `src/swell/suites/r2d2_ingest/suite_config.py`:
+
+```python
+qd.ingest_background_pipeline(True)
+qd.cycle_times(['T09'])                          # Must match the forecast init hour
+qd.start_cycle_point("2025-10-02T09:00:00Z")     # Forecast initialization time
+qd.final_cycle_point("2025-10-02T09:00:00Z")
+qd.model_components(['geos_cf'])                 # Or your model component
+```
+
+### Step 2: Configure the background source
+
+Under your model component's config block:
+
+```python
+geos_cf=[
+    qd.dry_run(True),
+    qd.background_source_path(),   # strftime path template to the source files
+    qd.background_experiment(),    # R2D2 experiment name for backgrounds
+    qd.horizontal_resolution(),    # R2D2 resolution string
+    qd.store_as_symlink(True),     # Register as symlink instead of copying
+]
+```
+
+`background_source_path` is a strftime template resolved once per hourly step, for example:
+
+```
+/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4
+```
+
+### Step 3: Create and run the experiment
+
+```bash
+swell create ingest_background_cf
+# Set dry_run in experiment.yaml False to actually store files, or keep true to preview which files you will be storing.
+swell launch <experiment_path>
+```
+
+See the `ingest_background_cf` suite under "Pre-configured suites" below for a complete worked
+example.
+
+---
+
 ## Editing configs in an existing experiment
 
 When you run `swell create`, observation YAML files are copied from the swell source
@@ -367,6 +425,20 @@ For each cycle:
    - Looks for the converted file in `<cycle_dir>/ioda/<obs_name>/`
    - Calls `r2d2.store()` to ingest it
 
+### Background ingestion pipeline
+
+Unlike the observation pipelines, `SaveBackground` runs once per cycle and handles a whole
+forecast's worth of files in that single run — there's no separate download/convert task, and
+the cycle point is the forecast initialization time rather than a DA window:
+
+1. Confirms the cycle time's hour matches the expected forecast initialization hour (currently
+   09Z); aborts if `cycle_times` is misconfigured.
+2. Loops over each hourly step of the forecast (`PT0H`–`PT23H`).
+3. For each step, resolves the source file path by applying `strftime` to
+   `background_source_path`, and confirms the file exists.
+4. Calls `r2d2.store()` for each file, registering it under `background_experiment` /
+   `horizontal_resolution`, as a symlink if `store_as_symlink` is `True` (the default).
+
 ---
 
 ## Dry run mode
@@ -402,3 +474,7 @@ File permissions must be `600` (`chmod 600 ~/.netrc`). For ASDC datasets
 (`retrieval_method: cmr`), also confirm that the ASDC DAAC application is
 approved in your Earthdata account (urs.earthdata.nasa.gov -> Applications ->
 Authorized Apps).
+
+**"SaveBackground expects cycle_time hour to be 09Z"** — `SaveBackground` assumes a single daily
+forecast run at a fixed initialization hour. Check that `cycle_times` in the suite config matches
+the forecast's actual initialization hour (e.g. `['T09']`).
