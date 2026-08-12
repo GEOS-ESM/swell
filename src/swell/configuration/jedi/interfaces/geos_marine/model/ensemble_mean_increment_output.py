@@ -7,22 +7,18 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_latlon_prior_mean_output(template_dict: Mapping) -> Mapping:
+def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
 
-    ensemble_latlon_prior_mean_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.prior.mean.',
-        'field io names': field_io_names_ensemble
+    ensemble_mean_increment_output = {
+        'datadir': './',
+        'exp': template_dict['experiment_id'] + '.inc',
+        'type': 'an'
     }
 
-    return ensemble_latlon_prior_mean_output
-
+    return ensemble_mean_increment_output
 
 # --------------------------------------------------------------------------------------------------
