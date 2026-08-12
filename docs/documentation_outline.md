@@ -78,7 +78,10 @@ Owner: __________
   - [3DVAR Marine Cycle Tier 2](practical_examples/soca/3dvar_marine_cycle_tier2.md)
   - [3DFGAT Marine Cycle](practical_examples/soca/3dfgat_marine_cycle.md)
 - [ ] **3.b. [Atmospheric (Weather) DA](practical_examples/atmosphere/README.md)** — **Missing** — Owner: __________
-- [ ] **3.c. [GEOS-CF (Composition) DA](practical_examples/geos_cf/README.md)** — **Missing** — Owner: __________
+- [ ] **3.c. GEOS-CF (Composition) DA** — **Existing** — Owner: __________
+  - [HofX GEOS-CF](practical_examples/geos_cf/hofx_cf.md)
+  - [3DVAR GEOS-CF](practical_examples/geos_cf/3dvar_cf.md)
+  - [3DVAR GEOS-CF Cycle](practical_examples/geos_cf/3dvar_cf_cycle.md)
 - [ ] **3.d. Background Ingestion, Observation Ingestion, and Conversion** — **Existing** — Owner: __________
   - Current documentation:
     [Storing Observations and Backgrounds in R2D2](practical_examples/r2d2/r2d2_ingest.md)

@@ -42,7 +42,10 @@
     - [3DVAR Marine Cycle Tier 2](practical_examples/soca/3dvar_marine_cycle_tier2.md)
     - [3DFGAT Marine Cycle](practical_examples/soca/3dfgat_marine_cycle.md)
   - [Atmospheric (Weather) DA](practical_examples/atmosphere/README.md) — _No documentation yet_
-  - [GEOS-CF (Composition) DA](practical_examples/geos_cf/README.md) — _No documentation yet_
+  - Atmospheric Composition DA
+    - [HofX GEOS-CF](practical_examples/geos_cf/hofx_cf.md)
+    - [3DVAR GEOS-CF](practical_examples/geos_cf/3dvar_cf.md)
+    - [3DVAR GEOS-CF Cycle](practical_examples/geos_cf/3dvar_cf_cycle.md)
   - Background Ingestion, Observation Ingestion, and Conversion
     - [Storing Observations and Backgrounds in R2D2](practical_examples/r2d2/r2d2_ingest.md)
   - Comparison and Evaluation
