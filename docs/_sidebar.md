@@ -1,9 +1,9 @@
 - 1. Getting Started
 
   - [What Is Swell?](README.md)
-  - [Core Concepts and Terminology](introduction/core_concepts_and_terminology.md) — _No documentation yet_
+  - [Core Concepts and Terminology](introduction/core_concepts_and_terminology.md)
   - Prerequisites and Supported Platforms
-    - [Prerequisites](introduction/prerequisites.md) — _No documentation yet_
+    - [Prerequisites](introduction/prerequisites.md)
     - [Supported Platforms](installation_and_setup/platforms/README.md)
     - [Project Requirements and Goals](introduction/requirements.md)
   - Installation and Setup
@@ -15,7 +15,7 @@
       - [Installing Swell Without Internet Access](installation_and_setup/platforms/discover/installing_swell_uv_offline.md)
       - [Installing Swell in an Interactive C Shell](installation_and_setup/platforms/discover/installing_swell_csh_interactive.md)
       - [Configuring Cylc on Discover](installation_and_setup/platforms/discover/configuring_cylc_discover.md)
-  - [QuickStart](introduction/quickstart.md) — _No documentation yet_
+  - [QuickStart](introduction/quickstart.md)
 
 - 2. Running Experiments
 
