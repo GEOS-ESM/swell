@@ -5,7 +5,6 @@
   - Prerequisites and Supported Platforms
     - [Prerequisites](introduction/prerequisites.md)
     - [Supported Platforms](installation_and_setup/platforms/README.md)
-    - [Project Requirements and Goals](introduction/requirements.md)
   - Installation and Setup
     - [Installing Swell](installation_and_setup/installing_swell.md)
     - [Configuring Cylc](installation_and_setup/configuring_cylc.md)

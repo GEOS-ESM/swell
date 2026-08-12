@@ -19,7 +19,6 @@ Owner: __________
 - [ ] **1.c. Prerequisites and Supported Platforms** — **Partial**
   - [Prerequisites](introduction/prerequisites.md): **Missing**
   - Current documentation: [Supported Platforms](installation_and_setup/platforms/README.md)
-  - Related documentation: [Project Requirements and Goals](introduction/requirements.md)
 - [ ] **1.d. Installation and Setup** — **Existing**
   - [Installing Swell](installation_and_setup/installing_swell.md)
   - [Configuring Cylc](installation_and_setup/configuring_cylc.md)
