@@ -36,10 +36,23 @@ This registers the experiment in R2D2 and creates a directory (default `/discove
 | `-o`, `--override <file.yaml>` | `swell create` | Override any `experiment.yaml` value, e.g. `experiment_root` (the run directory) or `experiment_id`. |
 | `-p`, `--platform <platform>` | `swell create` | Select platform-specific defaults (e.g. `nccs_discover_sles15`). |
 | `-s`, `--slurm <file.yaml>` | `swell create` | Override SLURM directives (account, nodes, qos, etc.), globally or per task/model. See [SLURM Configuration](../configuration_reference/slurm_configuration.md). |
-| `-k`, `--skip-r2d2` | `swell create` | Skip registering the experiment and storing products in R2D2. |
+| `-k`, `--skip-r2d2` | `swell create` | Skip registering the experiment and storing products in R2D2. Useful if you don't have credentials set up yet — see [below](#skipping-r2d2-for-a-first-run). |
 | `-l`, `--log_path <dir>` | `swell launch` | Directory to receive workflow manager (Cylc) logging output, instead of the default `$HOME/cylc-run/<suite_name>`. |
 
 Run `swell create --help` or `swell launch --help` for the full, up-to-date list.
+
+### Skipping R2D2 for a first run
+
+Are you new to Swell and don't have R2D2 credentials set up yet? Pass `-k`/`--skip-r2d2` to
+`swell create` to skip registering the experiment and storing products in R2D2:
+
+```bash
+swell create <suite> --skip-r2d2
+```
+
+This lets you complete a full create -> launch -> monitor cycle to see Swell working end to end
+before setting up your [R2D2 credentials](../configuration_reference/r2d2_v3_credentials.md). Tasks
+that use R2D2 (fetching observations, storing backgrounds/analyses) will be skipped rather than run.
 
 ## 3. Launch It
 
@@ -68,5 +81,5 @@ If the TUI gets closed you can reopen it by typing `cylc tui` in the terminal.
 
 ## 5. Verify the Result
 
-Once all tasks complete (all green), the experiment directory will contain the generated files for each cycle. By default `skip_r2d2` is `false`, so outputs (backgrounds, analyses, diagnostics) will also be registered and stored in R2D2; set `skip_r2d2: true` in `experiment.yaml` (or pass `-k`/`--skip-r2d2` to `swell create`) if you want to skip that. From here, see [Choosing a Workflow](../running_an_experiment/choosing_a_workflow.md) to explore other suites.
+Once all tasks complete (all green), the experiment directory will contain the generated files for each cycle. By default `skip_r2d2` is `false`, so outputs (backgrounds, analyses, diagnostics) will also be registered and stored in R2D2 (see [Skipping R2D2 for a first run](#skipping-r2d2-for-a-first-run) if you don't have credentials set up yet). From here, see [Choosing a Workflow](../running_an_experiment/choosing_a_workflow.md) to explore other suites.
 
