@@ -43,7 +43,7 @@ class GetBufr(taskBase):
 
         perl_executable_path = os.path.join(self.experiment_path(), 'GMAO_perllib')
         geos_mksi_obsysrc_path = os.path.join(self.experiment_path(),
-                                              'GEOS_mksi/ObsClass/obsys-nccs.rc')
+                                              self.config.obs_rc_path())
 
         # Environment variables for acquire_obsys
         env_dict = os.environ
