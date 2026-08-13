@@ -1,7 +1,7 @@
 # WOD CTD salinity profiles from the public NOAA reanalysis bucket (NNJA).
 #
 # Temperature and salinity are published as separate IODA v3 files; this fetches the
-# salinity file. Temperature has its own registry file (insitu_profile_ctd_t.yaml).
+# salinity file. Temperature has its own registry file (insitu_temp_profile_wod_ctd.yaml).
 #
 # Only 2023 is uploaded so far; earlier years are being backfilled from 1988.
 

@@ -1,13 +1,13 @@
 obs space:
-  name: insitu_profile_ctd_s
+  name: insitu_salt_profile_wod_ctd
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/insitu_profile_ctd_s.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/insitu_salt_profile_wod_ctd.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.insitu_profile_ctd_s.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.insitu_salt_profile_wod_ctd.{{window_begin}}.nc4'
   simulated variables: [salinity]
 obs operator:
   name: VertInterp

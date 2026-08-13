@@ -295,11 +295,11 @@ ioda instrument names:
     full name: CTD (In-situ)
     provider : odas
     inst type: conventional
-  - ioda name: insitu_profile_ctd_t
+  - ioda name: insitu_temp_profile_wod_ctd
     full name: CTD Temperature (In-situ)
     provider : odas
     inst type: conventional
-  - ioda name: insitu_profile_ctd_s
+  - ioda name: insitu_salt_profile_wod_ctd
     full name: CTD Salinity (In-situ)
     provider : odas
     inst type: conventional
