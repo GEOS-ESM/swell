@@ -24,7 +24,7 @@ An excerpt from an example config file shows how to setup a `localensembleda` ex
 with C90/nz=72 resolution using linear observer for deterministic GETKF. 
 
 
-```
+```yaml
 # What is the experiment id?
 experiment_id: c90ens
 
@@ -160,7 +160,6 @@ models:
 
      is the parameter used in `swell task RunJediObsfiltersExecutable` to thin observation data using GaussianThinning.
 
-
    -  `local_ensemble_solver`: Deterministic GETKF / Deterministic LETKF
 
    prescribes the solver type for ETKF methods
@@ -183,3 +182,12 @@ models:
 
     `vertical_localization_frac_retained_variance`: 0.95
 
+
+More information on the algorithm can be found in the JEDI documentation: https://jcsda-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/oops/applications/localensembleda.html
+
+
+3. EVA plots
+
+Example output for the ensemble mean increment in temperature at 500 hPa is shown below:
+
+![Description of Image](../../_media/example_inc_t_500_lgetkf.png)

@@ -7,16 +7,16 @@ To create a `3dvar_atmos` suite in swell, run the following command:
 swell create 3dvar_atmos 
 ```
 
-If you want to customize the run directory of the suite, use the override option (`-o` or `--override`).
+If you want to customize the run directory of the suite, use the override option (`-o` or `--override`):
 
 ```bash
 swell create 3dvar_atmos -o override.yaml
 ```
 
 where the `override.yaml` file may look like 
-```bash
+```yaml
 experiment_root: ${NOBACKUP}/your_swell_experiment_path
-experiment_id: 3dvar_test
+experiment_id: test001
 ```
 
 
@@ -24,10 +24,9 @@ experiment_id: 3dvar_test
 
 
 The command `swell create suite -o override.yaml` will generate `experiment.yaml` (the final configure file) and `flow.cylc` (the final cylc file) in
-the `experiment_id/${experiment_id}-suite` directory under your specified swell experiment path.  Inside `experiment.yaml`, you will find
+the `${experiment_id}/${experiment_id}-suite` directory under your_swell_experiment_path.  Inside `experiment.yaml`, you will find
 
-```bash
-
+```yaml
 # List of models in this experiment
 model_components:
 - geos_atmosphere
@@ -49,7 +48,7 @@ models:
     cycling_varbc: false
 
     # Provide a path that contains observation files not in r2d2.
-    ioda_locations_not_in_r2d2: /media/yonggang/T9/yonggang/discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
+    ioda_locations_not_in_r2d2: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
 
     # What number of processors do you wish to use in the x-direction?
     npx_proc: 1
@@ -82,7 +81,7 @@ models:
     background_time_offset: PT9H
 
     # What is the path to the GEOS X-backgrounds directory?
-    geos_x_background_directory: /media/yonggang/T9/yonggang/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
 
     # Provide a list of patterns that you wish to remove from the cycle directory.
     clean_patterns:
@@ -199,169 +198,80 @@ models:
 
 ```
 
-A few important keywords include
+A few important keywords from this file include
 
-- 
+`cycle_times`: define the 6-hour cycle point. 
 
+`cycling_varbc`: specifies if varbc file is updated every cycle.
 
+`analysis_variables`: here please be aware that both `air_pressure_at_surface` and `air_pressure_levels` are specified which may need to be adjusted in certain circumstances
 
+`gradient_norm_reduction` and `number_of_iterations` are used to determine the cost function minization stop point
 
-
-
-
-
-
-
+`observations`:  the list of observations; you can override this observation list using override.yaml
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+For example, for test purposes the simple override.yaml file below can be used to replace the full list of observations by a single obs type
+```yaml
+models:
+  geos_atmosphere:
+    observations: [ "atms_n20" ]
+```
 
 
 
 ## Launch the `3dvar-atmos` experiment
 
-If `swell create 3dvar-atmos` is successful, you will be provided with a print out to launch the cylc job for the 3dvar-atmos suite, which typically looks like:
+If the `swell create 3dvar-atmos` command runs successfully, you will be provided with a printout to launch the cylc job for the 3dvar-atmos suite, which looks like:
 
-```
-swell launch /discover/nobackup/.../`experiment_id`/`experiment_id`-suite
-```
-
-
-
-
-
-
-
-
-## The overall workflow
-
-A conventional 3D-Var minimization is invoked for each member state and the resulting ensemble anlysis states are the final products from 3D-EDA.
-
-
-1. The driver for this mechanism is defined in `flow.cylc`
-
-```cylc
-   {% for i in range( 1, models[model_component]['ensemble_num_members'] + 1 ) %}
-   EDA_start-{{model_component}} => RunJediEdaExecutable_mem{{i}}-{{model_component}} => EDA_end-{{model_component}}
-   ...
-
-   [[RunJediEdaExecutable_mem{{i}}-{{model_component}}]] 
-     script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}} -imem {{i}}"
-   ...
-```
-
-The independent SWELL tasks `RunJediEdaExecutable -imem i` are submitted to the queue for 3D-Var type computation, where its yaml input files are customized for observation perturbations.
-
-
-
-2. Observation thinning:
-
-   EDA calculations demands a significant amount of computational resources. For test runs, users can thin the observartion data by setting `obs_thinning_rej_fraction` from zero (no thinning) to 1 (reject all). Example override file contains:
-
-```cylc
-  geos_atmosphere:
-    horizontal_resolution: "91"
-    obs_thinning_rej_fraction: 0.98
-    ensemble_num_members: 3
-    observations: [ "sondes" ]
-```
-
-   The underlying obs thinning function is performed by
-```Bash
-   swell task RunJediObsfiltersExecutable $config -d $datetime -m geos_atmosphere
+```bash
+swell launch /discover/nobackup/.../${experiment_id}/${experiment_id}-suite
 ```
 
 
+## While the suite is running
 
-As time elapes, your output directory will look like
+Initially you will find a few directories under your swell experiment path,
 
-```
-geos_atmosphere
-├── amsua_metop-b.20231009T210000Z_orig.nc4
-├── amsua_metop-b.20231009T210000Z.nc4
-├── jedi_obsfilters_config.yaml
-├── jedi_eda3D_config_mem001.yaml
-├── jedi_eda3D_config_mem002.yaml
-├── analysis
-│   ├── mem001
-│   │   ├── eda.amsua_metop-b.20231009T210000Z.nc4
-│   │   ├── eda.ana.mem001.20231010_000000z.nc4
-│   │   ├── eda.iasi_metop-b.20231009T210000Z.nc4
-│   │   ├── eda.inc_iter1.mem001.20231010_000000z.nc4
-│   │   ├── eda.sfcship.20231009T210000Z.nc4
-│   │   └── eda.sondes.20231009T210000Z.nc4
-│   └── mem002
-│       ├── eda.amsua_metop-b.20231009T210000Z.nc4
-│       ├── eda.ana.mem002.20231010_000000z.nc4
-│       ├── eda.iasi_metop-b.20231009T210000Z.nc4
-│       ├── eda.inc_iter1.mem002.20231010_000000z.nc4
-│       ├── eda.sfcship.20231009T210000Z.nc4
-│       └── eda.sondes.20231009T210000Z.nc4
-
-```
-
-These files indicate your `obs thinning` process is successful and the analysis and increment files for each member have been created.
-
-
-4. Postprocessing tasks (ensemble mean and variance)
-
-Once analysis of each member is obtained, the flow.cylc starts to generate the mean and variance for visualization using tasks below
-
-```
-swell task RunJediEnsembleMeanVariance  PATHTO/experiment.yaml -d $date -m geos_atmosphere
-swell task RunJediDiffstates PATHTO/experiment.yaml -d $date -m geos_atmosphere
-```
-
-The output files look like:
-```
-geos.prior.mean.20231010_000000z.nc4        [mean of ebkg in CS grid]
-geos.prior.mean.ll.20231010_000000z.nc4     [... in LL grid]
-geos.prior.variance.20231010_000000z.nc4    [variance of ebkg in CS grid]
-geos.prior.variance.ll.20231010_000000z.nc4 [... in LL grid]
-...
-eda.ana.mean.20231010_000000z.nc4           [mean of analysis in CS grid]
-eda.ana.mean.ll.20231010_000000z.nc4        [... in LL grid]
-eda.ana.variance.20231010_000000z.nc4       [variance of anlaysis in CS grid]
-eda.ana.variance.ll.20231010_000000z.nc4    [... in LL grid]
-...
-eda.mean-inc.20231010_000000z.nc4           [mean increment in LL grid]
-eda.mean-inc.cs.20231010_000000z.nc4        [... in CS grid]
+```bash
+test001/
+├── configuration
+├── test001-suite/
+|    ├── eva
+|    │   ├── increment-geos_atmosphere.yaml
+|    │   ├── jedi_log-geos_atmosphere.yaml
+|    │   └── observations-geos_atmosphere.yaml
+|    ├── experiment.yaml
+|    ├── flow.cylc
+|    ├── modules
+|    └── modules-csh
+|
+├── jedi_bundle
+|    ├── build -> /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_06242026/build-intel-release
+|    └── source -> /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_06242026
+|── run
 ```
 
 
-5. EVA plots and EDA clean up
+Note the the `jedi_bundle` directory contains soft links to JEDI source code and JEDI build.
+The `test001-suite` contains the `modules` file which can be used to load the environment, the `flow.cylc` to launch the cylc workflow, and
+the `experiment.yaml` file which is global configuration generated from the `swell create` step. 
 
-The eda-atmos workflow will trigger EVA plot for ensemble mean increment. 
-An example of mean T increment at 500 hPa is shown below.
 
-To save disk space on discover, the HofX outputs for individual ensemble members are purged at the end of the flow.
-The output directory will look like
 
+## After the run is complete
+
+The output from a single cyle point (`20231010T000000Z`) for a single model (`geos_atmosphere`) contains the following directory,
+
+```bash
+run/
+└── 20231010T000000Z
+    └── geos_atmosphere
+        ├── test001.analysis.20231010_000000z.nc4
+        ├── test001.increment-iter1.20231010_000000z.nc4
+        ├── jedi_variational_config.yaml
+        ├── jedi_variational_log.log
+        ├── eva/        
 ```
-analysis/
-├── mem001
-│   ├── eda.ana.mem001.20231010_000000z.nc4
-│   ├── eda.inc_iter1.mem001.20231010_000000z.nc4
-└── mem002
-    ├── eda.ana.mem002.20231010_000000z.nc4
-    ├── eda.inc_iter1.mem002.20231010_000000z.nc4
-```
 
-
-
-
-
-
-
-
+`eva/` directory contains the graphics output for analysis increment, the variational gradient convergence figure, etc.
