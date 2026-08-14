@@ -13,7 +13,7 @@
 
 retrieval_method: cmr
 cmr_short_name: TEMPO_NO2_L2
-cmr_version: V03
+cmr_version: V04
 
 # Maximum duration of a single TEMPO scan granule. Used to extend the
 # temporal search window backwards so granules starting before window_begin
