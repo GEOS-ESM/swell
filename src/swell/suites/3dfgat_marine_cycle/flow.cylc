@@ -106,13 +106,10 @@
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
             {% if not skip_r2d2 %}
-            # Save analysis output
-            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            # Compress forecast on compute node, then store in R2D2 on login node
+            LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
             {% endif %}
-
-            # Save model output
-            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
@@ -245,6 +242,18 @@
         {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[RunCompressForecast-{{model_component}}]]
+        script = "swell task RunCompressForecast $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunCompressForecast"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunCompressForecast"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[SaveForecast-{{model_component}}]]
+        script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
 
     [[SaveRestart-{{model_component}}]]
         script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
