@@ -177,6 +177,7 @@ class GetObservations(taskBase):
         obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
+        observation_providers = self.config.observation_providers(default={})
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_length = self.config.window_length()
@@ -235,7 +236,12 @@ class GetObservations(taskBase):
 
             # Get the set obs providers for each observation
             # ----------------------------------------------
-            obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
+            obs_provider = get_provider_for_observation(
+                observation,
+                ioda_names_list,
+                self.logger,
+                provider_overrides=observation_providers,
+            )
 
             # Derive the file extension from the obsfile template in the obs YAML
             # this is the single source of truth for what format JEDI expects.

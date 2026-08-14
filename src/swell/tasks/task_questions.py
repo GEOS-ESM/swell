@@ -362,7 +362,8 @@ class TaskQuestions(QuestionContainer, Enum):
     GetBufr = QuestionList(
         list_name="GetBufr",
         questions=[
-            qd.bufr_obs_classes()
+            qd.bufr_obs_classes(),
+            qd.obs_rc_path()
         ]
     )
 
@@ -381,7 +382,10 @@ class TaskQuestions(QuestionContainer, Enum):
     GetEnsemble = QuestionList(
         list_name="GetEnsemble",
         questions=[
-            qd.path_to_ensemble()
+            qd.path_to_ensemble(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.background_experiment(),
         ]
     )
 
@@ -392,6 +396,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.background_experiment(),
             qd.background_time_offset(),
+            qd.ebkg_time_offset(),
             qd.geos_x_ensemble_directory()
         ]
     )
@@ -457,6 +462,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cache_fetch(),
             qd.cycling_varbc(),
             qd.obs_experiment(),
+            qd.observation_providers(),
             qd.observing_system_records_path(),
             qd.window_length(),
         ]
@@ -675,11 +681,28 @@ class TaskQuestions(QuestionContainer, Enum):
             window_questions,
             qd.analysis_variables(),
             qd.ensemble_num_members(),
+            qd.ensmeanvariance_spec(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.observations(),
             qd.observing_system_records_path(),
             qd.comparison_log_type('ensmeanvariance'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediDiffstates = QuestionList(
+        list_name="RunJediDiffstates",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.diffstates_spec(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.comparison_log_type('diffstates'),
             qd.mock_experiment()
         ]
     )
@@ -742,15 +765,13 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
+            qd.analysis_variables(),
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.ensemble_num_members(),
             qd.ensmean_only(),
             qd.ensmeanvariance_only(),
             qd.generate_yaml_and_exit(),
-            qd.horizontal_localization_lengthscale(),
-            qd.horizontal_localization_max_nobs(),
-            qd.horizontal_localization_method(),
             qd.jedi_forecast_model(),
             qd.local_ensemble_inflation_mult(),
             qd.local_ensemble_inflation_rtpp(),
@@ -817,6 +838,30 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.perhost(),
             qd.comparison_log_type('variational'),
             qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEdaExecutable = QuestionList(
+        list_name="RunJediEdaExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+            qd.obs_pert_amplitude(),
+            qd.obs_thinning_rej_fraction(),
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CleanEda = QuestionList(
+        list_name="CleanEda",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
         ]
     )
 
