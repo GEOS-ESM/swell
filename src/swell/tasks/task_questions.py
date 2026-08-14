@@ -891,18 +891,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    SaveForecastCf = QuestionList(
-        list_name="SaveForecastCf",
-        questions=[
-            qd.forecast_length(),
-            qd.forecast_output_frequency(),
-            qd.horizontal_resolution(),
-            qd.window_length(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     SaveObsDiags = QuestionList(
         list_name="SaveObsDiags",
         questions=[
