@@ -94,6 +94,13 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
 def _resolve_s3_key(client, bucket: str, key_template: str,
                     filename_pattern: Union[str, None], when: dt) -> str:
+    """Resolve one key template to a concrete S3 object key for a sub-window.
+
+    By default this is exact-key mode: the template fully determines the key, so no
+    listing happens at all. If a ``filename_pattern`` is supplied, the template is
+    instead treated as a prefix that is listed and filtered, and the first matching
+    object is used.
+    """
     if filename_pattern:
         prefix = swell_s3.resolve_template(key_template, when)
         filename_glob = swell_s3.resolve_template(filename_pattern, when)
@@ -108,6 +115,15 @@ def _resolve_s3_key(client, bucket: str, key_template: str,
 
 
 def _fetch_from_public_s3(external_s3: dict, r2d2_dict: dict, logger) -> None:
+    """Download an observation's file directly from a public S3 bucket.
+
+    The key is built from the sub-window time (``window_start``) and the observation's
+    ``s3_key_template``, then fetched anonymously into ``target_file``. Nothing is stored
+    in any R2D2 datastore.
+
+    Raises if the object is missing, which run_r2d2_fetch turns into an empty obs, so a
+    missing sub-window behaves just like a missing R2D2 fetch.
+    """
     target_file = r2d2_dict['target_file']
     bucket = external_s3['bucket']
     key_template = external_s3['key_template']
@@ -597,6 +613,10 @@ class GetObservations(taskBase):
         ``configuration/jedi/interfaces/<model>/`` directory. When present, this
         observation is fetched directly from a public S3 bucket into the cycle
         directory instead of from R2D2 (no datastore copy).
+
+        Each registry file describes a single file per sub-window via ``s3_key_template``.
+        Observations published as several files (e.g. WOD splits temperature and salinity
+        into separate IODA files) get one registry file each.
         """
         config_path = os.path.join(
             self.experiment_path(),
