@@ -352,6 +352,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.rst_experiment(),
             qd.rst_file_types(),
             qd.horizontal_resolution(),
+            qd.compress_output(),
         ]
     )
 
@@ -519,9 +520,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_to_ingest(),
             qd.window_length(),
             qd.store_as_symlink(),
-            qd.compress_output(),
-            qd.compress_algorithm(),
-            qd.compress_pigz_threads(),
         ]
     )
 

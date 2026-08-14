@@ -9,7 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.compress import decompress_if_needed
+from swell.utilities.compress import compressed_extension, decompress_if_needed
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 import isodate
@@ -52,10 +52,14 @@ class GetRestartCf(taskBase):
 
         self.logger.info(f'Fetching rst files from experiment {rst_exp}')
 
+        compress_output = self.config.compress_output(False)
+        file_extension = compressed_extension('nc') if compress_output else 'nc'
+
         for file_type in rst_file_types:
             base = os.path.join(scratch_dir, file_type)
             target_file = f'{base}_rst'
-            self.logger.info(f'Fetching {file_type} to {target_file}')
+            fetch_target = target_file + '.gz' if compress_output else target_file
+            self.logger.info(f'Fetching {file_type} to {fetch_target}')
             r2d2.fetch(
                 model=model,
                 item='forecast',
@@ -63,13 +67,13 @@ class GetRestartCf(taskBase):
                 step=rst_step,
                 resolution=horizontal_resolution,
                 date=window_begin_prev.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                target_file=target_file,
-                file_extension='nc',
+                target_file=fetch_target,
+                file_extension=file_extension,
                 file_type=file_type,
                 )
 
             # Decompress if the file was .gz compressed
-            actual_file = decompress_if_needed(target_file)
+            actual_file = decompress_if_needed(fetch_target)
 
             # Change permission
             os.chmod(actual_file, 0o644)
