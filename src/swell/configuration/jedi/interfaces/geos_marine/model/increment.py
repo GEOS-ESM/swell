@@ -16,7 +16,9 @@ def increment(template_dict: Mapping) -> Mapping:
     experiment_id = template_dict['experiment_id']
 
     increment = {
-        'date': analysis_time_iso,
+        # This is technically not the local background time but the analysis time,
+        # but it gives error otherwise
+        'date': template_dict['local_background_time_iso'],
         'basename': './',
         'ocn_filename': f'ocn.{experiment_id}.incr.{analysis_time_iso}.nc',
         'ice_filename': f'ice.{experiment_id}.incr.{analysis_time_iso}.nc'
