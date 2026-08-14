@@ -153,7 +153,7 @@ class ConvertObsToIoda(taskBase):
         # Build output path
         ioda_dir = os.path.join(self.cycle_dir(), 'ioda', obs_name)
         output_filename = cycle_time_dto.strftime(
-            conv_config.get('output_filename_template', f'{obs_name}_%Y%m%d%H.nc'))
+            conv_config.get('output_filename_template', f'{obs_name}_%Y%m%d%H.nc4'))
         output_file = os.path.join(ioda_dir, output_filename)
 
         if not dry_run:

@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass
-from typing import List, Dict
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -247,7 +247,7 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = "Enter if skip ensemble hofx."
+        prompt: str = "Do you want to run localensembleda observer and solver together?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -352,6 +352,19 @@ class QuestionDefaults():
         ])
         prompt: str = ("How long before the middle of the analysis window did"
                        " the background providing forecast begin?")
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ebkg_time_offset(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ebkg_time_offset"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("How long before the middle of the analysis window did"
+                       " the ensemble background providing forecast begin?")
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
@@ -499,7 +512,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
         widget_type: WType = WType.INTEGER
@@ -513,7 +526,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Enter hofx strategy."
         widget_type: WType = WType.STRING_DROP_LIST
@@ -526,10 +539,23 @@ class QuestionDefaults():
         question_name: str = "ensemble_num_members"
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "How many members comprise the ensemble?"
         widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_pert_amplitude(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "obs_pert_amplitude"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Enter obs perturbation amplitude for EDA:"
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -542,7 +568,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Calculate ensemble mean only?"
         widget_type: WType = WType.BOOLEAN
@@ -558,10 +584,36 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
         widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ensmeanvariance_spec(TaskQuestion):
+        default_value: List[Dict[str, str]] = field(default_factory=lambda: [{}])
+        question_name: str = "ensmeanvariance_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the ensemble mean and variance specifications:"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class diffstates_spec(TaskQuestion):
+        default_value: Dict[str, Any] = field(default_factory=dict)
+        question_name: str = "diffstates_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the diffstates specifications: [state1, state2]"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -932,44 +984,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class horizontal_localization_lengthscale(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_lengthscale"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "What is the length scale for horizontal covariance localization?"
-        widget_type: WType = WType.FLOAT
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_max_nobs(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_max_nobs"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = ("What is the maximum number of observations to consider"
-                       " for horizontal covariance localization?")
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_method(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_method"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Which localization scheme should be applied in the horizontal?"
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class horizontal_resolution(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_resolution"
@@ -1006,6 +1020,16 @@ class QuestionDefaults():
         ])
         prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
         widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_rc_path(TaskQuestion):
+        default_value: str = 'GEOS_mksi/ObsClass/obsys-nccs.rc'
+        question_name: str = 'obs_rc_path'
+        ask_question: bool = True
+        prompt: str = "Filepath to observing system rc file within experiment directory."
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1111,7 +1135,7 @@ class QuestionDefaults():
 
     @dataclass
     class jedi_build_method(TaskQuestion):
-        default_value: str = "create"
+        default_value: str = "use_existing"
         question_name: str = "jedi_build_method"
         ask_question: bool = True
         options: List[str] = mutable_field([
@@ -1147,7 +1171,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_mult"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
         widget_type: WType = WType.FLOAT
@@ -1159,7 +1183,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtpp"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
         widget_type: WType = WType.FLOAT
@@ -1171,7 +1195,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtps"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
         widget_type: WType = WType.FLOAT
@@ -1187,7 +1211,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble members?"
         widget_type: WType = WType.BOOLEAN
@@ -1204,7 +1228,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
         widget_type: WType = WType.BOOLEAN
@@ -1221,7 +1245,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble mean?"
         widget_type: WType = WType.BOOLEAN
@@ -1238,7 +1262,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
         widget_type: WType = WType.BOOLEAN
@@ -1252,7 +1276,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
         widget_type: WType = WType.STRING_DROP_LIST
@@ -1266,9 +1290,9 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
-        prompt: str = "Which local ensemble solver type should be implemented?"
+        prompt: str = "Use linear observer in local ensemble solver?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -1494,7 +1518,6 @@ class QuestionDefaults():
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere",
             "geos_marine"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
