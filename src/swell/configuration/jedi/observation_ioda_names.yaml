@@ -297,11 +297,11 @@ ioda instrument names:
     inst type: conventional
   - ioda name: insitu_temp_profile_wod_ctd
     full name: CTD Temperature (In-situ)
-    provider : odas
+    provider : nnja
     inst type: conventional
   - ioda name: insitu_salt_profile_wod_ctd
     full name: CTD Salinity (In-situ)
-    provider : odas
+    provider : nnja
     inst type: conventional
   - ioda name: insitu_profile_pirata
     full name: PIRATA (In-situ)

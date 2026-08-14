@@ -1631,7 +1631,7 @@ class QuestionDefaults():
             True,
             False
         ])
-        prompt: str = "Fetch observations directly from a public S3 bucket (where registered)?"
+        prompt: str = "Fetch observations directly from a public S3 bucket if they are available?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
