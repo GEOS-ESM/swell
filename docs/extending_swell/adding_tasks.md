@@ -47,7 +47,7 @@ class CloneGeosMksi(taskBase):
 ```
 This example shows the basics of writing a task, including task definition and the execute function. The current model is accessed by the `self.get_model()` function, inherited from `taskBase`. The variables `path_to_geos_mksi`, and `tag`, are pulled from the experiment configuration, which is sourced from the `experiment.yaml`.
 
-In order to know which questions to associate with which tasks, it is necessary to update `src/swell/tasks/task_questions.py` with all task questions used by the task. This tells Swell to ask the question during suite creation, and makes the parameter available to be used in the tasks `self.config` object. Suite questions are accessible to all tasks, so long as they have entries in `experiment.yaml`. For more information, see [Adding questions](adding_tasks.md)
+In order to know which questions to associate with which tasks, it is necessary to update `src/swell/tasks/task_questions.py` with all task questions used by the task. This tells Swell to ask the question during suite creation, and makes the parameter available to be used in the tasks `self.config` object. Suite questions are accessible to all tasks, so long as they have entries in `experiment.yaml`. For more information, see [Adding questions](adding_questions.md)
 
 `task_questions.py`:
 ```

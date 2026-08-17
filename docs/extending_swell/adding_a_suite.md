@@ -152,7 +152,7 @@ More detailed instructions and examples for these steps follows in this section.
 
 ### Writing tasks
 
-For more information on tasks, see: [Adding Tasks](adding_a_suite.md)
+For more information on tasks, see: [Adding Tasks](adding_tasks.md)
 
 ### Creating the flow.cylc template
 
