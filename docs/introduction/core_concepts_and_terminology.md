@@ -6,10 +6,10 @@ The Swell system is developed by NASA's Global Modeling and Assimilation Office.
 
 Before diving into installation and configuration, it helps to understand the concepts that Swell is built around: such as **workflow**,  **suite**,  **task**, **question**, and **experiment**.
 
-1. The swell **suite** is the blueprint for the kind of application wanted with very configurable options for various cases.
+1. A Swell **suite** is a configurable blueprint for building and running a particular type of application.
 2. Each suite exposes a set of **questions** which are the configurable parameters that need an answer before the application can run.
 3. Swell can then generate an **experiment** containing a set of interdependent **tasks** defined in a `cylc` graph.
-4. The **workflow** `cylc` reads `flow.cylc` and executes the **tasks** in the order and the dependencies the suite defines, running the actual application **experiment**.
+4. The `cylc` **workflow** reads `flow.cylc` and executes the **tasks** in the order and the dependencies the suite defines, running the actual application **experiment**.
 
 
 ## Suites: An Organized Succession of Tasks
@@ -27,7 +27,7 @@ In software enginnering terms: a **suite is a class** and an **experiment is an 
 
 A **question** is a single configurable parameter that turn the suite into a runnable experiment: for example the model components to run, the start and final cycle points, the resolution, or the background error method, etc.
 
-Both suites and individual tasks declare the questions they need. At suite creation, Swell collects the full set of questions that can come form from defaults, or from command-line input, or from an override file the user can supply. Swell uses the resulting answers to fill in the suite's templates and produce a concrete `experiment.yaml`.
+Both suites and individual tasks declare the questions they need. At suite creation, Swell collects the full set of questions that can come from defaults, or from command-line input, or from an override file the user can supply. Swell uses the resulting answers to fill in the suite's templates and produce a concrete `experiment.yaml`.
 
 ## Tasks: The Single Operations That Compose a Suite
 
