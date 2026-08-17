@@ -81,5 +81,7 @@ If the TUI gets closed you can reopen it by typing `cylc tui` in the terminal.
 
 ## 5. Verify the Result
 
-Once all tasks complete (all green), the experiment directory will contain the generated files for each cycle. By default `skip_r2d2` is `false`, so outputs (backgrounds, analyses, diagnostics) will also be registered and stored in R2D2 (see [Skipping R2D2 for a first run](#skipping-r2d2-for-a-first-run) if you don't have credentials set up yet). From here, see [Choosing a Workflow](../running_an_experiment/choosing_a_workflow.md) to explore other suites.
+Once tasks finish, the experiment directory will contain the generated files. Note that some tasks are required to succeed to triger the execution of other tasks while some tasks can fail without impacting cycling, if the cycl graph doesn't require completion of the task.
+
+By default `skip_r2d2` is `false`, so outputs (backgrounds, analyses, diagnostics) will also be registered and stored in R2D2 (see [Skipping R2D2 for a first run](#skipping-r2d2-for-a-first-run) if you don't have credentials set up yet). From here, see [Choosing a Workflow](../running_an_experiment/choosing_a_workflow.md) to explore other suites.
 
