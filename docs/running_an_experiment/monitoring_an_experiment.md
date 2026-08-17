@@ -4,7 +4,7 @@ The `swell launch` step will automatically start the `cylc` TUI, that lets you s
 
 ### When a task fails
 
-When a task fails it will show as red in the TUI. Starting with cylc version 8.4.0, it is possible to access log files directly.. `cylc` does have a web-based monitoring tool and we are investigating whether this can be used with `cylc`.
+When a task fails it will show as red in the TUI. Starting with cylc version 8.4.0, it is possible to access log files directly. `cylc` does have a web-based monitoring tool and we are investigating whether this can be used with `cylc`.
 
 Alternatively, it is possible to navigate to the log files and locate them manually. Lets say the experiment ID is `swell-hofx` and the `Stage` task has failed during the `2020-12-15T00:00:00Z` cycle on the users second attempt to run `swell_launch_experiment` and `cylc's` first run of the particular task. The logs for this task would be located at:
 
