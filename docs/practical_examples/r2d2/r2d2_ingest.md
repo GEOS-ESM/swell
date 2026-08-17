@@ -242,7 +242,7 @@ qd.ingest_background_pipeline(True)
 qd.cycle_times(['T09'])                          # Must match the forecast init hour
 qd.start_cycle_point("2025-10-02T09:00:00Z")     # Forecast initialization time
 qd.final_cycle_point("2025-10-02T09:00:00Z")
-qd.model_components(['geos_cf'])                 # Or your model component
+qd.model_components(['geos_cf'])
 ```
 
 ### Step 2: Configure the background source
@@ -252,10 +252,10 @@ Under your model component's config block:
 ```python
 geos_cf=[
     qd.dry_run(True),
-    qd.background_source_path(),   # strftime path template to the source files
-    qd.background_experiment(),    # R2D2 experiment name for backgrounds
-    qd.horizontal_resolution(),    # R2D2 resolution string
-    qd.store_as_symlink(True),     # Register as symlink instead of copying
+    qd.background_source_path(),                # strftime path template to the source files
+    qd.background_experiment('geos_cf_oper'),   # R2D2 experiment name for backgrounds
+    qd.horizontal_resolution('c360'),           # R2D2 resolution string
+    qd.store_as_symlink(True),                  # Register as symlink instead of copying
 ]
 ```
 
