@@ -44,7 +44,7 @@ Run `swell create --help` or `swell launch --help` for the full, up-to-date list
 ### Skipping R2D2 for a first run
 
 Are you new to Swell and don't have R2D2 credentials set up yet? Pass `-k`/`--skip-r2d2` to
-`swell create` to skip registering the experiment and storing products in R2D2:
+`swell create` to skip registering the experiment and storing products in R2D2, though experiments needing to fetch from R2D2 still require credentials:
 
 ```bash
 swell create <suite> --skip-r2d2
