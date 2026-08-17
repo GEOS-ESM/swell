@@ -13,7 +13,7 @@ Both commands should return without error. If they don't, revisit [Installing Sw
 
 ## 2. Create an Experiment
 
-Create an experiment from one of the maintained 3DVar suites, using its tier-1 test defaults. Pick the one matching the model you want to try:
+Create an experiment from one of the maintained 3DVar suites. Pick the one matching the model you want to try:
 
 | Model | Suite name | Command |
 |---|---|---|
