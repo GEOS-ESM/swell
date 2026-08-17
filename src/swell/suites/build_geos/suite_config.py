@@ -10,6 +10,7 @@
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
 from swell.suites.suite_questions import SuiteQuestions as sq
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 from enum import Enum
 
@@ -23,7 +24,8 @@ class SuiteConfig(QuestionContainer, Enum):
     build_geos = QuestionList(
         list_name="build_geos",
         questions=[
-            sq.all_suites
+            sq.all_suites,
+            qd.skip_store_r2d2(True)
         ]
     )
 

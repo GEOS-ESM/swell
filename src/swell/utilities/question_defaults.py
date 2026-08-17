@@ -253,9 +253,9 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class skip_r2d2(SuiteQuestion):
+    class skip_store_r2d2(SuiteQuestion):
         default_value: bool = False
-        question_name: str = "skip_r2d2"
+        question_name: str = "skip_store_r2d2"
         prompt: str = "Skip registering and storing results of this experiment in R2D2?"
         widget_type: WType = WType.BOOLEAN
 

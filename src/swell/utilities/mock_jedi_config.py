@@ -51,7 +51,7 @@ def mock_jedi_config(suite: str,
     override_dict['models'][model] = {'check_for_obs': False}
 
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
-                                override=override_dict, advanced=False, slurm=None, skip_r2d2=True)
+                                override=override_dict, advanced=False, slurm=None, skip_store_r2d2=True)
 
     experiment_yaml = os.path.join(tempdir, experiment_id,
                                    f'{experiment_id}-suite', 'experiment.yaml')

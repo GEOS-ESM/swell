@@ -29,6 +29,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2023-10-10T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
+            qd.skip_store_r2d2(True)
         ],
         geos_atmosphere=[
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),

@@ -165,8 +165,8 @@ def prepare_config(
 
     # Register the experiment in R2D2
     # -------------------------------
-    if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
-            and not experiment_dict['skip_r2d2']:
+    if 'r2d2_experiment_id' in experiment_dict and 'skip_store_r2d2' in experiment_dict \
+            and not experiment_dict['skip_store_r2d2']:
 
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
@@ -226,7 +226,7 @@ def create_experiment_directory(
     override: dict,
     advanced: bool,
     slurm: str | None,
-    skip_r2d2: bool
+    skip_store_r2d2: bool
 ) -> None:
 
     # Get the base name of the suite
@@ -239,10 +239,10 @@ def create_experiment_directory(
 
     # Specify whether to skip registering and storing in R2D2
     # -------------------------------------------------------
-    if skip_r2d2:
+    if skip_store_r2d2:
 
         # Only override this if it is true, otherwise let the suite decide
-        override['skip_r2d2'] = skip_r2d2
+        override['skip_store_r2d2'] = skip_store_r2d2
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
