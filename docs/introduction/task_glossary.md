@@ -39,7 +39,7 @@ Downloads observations and converts them to IODA using selected ioda-converter e
 Downloads raw observation files from remote servers. Differs from `GetObservations` since it does not use `R2D2`, instead using `https` or `s3` (for instance, `cmr` or [NNJA dataset](https://psl.noaa.gov/data/nnja_obs/)).
 
 ### EvaComparisonIncrement
-Generates comparison plots for JEDI increments between two experiments. Creates three-panel plots, with control, experiment, and difference panels
+Generates comparison plots for JEDI increments between two experiments. Creates three-panel plots, with control, experiment, and difference panels.
 
 ### EvaComparisonJediLog
 Generates comparison plots of JEDI log output, using EVA.
@@ -69,7 +69,7 @@ Runs JEDI executable for creating B Matrix files for background error models.
 Parses `GEOS_mksi` repository for active and available instrument channel information.
 
 ### GetBackgroundGeosExperiment
-Gets background files from an existing GEOS-FP experiment. Primarily used by `geos_atmosphere` experiments
+Gets background files from an existing GEOS-FP experiment. Primarily used by `geos_atmosphere` experiments.
 
 ### GetBackground
 Gets background files from `R2D2`.
@@ -123,7 +123,7 @@ Ingests observation files into R2D2.
 Parses the JEDI log files of two variational or fgat experiment's, then compares residual norm values for equality.
 
 ### JediOopsLogParser
-Parses JEDI log file for certain parameters, such as residual norm
+Parses JEDI log file for certain parameters, such as residual norm.
 
 ### LinkCoupledGeosOutput
 Links coupled GEOS output files for JEDI to ingest.
@@ -174,7 +174,7 @@ Sets up and runs JEDI local ensemble DA executable.
 Sets up and runs obs filters executable.
 
 ### RunJediUfoTestsExecutable
-Sets up and runs UFO (Unified Forward Operator) tests executable
+Sets up and runs UFO (Unified Forward Operator) tests executable.
 
 ### RunJediVariationalExecutable
 Sets up and runs JEDI variational executable.
@@ -183,16 +183,16 @@ Sets up and runs JEDI variational executable.
 Ingests background files into R2D2.
 
 ### SaveForecastCf
-`geos_cf`-specific task to ingests forecast files into R2D2
+`geos_cf`-specific task to ingests forecast files into R2D2.
 
 ### SaveObsDiags
-Ingests obs diag files into R2D2
+Ingests obs diag files into R2D2.
 
 ### SaveRestartCf
-`geos_cf`-specific task to ingest restart files into R2D2
+`geos_cf`-specific task to ingest restart files into R2D2.
 
 ### SaveRestart
-Ingests restart files into R2D2
+Ingests restart files into R2D2.
 
 ### StageJedi
 Performs setup for JEDI execution by copying set files into the cycle directory.
