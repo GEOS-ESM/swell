@@ -84,7 +84,7 @@ Copies coupled GEOS restart files to the forecast directory.
 Gets background files from an existing ensemble experiment.
 
 ### GetEnsemble
-Grabs ensemble member files from an existing location.
+Grabs ensemble member files from an existing location. Currently only works for `geos_marine`.
 
 ### GetGeosAdasBackground
 Gets background files from an existing `GEOSADAS` (ADAS-Atmospheric Data Assimilation System) experiment.
