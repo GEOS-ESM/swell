@@ -24,7 +24,7 @@
 
 - Can I view Cylc logs with my own editor?
 
-    > Yes. Once we switch to Cylc version 8.5.0 and later, users will be able to use their own editors (for example, Vim or Emacs). It is installed as part of SWELL currently, but it may be pre-installed in future spack-stack versions, as JCSDA is also developing its own Cylc-based workflows.
+    > Yes. Once we switch to Cylc version 8.5.0 and later, users will be able to use their own editors (for example, Vim or Emacs). It is installed as part of SWELL currently, but it may be pre-installed in future spack-stack versions, as JCSDA is also developing its own Cylc-based workflows. Additionally, the logs are stored under `~/cylc-run` directory and easily be viewed there.
 
 - My task has failed; I see a red box. What am I going to do?!?
 
