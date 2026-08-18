@@ -156,7 +156,7 @@ The `RunJedi` tasks largely function under the same premise, creating the JEDI c
 Converts increments from `soca` (Sea-ice Ocean and Coupled Assimilation) interface to `cice` interface.
 
 ### RunJediEnsembleMeanVariance
-Sets up and runs JEDI ensemble mean variance executable.
+Sets up and runs JEDI ensemble mean and variance executable.
 
 ### RunJediFgatExecutable
 Sets up and runs JEDI FGAT (First Guess at Appropriate Time) executable.
