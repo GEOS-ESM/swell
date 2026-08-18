@@ -138,7 +138,7 @@ Moves restart files into the next cycle directory for use.
 Copies coupled GEOS files to the next cycle directory for use.
 
 ### PrepForecastCf
-Performs setup in the scratch `forecast` directory for running the model.
+`geos_cf`-specific task to setup the scratch `forecast` directory for running the GEOS-CF.
 
 ### PrepareAnalysis
 Updates variables in restart files with analysis variables.
