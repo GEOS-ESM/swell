@@ -153,6 +153,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CleanEda = QuestionList(
+        list_name="CleanEda",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     CloneGeos = QuestionList(
         list_name="CloneGeos",
         questions=[
@@ -840,6 +850,18 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunCompressForecast = QuestionList(
+        list_name="RunCompressForecast",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediEdaExecutable = QuestionList(
         list_name="RunJediEdaExecutable",
         questions=[
@@ -854,11 +876,25 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    CleanEda = QuestionList(
-        list_name="CleanEda",
+    SaveForecast = QuestionList(
+        list_name="SaveForecast",
         questions=[
-            run_jedi_executable,
-            qd.ensemble_num_members(),
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            ]
+        )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveForecastCf = QuestionList(
+        list_name="SaveForecastCf",
+        questions=[
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.horizontal_resolution(),
+            qd.window_length(),
         ]
     )
 
@@ -905,18 +941,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    SaveForecastCf = QuestionList(
-        list_name="SaveForecastCf",
-        questions=[
-            qd.forecast_length(),
-            qd.forecast_output_frequency(),
-            qd.horizontal_resolution(),
-            qd.window_length(),
         ]
     )
 
