@@ -44,7 +44,7 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.r2d2_experiment_id(),
             qd.r2d2_server(),
             qd.r2d2_datastore(),
-            qd.skip_store_r2d2(),
+            qd.skip_store_r2d2()
         ]
     )
 
