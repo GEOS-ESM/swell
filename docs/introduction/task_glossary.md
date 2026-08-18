@@ -151,6 +151,7 @@ Renders a file `obs.yaml`, which contains the observation-relevant portion of th
 
 ## JEDI Executable tasks
 The `RunJedi` tasks largely function under the same premise, creating the JEDI config and calling the appropriate executable.
+One can set `generate_yaml_and_exit` in `experiment.yaml` to `True` to see if their final `jediconfig.yaml` is properly set before execution.
 
 ### RunJediConvertStateSoca2CiceExecutable
 Converts increments from `soca` (Sea-ice Ocean and Coupled Assimilation) interface to `cice` interface.
