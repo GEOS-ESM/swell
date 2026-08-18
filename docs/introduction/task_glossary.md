@@ -196,4 +196,4 @@ Ingests obs diag files into R2D2.
 Ingests restart files into R2D2.
 
 ### StageJedi
-Performs setup for JEDI execution by copying set files into the cycle directory.
+Performs setup for JEDI execution by copying model interface-specific sections that will be used in final JEDI config YAML (such as `background`, `geometry`, `write increments`, etc.), model geometry (such as `soca_gridspec.nc`) and static B related files (could be `gsibec`, `bump`, or `explicit diffusion`) into the cycle directory. The last two set of files come from the `SwellStaticFiles` location defined in the `experiment.yaml`.
