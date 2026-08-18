@@ -86,7 +86,7 @@
             {% if not skip_store_r2d2 %}
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-            {% if not skip_store_r2d2 %}
+            {% endif %}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}

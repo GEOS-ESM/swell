@@ -104,7 +104,8 @@ Set the cylc stall timeout manually for experiment. If unset, defaults to user v
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
-@click.option('-k', '--skip-store-r2d2', 'skip_store_r2d2', is_flag=True, default=False, help=skip_store_r2d2_help)
+@click.option('-k', '--skip-store-r2d2', 'skip_store_r2d2',
+              is_flag=True, default=False, help=skip_store_r2d2_help)
 def create(
     suite: str,
     input_method: str,
