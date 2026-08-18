@@ -103,14 +103,16 @@
             {% endif %}
 
             # Move restart to next cycle and then erase current forecast folder
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} d
 
             {% if not skip_r2d2 %}
-            # Compress forecast on compute node, then store in R2D2 on login node
-            LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}} => CleanCycle-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            # Compress forecast on compute node, then save in R2D2 on login node; (state space) forecast, analysis, and (obs space) observation outputs.
+            LinkCoupledGeosOutput-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
+
+            MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>

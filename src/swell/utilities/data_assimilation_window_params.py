@@ -101,17 +101,31 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time(self) -> str:
+    def analysis_time(self) -> Tuple[str, datetime.datetime]:
+        """Get the analysis time for the current cycle.
+
+        Returns
+        -------
+        Tuple[str, datetime.datetime]
+            A tuple containing the analysis time formatted as a string and the corresponding datetime object.
+        """
 
         analysis_time_dto = self.__get_analysis_time__()
-        return analysis_time_dto.strftime(datetime_formats['directory_format'])
+        return analysis_time_dto.strftime(datetime_formats['directory_format']), analysis_time_dto
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time_iso(self) -> str:
+    def analysis_time_iso(self) -> Tuple[str, datetime.datetime]:
+        """Get the analysis time for the current cycle in ISO format.
+
+        Returns
+        -------
+        Tuple[str, datetime.datetime]
+            A tuple containing the analysis time formatted as an ISO string and the corresponding datetime object.
+        """
 
         analysis_time_dto = self.__get_analysis_time__()
-        return analysis_time_dto.strftime(datetime_formats['iso_format'])
+        return analysis_time_dto.strftime(datetime_formats['iso_format']), analysis_time_dto
 
     # ----------------------------------------------------------------------------------------------
 

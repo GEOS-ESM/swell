@@ -850,8 +850,24 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+<<<<<<< Updated upstream
     RunCompressForecast = QuestionList(
         list_name="RunCompressForecast",
+=======
+    SaveAnalysis = QuestionList(
+        list_name="SaveAnalysis",
+        questions=[
+            window_questions,
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveForecast = QuestionList(
+        list_name="SaveForecast",
+>>>>>>> Stashed changes
         questions=[
             window_questions,
             qd.r2d2_experiment_id(),

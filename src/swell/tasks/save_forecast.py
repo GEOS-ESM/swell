@@ -60,7 +60,7 @@ class SaveForecast(taskBase):
             self.window_type,
             dto=True)
 
-        analysis_time_iso = self.da_window_params.analysis_time_iso()
+        analysis_time_iso, _ = self.da_window_params.analysis_time_iso()
 
         # Populate jedi_rendering template dictionary before rendering
         # (mirrors run_jedi_variational_executable.py)
