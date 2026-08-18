@@ -1,0 +1,4 @@
+obs localizations:
+  localization method: Horizontal Gaspari-Cohn
+  lengthscale: 1500.e3
+  max nobs: 10000

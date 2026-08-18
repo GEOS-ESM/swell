@@ -304,6 +304,10 @@ observations:
   - mls55_aura
   - omi_aura
   - ompsnm_npp
+  - tropics_t01
+  - tropics_t03
+  - tropics_t05
+  - tropics_t06
 
 observing_system_records_mksi_path:
   default_value: None

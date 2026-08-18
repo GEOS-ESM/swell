@@ -150,6 +150,22 @@ ioda instrument names:
     full name: MHS (NOAA-19)
     provider : ncdiag
     inst type: radiance
+  - ioda name: tropics_t01
+    full name: TROPICS T01
+    provider : ncdiag
+    inst type: radiance
+  - ioda name: tropics_t03
+    full name: TROPICS T03
+    provider : ncdiag
+    inst type: radiance
+  - ioda name: tropics_t05
+    full name: TROPICS T05
+    provider : ncdiag
+    inst type: radiance
+  - ioda name: tropics_t06
+    full name: TROPICS T06
+    provider : ncdiag
+    inst type: radiance
   - ioda name: mls55_aura
     full name: MLS (AURA)
     provider : ncdiag
