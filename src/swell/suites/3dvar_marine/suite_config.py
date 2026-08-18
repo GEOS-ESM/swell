@@ -60,6 +60,25 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    _3dvar_marine_nnja = QuestionList(
+        list_name="3dvar_marine_nnja",
+        questions=[
+            _3dvar_marine,
+            qd.start_cycle_point("2023-07-01T12:00:00Z"),
+            qd.final_cycle_point("2023-07-01T12:00:00Z"),
+            qd.fetch_obs_from_public_s3(True),
+        ],
+        geos_marine=[
+            qd.observations([
+                "insitu_salt_profile_wod_ctd",
+                "insitu_temp_profile_wod_ctd",
+            ]),
+        ],
+        qd.background_experiment("swell_test"),
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     _3dvar_marine_tier1 = QuestionList(
         list_name="3dvar_marine_tier1",
         questions=[
