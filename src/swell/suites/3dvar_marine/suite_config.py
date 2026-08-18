@@ -73,8 +73,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "insitu_salt_profile_wod_ctd",
                 "insitu_temp_profile_wod_ctd",
             ]),
+            qd.background_experiment("swell_test"),
         ],
-        qd.background_experiment("swell_test"),
     )
 
     # --------------------------------------------------------------------------------------------------
