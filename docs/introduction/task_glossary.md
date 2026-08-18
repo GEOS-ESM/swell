@@ -90,7 +90,7 @@ Grabs ensemble member files from an existing location. Currently only works for 
 Gets background files from an existing `GEOSADAS` (ADAS-Atmospheric Data Assimilation System) experiment.
 
 ### GetGeovals
-Get GeoVaLs (Geophysical Values at Locations) observation files from R2D2, from a particular GeoVaLs experiment.
+Get GeoVaLs (Geophysical Values at Locations) observation files from R2D2, from a particular GEOS-FP experiment, such as `x0054`.
 
 ### GetGsiBc
 Gets bias correction files from an existing path to GSI bias correction coefficients.
