@@ -17,7 +17,7 @@ Before diving into installation and configuration, it helps to understand the co
 A **suite** is the definition of *what an application is made of* and *in what order it runs*. Concretely, a suite is a directory under `src/swell/suites/` that provides:
 
 - A template describing the tasks and the dependency graph between them (what must finish before what can start, what can run in parallel, what can retry or fall back to another task on failure).
-- A set of suite-level questions describing the parameters needed to configure the application (models involved, cycle times, resolution, etc.). Such parameters can be overriden with a yaml at the suite execution. See section on overrides.
+- A set of suite-level questions describing the parameters needed to configure the application (models involved, cycle times, resolution, etc.). Such parameters can be overriden with a YAML at the suite execution. See section on overrides.
 
 Because the suite defines an ordered (and sometimes conditional/parallel) graph of steps, it is useful to think of a suite as **a succession of organized tasks that, run together, execute an application**. The suite itself never runs anything directly; it is the plan that Cylc follows once it's been turned into an experiment.
 
