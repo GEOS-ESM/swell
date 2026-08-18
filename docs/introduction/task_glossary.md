@@ -54,7 +54,7 @@ Creates increment plots using EVA, based on template yamls stored in each suite.
 Creates jedi log plots (Residual norm, log norm reduction) using EVA.
 
 ### EvaObservations
-Creates observation plots from IODA, using eva. Plots are based on template yamls stored in each suite.
+Creates observation plots from IODA, using EVA. Plots are based on template yamls stored in each suite.
 
 ### EvaTimeseries
 Creates time series plots of observations, using EVA.
