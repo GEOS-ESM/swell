@@ -1,5 +1,7 @@
 # Editing the documentation
 
+## How to edit the documentation
+
 SWELL documentation is written as Markdown files stored in the `docs/` folder.
 
 Because the documentation is version controlled alongside the code, developers are strongly encouraged (if not required) to update both code and documentation as part of the same pull request (especially, for user-facing changes).
