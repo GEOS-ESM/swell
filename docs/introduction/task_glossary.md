@@ -36,7 +36,7 @@ Clones selected JEDI repositories, set by the `bundles` parameter.
 Downloads observations and converts them to IODA using selected ioda-converter executables.
 
 ### DownloadObs
-Downloads raw observation files from remote servers. Differs from `GetObservations` since it does not use `R2D2`, instead using `https` or `cmr`.
+Downloads raw observation files from remote servers. Differs from `GetObservations` since it does not use `R2D2`, instead using `https` or `s3` (for instance, `cmr` or [NNJA dataset](https://psl.noaa.gov/data/nnja_obs/)).
 
 ### EvaComparisonIncrement
 Generates comparison plots for JEDI increments between two experiments. Creates three-panel plots, with control, experiment, and difference panels
