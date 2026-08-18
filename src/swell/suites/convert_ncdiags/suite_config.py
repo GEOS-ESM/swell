@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.bundles("REMOVE"),
             qd.model_components(['geos_atmosphere']),
+            qd.skip_store_r2d2(True)
         ],
         geos_atmosphere=[
             qd.cycle_times(['T00', 'T06']),
