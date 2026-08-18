@@ -135,7 +135,7 @@ Links GEOS output files for JEDI to ingest.
 Moves restart files into the next cycle directory for use.
 
 ### PrepCoupledGeosRunDir
-Copies coupled GEOS files to the next cycle directory for use.
+Makes modifications for GEOSgcm specific files in the `forecast` directory so that `gcm_run.j` can be called directly within the SWELL experiment folder.
 
 ### PrepForecastCf
 `geos_cf`-specific task to setup the scratch `forecast` directory for running the GEOS-CF.
