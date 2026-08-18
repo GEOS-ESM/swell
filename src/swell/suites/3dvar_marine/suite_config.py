@@ -53,6 +53,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "temp_profile_xbt"
             ]),
             qd.background_time_offset("PT18H"),
+            qd.background_experiment("pr790_test"),
             qd.clean_patterns(['*.nc4', '*.txt']),
         ]
     )

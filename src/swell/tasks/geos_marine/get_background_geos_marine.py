@@ -62,6 +62,7 @@ class GetBackground(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         horizontal_resolution = self.config.horizontal_resolution()
+        background_experiment = self.config.background_experiment()
 
         local_background_time, local_background_time_dto = \
             self.da_window_params.local_background_time(window_length, window_type, dto=True)
@@ -85,7 +86,7 @@ class GetBackground(taskBase):
                 item='forecast',
                 target_file=archive_path,
                 model=model_name,
-                experiment=self.config.r2d2_experiment_id(),
+                experiment=background_experiment,
                 file_extension='tar.gz',
                 resolution=horizontal_resolution,
                 step='PT00',
