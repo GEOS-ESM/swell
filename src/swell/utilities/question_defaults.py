@@ -108,7 +108,7 @@ class QuestionDefaults():
 
     @dataclass
     class fetch_from_r2d2(SuiteQuestion):
-        default_value: str = "defer_to_model"
+        default_value: str = True
         question_name: str = "fetch_from_r2d2"
         ask_question: bool = True
         prompt: str = ("Fetch observations from r2d2, or local filesystem?")
