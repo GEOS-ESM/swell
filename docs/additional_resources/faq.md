@@ -4,8 +4,6 @@
 
     > GMAO has long produced many different data assimilation products using separate, independent workflows. The core idea behind the development of JEDI was to provide abstraction across the Earth-system components used in data assimilation. Our goal in creating SWELL for the JEDI/GEOS coupled Earth-system DA ecosystem is to simplify the execution of different data assimilation experiments while standardizing key aspects of the workflow. Going forward, this will enable GMAO to test new observations, GEOS model versions, and JEDI versions more easily as coupled modeling and coupled data assimilation become increasingly important to the mission. We need more users to identify and address a broader range of use cases. Our development team is very open to constructive criticism, new feature suggestions, and contributions from all GMAO users, so do not hesitate to reach out.
 
-    List of developers?: Michael, Doruk, Maryam, Yonggang etc.?
-
 - This is all too complicated; I miss using (insert a software package here, last updated 10+ years ago)
 
     > We do our best to allocate external dependencies only when they are absolutely needed for an application (for example, GMAO_perllib) and encourage users to utilize their own tools with experiment outputs if they prefer.
