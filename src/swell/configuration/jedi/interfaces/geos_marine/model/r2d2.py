@@ -19,11 +19,13 @@ def r2d2(template_dict: Mapping) -> Mapping:
 
     fc_list = [{'file_type': 'MOM.res',
                 'r2d2_model': 'mom6',
+                'file_extension': 'tar.gz',
                 'filename': f'{cycle_dir}/MOM6.res.{local_background_time}.nc'}]
 
     if 'cice6' in template_dict['marine_models']:
         fc_list.append({'file_type': 'cice.res',
                         'r2d2_model': 'cice6',
+                        'file_extension': 'tar.gz',
                         'filename': f'{cycle_dir}/cice.res.{local_background_time}.nc'})
 
     an_list = [{'file_type': 'ocn.incr',

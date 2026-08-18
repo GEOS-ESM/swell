@@ -7,7 +7,7 @@
 3. [R2D2 Concepts](#r2d2-concepts)
 4. [How Swell Uses R2D2](#how-swell-uses-r2d2)
 5. [Store & Fetch Quick Reference](#store--fetch-quick-reference)
-6. [Storing Observations to R2D2](../examples/r2d2/ingest_obs.md)
+6. [Storing Observations to R2D2](../examples/r2d2/r2d2_ingest.md)
 
 ---
 
@@ -193,6 +193,22 @@ When you run a Swell experiment, R2D2 is used behind the scenes in several tasks
 | **Ingest Obs** | Ingest suite that stores newly processed observations into R2D2 |
 | **Save Obs Diags** | Stores feedback/diagnostic files (`item='feedback'`) |
 | **Save Restart** | Stores forecast and analysis restart files for model components |
+
+By default, **Get Observations** reads each observation's provider from
+`observation_ioda_names.yaml`. A suite or experiment can override individual providers with a
+model-level mapping:
+
+```yaml
+models:
+  geos_cf:
+    observation_providers:
+      tempo_no2_tropo: nasa_v4
+      tropomi_s5p_no2_tropo: esa
+```
+
+In `suite_config.py`, set the same mapping with
+`qd.observation_providers({...})`. Observations omitted from the mapping continue to use the
+provider in `observation_ioda_names.yaml`.
 
 > **Note**: R2D2 adaptation in Swell is under active development. Task behavior and configuration may change as implementation continues.
 

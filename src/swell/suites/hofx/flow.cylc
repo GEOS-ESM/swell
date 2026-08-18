@@ -69,8 +69,8 @@
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}

@@ -46,9 +46,9 @@ module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
 module load eva/sles15_1.6.7
 module load jedi_bundle/sles15_skylab9
 
-# Load sp
+# Load ip
 # -------
-module load sp/2.5.0
+module load ip/5.1.0 
 
 # Remove any r2d2 v2 paths from PYTHONPATH to prevent conflicts
 export PYTHONPATH=$(echo $PYTHONPATH | tr ':' '\n' | grep -v "/r2d2/sles15_spack19/" | tr '\n' ':' | sed 's/:$//')

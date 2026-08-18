@@ -99,6 +99,8 @@ class IngestObs(taskBase):
             self.logger.info(
                 "DRY RUN MODE - No files will be ingested to R2D2")
 
+        store_as_symlink = self.config.store_as_symlink(False)
+
         total_ingested = 0
         total_failed = 0
 
@@ -130,7 +132,7 @@ class IngestObs(taskBase):
             # Ingest
             ingested, failed = self.process_obs_config(
                 obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
-                r2d2_datastore)
+                r2d2_datastore, store_as_symlink)
 
             total_ingested += len(ingested)
             total_failed += len(failed)
@@ -153,6 +155,7 @@ class IngestObs(taskBase):
         window_length: str,
         dry_run: bool,
         r2d2_datastore: str | None = None,
+        store_as_symlink: bool = False,
     ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single observation configuration file."""
         ingested = []
@@ -215,10 +218,11 @@ class IngestObs(taskBase):
                     provider=provider,
                     observation_type=obs_name,
                     file_extension=os.path.splitext(
-                        target_file)[1][1:],  # 'nc' from '.nc'
+                        target_file)[1][1:],  # e.g. '.nc4'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file
+                    source_file=target_file,
+                    store_as_symlink=store_as_symlink,
                 )
                 if r2d2_datastore:
                     store_kwargs['data_store'] = r2d2_datastore

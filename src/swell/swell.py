@@ -86,6 +86,8 @@ or for task-model combinations.
 
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
+additional_parameter_help = ('Additional option to specify parameters to task, '
+                             'context-dependent on individual task.')
 cylc_timeout_help = """
 Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
  ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
@@ -177,7 +179,7 @@ def launch(
     suite_path: str,
     no_detach: bool,
     log_path: str,
-    cylc_timeout: bool
+    cylc_timeout: str | None
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -204,13 +206,18 @@ def launch(
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+@click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    additional_parameter: Optional[str],
+    ensemblePacket: Optional[str],
+    imember: Optional[int]
 ) -> None:
     """
     Run a workflow task
@@ -222,7 +229,8 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
+    task_wrapper(task, config, datetime, model, additional_parameter,
+                 ensemblePacket, imember)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -230,7 +238,9 @@ def task(
 
 @swell_driver.command()
 @click.argument('utility', type=click.Choice(get_utilities()))
-def utility(utility: str) -> None:
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
+def utility(utility: str, additional_parameter: str | None) -> None:
     """
     Run a utility script
 
@@ -240,7 +250,7 @@ def utility(utility: str) -> None:
         utility (str): Name of the utility operation to perform.\n
 
     """
-    utility_wrapper(utility)
+    utility_wrapper(utility, additional_parameter)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -268,9 +278,9 @@ def test(test: str) -> None:
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
-                                            "localensembleda", "3dvar_cycle")))
+                                            "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
