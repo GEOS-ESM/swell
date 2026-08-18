@@ -183,7 +183,7 @@ Sets up and runs JEDI variational executable.
 Ingests background files into R2D2.
 
 ### SaveForecastCf
-Ingests forecast files into R2D2
+`geos_cf`-specific task to ingests forecast files into R2D2
 
 ### SaveObsDiags
 Ingests obs diag files into R2D2
