@@ -214,7 +214,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # bypass the writing of HofXs
         # ---------------------------
-        bypass_HofXs = False
+        bypass_HofXs = True
         if bypass_HofXs:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
