@@ -72,7 +72,7 @@ Parses `GEOS_mksi` repository for active and available instrument channel inform
 Gets background files from an existing GEOS-FP experiment. Primarily used by `geos_atmosphere` experiments.
 
 ### GetBackground
-Gets background files from `R2D2`.
+Gets background files from `R2D2`. Currently has a generic version and a `geos_marine` specific version. Both uses `R2D2` but the `geos_marine` version fetches compressed `tar.gz` files.
 
 ### GetBufr
 Uses the `GMAO_perllib` `acquire` function to copy BUFR files to the experiment.
