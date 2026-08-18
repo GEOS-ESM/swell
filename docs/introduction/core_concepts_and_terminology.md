@@ -27,7 +27,7 @@ In software enginnering terms: a **suite is a class** and an **experiment is an 
 
 A **question** is a single configurable parameter that turn the suite into a runnable experiment: for example the model components to run, the start and final cycle points, the resolution, or the background error method, etc.
 
-Both suites and individual tasks declare the questions they need. At suite creation, Swell collects the full set of questions that can come from defaults, or from command-line input, or from an override file the user can supply. Swell uses the resulting answers to fill in the suite's templates and produce a concrete `experiment.yaml`.
+Both suites and individual tasks declare the questions they need. At suite creation, Swell collects the full set of questions that can come from defaults, or from command-line input, or from an override file the user can supply. Swell uses the resulting answers to fill in the suite's templates and produce a final experiment configuration called `experiment.yaml`.
 
 ## Tasks: The Single Operations That Compose a Suite
 
