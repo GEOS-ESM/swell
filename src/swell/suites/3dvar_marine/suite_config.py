@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_marine",
         questions=[
             sq.marine,
-            qd.start_cycle_point("2021-07-01T12:00:00Z"),
-            qd.final_cycle_point("2021-07-01T12:00:00Z"),
+            qd.start_cycle_point("2023-07-01T12:00:00Z"),
+            qd.final_cycle_point("2023-07-01T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_marine']),
         ],
@@ -53,7 +53,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "temp_profile_xbt"
             ]),
             qd.background_time_offset("PT18H"),
-            qd.background_experiment("pr790_test"),
+            qd.background_experiment("swell_test"),
             qd.clean_patterns(['*.nc4', '*.txt']),
         ]
     )
@@ -64,8 +64,6 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_marine_nnja",
         questions=[
             _3dvar_marine,
-            qd.start_cycle_point("2023-07-01T12:00:00Z"),
-            qd.final_cycle_point("2023-07-01T12:00:00Z"),
             qd.fetch_obs_from_public_s3(True),
         ],
         geos_marine=[
@@ -73,7 +71,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "insitu_salt_profile_wod_ctd",
                 "insitu_temp_profile_wod_ctd",
             ]),
-            qd.background_experiment("swell_test"),
         ],
     )
 
