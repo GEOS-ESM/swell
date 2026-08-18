@@ -6,32 +6,37 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import importlib
-import os
+# Cylc suite for comparing two builds of JEDI directly
 
 # --------------------------------------------------------------------------------------------------
 
-valid_tests = ['code_tests']
+[scheduler]
+    allow implicit tasks = False
 
 # --------------------------------------------------------------------------------------------------
 
+[scheduling]
 
-def test_wrapper(test: str) -> None:
-
-    # Test script
-    test_script_file = 'swell.test.'+test+'.'+test
-
-    # Suppress warning from NUMEXPR
-    os.environ['NUMEXPR_MAX_THREADS'] = str(8)
-
-    # Import the correct method
-    test_method = getattr(importlib.import_module(test_script_file), test)
-
-    # Run the test
-    test_method()
-
+    [[graph]]
+        R1 = """
+            CompareJediCtests
+        """
 
 # --------------------------------------------------------------------------------------------------
 
-if __name__ == '__main__':
-    test_wrapper('code_tests')
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CompareJediCtests]]
+        script = "swell task CompareJediCtests $config"
+
+# --------------------------------------------------------------------------------------------------
