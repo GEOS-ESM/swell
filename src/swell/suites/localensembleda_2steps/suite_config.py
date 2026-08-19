@@ -105,7 +105,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
-#                "airs_aqua",
                 "amsr2_gcom-w1",
                 "amsua_aqua",
                 "amsua_metop-b",
@@ -118,12 +117,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "avhrr3_metop-b",
                 "avhrr3_n18",
                 "avhrr3_n19",
-#                "cris-fsr_n20",
-#                "cris-fsr_npp",
                 "gmi_gpm",
                 "gps",
-#                "iasi_metop-b",
-#                "iasi_metop-c",
                 "mhs_metop-b",
                 "mhs_metop-c",
                 "mhs_n19",
@@ -144,6 +139,12 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.clean_patterns(['*.txt'])
         ]
     )
+# IR sensors:
+#                "airs_aqua",
+#                "cris-fsr_n20",
+#                "cris-fsr_npp",
+#                "iasi_metop-b",
+#                "iasi_metop-c",
 
     # --------------------------------------------------------------------------------------------------
 

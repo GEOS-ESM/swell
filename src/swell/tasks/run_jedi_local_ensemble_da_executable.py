@@ -115,7 +115,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                         self.config.vertical_localization_frac_retained_variance())
             self.jedi_rendering.add_key('vertical_localization_function',
                                         self.config.vertical_localization_function())
-            
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())

@@ -93,11 +93,9 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
             qd.obs_thinning_rej_fraction(0.75),
-# wait for oops 3342 to activate all non-IR-obs
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
-#                "airs_aqua",
                 "amsr2_gcom-w1",
                 "amsua_aqua",
                 "amsua_metop-b",
@@ -110,12 +108,21 @@ class SuiteConfig(QuestionContainer, Enum):
                 "avhrr3_metop-b",
                 "avhrr3_n18",
                 "avhrr3_n19",
-##                "cris-fsr_n20",
-##                "cris-fsr_npp",
+            ]),
+            qd.window_length("PT6H"),
+            qd.window_type("3D"),
+            qd.clean_patterns(['*.txt'])
+        ]
+    )
+
+# wait for oops 3342 to activate all non-IR-obs
+#                "airs_aqua",
+#                "cris-fsr_n20",
+#                "cris-fsr_npp",
 #                "gmi_gpm",
 #                "gps",
-##                "iasi_metop-b",
-##                "iasi_metop-c",
+#                "iasi_metop-b",
+#                "iasi_metop-c",
 #                "mhs_metop-b",
 #                "mhs_metop-c",
 #                "mhs_n19",
@@ -129,12 +136,6 @@ class SuiteConfig(QuestionContainer, Enum):
 #                "sfc",
 #                "sondes",
 #                "ssmis_f17"
-            ]),
-            qd.window_length("PT6H"),
-            qd.window_type("3D"),
-            qd.clean_patterns(['*.txt'])
-        ]
-    )
 
     # --------------------------------------------------------------------------------------------------
 
