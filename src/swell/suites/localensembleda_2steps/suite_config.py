@@ -105,7 +105,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
-                "airs_aqua",
+#                "airs_aqua",
                 "amsr2_gcom-w1",
                 "amsua_aqua",
                 "amsua_metop-b",
@@ -118,12 +118,12 @@ class SuiteConfig(QuestionContainer, Enum):
                 "avhrr3_metop-b",
                 "avhrr3_n18",
                 "avhrr3_n19",
-                "cris-fsr_n20",
-                "cris-fsr_npp",
+#                "cris-fsr_n20",
+#                "cris-fsr_npp",
                 "gmi_gpm",
                 "gps",
-                "iasi_metop-b",
-                "iasi_metop-c",
+#                "iasi_metop-b",
+#                "iasi_metop-c",
                 "mhs_metop-b",
                 "mhs_metop-c",
                 "mhs_n19",
@@ -150,7 +150,7 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda_2steps = QuestionList(
         list_name="localensembleda_2steps",
         questions=[
-            localensembleda_2steps_tier1
+            localensembleda_2steps_tier2
         ]
     )
 
