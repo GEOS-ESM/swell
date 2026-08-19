@@ -17,6 +17,7 @@ Logs are organized by cycle, task, and submit attempt. The most frequently used 
 - `job.out`, which contains standard output from the task.
 - `job.err`, which contains standard error from the task.
 - `job`, which records the generated job script and environment used for the submission.
+- `job-activity.log`, which details slurm request details in case the request fails.
 
 When a task fails, note its cycle, task name, and submit attempt in the Cylc TUI before opening the
 corresponding log directory.
