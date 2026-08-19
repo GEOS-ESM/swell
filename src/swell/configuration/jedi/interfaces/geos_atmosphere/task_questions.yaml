@@ -12,7 +12,7 @@ analysis_variables:
   - rain_water
   - snow_water
   - mole_fraction_of_ozone_in_air
-  - geopotential_height_times_gravity_at_surface
+  - geopotential_at_surface
   - fraction_of_ocean
   - fraction_of_lake
   - fraction_of_ice
@@ -29,7 +29,7 @@ analysis_variables:
   - rain_water
   - snow_water
   - mole_fraction_of_ozone_in_air
-  - geopotential_height_times_gravity_at_surface
+  - geopotential_at_surface
   - fraction_of_ocean
   - fraction_of_lake
   - fraction_of_ice
@@ -327,6 +327,19 @@ skip_ensemble_hofx:
   options:
   - true
   - false
+
+horizontal_localization_lengthscale:
+  default_value: 10000e3
+
+horizontal_localization_max_nobs:
+  default_value: 1000
+
+horizontal_localization_method:
+  default_value: Horizontal Gaspari-Cohn
+  options:
+  - Horizontal Gaspari-Cohn
+  - Horizontal SOAR
+  - Horizontal Box car
 
 vertical_localization_function:
   default_value: Gaspari Cohn

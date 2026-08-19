@@ -204,12 +204,17 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                     horizLoc = loc_list['obs localizations']
                 localization = [horizLoc]
                 observer.update({'obs localizations': localization})
+# old oops version
+#                observer['obs space'].update(
+#                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                observer['obs space'].pop('distribution', None)
+                observer['obs space'].update({'use data frame container': True})
                 observer['obs space'].update(
-                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                    {'redistribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
         # bypass the writing of HofXs
         # ---------------------------
-        bypass_HofXs = False
+        bypass_HofXs = True
         if bypass_HofXs:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
