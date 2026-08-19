@@ -82,6 +82,7 @@ def prepare_scheduling_dict(
         'EvaComparisonObservations',
         'EvaTimeseries',
         'GenerateBClimatology',
+        'RunCompressForecast',
         'RunGeos',
         'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',
