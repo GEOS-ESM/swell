@@ -44,6 +44,7 @@
     - [MOM6](configs/model_configurations/mom6.md)
     - [History Outputs](configs/model_configurations/history_outputs.md)
   - [Observation configuration](configs/observation_configuration.md)
+  - [Fetching observations from a public S3 bucket](configs/fetch_observations_public_s3.md)
   - [R2D2 configuration](configs/r2d2_v3_credentials.md)
   - [SLURM configuration](configs/slurm_configuration.md)
 
