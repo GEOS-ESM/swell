@@ -56,19 +56,7 @@ set RUN_GSI = 0
 #######################################################################
 echo "  Create Experiment Sub-Directories "
 setenv CYCLEDIR >>>SWELL_CYCLEDIR<<< # current_cycle
-
-
-#if (! -e $CYCLEDIR/restarts   ) mkdir -p $CYCLEDIR/restarts
-#if (! -e $CYCLEDIR/holding    ) mkdir -p $CYCLEDIR/holding
-
 setenv  SCRDIR  $CYCLEDIR
-# Remove the directory if it exists
-#if ( -d $SCRDIR ) then
-#    rm -rf $SCRDIR
-#endif
-
-# Create the directory
-#mkdir -p $SCRDIR
 
 #######################################################################
 #                   Set Experiment Run Parameters
@@ -175,14 +163,8 @@ echo "finish Set Experiment Run Parameters"
 #   Move to Scratch Directory and Copy RC Files from Home Directory
 #######################################################################
 echo " Move to Scratch Directory and Copy RC Files from Home Directory "
-cd $SCRDIR  # SCRDIR=$CYCLEDIR/scratch
+cd $SCRDIR 
 
-# done in prep_forecast
-#cp -rf  $CYCLEDIR/RC/* . #moved/edited in prepForecast
-#cp      $CYCLEDIR/cap_restart . 
-#cp -rf  $CYCLEDIR/*.rc .
-##cp -rf  $HOMDIR/*.nml .
-#cp -rf  $CYCLEDIR/*.yaml .
 cp     $GEOSBIN/bundleParser.py .
 
 cat fvcore_layout.rc >> input.nml
