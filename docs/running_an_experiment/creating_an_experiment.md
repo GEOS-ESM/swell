@@ -1,37 +1,53 @@
-# Creating an experiment using Swell
+# Creating an Experiment
 
-Once you have installed `swell` and configured `cylc` you should be able to create and run an experiment.
-
-A useful command when using swell is `swell --help`. This will take you through all the options within swell. The help traverses through the applications so you can similarly issue `swell create --help`
-
-- Make sure you've configured `~/.swell/r2d2_credentials.yaml` as described in [R2D2 v3 credentials](../configuration_reference/r2d2_v3_credentials.md).
-
-The first step is to create an experiment which is done with
+After [choosing a workflow](choosing_a_workflow.md) and deciding how to
+[configure it](understanding_configuration.md), create the experiment with:
 
 ```bash
 swell create <suite> <options>
 ```
 
-**During `swell create`**: Credentials are loaded, and the experiment is registered in R2D2 automatically. The experiment ID is stored in `experiment.yaml` and used by STORE operations such as SaveRestart and SaveObsDiags.
-
-This will create a directory with your experiment ID in the experiment root.
-
-- If you specify no options the resulting experiment will be configured the way that suite is run in the tier 1 testing.
-
-- If you want to be taken through all the questions for configuring the experiment you would specify `swell create <suite> -m cli`
-
-# Creating a Swell experiment using pinned Jedi Bundle
-Due to frequent updates on JEDI's repositories, Swell users may want to develop against a pinned version of the JEDI ecosystem. A pinned version means that every repository required for the JEDI build is pinned to a commit hash from a specific date. These pinned hashes will be continually updated as the Swell team validates them.
-
-There are two options for creating an experiment with a pinned JEDI bundle, and both require using the Questionary command line tool since they are currently not default options.
-
-## Building using pinned versions
-When you run `swell create <suite> -m cli`, it will take you to the Questionary command line tool. At some point, you will see the following question: 
+For example, the following command creates a `3dvar_marine` experiment using its default
+configuration and the default platform:
 
 ```bash
-Do you want to use an existing JEDI build or create a new build?
+swell create 3dvar_marine
 ```
-To create a new build, there are two options: `create` and `pinned_create`. Using `pinned_create` will tell the `CloneJedi` task to clone the JEDI repository commit hashes specified in `utilities/pinned_versions/pinned_versions.yaml`. Then, the experiment will run the `BuildJedi` task as normal.
 
-## Linking to pinned versions build
-There are two options to link to a JEDI build when the aforementioned question is asked: `use_existing` and `use_pinned_existing`. Using the `use_pinned_existing` option will ask for a build and source directory to link to. There are default directories provided for the user that the Swell team maintains. However, users are welcome to build pinned JEDI bundles themselves (see [here](https://geos-esm.github.io/jedi_bundle/#/building_jedi_code) for more information). Note that the build must use the hashes found in `utilities/pinned_versions/pinned_versions.yaml` or the Swell experiment will abort. 
+Use `swell create --help` to see the available suites and command-line options. Common variations
+include:
+
+```bash
+# Ask each configuration question interactively.
+swell create 3dvar_marine -m cli
+
+# Apply reproducible settings from an override file.
+swell create 3dvar_marine -o override.yaml
+
+# Select a platform explicitly.
+swell create 3dvar_marine -p nccs_discover_sles15
+```
+
+Before creating an experiment, make sure Swell is installed, Cylc is configured, and R2D2
+credentials are available when the workflow retrieves or stores R2D2 data. See
+[Installing Swell](../installation_and_setup/installing_swell.md),
+[Configuring Cylc](../installation_and_setup/configuring_cylc.md), and
+[R2D2 Credentials](../configuration_reference/r2d2_v3_credentials.md).
+
+## What `swell create` does
+
+`swell create` prepares the files needed to run the selected suite. It:
+
+- Resolves suite, model, platform, override, and command-line configuration values.
+- Optionally assigns an `r2d2_experiment_id` and registers the experiment with R2D2.
+- Creates `<experiment_root>/<experiment_id>/`.
+- Writes the fully resolved configuration to `experiment.yaml`.
+- Renders the scheduling information and Jinja templates into `flow.cylc`.
+- Copies platform environment files, suite EVA templates when present, and Swell configuration
+  files into the experiment directory.
+
+Creation does not install or start the Cylc workflow. A successful command prints the suite path
+to pass to `swell launch` later.
+
+Before launching, review the [generated directory layout](experiment_directory.md), especially
+`experiment.yaml` and the resolved experiment path.

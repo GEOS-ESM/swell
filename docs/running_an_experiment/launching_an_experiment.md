@@ -1,30 +1,15 @@
-# Launching an experiment
+# Launching an Experiment
 
-After running `swell create` the output will provide the directive needed to launch the experiment. It is typically something along the lines of:
-
-```bash
-swell launch --suite_path <experiment_root>/<experiment_id>/<experiment_id>-suite
-```
-
-The above script will install the workflow with `cylc`, start the workflow running and start the `cylc`-provided Terminal User Interface (TUI) that will allow you to monitor the progress of the tasks.
-
-
-### Stopping jobs
-
-Once the workflow is installed and running it can be stopped with:
+After reviewing the [generated experiment directory](experiment_directory.md), launch the workflow
+by passing its suite directory to `swell launch`:
 
 ```bash
-cylc stop swell-hofx-suite/runX
+swell launch <experiment_root>/<experiment_id>/<experiment_id>-suite
 ```
 
-Where X is replaced with the run you wish to stop. Alternatively you can issue without `/runX` to stop all runs of that experiment.
+The command installs the generated workflow in Cylc, starts it, and opens the Cylc Terminal User
+Interface (TUI). The TUI shows the cycles and task states as the workflow progresses. Leaving the
+TUI does not by itself stop the workflow.
 
-The above command will stop after currently active tasks have finished. Alternatively you could issue
-
-```bash
-cylc stop --kill swell-hofx-suite
-```
-
-to stop all runs of the swell-hofx-suite experiment after killing current active tasks.
-
-See `cylc stop --help` for the full list of options.
+Continue to [Monitoring, Restarting, and Stopping](monitoring_an_experiment.md) for routine workflow
+control.
