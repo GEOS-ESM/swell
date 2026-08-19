@@ -179,7 +179,7 @@ def launch(
     suite_path: str,
     no_detach: bool,
     log_path: str,
-    cylc_timeout: bool
+    cylc_timeout: str | None
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
