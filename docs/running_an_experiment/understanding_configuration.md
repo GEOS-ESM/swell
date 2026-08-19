@@ -1,6 +1,6 @@
 # Understanding Configuration
 
-Swell builds an experiment by asking a series of "questions" and resolving each one to a value. Every question is resolved through a layered hierarchy of defaults and overrides, so there are several places a user can intervene depending on how permanent and how targeted the change needs to be. A simple `swell create <suite>` will start an experiment and use all the default values pluse the values specified in `suite_config.py` (more about this in section 4). The list below includes differet ways a user can configure a Swell experiment:
+Swell builds an experiment by asking a series of "questions" and resolving each one to a value. Every question is resolved through a layered hierarchy of defaults and overrides, so there are several places a user can intervene depending on how permanent and how targeted the change needs to be. A simple `swell create <suite>` will start an experiment and use all the default values plus the values specified in `suite_config.py` (more about this in section 4). The list below includes different ways a user can configure a Swell experiment:
 
 
 ## 1. The interactive CLI (`-m cli`)
