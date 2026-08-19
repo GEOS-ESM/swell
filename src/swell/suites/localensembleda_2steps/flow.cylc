@@ -51,27 +51,39 @@
             # Task triggers for: {{model_component}}
             # ------------------
 
-            # Perform staging that is cycle dependent
-            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}} => sync_point
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
+            # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
+
+            RunJediEtkfSolver-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% else %}
+
+            # Cycling VarBC is inactive, static bias files will be used
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            {% endif %}
 
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            
-            RenderJediObservations-{{model_component}} => sync_point
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
 
-            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
-
-            GetEnsembleGeosExperiment-{{model_component}} => sync_point
+            BuildJediByLinking[^]? | BuildJedi[^]  => SP1-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}} => SP1-{{model_component}}
+            GetEnsembleGeosExperiment-{{model_component}} => SP1-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => SP1-{{model_component}}
+            SP1-{{model_component}} => GenerateObservingSystemRecords-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
             {% if skip_ensemble_hofx %}
-               sync_point => RunJediObsfiltersExecutable-{{model_component}}
                RunJediObsfiltersExecutable-{{model_component}} => RunJediEtkfObserver-{{model_component}}
                RunJediEtkfObserver-{{model_component}} => RunJediEtkfSolver-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
-                   sync_point => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                   SP1-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
                {% elif ensemble_hofx_strategy == 'parallel' %}
@@ -82,7 +94,7 @@
                       # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
                       # RunEnsembleHofxCombiner-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
-                      sync_point => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                      SP1-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                       RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                    {% endfor %}
                {% endif %}
@@ -100,7 +112,7 @@
 
             # Clean up large files
             # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
-            # EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -252,8 +264,11 @@
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    # SP: Sync Point
+    [[SP1-{{model_component}}]]
+        script = true
+
     {% endfor %}
 
-    [[sync_point]]
-        script = true
 # --------------------------------------------------------------------------------------------------
