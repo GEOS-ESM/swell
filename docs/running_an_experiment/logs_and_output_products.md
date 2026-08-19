@@ -51,7 +51,7 @@ record. See [R2D2 Concepts](../introduction/r2d2_overview.md).
 
 | Problem | Start here |
 | --- | --- |
-| Cylc could not submit or start a task | The task's `job.err`, generated `job` script, and scheduler messages |
+| Cylc could not submit or start a task | The task's `job.err`, `job-activity.log`, generated `job` script, and scheduler messages |
 | A Swell Python task failed | The task's `job.out` and `job.err` |
 | A JEDI executable failed | The task logs, then `jedi_<application>_log.log` in the cycle directory |
 | A result is missing or scientifically unexpected | Generated JEDI YAML, application log, staged inputs, and the workflow guide |
