@@ -26,14 +26,7 @@ limit stacksize unlimited
 setenv ARCH `uname`
 
 setenv SITE             NCCS
-#setenv GEOSDIR          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil
-#setenv GEOSBIN          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil/bin
-#setenv GEOSETC          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil/etc
-#setenv GEOSUTIL         /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil
-
-#setenv GEOSDIR          /discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install
 setenv GEOSDIR          >>>SWELL_GEOSINSTALL<<<
-#setenv GEOSDIR          /discover/nobackup/vshah5/cf2/CFv2_code/GEOSgcm_rc1_t15/build_mil
 setenv GEOSBIN          $GEOSDIR/bin
 setenv GEOSETC          $GEOSDIR/etc
 setenv GEOSUTIL         $GEOSDIR
@@ -51,10 +44,8 @@ echo   VERSION: $GCMVER
 #######################################################################
 
 
-setenv  EXPID   GCv14.0_GCMv1.17_c90
-#setenv  EXPDIR  /discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab 
+setenv  EXPID   GCv14.0_GCMv1.17_c90b 
 setenv  EXPDIR  >>>SWELL_GEOSRUN<<<
-# EXPDIR and EXPID have to be the same 
 setenv  HOMDIR  $EXPDIR
 
 # Run GSI?
