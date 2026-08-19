@@ -1,92 +1,135 @@
 # Understanding Configuration
 
-Swell builds an experiment by asking a series of "questions" and resolving each one to a value. Every question is resolved through a layered hierarchy of defaults and overrides, so there are several places a user can intervene depending on how permanent and how targeted the change needs to be. A simple `swell create <suite>` will start an experiment and use all the default values plus the values specified in `suite_config.py` (more about this in section 4). The list below includes different ways a user can configure a Swell experiment:
+Swell builds an experiment by resolving a series of configuration questions. Each answer comes
+from a layered hierarchy of suite, model, and platform defaults, with optional user overrides.
+Choose a configuration method based on whether the experiment is exploratory or must be reproduced.
 
+## 1. Using the defaults
 
-## 1. The interactive CLI (`-m cli`)
+The simplest command uses the selected suite's resolved defaults without asking questions:
 
-The quickest way to configure a single experiment is to run `swell create <suite> -m cli`. This launches the Questionary command-line client (`GetAnswerCli`), which walks you through every model-independent and model-dependent question in order, pre-populating each prompt with the suite's default and letting you accept or change it. With no `-m` option (i.e., `swell create <suite>`), Swell instead uses `-m defaults`, meaning it silently takes the baked-in tier-1 defaults without asking anything.
-
-This method is recommended only for quick testing of the system as it makes the reproducibility of an experiment almost imposible.
-
-
-## 2. An override file (`-o override.yaml`)
-
-For a repeatable, non-interactive tweak, pass `swell create <suite> -o my_override.yaml`. The override file is a YAML that looks like the final experiment dictionary: any top-level key you list replaces that question's `default_value` and for all the other keys not listed in this yaml the default values will be selected. The *model-dependent* settings go under a nested `models:` block keyed by model component, e.g.:
-
+```bash
+swell create <suite>
 ```
+
+This is equivalent to using `-m defaults`. It is useful for running a suite's standard
+configuration or creating an initial `experiment.yaml` to inspect.
+
+## 2. Using an override file (`-o override.yaml`)
+
+An override file is the preferred way to customize a reproducible experiment. Pass it to
+`swell create` with `-o` or `--override`:
+
+```bash
+swell create <suite> -o my_override.yaml
+```
+
+The override file follows the structure of the final experiment configuration. A top-level key
+replaces the resolved value for that question. Settings that belong to a model component go under
+a `models` block keyed by component, for example:
+
+```yaml
 start_cycle_point: 2023-10-10T00:00:00Z
 models:
   geos_atmosphere:
     horizontal_resolution: "91"
     npx_proc: 4
 ```
-This is the preferred way to customize a run without editing source code.
 
-## 3. Command-line flags for cross-cutting settings
+Keys not included in the override continue to use their resolved defaults. Keeping experiment
+changes in an override file makes them easier to review, reuse, and version-control.
 
-Several flags configure whole categories of behavior rather than individual questions.
-* `-p/--platform` selects which platform's `suite_questions.yaml` / `task_questions.yaml` defaults fill in any value marked `defer_to_platform` (paths, accounts, resources).
-* `-s/--slurm` injects [SLURM directives](../configuration_reference/slurm_configuration.md) globally, per-task, or per task/model combination.
-* `-k/--skip-r2d2` disables R2D2 registration and storage for the experiment. [TODO add link to skip-r2d2]
+## 3. Command-line options for cross-cutting settings
 
-These behave as overrides layered on top of the suite and platform defaults.
+Several options configure broad categories of behavior:
 
-## 4. The suite's suite_config.py
+- `-p/--platform` selects which platform defaults provide paths, accounts, and resources.
+- `-s/--slurm` applies [SLURM directives](../configuration_reference/slurm_configuration.md)
+  globally, per task, or per task and model combination.
+- `-k/--skip-r2d2` disables R2D2 registration and storage for the experiment.
 
-To change the default values themselves edit the relevant `QuestionList` in `src/swell/suites/<suite>/suite_config.py`. Each entry (e.g. `ingest_obs_cf`) defines the model-independent questions plus per-model blocks (`geos_cf=[...]`) using the `QuestionDefaults` (`qd`) and `SuiteQuestions` (`sq`) helpers.
+These options are useful for settings that apply across the workflow. Experiment-specific values
+should normally remain in an override file.
 
+## 4. Interactive configuration for exploratory runs (`-m cli`)
 
-## 5. The shared question and defaults hierarchy
+Run the Questionary command-line client with:
 
-Underneath the individual suites is a stack of shared definitions that determine what a
-question *is* and what it falls back to:
+```bash
+swell create <suite> -m cli
+```
 
-- [`suite_questions.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/suites/suite_questions.py) groups reusable question sets (like `common`). In common keys such as `cycle_times`, `start_cycle_points`, `final_cycle_points`, etc. are listed. These keys are shared between any suites that use `common` in their `suite_config.py`. See `hofx_cf` as [an example](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/suites/hofx_cf/suite_config.py#L27).
+The client walks through the model-independent and model-dependent questions in order. Each prompt
+is pre-populated with its resolved default, which you can accept or replace.
 
-- [`question_defaults.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/utilities/question_defaults.py) defines each question's prompt, type, and base default. The `default_value` of some questions are set to `defer_to_platform`, `defer_to_model`, or `defer_to_code`.
+Interactive configuration is useful for exploring available settings and quick tests. Because the
+answers are entered during creation rather than maintained in a separate input file, use an
+override file for experiments that need to be reproduced or reviewed later.
 
-  The **per-platform** and **per-model** default values are defined under `src/swell/deployment/platforms/generic/suite_questions.yaml` and `src/swell/configuration/jedi/interfaces/<model>/suite_questions.yaml`.
+## 5. Editing a generated experiment
 
-  Editing these affects behavior across many suites at once, so it's the right layer only
-for global changes (adding a new question, changing a default resolution for
-every model, etc.).
+After `swell create` finishes, `experiment.yaml` and `flow.cylc` are plain-text files. You can edit
+them directly for a one-off test before launch. For changes that need to be reproduced, update an
+override file and create the experiment again instead.
 
-### More about `defer_to_*`:
+The [Generated Directory Layout](experiment_directory.md) explains where these files are located
+and how Swell uses them.
 
-Many questions don't have a single sensible default, because the right value depends on
-*which model component* the experiment uses (e.g. `geos_atmosphere` vs. `marine` model)
-or *which platform* it runs on. Rather than hard-code a value, `question_defaults.py`
-sets these questions to a **sentinel string** that means "I don't know yet — go look it
-up later":
+## 6. Advanced: how defaults are resolved
 
-- **defer_to_model** — resolve this from the model component in `src/swell/configuration/jedi/interfaces/<model>/suite_questions.yaml` and `src/swell/configuration/jedi/interfaces/<model>/task_questions.yaml`
-- **defer_to_platform** — resolve this from the platform in `src/swell/deployment/platforms/generic/suite_questions.yaml`
-- **defer_to_code** — resolve this in [`prepare_config_and_suit.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/deployment/prepare_config_and_suite/prepare_config_and_suite.py) (e.g. `r2d2_experiment_id` or `experiment_id`).
+The following configuration layers are primarily relevant to developers changing the behavior of
+Swell itself rather than configuring a single experiment.
 
+### Suite defaults
 
-## 6. Editing the generated experiment directly (Modifying an experiment)
-Finally, once `swell create` has produced the experiment directory, the resulting `experiment.yaml` and `flow.cylc` are plain text files. For a one-off manual adjustment before launching, you can edit these directly — though for anything you'll want to reproduce, capturing the change as an `override` file or in `suite_config.py` is preferable.
+Each suite defines a `QuestionList` in `src/swell/suites/<suite>/suite_config.py`. It combines
+model-independent questions with per-model blocks using the `QuestionDefaults` (`qd`) and
+`SuiteQuestions` (`sq`) helpers. Editing this file changes the defaults for every experiment
+created from that suite.
 
+### Shared questions and defaults
 
+- [`suite_questions.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/suites/suite_questions.py)
+  groups reusable question sets, such as cycle bounds shared by several suites.
+- [`question_defaults.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/utilities/question_defaults.py)
+  defines each question's prompt, type, and base default.
+- Model-specific defaults are defined under
+  `src/swell/configuration/jedi/interfaces/<model>/suite_questions.yaml` and
+  `task_questions.yaml`.
+- Platform-specific defaults are defined under `src/swell/deployment/platforms/<platform>/`.
 
-## An example -- Using pinned JEDI build vs. building JEDI
+Changing these shared definitions affects multiple suites. Use this layer for changes to Swell's
+global behavior, such as adding a question or changing a default for every experiment using a
+particular model or platform.
 
-Due to frequent updates on JEDI's repositories, Swell users may want to develop against a pinned version of the JEDI ecosystem. The Swell team builds, supports, and continually ypdates a JEDI build that is pinned to [specific commit hashes](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/utilities/pinned_versions/pinned_versions.yaml). Users can use the JEDI executables from this JEDI build.
+### Deferred values
 
+Some questions do not have one sensible default. Their initial value is a sentinel that directs
+Swell to resolve the answer from another layer:
 
-By default, Swell builds JEDI using either the `develop` branch of JEDI-bundle repositories, or use commit hashes specified in `utilities/pinned_versions/pinned_versions.yaml`. These can be set by using `jedi_build_method: create` for building with `develop` branches, and `jedi_build_method: pinned_create` for building with specific commit hashes.
+- `defer_to_model` resolves the value from the selected model component.
+- `defer_to_platform` resolves the value from the selected platform.
+- `defer_to_code` resolves the value in
+  [`prepare_config_and_suite.py`](https://github.com/GEOS-ESM/swell/blob/develop/src/swell/deployment/prepare_config_and_suite/prepare_config_and_suite.py),
+  as with `r2d2_experiment_id` or `experiment_id`.
 
-Most experiment suites, however, use `use_existing` key to link the JEDI build maintained by the Swell team. This is set in `src/swell/suites/<your_suite>/suite_config.py` and also `src/swell/deployment/platforms/<your_platform>/task_questions.yaml`. To use a different pre-built JEDI, you can add this to your `override.yaml` use:
+## 7. Example: selecting a JEDI build
 
-```YAML
+Swell can build JEDI from source or use an existing build. `jedi_build_method: create` builds from
+the configured development branches, while `jedi_build_method: pinned_create` uses the commit
+hashes in `src/swell/utilities/pinned_versions/pinned_versions.yaml`.
+
+Most experiment suites use an existing build maintained by the Swell team. To select another
+pre-built JEDI installation, add the following values to an override file:
+
+```yaml
 jedi_build_method: use_existing
 existing_jedi_source_directory: /path/to/jedi_bundle
 existing_jedi_build_directory: /path/to/jedi_bundle/build
 ```
 
-If you like to build your own JEDI-bundle you can follow the instructions [here](https://geos-esm.github.io/jedi_bundle/#/building_jedi_code).
+See the [JEDI bundle documentation](https://geos-esm.github.io/jedi_bundle/#/building_jedi_code)
+for instructions on building a bundle.
 
 After selecting the appropriate configuration method, continue to
-[Creating an Experiment](creating_an_experiment.md). The generated configuration and workflow
-files are described later in [Generated Directory Layout](experiment_directory.md).
+[Creating an Experiment](creating_an_experiment.md).
