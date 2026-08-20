@@ -222,7 +222,7 @@ models:
 
 ## Launch the `3dvar_atmos` experiment
 
-If the `swell create 3dvar-atmos` command runs successfully, you will be provided with a printout to launch the cylc job for the 3dvar-atmos suite, which looks like:
+If the `swell create 3dvar_atmos` command runs successfully, you will be provided with a printout to launch the cylc job for the 3dvar_atmos suite, which looks like:
 
 ```bash
 swell launch /discover/nobackup/.../${experiment_id}/${experiment_id}-suite
