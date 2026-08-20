@@ -40,6 +40,7 @@ The independent SWELL tasks `RunJediEdaExecutable -imem i` are submitted to the 
    EDA calculations demands a significant amount of computational resources. For test runs, users can thin the observartion data by setting `obs_thinning_rej_fraction` from zero (no thinning) to 1 (reject all). Example override file contains:
 
 ```cylc
+models:
   geos_atmosphere:
     horizontal_resolution: "91"
     obs_thinning_rej_fraction: 0.98
