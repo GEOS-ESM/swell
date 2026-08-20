@@ -15,7 +15,7 @@ class LocalEnsembleDA(OopsConfig):
 
     def render_oops(self):
 
-        if self.jedi_interface == 'geos_atmosphere':
+        if self.jedi_interface == 'geos_atmosphere' or self.jedi_interface == 'geos_cf':
             increment_var = [
                     'eastward_wind',
                     'northward_wind',
@@ -27,7 +27,7 @@ class LocalEnsembleDA(OopsConfig):
                     'cloud_liquid_water',
                     'mole_fraction_of_ozone_in_air',
             ]
-        elif self.jedi_interface == 'geos_atmosphere':
+        elif self.jedi_interface == 'geos_marine':
             increment_var = self.template_dict['analysis_variables']
 
         oops = {
