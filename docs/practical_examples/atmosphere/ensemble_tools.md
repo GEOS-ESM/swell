@@ -38,7 +38,6 @@ Method-2. create a section in `override.yaml`
 ```yaml
 models:
   geos_atmosphere:
-    ensmeanvariance_spec:
     - state: bkg
       fn_input: ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4
       fn_output_mean: geos.prior.mean
