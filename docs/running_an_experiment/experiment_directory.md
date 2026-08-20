@@ -103,7 +103,7 @@ do not have this directory.
 
 ## Directories created while the experiment runs
 
-After launch (`swell launch <path_to_experment.yaml>`), tasks add working directories and output beneath the experiment root. The exact
+After launch (`swell launch <experiment_root>/<experiment_id>/<experiment_id>-suite`), tasks add working directories and output beneath the experiment root. The exact
 contents depend on the selected suite, model components, and build method, but a data-assimilation
 experiment commonly develops this structure:
 
