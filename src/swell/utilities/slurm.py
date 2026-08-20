@@ -48,7 +48,7 @@ def prepare_scheduling_dict(
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
         "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}},
-        "RunJediEdaControlPertExecutable": {"all": {"nodes": 3, "ntasks-per-node": 126}}
+        "RunJediEdaControlPertExecutable": {"all": {"nodes": 3, "ntasks-per-node": 126}},
         "RunJediLocalEnsembleDaExecutable": {"all": {"nodes": 2}},
     }
 

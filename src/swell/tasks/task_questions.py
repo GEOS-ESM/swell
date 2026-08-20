@@ -893,16 +893,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    CleanEda = QuestionList(
-        list_name="CleanEda",
-        questions=[
-            run_jedi_executable,
-            qd.ensemble_num_members()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     SaveForecast = QuestionList(
         list_name="SaveForecast",
         questions=[

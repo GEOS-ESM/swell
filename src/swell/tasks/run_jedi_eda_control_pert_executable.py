@@ -237,7 +237,7 @@ class RunJediEdaControlPertExecutable(taskBase):
                 # copy obs input file to avoid multi MPI reading the same file
                 files = glob(os.path.join(self.cycle_dir(), f'{observation}.*'))
                 for src_file in files:
-                    self.loggerin.info(f'f= {src_file} is copied to {xdir}')
+                    self.logger.info(f'f= {src_file} is copied to {xdir}')
                     shutil.copy(src_file, xdir)
 
             # copy fv3-jedi dir, update dir names
