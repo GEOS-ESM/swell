@@ -20,7 +20,7 @@ experiment_id: test001
 ```
 
 
-## The configuration file for 3dvar-atmos (`experiment.yaml`):
+## The configuration file for 3dvar_atmos (`experiment.yaml`):
 
 
 The command `swell create suite -o override.yaml` will generate `experiment.yaml` (the final configure file) and `flow.cylc` (the final cylc file) in
