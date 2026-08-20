@@ -220,7 +220,7 @@ models:
 
 
 
-## Launch the `3dvar-atmos` experiment
+## Launch the `3dvar_atmos` experiment
 
 If the `swell create 3dvar-atmos` command runs successfully, you will be provided with a printout to launch the cylc job for the 3dvar-atmos suite, which looks like:
 
