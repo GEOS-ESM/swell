@@ -3,7 +3,7 @@
 Manually running a task is an advanced development and debugging technique. For normal execution
 and recovery, use Cylc so that task dependencies and state are managed by the workflow.
 
-1. The first step is ensure the full suite of modules that Swell tasks need is loaded. Navigate to the suite directory of the experiment and load the modules:
+1. The first step is to ensure the full suite of modules that Swell tasks need is loaded. Navigate to the suite directory of the experiment and load the modules:
 
 ```bash
 cd <experiment_root>/<experiment_id>/<experiment_id>-suite
