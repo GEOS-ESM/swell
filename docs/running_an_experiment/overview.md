@@ -4,7 +4,7 @@ Running a Swell experiment includes several steps:
 - Choosing a workflow that matches your scientific goal
 - Configure and create the experiment
 - Launch the experiment
-- Monitor its tasks and inspect the its logs and outputs
+- Monitor its tasks and inspect its logs and outputs
 
 **Creating** and **launching** are separate operations. `swell create` resolves the configuration and
 generates an experiment directory, but it does not run the workflow. `swell launch` starts the experiment.
