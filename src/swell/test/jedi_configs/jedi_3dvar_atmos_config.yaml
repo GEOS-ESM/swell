@@ -119,7 +119,7 @@ cost function:
       northward_wind_at_surface: v10m
   background error:
     covariance model: SABER
-    covariance type: hybrid
+    covariance type: gsi hybrid covariance
     saber central block:
       saber block name: gsi hybrid covariance
       read:
