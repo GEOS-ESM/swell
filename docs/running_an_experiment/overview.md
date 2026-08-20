@@ -28,7 +28,7 @@ Read the pages in the following order:
 8. [Manually Running Tasks](manually_running_tasks.md) describes an advanced development and
    debugging workflow outside Cylc.
 Workflow-specific inputs and expected results belong in the
-[practical examples](../practical_examples/README.md) (TODO:update this link). This section describes the common lifecycle
+[practical examples](../practical_examples/README.md). This section describes the common lifecycle
 shared by Swell workflows.
 
 Start by [choosing a workflow](choosing_a_workflow.md).

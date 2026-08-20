@@ -38,7 +38,6 @@
     - [3DVAR Marine Cycle Tier 2](practical_examples/soca/3dvar_marine_cycle_tier2.md)
     - [3DFGAT Marine Cycle](practical_examples/soca/3dfgat_marine_cycle.md)
   - Atmospheric (Weather) DA
-    - [Overview](practical_examples/atmosphere/README.md)
     - [3DVAR Atmosphere](practical_examples/atmosphere/3dvar_atmos.md)
     - [Ensemble Data Assimilation](practical_examples/atmosphere/eda_atmos.md)
     - [Local Ensemble DA](practical_examples/atmosphere/localensembleda.md)
@@ -68,7 +67,6 @@
   - [Adding Questions](extending_swell/adding_questions.md)
   - [Adding a Suite or Workflow](extending_swell/adding_a_suite.md)
   - [Adding Model Interfaces](extending_swell/adding_model_interfaces.md)
-  - [Adding Observations and Converters](extending_swell/adding_observations_and_converters.md)
   - [Adding Platform Support](extending_swell/adding_platform_support.md)
 
 - 6. Testing and Contributing

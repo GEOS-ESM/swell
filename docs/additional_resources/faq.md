@@ -26,7 +26,7 @@
 
 - My task has failed; I see a red box. What am I going to do?!?
 
-    > First, see `When a task fails` under [monitoring an experiment](../running_an_experiment/monitoring_an_experiment.md) to identify the root cause via logs. Even if a task fails, Cylc will keep the batch process in the background for two hours and only then will stop the suite. If `retry task` is defined for a certain task, Cylc will try rerunning the task x times after x minutes, depending on the `flow.cylc` settings (see xx). It is possible to retrigger a failed task; sometimes the problem may be a simple edit in the experiment/run directory. Afterward, the experiment will proceed as usual. It is also possible to restart (reinstall-reload) via the Cylc user interface to "revive" a stopped suite. This will allow the user to address certain issues beyond the two-hour limit.
+    > First, see `When a task fails` under [monitoring an experiment](../running_an_experiment/monitoring_an_experiment.md) to identify the root cause via logs. Even if a task fails, Cylc will keep the batch process in the background for two hours and only then will stop the suite. If `retry task` is defined for a certain task, Cylc will try rerunning the task according to the retry delays in `flow.cylc`. It is possible to retrigger a failed task; sometimes the problem may be a simple edit in the experiment/run directory. Afterward, the experiment will proceed as usual. It is also possible to restart (reinstall-reload) via the Cylc user interface to "revive" a stopped suite. This will allow the user to address certain issues beyond the two-hour limit.
 
 - Cylc TUI is showing a purple box for a certain task.
 
@@ -34,8 +34,8 @@
 
 - How can I create my own experiment?
 
-    > See the override section (xx)
+    > See [Creating an Experiment](../running_an_experiment/creating_an_experiment.md) and [Using an override file](../running_an_experiment/understanding_configuration.md?id=2-using-an-override-file--o-overrideyaml).
 
 - I actually begin to like SWELL; how can I contribute?
 
-    > See the developer guide (xx)
+    > See the [Contribution Guidelines](../testing_and_contributing/contribution_guidelines.md).

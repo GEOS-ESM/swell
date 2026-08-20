@@ -8,7 +8,7 @@ Model interface-specific configurations live under `src/swell/configuration/jedi
 Any questions that default to `defer_to_model` need associated values in `src/swell/configuration/jedi/interfaces/<model_component>/<suite or task>questions.yaml`. It is also possible to exclude certain questions from models using the `models` list in the question dataclass, which is useful when questions aren't relevant to all models.
 
 ### Observations
-Observation configurations in JEDI are model-specific, and live under `src/swell/configuration/jedi/interfaces/<model_component>/<observation>.yaml`. These are jinja2-templated YAML files that are used in the construction of the JEDI executable config. For more information, see [Adding observations](adding_observations_and_converters.md)
+Observation configurations in JEDI are model-specific, and live under `src/swell/configuration/jedi/interfaces/<model_component>/<observation>.yaml`. These are jinja2-templated YAML files that are used in the construction of the JEDI executable config. For information about downloading, converting, and ingesting observations into R2D2, see [R2D2 Observation & Background Ingestion](../practical_examples/r2d2/r2d2_ingest.md).
 
 ### Meta files
 Files under `src/swell/configuration/jedi/interfaces/<model_component>/<model_component>.yaml` set a selection of contextual information. Mainly, they are used to tell swell the specific JEDI executables that should be run for a given experiment, as well as some information about defaults.
