@@ -74,10 +74,13 @@ Names ending in `_tier1` or `_tier2` select configurations used by Swell's autom
 they are not different analysis methods. Start with the unsuffixed suite unless you are reproducing
 a tier test or a workflow guide explicitly asks for a tier configuration.
 
-Swell also exposes specialized suites such as `forecast_coupled_geos`, `geosadas`, `ufo_testing`,
+Swell also exposes specialized suites such as `forecast_coupled_geos`, `ufo_testing`,
 `eva_capabilities`, `build_jedi`, and `build_geos`. These support forecasting, development,
 compatibility tests, evaluation, or an isolated build. They are not the usual starting point for an
 analysis experiment.
+
+The [practical examples](../practical_examples/README.md) provide worked configurations for some
+model and workflow combinations.
 
 After selecting a suite, continue to [Understanding Configuration](understanding_configuration.md)
 to decide how to supply experiment-specific values.
