@@ -5,7 +5,7 @@ Tasks are color-coded by state; for example, running tasks are blue and complete
 
 ## When a task fails
 
-When a task fails it will show as red in the TUI. In TUI, you can go over the failed task with arrow keys on your keyboard, press enter and trigger the task.
+When a task fails, it will show as red in the TUI. In the TUI, select the failed task with the arrow keys, press Enter, and trigger the task.
 
 Alternatively, it is possible to navigate to the log files and locate them manually. Lets say the experiment ID is `swell-hofx` and the `Stage` task has failed during the `2020-12-15T00:00:00Z` cycle on the users second attempt to run `swell_launch_experiment` and `cylc`'s first run of the particular task. The logs for this task would be located at:
 
