@@ -19,6 +19,7 @@ analysis suites and non-analysis suites such as ingest or compare that are curre
 | `3dvar_cf_cycle` | `geos_cf` | Run cycling GEOS-CF 3DVAR when each composition analysis must be applied to a GEOS-CF forecast and its restarts saved for later cycles. |
 | `3dfgat_atmos` | `geos_atmosphere` | Run a non-cycling atmospheric 3D-FGAT analysis when observation timing within the assimilation window matters and time-varying atmospheric backgrounds are available. |
 | `3dfgat_marine_cycle` | `geos_marine` | Run cycling marine 3D-FGAT with GEOS when time-varying marine backgrounds are available and each analysis must update the coupled forecast used by a later cycle. |
+| `eda_atmos` | `geos_atmosphere` | Run an atmospheric ensemble of independent 3D-Var analyses with perturbed observations when you need analysis ensemble members, their mean and variance, and a mean analysis increment. |
 | `localensembleda` | `geos_atmosphere` | Run local ensemble data assimilation, such as GETKF, when flow-dependent uncertainty is central to the experiment and a compatible atmospheric background ensemble is available. |
 
 Here, **cycling** means that output from one analysis or forecast becomes input to a later cycle.
@@ -29,8 +30,9 @@ observation operator to a supplied background but does not produce an analysis i
 uses one background state to represent an assimilation window. 3D-FGAT uses time-varying
 background states so observations can be evaluated against a background valid near their
 observation times. Local ensemble data assimilation uses a background ensemble to represent
-flow-dependent uncertainty. Cycling additionally runs the forecast model and carries an analysis
-or restart into later cycles, requiring more compute resources and storage.
+flow-dependent uncertainty. EDA runs separate variational analyses for the ensemble members and
+then calculates ensemble statistics. Cycling additionally runs the forecast model and carries an
+analysis or restart into later cycles, requiring more compute resources and storage.
 
 Swell currently provides three JEDI model interfaces: `geos_atmosphere` for the GEOS atmosphere
 with FV3-JEDI, `geos_marine` for the GEOS marine component with SOCA, and `geos_cf` for GEOS-CF

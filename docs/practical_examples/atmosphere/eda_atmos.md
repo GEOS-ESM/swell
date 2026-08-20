@@ -1,6 +1,6 @@
 ## Background concept
 
-EDA stands for Ensemble of Data Assimilation. The `eda-atmos` suite is a JEDI block-EDA version that applies brute-force 3D-Var optimization 
+EDA stands for Ensemble of Data Assimilation. The `eda_atmos` suite is a JEDI block-EDA version that applies brute-force 3D-Var optimization
 for each independent member state. Random observation errors are also included into the cost function for minization.
 The ensemble mean and ensemble spread from analysis output are of siginicance to assmilation quality.
 
@@ -53,9 +53,9 @@ models:
    swell task RunJediObsfiltersExecutable $config -d $datetime -m geos_atmosphere
 ```
 
-3. Launch the eda-atmos experiment
+3. Launch the `eda_atmos` experiment
 
-If `swell create eda-atmos` is successful, you will be provided with a print out to launch the cylc job for the eda-atmos suite, which typically looks like:
+If `swell create eda_atmos` is successful, you will be provided with a print out to launch the cylc job for the `eda_atmos` suite, which typically looks like:
 
 ```
 swell launch /discover/nobackup/.../eda/eda-suite
@@ -120,7 +120,7 @@ eda.mean-inc.cs.20231010_000000z.nc4        [... in CS grid]
 
 5. EVA plots and EDA clean up
 
-The eda-atmos workflow will trigger EVA plot for ensemble mean increment. 
+The `eda_atmos` workflow will trigger EVA plot for ensemble mean increment.
 An example of mean T increment at 500 hPa is shown below.
 
 To save disk space on discover, the HofX outputs for individual ensemble members are purged at the end of the flow.

@@ -13,10 +13,10 @@ its own input file, output file, and grid_type.
 
 There are two ways to create the configure file.
 
-Method-1. modify the `eda-atmos` suite config file:
+Method-1. modify the `eda_atmos` suite config file:
 
 ```bash
-swell/src/swell/suites/eda/suite_config.py
+swell/src/swell/suites/eda_atmos/suite_config.py
 
 Lines 108 to 119 in 35e846c
  qd.ensmeanvariance_spec([ 
@@ -62,7 +62,7 @@ Finally to compute the mean and variance, run
 Method-1. modify the EDA suite config file:
 
 ```bash
-swell/src/swell/suites/eda/suite_config.py
+swell/src/swell/suites/eda_atmos/suite_config.py
 
 Lines 120 to 128 in 35e846c
  qd.diffstates_spec({ 
@@ -97,4 +97,3 @@ then run: `swell create eda_atmos -o override.yaml` to override the default conf
 
 Finally to compute the diff states, run
 `swell task RunJediDiffstates PATHTO/experiment.yaml -d $date -m geos_atmosphere`
-

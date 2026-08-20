@@ -55,7 +55,6 @@
 - 4. Data and R2D2
 
   - [R2D2 Concepts](introduction/r2d2_overview.md)
-  - [Observation Configuration](configuration_reference/observation_configuration.md)
   - [Fetching Observations from a Public S3 Bucket](configuration_reference/fetch_observations_public_s3.md)
   - [R2D2 Credentials](configuration_reference/r2d2_v3_credentials.md)
   - [Servers and Datastores](installation_and_setup/configuring_aws_server.md)

@@ -1,68 +1,119 @@
-# SLURM configuration for SWELL
+# SLURM configuration
 
-Many SWELL tasks are submitted using the SLURM scheduler.
-These tasks have some default SLURM directives that are stored within the SLURM source code (`src/swell/utilities/slurm.py`).
-However, in many cases, users may want to override the defaults with their own directives, or add additional options.
-There are two ways to do this:
+Swell uses SLURM to submit many workflow tasks on supported HPC platforms. SLURM
+settings can come from four places:
 
-The first is via the `$HOME/.swell/swell-slurm.yaml` file, which provides a single set of global overrides.
-The syntax of this file is unnested YAML that directly maps SLURM directives (e.g., `account`, `nodes`) to their values, as follows:
+1. Platform defaults distributed with Swell.
+2. Built-in defaults for individual tasks and models.
+3. User-wide defaults in `~/.swell/swell-slurm.yaml`.
+4. Experiment and task overrides supplied when an experiment is created.
+
+Settings from the more specific sources override settings from the more general
+sources. See [Configuration precedence](#configuration-precedence) for the full
+order.
+
+## User-wide defaults
+
+Use `~/.swell/swell-slurm.yaml` for directives that should apply to all of your
+Swell experiments. The file contains a flat mapping of `sbatch` directive names
+to values:
 
 ```yaml
 account: x1234
-nodes: 1
-qos: allqueues
+partition: compute
+qos: normal
 no-requeue: ''
 ```
 
-This corresponds to the command:
+Do not include the leading `--` used on the `sbatch` command line. For example,
+write `account`, not `--account`. Set a directive that takes no argument, such
+as `--no-requeue`, to an empty string. This is how Cylc represents a
+[flag-style directive](https://cylc.github.io/cylc-doc/stable/html/user-guide/task-implementation/job-submission.html#directives-section-quirks-pbs-sge).
 
-```sh
-sbatch ... --account=x1234 --nodes=1 --qos=allqueues --no-requeue
+Platform-specific defaults are stored in
+`src/swell/deployment/platforms/<platform>/slurm.yaml`. For example, the NCCS
+Discover Cascade and SLES15 configurations set the appropriate `constraint`
+value. The user-wide file overrides these platform defaults without requiring
+you to modify files distributed with Swell.
+
+Swell validates directive names against its supported `sbatch` options, but it
+does not validate every value. Quote a value when YAML could interpret it as a
+different type; for example, use `time: '01:30:00'`.
+
+## Experiment and task overrides
+
+To customize one experiment, create a YAML file and pass it to `swell create`
+with `-s` or `--slurm`:
+
+```shell
+swell create 3dvar_marine --slurm myslurm.yaml
 ```
 
-Note that the slurm directives such as `--no-requeue` take no arguments, so it was set to `''`. This is a Cylc reqirement for their SLURM directives handling. More details on this can be seen in their documentation [here](https://cylc.github.io/cylc-doc/stable/html/user-guide/task-implementation/job-submission.html#directives-section-quirks-pbs-sge).
-
-Since there are a few SLURM directives that are platform specific, they are stored under `deployment/platforms/{platform_name}/slurm.yaml`. For instance, requested nodes are `constraint: cas` for `nccs_discover_cascade` and `constraint: mil` for `nccs_discover_sles15`.
-
-All `sbatch` directives are supported (see [`man sbatch`](https://slurm.schedmd.com/sbatch.html)).
-However, note that SWELL will only validate that a given directive exists; we do not validate data types, or do anything fancy with type conversion (e.g., concatenation of arrays).
-If in doubt about types, use double quotes around values to force things to be strings.
-
-The second is to use the `-s / --slurm <somefile>` argument to SWELL (e.g., `slurm create 3dvar_marine -s myslurm.yaml`).
-This works similarly to the above but provides much finer-grained control over the ways that directives set for different tasks, though at the cost of more verbose syntax:
+The file can define directives for the whole experiment and overrides for
+individual tasks:
 
 ```yaml
-# Global user-specified default directives. These apply to all tasks and override
-# *all* hard-coded values.
 slurm_directives_global:
   account: x1234
   nodes: 1
 
-# Task-specific directives. These always override the globals (above) and any
-# hard-coded values.
 slurm_directives_tasks:
-  RunHofxExecutable:
-    # For model-specific tasks, "all" applies to all models.
+  RunJediHofxExecutable:
     all:
       nodes: 2
-    # Overrides for specific models.
     geos_atmosphere:
       nodes: 4
-  BuildJEDI:
-    # The "all" group is always required, even for tasks that aren't model-specific
+
+  BuildJedi:
     all:
       nodes: 2
 ```
 
-When SLURM directives conflict, the pattern of overrides generally proceeds such that user-specified targets override hard-coded targets and more specific targets override more general ones.
-The full priority list is as follows (directives higher in this list override directives lower):
+Entries under `slurm_directives_global` apply to every SLURM task in the
+experiment. Under `slurm_directives_tasks`, task names are case-sensitive and
+must match a task that Swell configures for SLURM; an unknown task name causes
+experiment creation to fail.
 
-1. Task- and model-specific directives (`slurm_directives_tasks`) set via `--slurm <somefile.yaml>` (e.g., `RunHofxExecutable.geos_atmosphere` would have `--nodes=4`).
-2. Task-specific (but model-agnostic) directives (`slurm_directives_tasks`) from `--slurm <somefile.yaml>` (e.g., `RunHofxExecutable.geos_marine` and all other `RunHofxExecutable` tasks would have `--nodes=2`)
-3. Global directives set from `--slurm <somefile.yaml>` (e.g., all tasks use account `x1234`; all tasks _except_ `RunHofxExecutable` and `BuildJEDI` use `--nodes=1`)
-4. User-level global directives in `$HOME/.swell/swell-slurm.yaml`
-5. Hard-coded platform specific directives (in SWELL source code `.../platforms/{platform_name}/slurm.yaml`)
-6. Hard-coded task- and model-specific directives (in SWELL source code)
-7. Hard-coded task-specific (but model-generic) directives (in SWELL source code)
-8. Hard-coded global defaults (in SWELL source code)
+Within a task, `all` applies to every model. A model-specific mapping, such as
+`geos_atmosphere` above, overrides `all` for that model. Model-agnostic tasks,
+such as `BuildJedi`, normally need only an `all` mapping.
+
+A task can also set `execution_time_limit` using an ISO 8601 duration. This
+controls how long Cylc waits for the job, independently of SLURM's `time`
+directive:
+
+```yaml
+slurm_directives_tasks:
+  RunJediHofxExecutable:
+    execution_time_limit: PT2H
+    all:
+      time: '01:30:00'
+```
+
+## Configuration precedence
+
+For a model-specific task, Swell uses the first applicable value in this list
+when the same directive is defined in more than one place:
+
+1. The task-and-model mapping in the file passed with `--slurm`.
+2. The task's `all` mapping in the file passed with `--slurm`.
+3. `slurm_directives_global` in the file passed with `--slurm`.
+4. User-wide defaults in `~/.swell/swell-slurm.yaml`.
+5. Swell's built-in defaults for that task and model.
+6. Swell's built-in defaults for that task across all models.
+7. Platform defaults in `src/swell/deployment/platforms/<platform>/slurm.yaml`.
+
+For a model-agnostic task, which uses the task's `all` mapping, the order is:
+
+1. The task's `all` mapping in the file passed with `--slurm`.
+2. Swell's built-in `all` mapping for that task.
+3. `slurm_directives_global` in the file passed with `--slurm`.
+4. User-wide defaults in `~/.swell/swell-slurm.yaml`.
+5. Platform defaults in `src/swell/deployment/platforms/<platform>/slurm.yaml`.
+
+This means a global override does not replace a built-in task default for a
+model-agnostic task. Put the override in that task's `all` mapping instead.
+Directives not set at a higher level are inherited from the levels below it.
+
+For the complete set of SLURM directives and their accepted values, see the
+[SLURM `sbatch` documentation](https://slurm.schedmd.com/sbatch.html).
