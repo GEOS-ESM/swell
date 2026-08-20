@@ -1299,9 +1299,12 @@ class QuestionDefaults():
 
     @dataclass
     class change_vbc_to_sbc(TaskQuestion):
-        default_value: str = "defer_to_model"
+        default_value: bool = False
         question_name: str = "change_vbc_to_sbc"
-        options: str = "defer_to_model"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
