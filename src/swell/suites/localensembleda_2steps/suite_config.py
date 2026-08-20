@@ -89,7 +89,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npy_proc(8),
             qd.perhost(96),
             qd.cycle_times(['T00']),
-            qd.ensemble_num_members(16),
+            qd.ensemble_num_members(32),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("Deterministic GETKF"),
             qd.local_ensemble_use_linear_observer(True),
@@ -101,7 +101,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.obs_thinning_rej_fraction(0.8),
+            qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
