@@ -23,8 +23,7 @@ analysis suites and non-analysis suites such as ingest or compare that are curre
 
 Here, **cycling** means that output from one analysis or forecast becomes input to a later cycle.
 For example, `3dvar_atmos` can cover several cycle points, but it retrieves a background for each
-analysis from an different run (e.g., geos-fp) instead of running the forecast that connects the analyses. Choose a `*_cycle` suite when Swell must run the forecast and manage that feedback loop.
-
+analysis from a different run (e.g., geos-fp) instead of running the forecast that connects the analyses. Choose a `*_cycle` suite when Swell must run the forecast and manage that feedback loop.
 Use the least complex analysis method that produces the information you need. HofX applies the
 observation operator to a supplied background but does not produce an analysis increment. 3DVAR
 uses one background state to represent an assimilation window. 3D-FGAT uses time-varying
