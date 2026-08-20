@@ -18,7 +18,7 @@
 
 - R2D2 is not working for me
 
-    > Please see [R2D2 settings](configuration_reference/r2d2_v3_credentials.md). As of the writing of this documentation, the same shared gmao-user API key is used, but this will change soon. Alternatively, the `--skip-r2d2` or `-k` argument can be used for `geos_atmosphere` applications to bypass R2D2 and use Ricardo's x00** experiment directories.
+    > Please see [R2D2 settings](../configuration_reference/r2d2_v3_credentials.md). As of the writing of this documentation, the same shared gmao-user API key is used, but this will change soon. Alternatively, the `--skip-r2d2` or `-k` argument can be used for `geos_atmosphere` applications to bypass R2D2 and use Ricardo's x00** experiment directories.
 
 - Can I view Cylc logs with my own editor?
 
@@ -26,11 +26,11 @@
 
 - My task has failed; I see a red box. What am I going to do?!?
 
-    > First, see `When a task fails` under [monitoring and experiment](running_an_experiment/monitoring_an_experiment.md) to identify the root cause via logs. Even if a task fails, Cylc will keep the batch process in the background for two hours and only then will stop the suite. If `retry task` is defined for a certain task, Cylc will try rerunning the task x times after x minutes, depending on the `flow.cylc` settings (see xx). It is possible to retrigger a failed task; sometimes the problem may be a simple edit in the experiment/run directory. Afterward, the experiment will proceed as usual. It is also possible to restart (reinstall-reload) via the Cylc user interface to "revive" a stopped suite. This will allow the user to address certain issues beyond the two-hour limit.
+    > First, see `When a task fails` under [monitoring an experiment](../running_an_experiment/monitoring_an_experiment.md) to identify the root cause via logs. Even if a task fails, Cylc will keep the batch process in the background for two hours and only then will stop the suite. If `retry task` is defined for a certain task, Cylc will try rerunning the task x times after x minutes, depending on the `flow.cylc` settings (see xx). It is possible to retrigger a failed task; sometimes the problem may be a simple edit in the experiment/run directory. Afterward, the experiment will proceed as usual. It is also possible to restart (reinstall-reload) via the Cylc user interface to "revive" a stopped suite. This will allow the user to address certain issues beyond the two-hour limit.
 
 - Cylc TUI is showing a purple box for a certain task.
 
-    > A purple box indicates a problem with SLURM-type tasks. Please see if you defined your [SLURM settings](configuration_reference/slurm_configuration.md) properly in terms of compute group and queue types. Another common issue with new SLURM tasks is that they need to be specified under the source code `src/swell/utilities/slurm.py`.
+    > A purple box indicates a problem with SLURM-type tasks. Please see if you defined your [SLURM settings](../configuration_reference/slurm_configuration.md) properly in terms of compute group and queue types. Another common issue with new SLURM tasks is that they need to be specified under the source code `src/swell/utilities/slurm.py`.
 
 - How can I create my own experiment?
 
