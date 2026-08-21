@@ -87,7 +87,7 @@ For each cycle and each `model_component` (only `geos_cf` in this suite), the fo
 - `RenderJediObservations`: render the JEDI observation configuration.
 - `RunJediHofxExecutable`: run the JEDI H(x) executable.
 - `EvaObservations`: generate observation-space diagnostic plots.
-- `SaveObsDiags` (unless `skip_r2d2` is `true`): store the observation diagnostics in R2D2.
+- `SaveObsDiags` (unless `skip_store_r2d2` is `true`): store the observation diagnostics in R2D2.
 - `CleanCycle`: remove large intermediate files matching `clean_patterns`.
 
 For the exact task dependency graph, look at the `hofx_cf` suite's workflow definition in the Swell

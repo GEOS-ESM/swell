@@ -136,7 +136,7 @@ For each cycle and each `model_component` (only `geos_cf` in this suite), the fo
 - `EvaObservations`: generate observation-space diagnostic plots.
 - `EvaJediLog`: generate JEDI log (cost function/iteration) diagnostic plots.
 - `EvaIncrement`: generate analysis increment diagnostic plots.
-- `SaveObsDiags` (unless `skip_r2d2` is `true`): store the observation diagnostics in R2D2.
+- `SaveObsDiags` (unless `skip_store_r2d2` is `true`): store the observation diagnostics in R2D2.
 - `CleanCycle`: remove large intermediate files matching `clean_patterns`.
 
 For the exact task dependency graph, look at the `3dvar_cf` suite's workflow definition in the Swell
