@@ -1062,6 +1062,10 @@ class QuestionDefaults():
                        "Only used when compress_algorithm is 'pigz'. "
                        "Should not exceed the number of CPUs allocated to the task.")
         widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_rc_path(TaskQuestion):
         default_value: str = 'GEOS_mksi/ObsClass/obsys-nccs.rc'
         question_name: str = 'obs_rc_path'

@@ -103,3 +103,5 @@ def decompress_if_needed(file_path: str) -> str:
 
 def compressed_extension(original_ext: str) -> str:
     return original_ext + '.gz'
+
+# --------------------------------------------------------------------------------------------------

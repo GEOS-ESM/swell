@@ -51,6 +51,7 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     target_file = r2d2_dict['target_file']
 
+    # Skip fetch if caching is enabled and the file already exists
     if cache_fetch and os.path.exists(target_file) and os.path.getsize(target_file) > 0:
         logger.info(f"Cache exists, skipping fetch: {target_file}")
         return
@@ -84,6 +85,7 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
         else:
             raise Exception(e)
 
+    # Change the permissions
     os.chmod(target_file, 0o644)
 
 
@@ -295,6 +297,7 @@ class GetObservations(taskBase):
                 provider_overrides=observation_providers,
             )
 
+            # Derive the file extension from the obsfile template in the obs YAML
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
@@ -321,7 +324,6 @@ class GetObservations(taskBase):
             # Here, we are fetching
             for obs_num, obs_time in enumerate(this_obs_list):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-
                 target_file = os.path.join(
                     self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
                 )

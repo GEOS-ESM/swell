@@ -211,15 +211,14 @@ class IngestObs(taskBase):
             self.logger.info(f"    Source: {target_file}")
             ingested.append(target_file)
         else:
-            file_extension = os.path.splitext(target_file)[1][1:]  # e.g. 'nc4' from '.nc4'
-
             try:
                 # Store to R2D2
                 store_kwargs = dict(
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
-                    file_extension=file_extension,
+                    file_extension=os.path.splitext(
+                        target_file)[1][1:],  # e.g. '.nc4'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file,

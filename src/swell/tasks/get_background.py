@@ -9,7 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.compress import decompress_if_needed
+from swell.utilities.compress import compressed_extension, decompress_if_needed
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 
 from datetime import timedelta
@@ -190,6 +190,9 @@ class GetBackground(taskBase):
                 fetch_step = bkg_step
                 fetch_date = forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
+                fetch_target = target_file
+                compress_output = False
+
                 if use_geos_cf_oper_background:
                     geos_cf_forecast_start_time = self.geos_cf_oper_forecast_start(background_time)
                     fetch_step = self.geos_cf_oper_step(
@@ -204,9 +207,16 @@ class GetBackground(taskBase):
                         f'date={fetch_date}, step={fetch_step}'
                     )
 
+                    # SaveBackground may have compressed this record before storing it
+                    # (compress_output). R2D2 query must match the stored extension.
+                    compress_output = self.config.compress_output(False)
+                    if compress_output:
+                        file_extension = compressed_extension(file_extension)
+                        fetch_target = target_file + '.gz'
+
                 fetch_kwargs = dict(
                     item='forecast',
-                    target_file=target_file,
+                    target_file=fetch_target,
                     model=r2d2_model,
                     experiment=background_experiment,
                     file_extension=file_extension,
@@ -219,8 +229,9 @@ class GetBackground(taskBase):
                     fetch_kwargs['data_store'] = r2d2_datastore
                 r2d2.fetch(**fetch_kwargs)
 
-                actual_file = decompress_if_needed(target_file)
-
+                # Decompress if SaveBackground stored this record compressed, then
+                # change permission on the file that actually ends up at target_file.
+                actual_file = decompress_if_needed(fetch_target)
                 os.chmod(actual_file, 0o644)
 
 # --------------------------------------------------------------------------------------------------
