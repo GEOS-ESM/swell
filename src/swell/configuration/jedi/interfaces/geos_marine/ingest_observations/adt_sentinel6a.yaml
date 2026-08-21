@@ -1,7 +1,6 @@
 # Data availability period (for reference only):
-# available_period:
-# time_begin: '2023-07-01T00:00:00Z'
+# time_begin: '2020-11-21T00:00:00Z'
 # time_end: '2999-12-31T23:59:59Z'
 
-retrieval_method: 'cp'
-cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/YYYY/MM'
+acquisition_method: 'cp'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_sentinel6a.nc4'

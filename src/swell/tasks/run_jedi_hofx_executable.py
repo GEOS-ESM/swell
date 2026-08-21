@@ -84,6 +84,13 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+
         # Model
         # -----
         if window_type == '4D':
@@ -157,6 +164,7 @@ class RunJediHofxExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')
+                return
 
             # If saving the geovals they need to be combined
             # ----------------------------------------------
@@ -262,6 +270,11 @@ class RunJediHofxExecutable(taskBase):
         # Add mem to the filename if it is not None
         mem_str = f'_mem{mem}' if mem is not None else ''
 
+        if not self.config.mock_experiment(False):
+            cycle_dir = self.cycle_dir()
+        else:
+            cycle_dir = 'cycle_dir'
+
         for observer in jedi_config_dict['observations']['observers']:
 
             observation = observer['observation_name']
@@ -269,7 +282,7 @@ class RunJediHofxExecutable(taskBase):
             # Define the GeoVaLs saver dictionary
             gom_saver_dict = {
                 'filter': 'GOMsaver',
-                'filename': os.path.join(self.cycle_dir(),
+                'filename': os.path.join(cycle_dir,
                                          f'{observation}-geovals.{window_begin}{mem_str}.nc4')
             }
 

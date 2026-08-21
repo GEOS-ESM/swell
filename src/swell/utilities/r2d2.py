@@ -8,7 +8,7 @@
 
 
 import os
-from ruamel.yaml import YAML
+from ruamel.yaml import YAML, YAMLError
 import random
 import subprocess
 
@@ -106,6 +106,7 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
         return None, None
 
     # Platform-specific R2D2 configurations
+    # Note: ~/.swell/r2d2_credentials.yaml overrides these values if specified
     platform_configs = {
         'nccs_discover_sles15': {
             'host': 'discover-gmao',
@@ -114,10 +115,6 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
         'nccs_discover_cascade': {
             'host': 'discover-gmao',
             'compiler': 'intel'
-        },
-        'aws': {
-            'host': 'aws-gmao',
-            'compiler': 'intel'  # or 'gnu' depending on AWS setup
         },
         'generic': {
             'host': None,
@@ -141,37 +138,72 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
 def load_r2d2_credentials(
     logger: Logger,
     platform: str = None,
-    yaml_path: str = "~/.swell/r2d2_credentials.yaml"
+    yaml_path: str = "~/.swell/r2d2_credentials.yaml",
+    r2d2_server: str | None = None,
 ) -> None:
     """
-    Load R2D2 v3 credentials from YAML file and set environment variables.
+    Load R2D2 credentials from YAML file and set environment variables.
     Host and compiler are automatically determined from platform configuration or YAML file.
 
     Args:
         logger: SWELL logger instance
         platform: Platform name (e.g., 'nccs_discover_sles15')
         yaml_path: Path to R2D2 credentials YAML file
+        r2d2_server: Server/profile name in the credentials YAML
+            (e.g. 'gmao', 'jcsda'). Selects which named credential block to load.
+            If not set, uses ``R2D2_SERVER`` env var if available.
+            If neither is set, uses the root of the YAML file.
     """
     yaml_path = os.path.expanduser(yaml_path)
+
+    server_name = None if r2d2_server is None else str(r2d2_server).strip() or None
+    if server_name is None:
+        env_server_name = os.environ.get('R2D2_SERVER')
+        if isinstance(env_server_name, str):
+            server_name = env_server_name.strip() or None
 
     # Determine platform-specific host and compiler
     r2d2_host, r2d2_compiler = _get_platform_r2d2_config(logger, platform)
 
     # Load credentials from YAML file if it exists
-    credentials = {}
+    credentials_yaml = {}
     if os.path.exists(yaml_path):
-        logger.info(f"Loading R2D2 v3 credentials from {yaml_path}")
+        logger.info(f"Loading R2D2 credentials from {yaml_path}")
         try:
             yaml = YAML(typ='safe')
             with open(yaml_path, 'r') as yaml_file:
-                credentials = yaml.load(yaml_file)
-        except Exception as e:
+                credentials_yaml = yaml.load(yaml_file) or {}
+        except (OSError, YAMLError) as e:
             logger.error(f"Error loading R2D2 credentials from {yaml_path}: {e}")
             logger.info("Continuing with existing environment variables...")
-            credentials = {}
+            credentials_yaml = {}
     else:
         logger.info(f"R2D2 credentials file not found at {yaml_path}")
-        logger.info("R2D2 v3 will use existing environment variables if set")
+        logger.info("R2D2 will use existing environment variables if set")
+
+    if not isinstance(credentials_yaml, dict):
+        raise TypeError("R2D2 credentials file must contain a YAML mapping at the root.")
+
+    if server_name is not None:
+        server_credentials = credentials_yaml.get(server_name)
+        if isinstance(server_credentials, dict):
+            credentials = server_credentials
+            logger.info(f"Using R2D2 credentials for server: {server_name!r}")
+        else:
+            raise ValueError(
+                f"R2D2 credentials for server {server_name!r} not found or not a mapping."
+            )
+    else:
+        # Select the first server name
+        all_named = bool(credentials_yaml) and all(
+            isinstance(v, dict) for v in credentials_yaml.values()
+        )
+        if all_named:
+            server_name = next(iter(credentials_yaml))
+            credentials = credentials_yaml[server_name]
+            logger.info(f"No r2d2_server set, auto-selected first profile: {server_name!r}")
+        else:
+            credentials = credentials_yaml
 
     # Set user credentials from YAML file
     if 'user' in credentials and 'R2D2_USER' not in os.environ:
@@ -180,22 +212,48 @@ def load_r2d2_credentials(
     if 'api_key' in credentials and 'R2D2_API_KEY' not in os.environ:
         os.environ['R2D2_API_KEY'] = credentials['api_key']
 
+    if 'r2d2_server_host' in credentials and 'R2D2_SERVER_HOST' not in os.environ:
+        os.environ['R2D2_SERVER_HOST'] = credentials['r2d2_server_host']
+
+    if 'r2d2_server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
+        os.environ['R2D2_SERVER_PORT'] = str(credentials['r2d2_server_port'])
+
+    if 'aws_access_key_id' in credentials and 'AWS_ACCESS_KEY_ID' not in os.environ:
+        os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
+
+    if 'aws_secret_access_key' in credentials and 'AWS_SECRET_ACCESS_KEY' not in os.environ:
+        os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
+
+    if 'aws_session_token' in credentials and 'AWS_SESSION_TOKEN' not in os.environ:
+        os.environ['AWS_SESSION_TOKEN'] = credentials['aws_session_token']
+
     # Set host and compiler (YAML config takes precedence over platform detection)
-    if 'host' in credentials and 'R2D2_HOST' not in os.environ:
+    if 'r2d2_host' in credentials and 'R2D2_HOST' not in os.environ:
+        os.environ['R2D2_HOST'] = credentials['r2d2_host']
+        logger.info(
+            f"YAML r2d2_host ({credentials['r2d2_host']!r}) overrides "
+            f"platform default ({r2d2_host!r})"
+        )
+
+    elif 'host' in credentials and 'R2D2_HOST' not in os.environ:
+        logger.warning("Credentials key 'host' is deprecated; rename it to 'r2d2_host'.")
         os.environ['R2D2_HOST'] = credentials['host']
-        logger.info(f"Using platform host '{r2d2_host}' (overriding YAML '{credentials['host']}')")
-        logger.warning("Using host from YAML file")
 
     elif r2d2_host and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_HOST'] = r2d2_host
         logger.info(f"Set R2D2_HOST={r2d2_host} from platform configuration")
 
     # Set compiler
-    if 'compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+    if 'r2d2_compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+        os.environ['R2D2_COMPILER'] = credentials['r2d2_compiler']
+        logger.info(
+            f"YAML r2d2_compiler ({credentials['r2d2_compiler']!r}) overrides "
+            f"platform default ({r2d2_compiler!r})"
+        )
+
+    elif 'compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+        logger.warning("Credentials key 'compiler' is deprecated; rename it to 'r2d2_compiler'.")
         os.environ['R2D2_COMPILER'] = credentials['compiler']
-        logger.info(f"Using platform compiler '{r2d2_compiler}' \
-                    (overriding YAML '{credentials['compiler']}')")
-        logger.warning("Using compiler from YAML file")
 
     elif r2d2_compiler and 'R2D2_COMPILER' not in os.environ:
         os.environ['R2D2_COMPILER'] = r2d2_compiler
@@ -226,11 +284,12 @@ def experiment_exists(r2d2_id: str):
 
     try:
         r2d2.get(item='experiment', name=r2d2_id)
+        return True
     except Exception as e:
-        if '400 Client Error' in str(e):
+        err = str(e)
+        if '400 Client Error' in err or '404 Not Found' in err or '404 Client Error' in err:
             return False
-
-    return True
+        raise
 
 # ----------------------------------------------------------------------------------------------
 

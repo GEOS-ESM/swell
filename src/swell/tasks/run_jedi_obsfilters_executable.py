@@ -24,6 +24,11 @@ class RunJediObsfiltersExecutable(taskBase):
 
     def execute(self, ensemble_members: Optional[list] = None) -> None:
 
+        # skip this task if the model is not geos_atmosphere
+        if self.get_model() != 'geos_atmosphere':
+            self.logger.info('Skip RunJediObsfiltersExecutable task for non-geos_atmosphere model')
+            return
+
         # Jedi application name
         # ---------------------
         jedi_application = 'obsfilters'
@@ -76,6 +81,13 @@ class RunJediObsfiltersExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+
         # Model
         # -----
         if window_type == '4D':
@@ -102,7 +114,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning', window_type,
                                                                 jedi_forecast_model)
 
-        # Include filter_thinning into {observations: obs sapce: obs filters:}
+        # Include filter_thinning into {observations: obs space: obs filters:}
         # -------------------------------------------------------------------
         new_dict = {'observations': []}
         for observer in jedi_config_dict['observations']['observers']:

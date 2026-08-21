@@ -4,11 +4,15 @@ Once you have installed `swell` and configured `cylc` you should be able to crea
 
 A useful command when using swell is `swell --help`. This will take you through all the options within swell. The help traverses through the applications so you can similarly issue `swell create --help`
 
+- Make sure you've configured `~/.swell/r2d2_credentials.yaml` as described in [R2D2 v3 credentials](configs/r2d2_v3_credentials.md).
+
 The first step is to create an experiment which is done with
 
 ```bash
 swell create <suite> <options>
 ```
+
+**During `swell create`**: Credentials are loaded, and the experiment is registered in R2D2 automatically. The experiment ID is stored in `experiment.yaml` and used by STORE operations such as SaveRestart and SaveObsDiags.
 
 This will create a directory with your experiment ID in the experiment root.
 

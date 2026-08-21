@@ -1,0 +1,43 @@
+datasets:
+
+- group: increment
+  type: LatLon
+  filename: {{increment_file_path}}
+  name: experiment_increment
+  variables: [NO2, lat, lon]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  #map plot for NO2 increment (near surface)
+  - batch figure:
+      variables: [NO2]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'NO2 Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_surface.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: NO2 Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::NO2
+            slices: '[71,...]'
+          label: NO2 increment (surface level)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1e-10
+          vmax: 1e-10

@@ -1,0 +1,192 @@
+# (C) Copyright 2025 NOAA/NWS/NCEP/EMC
+#
+# This software is licensed under the terms of the Apache License Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0.
+
+bufr:
+  subsets:
+    - NC021044
+
+  variables:
+    # MetaData
+    timestamp:
+      datetime:
+        year: "*/YEAR"
+        month: "*/MNTH"
+        day: "*/DAYS"
+        hour: "*/HOUR"
+        minute: "*/MINU"
+        second: "*/SECO"
+
+    dataReceiptTime:
+      datetime:
+        year: "*/RCYR"
+        month: "*/RCMO"
+        day: "*/RCDY"
+        hour: "*/RCHR"
+        minute: "*/RCMI"
+
+    latitude:
+      query: "*/CLATH"
+
+    longitude:
+      query: "*/CLONH"
+
+    satelliteId:
+      query: "*/SAID"
+
+    satelliteZenithAngle:
+      query: "*/SAZA"
+
+    solarZenithAngle:
+      query: "*/SOZA"
+
+    landOrSeaQualifier:
+      query: "*/LSQL"
+
+    geopotentialHeight:
+      query: "*/HITE"
+
+    sensorCentralFrequency:
+      query: "*/RPSEQ11{1-10}/SCCF"
+
+    # ObsValue
+    cloudType:
+      query: "*/RPSEQ11{1-10}/CLTP"
+
+    cloudAmount:
+      query: "*/RPSEQ11{1-10}/CLDMNT"
+
+    cloudFree:
+      query: "*/RPSEQ11{1-10}/NCLDMNT"
+
+    brightnessTemperature:
+      query: "*/RPSEQ11{1-10}/TMBRST"
+
+    clearSkyStandardDeviation:
+      query: "*/RPSEQ11{1-10}/SDTB"
+
+  splits:
+    satId:
+      category:
+        variable: satelliteId
+        map:
+          _173: h8
+          _174: h9
+
+encoder:
+  dimensions:
+    - name: Channel
+      path: "*/RPSEQ11{1-10}"
+
+  globals:
+    - name: "platformCommonName"
+      type: string
+      value: "Himawari"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "JMA HIMAWARI-8 Clear Sky Radiances (CSR)"
+
+    - name: "sensor"
+      type: string
+      value: "Advanced Himawari Imager (AHI)"
+
+    - name: "providerFullName"
+      type: string
+      value: "Japan Meteorological Agency (JMA)"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centers for Environmental Prediction (NCEP)"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP BUFR Dump containing NC021044 subset for JMA HIMAWARI-8 Clear Sky Radiances (CSR)"
+
+    - name: "processingLevel"
+      type: string
+      value: "Level-2"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+    # MetaData
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Datetime"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/dataReceiptTime"
+      source: variables/dataReceiptTime
+      longName: "Observation Receipt Time"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degrees_north"
+      range: [ -90, 90 ]
+
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degrees_east"
+      range: [ -180, 180 ]
+
+    - name: "MetaData/satelliteIdentifier"
+      source: variables/satelliteId
+      longName: "Satellite Identifier"
+
+    - name: "MetaData/satelliteZenithAngle"
+      source: variables/satelliteZenithAngle
+      longName: "Satellite Zenith Angle"
+      units: "degree"
+      range: [ 0, 90 ]
+
+    - name: "MetaData/solarZenithAngle"
+      source: variables/solarZenithAngle
+      longName: "Solar Zenith Angle"
+      units: "degree"
+      range: [0, 180]
+
+    - name: "MetaData/landOrSeaQualifier"
+      source: variables/landOrSeaQualifier
+      longName: "Land/Sea Qualifier"
+
+    - name: "MetaData/geopotentialHeight"
+      source: variables/geopotentialHeight
+      longName: "Geopotential Height"
+      units: "m"
+
+    - name: "MetaData/sensorCentralFrequency"
+      source: variables/sensorCentralFrequency
+      longName: "Satellite Channel Center Frequency"
+      units: "Hz"
+
+    # ObsValue
+    - name: "ObsValue/cloudType"
+      source: variables/cloudType
+      longName: "Cloud Type"
+
+    - name: "ObsValue/cloudAmount"
+      source: variables/cloudAmount
+      longName: "Cloud Amount In Segment"
+      units: "1"
+
+    - name: "ObsValue/cloudFree"
+      source: variables/cloudFree
+      longName: "Segment Amount Cloud Free"
+      units: "1"
+
+    - name: "ObsValue/brightnessTemperature"
+      source: variables/brightnessTemperature
+      longName: "Brightness Temperature"
+      units: "K"
+
+    - name: "ObsValue/clearSkyStandardDeviation"
+      source: variables/clearSkyStandardDeviation
+      longName: "Brightness Temperature Standard Deviation"
+      units: "K"      

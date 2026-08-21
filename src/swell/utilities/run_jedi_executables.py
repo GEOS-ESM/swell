@@ -76,7 +76,7 @@ def run_executable(
     # -----------------------
     persistent_job_id = os.environ.get('SWELL_PERSISTENT_JOB_ID')
 
-    if perhost is None:
+    if (perhost is None or perhost == "None"):
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
         if persistent_job_id:
             nodes_env = os.environ.get('SWELL_SRUN_NODES')

@@ -47,7 +47,6 @@ class GetBackgroundGeosExperiment(taskBase):
         background_experiment = self.config.background_experiment()
         geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()
-        horizontal_resolution = self.config.horizontal_resolution()
 
         # Since this is an optional task, check if the geos_x_background_directory is
         # set to /dev/null, if so fail the task
@@ -77,8 +76,10 @@ class GetBackgroundGeosExperiment(taskBase):
         # Define the source tar folder and file
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
+        sub_directory = ''
+
         bkgr_tar = os.path.join(geos_x_background_directory,
-                                horizontal_resolution,
+                                sub_directory,
                                 background_experiment,
                                 'rs',
                                 bkgr_exp_start_dto.strftime('Y%Y'),
@@ -110,12 +111,16 @@ class GetBackgroundGeosExperiment(taskBase):
                     # Strip the filename to get the date information
                     # -----------------------------------------------------
                     member_date_str = member.name.split('.')[2]
+                    member_type_str = member.name.split('.')[1]
                     member_date_dto = dt.strptime(member_date_str, '%Y%m%d_%H00z')
 
                     # Create the JEDI bkgr filename
                     # -----------------------------
                     jedi_date = member_date_dto.strftime(datetime_formats["directory_format"])
-                    bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
+                    if member_type_str == "bkg_clcv_rst":
+                        bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
+                    if member_type_str == "extbkg_clcv_rst":
+                        bkg_filename_jedi = f'extbkg.{jedi_date}.nc4'
 
                     # Rename the files
                     # ----------------

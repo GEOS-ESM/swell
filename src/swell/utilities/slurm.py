@@ -57,7 +57,8 @@ def prepare_scheduling_dict(
     task_defaults = {
         "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
-        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
+        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
+        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
@@ -89,8 +90,11 @@ def prepare_scheduling_dict(
         'EvaComparisonObservations',
         'EvaTimeseries',
         'GenerateBClimatology',
+        'RunCompressForecast',
         'RunGeos',
+        'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',
+        'RunJediDiffstates',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',
         'RunJediHofxEnsembleExecutable',
@@ -190,7 +194,7 @@ def prepare_scheduling_dict(
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
         # Default execution time limit for everthing is PT1H
-        x = 'PT1H'
+        x = 'PT20M'
         if slurm_task in experiment_task_directives.keys():
             x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
         scheduling_dict[slurm_task]['execution_time_limit'] = x

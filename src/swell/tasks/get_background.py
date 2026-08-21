@@ -11,6 +11,7 @@
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 
+from datetime import timedelta
 import isodate
 import os
 import r2d2
@@ -19,6 +20,26 @@ import r2d2
 
 
 class GetBackground(taskBase):
+
+    @staticmethod
+    def geos_cf_oper_forecast_start(background_time):
+        """Return the GEOS-CF v2 forecast cycle that provides background_time."""
+        forecast_start = background_time.replace(hour=9, minute=0, second=0, microsecond=0)
+
+        if background_time < forecast_start:
+            forecast_start = forecast_start - timedelta(days=1)
+
+        return forecast_start
+
+    @staticmethod
+    def geos_cf_oper_step(background_time, forecast_start_time):
+        """Return a GEOS-CF v2 R2D2 step string matching SaveBackground."""
+        step_seconds = int((background_time - forecast_start_time).total_seconds())
+
+        if step_seconds % 3600 == 0:
+            return f'PT{step_seconds // 3600}H'
+
+        return isodate.duration_isoformat(background_time - forecast_start_time)
 
     def execute(self) -> None:
         """Acquires background files for a given experiment and cycle
@@ -31,18 +52,34 @@ class GetBackground(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_server=self.config.r2d2_server(default=None),
+        )
+
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
 
         # Parse config
-        background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency(None)
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_type = self.config.window_type()
+
+        # For experiments with cycle in the suite name:
+        # for the first cycle, use background_experiment in config
+        # as the experiment id for fetching from r2d2 for cycles after
+        # the first, use the current experiment id for fetching from r2d2
+        if self.cycle_time_dto() != self.start_cycle_point_dto() and 'cycle' in self.suite_name():
+            background_experiment = self.config.r2d2_experiment_id()
+        else:
+            background_experiment = self.config.background_experiment()
+
+        self.logger.info(f'Fetching background from experiment {background_experiment}')
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
@@ -108,6 +145,15 @@ class GetBackground(taskBase):
         # Get name of this model component
         # --------------------------------
         model_component = self.get_model()
+        use_geos_cf_oper_background = (
+            model_component == 'geos_cf'
+            and background_experiment == 'geos_cf_oper'
+        )
+
+        if use_geos_cf_oper_background:
+            self.logger.info(
+                'Using GEOS-CF v2 fixed 09Z forecast reference for background fetches.'
+            )
 
         # Loop over background files in the R2D2 config and fetch
         # -------------------------------------------------------
@@ -140,18 +186,37 @@ class GetBackground(taskBase):
                 target_file = background_time.strftime(target_file_template)
 
                 file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
+                fetch_step = bkg_step
+                fetch_date = forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-                r2d2.fetch(
+                if use_geos_cf_oper_background:
+                    geos_cf_forecast_start_time = self.geos_cf_oper_forecast_start(background_time)
+                    fetch_step = self.geos_cf_oper_step(
+                        background_time,
+                        geos_cf_forecast_start_time
+                    )
+                    fetch_date = geos_cf_forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    file_extension = 'nc4'
+                    self.logger.info(
+                        f'GEOS-CF v2 background fetch: valid='
+                        f'{background_time.strftime("%Y-%m-%dT%H:%M:%SZ")}, '
+                        f'date={fetch_date}, step={fetch_step}'
+                    )
+
+                fetch_kwargs = dict(
                     item='forecast',
                     target_file=target_file,
                     model=r2d2_model,
                     experiment=background_experiment,
                     file_extension=file_extension,
                     resolution=horizontal_resolution,
-                    step=bkg_step,
-                    date=forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    step=fetch_step,
+                    date=fetch_date,
                     file_type=file_type,
                 )
+                if r2d2_datastore:
+                    fetch_kwargs['data_store'] = r2d2_datastore
+                r2d2.fetch(**fetch_kwargs)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

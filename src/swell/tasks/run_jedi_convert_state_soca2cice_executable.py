@@ -54,6 +54,13 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         self.jedi_rendering.add_key('analysis_time', analysis_time)
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+
         # Geometry
         # --------
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))

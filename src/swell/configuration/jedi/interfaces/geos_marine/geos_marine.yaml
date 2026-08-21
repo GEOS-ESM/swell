@@ -9,6 +9,10 @@ executables:
   variational4DEnsVar: soca_var.x
   explicit_diffusion: soca_error_covariance_toolbox.x
   convert_state_soca2cice: soca_convertstate.x
+  localensembleda: soca_letkf.x
+  ensmeanvariance: soca_ensmeanvariance.x
+  ensemblehofx3D: soca_hofx3d.x
+  obsfilters: soca_obsfilters.x
 variables:
   hocn: h
   socn: Salt

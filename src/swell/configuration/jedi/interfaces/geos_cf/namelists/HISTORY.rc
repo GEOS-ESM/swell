@@ -1,0 +1,141 @@
+VERSION: 1
+EXPID:  >>>SWELL_GEOSCF_FORECAST_EXPID<<<
+EXPDSC: JEDI
+EXPSRC: GEOSCFv2/rc1/t13
+
+
+COLLECTIONS:  '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<'
+#             'geosgcm_prog'
+#             'prog.eta'
+             ::
+
+##################################################
+# The GRID_LABELS section must be after the main #
+#  list of COLLECTIONS for scripting purposes.   #
+##################################################
+
+GRID_LABELS: PE90x540-CF
+             PE360x2160-CF
+             PC360x181-DC
+::
+
+PE360x2160-CF.GRID_TYPE: Cubed-Sphere
+PE360x2160-CF.IM_WORLD: 360
+PE360x2160-CF.JM_WORLD: 2160
+PE360x2160-CF.POLE: PC
+PE360x2160-CF.DATELINE: DC
+PE360x2160-CF.LM: 72
+
+PE90x540-CF.GRID_TYPE: Cubed-Sphere
+PE90x540-CF.IM_WORLD: 90
+PE90x540-CF.JM_WORLD: 540
+PE90x540-CF.POLE: PC
+PE90x540-CF.DATELINE: DC
+PE90x540-CF.LM: 72
+
+PC360x181-DC.GRID_TYPE: LatLon
+PC360x181-DC.IM_WORLD: 360
+PC360x181-DC.JM_WORLD: 181
+PC360x181-DC.POLE: PC
+PC360x181-DC.DATELINE: DC
+PC360x181-DC.LM: 72
+
+
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.template:  '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.archive:   '%c/Y%y4',
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.format:    'CFIO',
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.mode:      'instantaneous' ,
+  #>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.frequency:  010000,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.ref_time:   000000,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.grid_label: >>>SWELL_GEOSCF_JEDI_GRID<<<
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.fields:     'T'                       , 'DYN'           ,
+                          'U_DGRID;V_DGRID'         , 'DYN'           , 'ud;vd' ,
+                          'U;V'                     , 'DYN'           , 'ua;va' ,
+                          'DELP'                    , 'DYN'           ,
+                          'PS'                      , 'DYN'           ,
+                          'Q'                       , 'MOIST'         , 'SPHU'  ,
+                          'QITOT'                   , 'AGCM'          , 'qi'    ,
+                          'QLTOT'                   , 'AGCM'          , 'ql'    ,
+                          'PHIS'                    , 'AGCM'          , 'phis'  ,
+                          'SpeciesConc_O3'          , 'GEOSCHEMCHEM'  , 'O3'    ,
+                          'SpeciesConc_NO'          , 'GEOSCHEMCHEM'  , 'NO'    ,
+                          'SpeciesConc_NO2'         , 'GEOSCHEMCHEM'  , 'NO2'   ,
+                          'SpeciesConc_CO'          , 'GEOSCHEMCHEM'  , 'CO'    ,
+                          'EMIS_CO'                 , 'GEOSCHEMCHEM'  ,
+                          'EMIS_CO_IND'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_CO_POW'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_CO_TRA'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_CO_RES'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO'                 , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO_IND'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO_POW'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO_TRA'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO_RES'             , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO2'                , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO2_IND'            , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO2_POW'            , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO2_TRA'            , 'GEOSCHEMCHEM'  ,
+                          'EMIS_NO2_RES'            , 'GEOSCHEMCHEM'  ,
+                          'Met_PBLTHICK'            , 'GEOSCHEMCHEM'  , 
+                          ::
+
+
+
+
+
+  geosgcm_prog.template:         '%y4%m2%d2_%h2%n2z.nc4' ,
+  geosgcm_prog.archive:          '%c/Y%y4' ,
+  geosgcm_prog.format:           'CFIO' ,
+  geosgcm_prog.deflate:           1 ,
+  geosgcm_prog.grid_label:        PE90x540-CF ,
+  geosgcm_prog.frequency:         060000 ,
+  geosgcm_prog.vscale:            100.0 ,
+  geosgcm_prog.vunit:            'hPa' ,
+  geosgcm_prog.vvars:            'log(PLE)' , 'DYN' ,
+  geosgcm_prog.levels:            1000 975 950 925 900 875 850 825 800 775 750 725 700 650 600 550 500 450 400 350 300 250 200 150 100 70 50 40 30 20 10 7 5 4 3 2 1 0.7 0.5 0.4 0.3 0.2 0.1 0.07 0.05 0.04 0.03 0.02 ,
+  geosgcm_prog.fields:           'PHIS'   , 'AGCM'       ,
+                                 'SLP'    , 'DYN'        ,
+                                 'U;V'    , 'DYN'        ,
+                                 'T'      , 'DYN'        ,
+                                 'PS'     , 'DYN'        ,
+                                 'ZLE'    , 'DYN'        , 'H'   ,
+                                 'OMEGA'  , 'DYN'        ,
+                                 'Q'      , 'MOIST'      , 'QV'  ,
+                                 'QITOT'  , 'AGCM'       , 'QI'  ,
+                                 'QLTOT'  , 'AGCM'       , 'QL'  ,
+                                 'RH2'    , 'MOIST'      , 'RH'  ,
+                                 'O3'     , 'CHEMISTRY'  ,
+                                  ::
+
+
+
+  prog.eta.template:             '%y4%m2%d2_%h2%n2z.nc4' ,
+  prog.eta.archive:              '%c/Y%y4' ,
+  prog.eta.format:               'CFIO' ,
+  prog.eta.deflate:               1 ,
+  prog.eta.grid_label:            PC360x181-DC ,
+  prog.eta.regrid_method:        'BILINEAR',
+  prog.eta.mode:                 'instantaneous' ,
+  prog.eta.frequency:             060000 ,
+  prog.eta.duration:              060000 ,
+  prog.eta.ref_time:              000000 ,
+  prog.eta.fields:               'PHIS'       , 'AGCM'       , 'phis'       ,
+                                 'SGH'        , 'AGCM'       , 'hs_stdv'    ,
+                                 'TS'         , 'SURFACE'    , 'ts'         ,
+                                 'FRLAND'     , 'SURFACE'    , 'frland'     ,
+                                 'FRLANDICE'  , 'SURFACE'    , 'frlandice'  ,
+                                 'FRLAKE'     , 'SURFACE'    , 'frlake'     ,
+                                 'FROCEAN'    , 'SURFACE'    , 'frocean'    ,
+                                 'FRACI'      , 'SURFACE'    , 'frseaice'   ,
+                                 'PS'         , 'DYN'        , 'ps'         ,
+                                 'DELP'       , 'DYN'        , 'delp'       ,
+                                 'U;V'        , 'DYN'        , 'u;v'        ,
+                                 'TV'         , 'DYN'        , 'tv'         ,
+                                 'Q'          , 'MOIST'      , 'sphu'       ,
+                                 'O3PPMV'     , 'CHEMISTRY'  , 'ozone'      ,
+                                 'QITOT'      , 'AGCM'       , 'qitot'      ,
+                                 'QLTOT'      , 'AGCM'       , 'qltot'      ,
+                                 'QRTOT'      , 'MOIST'      , 'qrtot'      ,
+                                 'QSTOT'      , 'MOIST'      , 'qstot'      ,
+                                 ::

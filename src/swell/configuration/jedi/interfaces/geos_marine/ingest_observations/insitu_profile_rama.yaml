@@ -1,0 +1,6 @@
+# Data availability period (for reference only):
+# time_begin: '2004-01-01T00:00:00Z'
+# time_end: '2999-12-31T23:59:59Z'
+
+acquisition_method: 'cp'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/insitu_profile_rama/YYYY/MM/ioda-obs-YYYYMMDDHH-insitu_profile_rama.nc4'

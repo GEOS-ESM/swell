@@ -1,0 +1,6 @@
+# Data availability period (for reference only):
+# time_begin: '2015-07-07T00:00:00Z'
+# time_end: '2022-12-13T23:59:59Z'
+
+acquisition_method: 'cp'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/gdas_obs/gdas_YYYY/gdas.YYYYMMDD/HH/ocean/sst/gdas.tHHz.sst_ahi_h08_l3c.nc4'

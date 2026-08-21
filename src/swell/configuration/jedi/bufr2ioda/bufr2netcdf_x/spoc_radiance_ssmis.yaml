@@ -1,0 +1,201 @@
+bufr:
+  variables:
+    # MetaData
+    timestamp:
+      datetime:
+        year: "*/YEAR"
+        month: "*/MNTH"
+        day: "*/DAYS"
+        hour: "*/HOUR"
+        minute: "*/MINU"
+        second: "*/SECO"
+
+    latitude:
+      query: "*/CLAT"
+
+    latitude1:
+      query: "*/SATEPHEM{1}/CLATH"
+
+    latitude2:
+      query: "*/SATEPHEM{2}/CLATH"
+
+    longitude:
+      query: "*/CLON"
+
+    satelliteId:
+      query: "*/SAID"
+
+    scanLineNumber:
+      query: "*/SLNM"
+
+    fieldOfViewNumber:
+      query: "*/FOVN"
+
+    surfaceFlag:
+      query: "*/SFLG"
+
+    rainFlag:
+      query: "*/RFLAG"
+
+    sensorChannelNumber:
+      query: "*/SSMISCHN/CHNM"
+
+    sensorScanAngle:
+      sensorScanAngle:
+        fieldOfViewNumber: "*/FOVN"
+        scanStart: 0.0 
+        scanStep: 0.0 
+        sensor: ssmis
+
+    remappedBT:
+      remappedBrightnessTemperature:
+        sensor: ssmis
+        method: 1
+        satelliteId: "*/SAID"
+        latitude: "*/CLAT"
+        longitude: "*/CLON"
+        fieldOfViewNumber: "*/FOVN"
+        rainFlag: "*/RFLAG"
+        sensorChannelNumber: "*/SSMISCHN/CHNM"
+        brightnessTemperature: "*/SSMISCHN/TMBR"
+        obsTime:
+          year: "*/YEAR"
+          month: "*/MNTH"
+          day: "*/DAYS"
+          hour: "*/HOUR"
+          minute: "*/MINU"
+          second: "*/SECO"
+
+  splits:
+    satId:
+      category:
+        variable: satelliteId
+        map:
+          _249: f16
+          _285: f17
+          _286: f18
+
+encoder:
+  dimensions:
+    - name: Channel
+      source: variables/sensorChannelNumber  
+      path: "*/SSMISCHN"
+  
+  globals:
+    - name: "description"
+      type: string
+      value: "SSMIS Level-1B calibrated radiance data with precipitation-contaminated FOVs filtered out and spatial averaging applied to reduce spatial noise"
+
+    - name: "platformCommonName"
+      type: string
+      value: "DSMP"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "Defense Meteorological Satellite Program"
+
+    - name: "sensorCommonName"
+      type: string
+      value: "SSMIS"
+
+    - name: "sensorLongDescription"
+      type: string
+      value: "Special Sensor Microwave Imager/Sounder (SSMIS) - 21 frequencies, 24 channels MW radiometer covering the 54 and 183 GHz bands; conical scanning"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centres for Environmental Prediction (NCEP))"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP BUFR Dump - ssmisu NC021201"
+
+    - name: "processingLevel"
+      type: string
+      value: "Level-1B"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+    # MetaData
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Datetime"
+      units: "seconds since 1970-01-01T00:00:00Z" 
+  
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degree_north"
+      range: [-90, 90]
+  
+#    - name: "MetaData/latitudeSatEphem1"
+#      source: variables/latitude1
+#      longName: "Latitude from SATEPHEM Record 1 (high resolution)"
+#      units: "degree_north"
+#      range: [-90, 90]
+  
+#    - name: "MetaData/latitudeSatEphem2"
+#      source: variables/latitude2
+#      longName: "Latitude from SATEPHEM Record 2 (high resolution)"
+#      units: "degree_north"
+#      range: [-90, 90]
+  
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degree_east"
+  
+    - name: "MetaData/satelliteIdentifier"
+      source: variables/satelliteId
+      longName: "Satellite Identifier"
+  
+    - name: "MetaData/sensorScanPosition"
+      source: variables/fieldOfViewNumber
+      longName: "Field of View Number"
+  
+    - name: "MetaData/sensorChannelNumber"
+      source: variables/sensorChannelNumber
+      longName: "Sensor Channel Number"
+  
+    - name: "MetaData/sensorViewAngle"
+      source: variables/sensorScanAngle
+      longName: "Sensor View Angle"
+      units: "degree"
+
+    - name: "MetaData/solarZenithAngle"
+      source: variables/solarZenithAngle
+      longName: "Solar Zenith Angle"
+      units: "degree"
+
+    - name: "MetaData/solarAzimuthAngle"
+      source: variables/solarAzimuthAngle
+      longName: "Solar Azimuth Angle"
+      units: "degree"
+
+    - name: "MetaData/satelliteAscendingFlag"
+      source: variables/satelliteAscendingFlag
+      longName: "Satellite Ascending/Descending Orbit Flag (Ascend:1; Descend:-1)"
+
+    - name: "MetaData/earthSurfaceType"
+      source: variables/surfaceFlag
+      longName: "Earth Surface Type"
+  
+    - name: "MetaData/rainFlag"
+      source: variables/rainFlag
+      longName: "Rain Flag (1:rain; 0:no rain (clear); -1:no determined"
+  
+    - name: "MetaData/scanLineNumber"
+      source: variables/scanLineNumber
+      longName: "Scan Line Number"
+  
+    # ObsValue
+    # Remapped Brightness Temperature
+    - name: "ObsValue/brightnessTemperature"
+      source: variables/remappedBT
+      longName: "3-by-3 Averaged Brightness Temperature"
+      units: "K"
+      range: [120, 500]
+      chunks: [10000, 24]

@@ -41,6 +41,8 @@ class taskBase(ABC):
         datetime_input: Optional[str],
         model: str,
         ensemblePacket: Optional[str],
+        additional_parameter: Optional[str],
+        imember: int | None,
         task_name: str
     ) -> None:
 
@@ -62,9 +64,14 @@ class taskBase(ABC):
         if datetime_input is not None:
             self.__datetime__ = Datetime(datetime_input)
 
+        # Keep copy of additional parameter
+        # ---------------------------------
+        self.__additional_parameter__ = additional_parameter
+
         # Keep copy of ensemblePacket
         # ---------------------------
         self.__ensemble_packet__ = ensemblePacket
+        self.__ensemble_imember__ = imember
 
         # Keep copy of model directive
         # ----------------------------
@@ -168,8 +175,18 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def get_ensemble_imember(self) -> int | None:
+        return self.__ensemble_imember__
+
+    # ----------------------------------------------------------------------------------------------
+
     def get_model(self) -> str:
         return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_parameter(self) -> str:
+        return self.__additional_parameter__
 
     # ----------------------------------------------------------------------------------------------
 
@@ -274,7 +291,9 @@ class taskFactory():
         config: str,
         datetime: Union[str, dt, None],
         model: str,
-        ensemblePacket: Optional[str]
+        additional_parameter: str | None,
+        ensemblePacket: Optional[str],
+        imember: int | None = None,
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -288,9 +307,9 @@ class taskFactory():
         if model is not None:
             try:
                 task_class = getattr(importlib.import_module(
-                    f'swell.tasks.{model}.{task_lower}-{model}'), task)
+                    f'swell.tasks.{model}.{task_lower}_{model}'), task)
                 factory_logger.info(f'Using model-specific version of {task} in '
-                                    f'<swell.tasks.{model}.{task_lower}-{model}>')
+                                    f'<swell.tasks.{model}.{task_lower}_{model}>')
             except ModuleNotFoundError:
                 factory_logger.info(f'Could not find model-specific version of {task}.'
                                     ' Looking for generic version.')
@@ -303,7 +322,8 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, task)
+        return task_class(config, datetime, model, ensemblePacket,
+                          additional_parameter, imember, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -323,6 +343,15 @@ def get_tasks() -> list:
         if '__' not in base_name:
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
 
+    # Get model-specific task names
+    for model in os.listdir(os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces')):
+        model_task_path = os.path.join(get_swell_path(), 'tasks', model)
+        if os.path.exists(model_task_path):
+            for task_file in os.listdir(model_task_path):
+                if f'_{model}.py' in task_file:
+                    task_name = task_file.split(f'_{model}.py')[0]
+                    tasks.append(snake_case_to_camel_case(task_name))
+
     # Return list of valid task choices
     return tasks
 
@@ -334,13 +363,16 @@ def task_wrapper(
     config: str,
     datetime: Union[str, dt, None],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    additional_parameter: str | None,
+    ensemblePacket: Optional[str],
+    imember: int | None = None,
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
-    task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
+    task_object = creator.create_task(task, config, datetime, model, additional_parameter,
+                                      ensemblePacket, imember=imember)
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 

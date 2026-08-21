@@ -69,8 +69,8 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
-        self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block())
-        self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block())
+        self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block(None))
+        self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block(None))
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
@@ -97,6 +97,13 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
+
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
         # Atmosphere background error model
         # ---------------------------------

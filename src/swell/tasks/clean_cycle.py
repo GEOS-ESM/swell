@@ -7,7 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import isodate
 import os
+import shutil
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from datetime import datetime as dt
@@ -86,6 +88,33 @@ class CleanCycle(taskBase):
                 else:
 
                     os.remove(item_to_remove)
+
+        # Clean the previous cycle's scratch directory now that this cycle has retrieved
+        # any restart/checkpoint files it needed (which may have been symlinked from there)
+        window_length = self.config.window_length(None)
+
+        if window_length is not None and self.cycle_time_dto() != self.start_cycle_point_dto():
+            prev_cycle_time = self.cycle_time_dto() - isodate.parse_duration(window_length)
+            prev_scratch_dir = os.path.join(
+                self.experiment_path(), 'run',
+                prev_cycle_time.strftime(datetime_formats['directory_format']),
+                self.__model__, 'scratch'
+            )
+            if os.path.isdir(prev_scratch_dir):
+                self.logger.info(f'Removing previous cycle scratch directory: {prev_scratch_dir}')
+                shutil.rmtree(prev_scratch_dir)
+
+        # If this is the last cycle of the experiment, also remove the current cycle's scratch dir
+        if self.cycle_time_dto() == self.final_cycle_point_dto():
+            curr_scratch_dir = os.path.join(
+                self.experiment_path(), 'run',
+                self.cycle_time_dto().strftime(datetime_formats['directory_format']),
+                self.__model__, 'scratch'
+            )
+            if os.path.isdir(curr_scratch_dir):
+                self.logger.info(f'Removing the last cycle scratch directory: '
+                                 f'{curr_scratch_dir}')
+                shutil.rmtree(curr_scratch_dir)
 
         # Have date information for the cycle done file
         time_short = dt.today().strftime(datetime_formats['directory_format'])

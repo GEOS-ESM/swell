@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass
-from typing import List, Dict
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -131,6 +131,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class mock_experiment(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "mock_experiment"
+        ask_question: bool = False
+        prompt: str = "Dry-run option for comparing configs."
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class model_components(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "model_components"
@@ -162,6 +172,35 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_server(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_server"
+        ask_question: bool = False
+        prompt: str = (
+            "Server/profile name in ~/.swell/r2d2_credentials.yaml "
+            "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class r2d2_datastore(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_datastore"
+        ask_question: bool = False
+        prompt: str = (
+            "Datastore name passed to R2D2 fetch and store operations "
+            "(e.g. a Discover directory store or an S3 bucket store). "
+            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
+            "Leave empty to let R2D2 pick the highest-priority writable datastore "
+            "for your compute host."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
@@ -174,13 +213,41 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class saber_central_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_central_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber central block do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_outer_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_outer_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber outer blocks do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class skip_ensemble_hofx(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "skip_ensemble_hofx"
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = "Enter if skip ensemble hofx."
+        prompt: str = "Do you want to run localensembleda observer and solver together?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -249,34 +316,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class saber_central_block(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "saber_central_block"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which saber central block do you want to use?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class saber_outer_block(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "saber_outer_block"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which saber outer blocks do you want to use?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class background_experiment(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_experiment"
@@ -316,6 +355,61 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ebkg_time_offset(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ebkg_time_offset"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("How long before the middle of the analysis window did"
+                       " the ensemble background providing forecast begin?")
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_experiment(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_experiment"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the name of the experiment providing the restart files in R2D2?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_file_types(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_file_types"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What are the restart file types to fetch/store from R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_store_interval(TaskQuestion):
+        default_value: str = None
+        question_name: str = "rst_store_interval"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = ("After how many cycles should restart files be stored as real files "
+                       "(not symlinks)? E.g. 28 means every 28th cycle (and multiples) stores "
+                       "real files. Leave unset to always store as symlinks.")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
@@ -418,7 +512,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
         widget_type: WType = WType.INTEGER
@@ -432,7 +526,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Enter hofx strategy."
         widget_type: WType = WType.STRING_DROP_LIST
@@ -445,10 +539,23 @@ class QuestionDefaults():
         question_name: str = "ensemble_num_members"
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "How many members comprise the ensemble?"
         widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_pert_amplitude(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "obs_pert_amplitude"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Enter obs perturbation amplitude for EDA:"
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -461,7 +568,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Calculate ensemble mean only?"
         widget_type: WType = WType.BOOLEAN
@@ -477,10 +584,36 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
         widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ensmeanvariance_spec(TaskQuestion):
+        default_value: List[Dict[str, str]] = field(default_factory=lambda: [{}])
+        question_name: str = "ensmeanvariance_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the ensemble mean and variance specifications:"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class diffstates_spec(TaskQuestion):
+        default_value: Dict[str, Any] = field(default_factory=dict)
+        question_name: str = "diffstates_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the diffstates specifications: [state1, state2]"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -591,6 +724,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class forecast_length(TaskQuestion):
+        default_value: str = "PT12H"
+        question_name: str = "forecast_length"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Duration of the GEOS-CF forecast (ISO 8601 duration, e.g. PT12H)"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class forecast_output_frequency(TaskQuestion):
+        default_value: str = "PT1H"
+        question_name: str = "forecast_output_frequency"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Frequency of forecast output files (ISO 8601 duration, e.g. PT1H)"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class generate_yaml_and_exit(TaskQuestion):
         default_value: bool = False
         question_name: str = "generate_yaml_and_exit"
@@ -649,6 +808,58 @@ class QuestionDefaults():
         prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
                        "output and restart files), if it is different than your GEOS HOME "
                        "Directory?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_install_dir(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geos_cf_install_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF install directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_run_dir(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geos_cf_run_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF model run directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_exp(TaskQuestion):
+        default_value: str = "f5295_fp"
+        question_name: str = "geosfp_exp"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the GEOS FP experiment ID used for IAU analysis files?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_path(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geosfp_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS FP archive?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -773,44 +984,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class horizontal_localization_lengthscale(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_lengthscale"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "What is the length scale for horizontal covariance localization?"
-        widget_type: WType = WType.FLOAT
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_max_nobs(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_max_nobs"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = ("What is the maximum number of observations to consider"
-                       " for horizontal covariance localization?")
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_method(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_method"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Which localization scheme should be applied in the horizontal?"
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class horizontal_resolution(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_resolution"
@@ -838,6 +1011,29 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class store_as_symlink(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "store_as_symlink"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_rc_path(TaskQuestion):
+        default_value: str = 'GEOS_mksi/ObsClass/obsys-nccs.rc'
+        question_name: str = 'obs_rc_path'
+        ask_question: bool = True
+        prompt: str = "Filepath to observing system rc file within experiment directory."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
         question_name: str = "obs_to_ingest"
@@ -850,6 +1046,34 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_download(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_download"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to download from remote servers?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class converter_path(TaskQuestion):
+        default_value: str = ""
+        question_name: str = "converter_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Path to directory containing ioda-converter scripts"
+                       " (leave blank to use jedi_bin)")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class initial_restarts_method(TaskQuestion):
         default_value: str = "defer_to_platform"
@@ -880,8 +1104,38 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class iau(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "iau"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Use Incremental Analysis Update (IAU) in the GEOS-CF forecast?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class inc_template(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "inc_template"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF increment template NetCDF file?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class jedi_build_method(TaskQuestion):
-        default_value: str = "create"
+        default_value: str = "use_existing"
         question_name: str = "jedi_build_method"
         ask_question: bool = True
         options: List[str] = mutable_field([
@@ -917,7 +1171,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_mult"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
         widget_type: WType = WType.FLOAT
@@ -929,7 +1183,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtpp"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
         widget_type: WType = WType.FLOAT
@@ -941,7 +1195,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtps"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
         widget_type: WType = WType.FLOAT
@@ -957,7 +1211,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble members?"
         widget_type: WType = WType.BOOLEAN
@@ -974,7 +1228,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
         widget_type: WType = WType.BOOLEAN
@@ -991,7 +1245,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble mean?"
         widget_type: WType = WType.BOOLEAN
@@ -1008,7 +1262,7 @@ class QuestionDefaults():
             False
         ])
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
         widget_type: WType = WType.BOOLEAN
@@ -1022,7 +1276,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
         widget_type: WType = WType.STRING_DROP_LIST
@@ -1036,9 +1290,9 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
-        prompt: str = "Which local ensemble solver type should be implemented?"
+        prompt: str = "Use linear observer in local ensemble solver?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -1184,6 +1438,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class observation_providers(TaskQuestion):
+        default_value: Dict[str, str] = mutable_field({})
+        question_name: str = "observation_providers"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Map observation names to their R2D2 providers."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_thinning_rej_fraction(TaskQuestion):
         default_value: float = 0.75
         question_name: str = "obs_thinning_rej_fraction"
@@ -1251,7 +1518,6 @@ class QuestionDefaults():
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere",
             "geos_marine"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
@@ -1335,6 +1601,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class publish_directory(TaskQuestion):
+        default_value: str = None
+        question_name: str = "publish_directory"
+        ask_question: bool = False
+        prompt: str = "Provide an external directory to publish relevant results to."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class cache_fetch(TaskQuestion):
         default_value: bool = True
         question_name: str = "cache_fetch"
@@ -1343,6 +1619,19 @@ class QuestionDefaults():
             False
         ])
         prompt: str = "Use cached observation files if they already exist?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class fetch_obs_from_public_s3(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "fetch_obs_from_public_s3"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Fetch observations directly from a public S3 bucket if they are available?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -1380,6 +1669,9 @@ class QuestionDefaults():
     class swell_static_files(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
         prompt: str = "What is the path to the Swell Static files directory?"
         widget_type: WType = WType.STRING
 
@@ -1532,4 +1824,38 @@ class QuestionDefaults():
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
         widget_type: WType = WType.STRING_DROP_LIST
 
-# --------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class background_source_path(TaskQuestion):
+        default_value: str = (
+            '/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/'
+            'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4'
+        )
+        question_name: str = "background_source_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field(['geos_cf'])
+        prompt: str = ("Path template for background files. Uses Python strftime format codes, "
+                       "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
+                       "20251002_0900z.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ingest_background_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "ingest_background_pipeline"
+        ask_question: bool = False
+        prompt: str = "Run the SaveBackground task to ingest background files into R2D2?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class download_convert_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "download_convert_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
+                       "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+        widget_type: WType = WType.BOOLEAN

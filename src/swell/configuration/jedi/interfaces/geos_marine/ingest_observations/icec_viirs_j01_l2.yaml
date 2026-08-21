@@ -1,0 +1,6 @@
+# Data availability period (for reference only):
+# time_begin: '2017-11-18T00:00:00Z'
+# time_end: '2024-12-31T23:59:59Z'
+
+acquisition_method: 'cp'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/gdas_obs/gdas_YYYY/gdas.YYYYMMDD/HH/ocean/icec/gdas.tHHz.icec_viirs_j01_l2.nc4'

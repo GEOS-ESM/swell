@@ -1,3 +1,4 @@
+#!jinja2
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -17,6 +18,8 @@
     UTC mode = True
     allow implicit tasks = False
 
+{{scheduling['stall_timeout']}}
+
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
@@ -26,6 +29,11 @@
     runahead limit = {{runahead_limit}}
 
     [[graph]]
+	R1 = """
+        {% for model_component in model_components %}
+            JediLogComparison-{{model_component}}?
+        {% endfor %}     
+        """
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
@@ -33,10 +41,11 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
-	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => comparison_fail
+            JediLogComparison-{{model_component}}? => Pass
+            JediLogComparison-{{model_component}}:fail? => comparison_fail?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
         {% endif %}
         {% endfor %}
         """
@@ -62,6 +71,15 @@
         script = "exit 1"
 
     {% for model_component in model_components %}
+    [[Pass]]
+        #cylc set ... --out skip tells Cylc: “this task is intentionally not going to run; mark it as skipped.”
+        script = """
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonObservations-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/PublishComparisons --out skip
+        """
+
     [[EvaComparisonIncrement-{{model_component}}]]
         script = "swell task EvaComparisonIncrement $config -d $datetime -m {{model_component}}"
 
@@ -76,6 +94,9 @@
         {%- for key, value in scheduling["EvaComparisonObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[PublishComparisons]]
+         script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
 
     {% if comparison_experiment_paths is mapping %}
     {% for path in comparison_experiment_paths.values() %}
