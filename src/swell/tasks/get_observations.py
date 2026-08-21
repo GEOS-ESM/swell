@@ -298,6 +298,7 @@ class GetObservations(taskBase):
             )
 
             # Derive the file extension from the obsfile template in the obs YAML
+            # this is the single source of truth for what format JEDI expects.
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
