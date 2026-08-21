@@ -472,6 +472,7 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.cache_fetch(),
             qd.cycling_varbc(),
+            qd.fetch_obs_from_public_s3(),
             qd.obs_experiment(),
             qd.observation_providers(),
             qd.observing_system_records_path(),
@@ -933,21 +934,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    SaveForecastCf = QuestionList(
-        list_name="SaveForecastCf",
-        questions=[
-            qd.forecast_length(),
-            qd.forecast_output_frequency(),
-            qd.horizontal_resolution(),
-            qd.window_length(),
-            qd.compress_output(),
-            qd.compress_algorithm(),
-            qd.compress_pigz_threads(),
         ]
     )
 
