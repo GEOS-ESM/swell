@@ -62,7 +62,6 @@ class SuiteConfig(QuestionContainer, Enum):
                                 'tropomi_s5p_co_total', 'tempo_no2_tropo']),
             qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                               'tropomi_s5p_co_total', 'tempo_no2_tropo']),
-            ),
             qd.dry_run(True),
             qd.store_as_symlink(False),
         ]
