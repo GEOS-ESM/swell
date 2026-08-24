@@ -178,7 +178,7 @@ obs post filters:
           channels: *amsua_metop-b_available_channels
           options:
             channels: *amsua_metop-b_available_channels
-            sensor: *Sensor_ID
+            sensor: microwave
         error parameter vector: *amsua_metop-b_oberr
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,

@@ -180,7 +180,7 @@ obs post filters:
           channels: *atms_n20_channels
           options:
             channels: *atms_n20_channels
-            sensor: *Sensor_ID
+            sensor: microwave
         error parameter vector: *atms_n20_oberr
         obserr_bound_max: [4.5, 4.5, 3.0, 3.0, 1.0,
                            1.0, 1.0, 1.0, 1.0, 1.0,
