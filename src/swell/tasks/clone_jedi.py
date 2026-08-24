@@ -39,7 +39,7 @@ class CloneJedi(taskBase):
         # ----------------------------------------------------------------
         if self.config.resolve(jedi_build_method) == 'use_existing':
             # Link the source code directory
-            link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
+            link_path(self.config.resolve(existing_jedi_source_directory), jedi_bundle_source_path)
 
         elif self.config.resolve(jedi_build_method) == 'use_pinned_existing':
             # Check hashes before proceeding

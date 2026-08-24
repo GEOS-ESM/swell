@@ -127,7 +127,7 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def resolve(self, question: SwellQuestion, default='LrZRExPGcQ'):
-        name = question.question_name
+        name = question().question_name
 
         if name in self.question_list:
             default = self.experiment_dict[name]

@@ -7,7 +7,7 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList, WidgetType
+from swell.utilities.swell_questions import QuestionContainer, QuestionList
 import swell.configuration.question_defaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
@@ -25,9 +25,9 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             sq.all_suites,
             qd.comparison_experiment_paths(),
-            qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
-            qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
-            qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
+            qd.start_cycle_point(default_value=None),
+            qd.final_cycle_point(default_value=None),
+            qd.cycle_times(default_value=[None]),
             qd.model_components(),
             qd.runahead_limit(),
         ]
