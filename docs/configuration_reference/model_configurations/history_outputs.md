@@ -46,4 +46,4 @@ model:
   tstep: PT3H
 ```
 
-More details can be found in [JEDI/SOCA documentation](https://jointcenterforsatellitedataassimilation-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/soca/index.html).
+More details can be found in [JEDI/SOCA documentation](https://jcsda-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/soca/index.html).
