@@ -32,11 +32,12 @@ class PrepCoupledGeosRunDir(taskBase):
         As the name suggests, this task is geared towards coupled GEOSgcm simulations but
         the only difference between this and dataOcean ones should be in the get_static() method.
 
-        xx) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
-        xx) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
-        xx) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with
+        01) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
+        02) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
+        03) Modifies ice_in and diag_table files to match background_frequency
+        xx) (Not active) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with
             experiment.yaml value if the override switch is on
-        xx) Modifies CAP.rc according to cycle_date and forecast_duration
+        04) Modifies CAP.rc according to cycle_date and forecast_duration
         """
 
         # These links were created in get_*_geos_restart task. This step will copy experiment
@@ -66,14 +67,20 @@ class PrepCoupledGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
+        # Modify ice_in and diag_table to allow different DA windows without changing the GEOSgcm 
+        # experiment directory
+        # --------------------------------
+        bkgr_freq = self.config.get_key_for_model('background_frequency', 'geos_marine', 'PT00')
+        self.geos.process_icein(bkgr_freq)
+        self.geos.process_diag_table(bkgr_freq)
+
         # IAU augment for MOM6
         # --------------------
-        if 'geos_marine' == self.get_model():
-            self.mom6_iau()
+        self.mom6_iau()
 
         # Modify input.nml if not cold start (default)
         # --------------------------------------------
-        self.geos.process_nml()
+        self.geos.process_inputnml()
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
@@ -124,7 +131,7 @@ class PrepCoupledGeosRunDir(taskBase):
         #         else:
         #             outfile.write(line)
 
-        # TODO: Still need to rewrite CAP.rc here for now to make sure END_TIME is long enough
+        # Still need to rewrite CAP.rc here for now to ensure END_TIME is long enough
         self.cap_dict = self.rewrite_cap(self.cap_dict, self.forecast_dir('CAP.rc'))
 
         self.agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
