@@ -16,6 +16,7 @@ from swell.utilities.build import link_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.pinned_versions.check_hashes import check_hashes
 from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
+from swell.configuration.question_defaults import *
 
 
 # --------------------------------------------------------------------------------------------------

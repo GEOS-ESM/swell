@@ -12,6 +12,7 @@ import os
 from dataclasses import dataclass, asdict, field
 from typing import List, Optional, Self, Union, Literal
 from enum import Enum
+from collections.abc import Mapping
 
 from swell.utilities.datetime_util import is_datetime, is_duration
 from swell.swell_path import get_swell_path
@@ -19,68 +20,51 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
-class WidgetType(Enum):
+class DataType(Enum):
     STRING = "string"
-    STRING_CHECK_LIST = "string-check-list"
-    STRING_DROP_LIST = "string-drop-list"
     BOOLEAN = "boolean"
     ISO_DURATION = "iso-duration"
     ISO_DATETIME = "iso-datetime"
     INTEGER = "integer"
     INTEGER_LIST = "integer-list"
-    FILE_CHECK_LIST = "file-check-list"
     FLOAT = "float"
+    LIST = "list"
+    MAPPING = "mapping"
 
-    @property
-    def is_drop_list(self) -> bool:
-        return 'drop-list' in self.value
+    def is_type(self, value) -> bool:
+        """ Validate that the value matches the data type. """
 
-    @property
-    def is_check_list(self) -> bool:
-        return 'check-list' in self.value
-
-    @property
-    def base_type(self) -> type:
-        """ Get the base type of the value based on the widget type. """
-        if 'string' in self.value:
-            return str
-        if 'boolean' in self.value:
-            return bool
-        if 'integer' in self.value:
-            return int
-        if 'float' in self.value:
-            return float
-        if 'iso-' in self.value:
-            return str
-
-    def validate_value(self, value) -> bool:
-        """ Validate that the value matches the type and format of the widget type. """
-        base_type = self.base_type()
-
-        # Check that the answer fits the base type
-        if base_type == float:
-            try:
-                float(value)
-            except ValueError:
-                return False
-        elif base_type == int:
-            try:
-                int(value)
-            except ValueError:
-                return False
-        else:
-            try:
-                str(value)
-            except ValueError:
-                return False
-
-        # If the widget is a datetime, ensure it is in the right format
-        if self == WidgetType.ISO_DATETIME:
+        # Ensure value is in ISO datetime format
+        if self == DataType.ISO_DATETIME:
             return is_datetime(value)
 
-        # Ensure the value is a duration
-        if self == WidgetType.ISO_DURATION:
+        # Ensure the value is in ISO duration format
+        if self == DataType.ISO_DURATION:
             return is_duration(value)
+
+        if self == DataType.STRING:
+            return isinstance(value, str)
+        
+        if self == DataType.BOOLEAN:
+            return isinstance(value, bool)
+
+        if self == DataType.INTEGER:
+            return isinstance(value, int)
+        
+        if self == DataType.INTEGER_LIST:
+            if isinstance(value, list):
+                return all([isinstance(item, int) for item in value])
+            else:
+                return False
+
+        if self == DataType.FLOAT:
+            return isinstance(value, float)    
+
+        if self == DataType.LIST:
+            return isinstance(value, list)
+
+        if self == DataType.MAPPING:
+            return isinstance(value, Mapping)
 
         return True
 
@@ -91,12 +75,15 @@ class WidgetType(Enum):
 class SwellQuestion:
     """Basic dataclass for defining Swell questions for suites and tasks"""
     default_value: str
-    question_name: str
-    widget_type: WidgetType
+    data_type: DataType
     prompt: str
+    question_name: str | None = None
     question_type: str = None
-    ask_question: bool = False
     options: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        if self.question_name is None:
+            self.question_name = self.__class__.__name__
 
 # --------------------------------------------------------------------------------------------------
 
