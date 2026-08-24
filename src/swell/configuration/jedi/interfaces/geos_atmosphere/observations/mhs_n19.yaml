@@ -222,7 +222,7 @@ obs filters:
       name: ObsFunction/ObsErrorFactorTopoRad
       channels: *mhs_n19_available_channels
       options:
-        sensor: *Sensor_ID
+        sensor: infrared
         channels: *mhs_n19_available_channels
 #Transmittnace Top Check
 - filter: BlackList

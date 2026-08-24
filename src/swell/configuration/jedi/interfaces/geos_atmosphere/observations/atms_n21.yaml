@@ -124,7 +124,7 @@ obs post filters:
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *atms_n21_channels
         options:
-          sensor: *Sensor_ID
+          sensor: microwave
           channels: *atms_n21_channels
 # Transmittance Top Check
   - filter: BlackList

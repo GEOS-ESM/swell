@@ -122,7 +122,7 @@ obs post filters:
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *amsua_aqua_available_channels
         options:
-          sensor: *Sensor_ID
+          sensor: microwave
           channels: *amsua_aqua_available_channels
 # Transmittance Top Check
   - filter: BlackList
