@@ -141,8 +141,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "insitu_profile_tao",
                 "icec_amsr2_north",
                 "icec_amsr2_south",
-                "icec_nsidc_nh",
-                "icec_nsidc_sh",
                 "sst_ostia",
                 "sss_smos",
                 "sss_smapv5",
@@ -151,10 +149,63 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sst_avhrrf_mc_l3u",
                 "sst_viirs_n20_l3u",
                 "sst_viirs_npp_l3u",
-                "temp_profile_xbt"
             ]),
             qd.number_of_iterations([50]),
             qd.background_time_offset("P1DT12H"),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    _3dfgat_marine_cycle_5day = QuestionList(
+        list_name="3dfgat_marine_cycle_5day",
+        questions=[
+            _3dfgat_marine_cycle_tier2,
+            qd.start_cycle_point("2023-01-08T12:00:00Z"),
+            qd.final_cycle_point("2023-02-27T12:00:00Z"),
+            qd.forecast_duration("P10D"),
+            qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/GEOS_v12_rc20/"
+                           "dataatm_025deg_om4_swell"),
+        ],
+        geos_marine=[
+            qd.cycle_times([
+                "P5D",
+            ]),
+            qd.marine_models([
+                "mom6",
+            ]),
+            qd.observations([
+                "adt_cryosat2n",
+                "adt_jason3",
+                "adt_jason3n",
+                "adt_saral",
+                "adt_sentinel3a",
+                "adt_sentinel3b",
+                "adt_sentinel6a",
+                "adt_swot_nadir",
+                "insitu_profile_argo",
+                "insitu_profile_ctd",
+                "insitu_profile_pirata",
+                "insitu_profile_rama",
+                "insitu_profile_tao",
+                "sss_smos",
+                "sss_smapv5",
+                "sst_avhrrf_mb_l3u",
+                "sst_avhrrf_mc_l3u",
+                "sst_viirs_n20_l3u",
+                "sst_viirs_npp_l3u",
+            ]),
+            qd.analysis_variables([
+                "sea_water_salinity",
+                "sea_water_potential_temperature",
+                "sea_surface_height_above_geoid",
+                "sea_water_cell_thickness",
+            ]),
+            qd.window_length("P5D"),
+            qd.background_frequency("PT12H"),
+            qd.mom6_iau_nhours("PT18H"),
+            qd.background_time_offset("P7DT12H"),
+            qd.number_of_iterations([75]),
         ]
     )
 

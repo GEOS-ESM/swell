@@ -21,7 +21,8 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self) -> None:
-        """Copies coupled GEOS restart files to the forecast directory.
+        """Copies coupled GEOS restart files to the forecast directory. Coupled here indicate that the
+        simulation involves both the atmosphere and marine (MOM6 + CICE6) components.
 
         The files copied include:
         - *_rst files (including atmosphere and tile interface files)
