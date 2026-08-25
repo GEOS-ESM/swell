@@ -183,7 +183,7 @@ models:
     `vertical_localization_frac_retained_variance`: 0.95
 
 
-More information on the algorithm can be found in the JEDI documentation: https://jcsda-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/oops/applications/localensembleda.html
+More information on the algorithm can be found in the [JEDI Local Ensemble DA documentation](https://jcsda-jedi-docs.readthedocs-hosted.com/en/latest/inside/jedi-components/oops/applications/localensembleda.html).
 
 
 3. EVA plots

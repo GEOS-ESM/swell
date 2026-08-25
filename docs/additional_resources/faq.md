@@ -34,7 +34,7 @@
 
 - How can I create my own experiment?
 
-    > See [Creating an Experiment](../running_an_experiment/creating_an_experiment.md) and [Using an override file](../running_an_experiment/understanding_configuration.md?id=2-using-an-override-file--o-overrideyaml).
+    > See [Creating an Experiment](../running_an_experiment/creating_an_experiment.md) and [Using an override file](../running_an_experiment/understanding_configuration.md?id=_2-using-an-override-file--o-overrideyaml).
 
 - I actually begin to like SWELL; how can I contribute?
 

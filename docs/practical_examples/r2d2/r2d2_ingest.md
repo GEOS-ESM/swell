@@ -139,7 +139,7 @@ Supported placeholders in `remote_path_template` and `filename_pattern`:
 
 #### `retrieval_method: cmr`
 
-Queries the [NASA CMR API](https://cmr.earthdata.nasa.gov) to discover
+Queries the [NASA CMR API](https://cmr.earthdata.nasa.gov/search) to discover
 granule download URLs, then fetches each file over authenticated HTTPS using
 Earthdata credentials from `~/.netrc`.
 
@@ -160,7 +160,7 @@ max_orbit_duration: PT2H          # extend search window backwards (optional, de
 | `cmr_version` | No | Collection version string (e.g. `V03`). Omit to match all versions. |
 | `max_orbit_duration` | No | ISO-8601 duration; extends the CMR temporal query backwards so granules starting just before `window_begin` are not missed. Default `PT0H`. |
 
-CMR search requires no authentication, but you'll need Earthdata account. You can register at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) if you don't have one. File downloads use the four-step
+CMR search requires no authentication, but you'll need Earthdata account. You can register at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov/) if you don't have one. File downloads use the four-step
 Earthdata OAuth flow with credentials from `~/.netrc`:
 
 ```
