@@ -12,7 +12,7 @@ analysis_variables:
   - rain_water
   - snow_water
   - mole_fraction_of_ozone_in_air
-  - geopotential_height_times_gravity_at_surface
+  - geopotential_at_surface
   - fraction_of_ocean
   - fraction_of_lake
   - fraction_of_ice
@@ -29,7 +29,7 @@ analysis_variables:
   - rain_water
   - snow_water
   - mole_fraction_of_ozone_in_air
-  - geopotential_height_times_gravity_at_surface
+  - geopotential_height_at_surface
   - fraction_of_ocean
   - fraction_of_lake
   - fraction_of_ice
@@ -52,6 +52,9 @@ background_frequency:
 
 background_time_offset:
   default_value: PT9H
+
+ebkg_time_offset:
+  default_value: PT3H
 
 bufr_obs_classes:
   default_value:
@@ -123,7 +126,7 @@ ensemble_hofx_strategy:
   - parallel
 
 ensemble_num_members:
-  default_value: 10
+  default_value: 16
   options: None
 
 geovals_experiment:
@@ -158,19 +161,6 @@ gsibec_nlons:
   - '288'
   - '576'
   - '1152'
-
-horizontal_localization_lengthscale:
-  default_value: 10000e3
-
-horizontal_localization_max_nobs:
-  default_value: 1000
-
-horizontal_localization_method:
-  default_value: Horizontal Gaspari-Cohn
-  options:
-  - Horizontal Gaspari-Cohn
-  - Horizontal SOAR
-  - Horizontal Box car
 
 horizontal_resolution:
   default_value: '361'
