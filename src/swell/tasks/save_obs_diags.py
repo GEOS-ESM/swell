@@ -89,7 +89,7 @@ class SaveObsDiags(taskBase):
                     experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
-                    window_length='PT6H',
+                    window_length=window_length,
                     window_start=window_begin,
                     source_file=obs_path_file,
                     member=-9999,
