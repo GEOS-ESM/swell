@@ -35,15 +35,15 @@ class CloneGeos(taskBase):
 
         # Choice to link to existing build or build GEOS
         # ----------------------------------------------
-        if self.config.resolve(resolve, default=geos_build_method) == 'use_existing':
+        if self.config.resolve(geos_build_method) == 'use_existing':
 
             # Link the source code directory
-            link_path(self.config.resolve(resolve, default=existing_geos_gcm_source_path), geos_gcm_source_path)
+            link_path(self.config.resolve(existing_geos_gcm_source_path), geos_gcm_source_path)
 
-        elif self.config.resolve(resolve, default=geos_build_method) == 'create':
+        elif self.config.resolve(geos_build_method) == 'create':
 
             # Get tag to build
-            geos_gcm_tag = self.config.resolve(resolve, default=geos_gcm_tag)
+            geos_gcm_tag = self.config.resolve(geos_gcm_tag)
 
             # Make sure tag is prepended with 'v'
             if geos_gcm_tag[0] != 'v':
