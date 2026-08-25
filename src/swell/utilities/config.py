@@ -127,7 +127,8 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def resolve(self, question: SwellQuestion, default='LrZRExPGcQ'):
-        name = question().question_name
+        question_obj = question()
+        name = question_obj.question_name
 
         if name in self.question_list:
             default = self.experiment_dict[name]
@@ -139,6 +140,12 @@ class Config():
             raise KeyError(f'Trying to reference value {name} in config but this key does not '
                            'exist and no default has been provided')
         
+        data_type = question_obj.data_type
+
+        if not data_type.is_type(default):
+            self.__logger__.warning(f'Warning: Experiment key {name} does not conform to expected'
+                                    f' type <{data_type.value}>.')
+
         return default
 
     # ----------------------------------------------------------------------------------------------

@@ -16,6 +16,7 @@ from collections.abc import Mapping
 
 from swell.utilities.datetime_util import is_datetime, is_duration
 from swell.swell_path import get_swell_path
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 

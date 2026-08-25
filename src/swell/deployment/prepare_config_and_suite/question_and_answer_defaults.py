@@ -18,11 +18,11 @@ class GetAnswerDefaults:
     def get_answer(self, logger: Logger, key: str, val: dict,
                    model: Optional[str] = None) -> Union[int, float, str]:
         default = val['default_value']
-        widget_type = val['widget_type']
+        data_type = val['data_type']
 
-        if not widget_type.validate_value(default):
+        if not data_type.is_type(default):
             logger.abort(f'Default value for {key}, {default}, does not conform to type '
-                         f'{widget_type.base_type.__name__}, check the override file or '
+                         f'{data_type.base_type.__name__}, check the override file or '
                          'suite configuration.')
 
         return default
