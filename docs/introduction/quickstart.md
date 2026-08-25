@@ -47,7 +47,7 @@ Are you new to Swell and don't have R2D2 credentials set up yet? Pass `-k`/`--sk
 `swell create` to skip registering the experiment and storing products in R2D2, though experiments needing to fetch from R2D2 still require credentials:
 
 ```bash
-swell create <suite> --skip-store_r2d2
+swell create <suite> --skip-store-r2d2
 ```
 
 This lets you complete a full create -> launch -> monitor cycle to see Swell working end to end
