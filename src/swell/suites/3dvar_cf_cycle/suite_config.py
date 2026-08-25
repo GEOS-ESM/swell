@@ -93,16 +93,16 @@ class SuiteConfig(QuestionContainer, Enum):
                 'GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
             ),
             qd.geos_cf_install_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GEOSgcm_31062024/install'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOSgcm_31062024/install'
                 ),
             qd.geos_cf_run_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GCv14.0_GCMv1.17_c90_Skylab'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GCv14.0_GCMv1.17_c90'
                 ),
             qd.swell_static_files(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/SwellStaticFiles'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles'
                 ),
             qd.geosfp_path(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GEOS-FP'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOS-FP'
                 )
         ]
     )

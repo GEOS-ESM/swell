@@ -26,7 +26,7 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             sq.common,
             qd.swell_static_files(
-                "/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/SwellStaticFiles"
+                "/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles"
                 ),
             qd.start_cycle_point("2023-08-05T18:00:00Z"),
             qd.final_cycle_point("2023-08-05T18:00:00Z"),
