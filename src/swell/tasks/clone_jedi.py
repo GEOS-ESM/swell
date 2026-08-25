@@ -38,17 +38,17 @@ class CloneJedi(taskBase):
 
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
-        if self.config.resolve(resolve, default=jedi_build_method) == 'use_existing':
+        if self.config.resolve(jedi_build_method) == 'use_existing':
             # Link the source code directory
-            link_path(self.config.resolve(resolve, default=existing_jedi_source_directory), jedi_bundle_source_path)
+            link_path(self.config.resolve(existing_jedi_source_directory), jedi_bundle_source_path)
 
-        elif self.config.resolve(resolve, default=jedi_build_method) == 'use_pinned_existing':
+        elif self.config.resolve(jedi_build_method) == 'use_pinned_existing':
             # Check hashes before proceeding
-            check_hashes(self.config.resolve(resolve, default=existing_jedi_source_directory_pinned), self.logger)
+            check_hashes(self.config.resolve(existing_jedi_source_directory_pinned), self.logger)
             # Link the pinned source code directory
-            link_path(self.config.resolve(resolve, default=existing_jedi_source_directory_pinned), jedi_bundle_source_path)
+            link_path(self.config.resolve(existing_jedi_source_directory_pinned), jedi_bundle_source_path)
 
-        elif self.config.resolve(resolve, default=jedi_build_method) in ('create', 'pinned_create'):
+        elif self.config.resolve(jedi_build_method) in ('create', 'pinned_create'):
             # Determine which bundles need to be build
             model_components = self.get_model_components()
             if model_components is not None:
@@ -65,11 +65,11 @@ class CloneJedi(taskBase):
 
             # Determine whether to use pinned versions or not
             use_pinned = False
-            if self.config.resolve(resolve, default=jedi_build_method) == 'pinned_create':
+            if self.config.resolve(default=jedi_build_method) == 'pinned_create':
                 use_pinned = True
 
             # Generate the build dictionary
-            jedi_bundle_dict = set_jedi_bundle_config(self.config.resolve(resolve, default=bundles, bundles),
+            jedi_bundle_dict = set_jedi_bundle_config(self.config.resolve(bundles, default=bundles),
                                                       jedi_bundle_source_path,
                                                       jedi_bundle_build_path,
                                                       self.platform(),
