@@ -44,7 +44,7 @@ echo   VERSION: $GCMVER
 #######################################################################
 
 
-setenv  EXPID   GCv14.0_GCMv1.17_c90b 
+setenv  EXPID   GEOS_CF_c360_swell 
 setenv  EXPDIR  >>>SWELL_GEOSRUN<<<
 setenv  HOMDIR  $EXPDIR
 

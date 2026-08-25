@@ -351,6 +351,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.window_length(),
             qd.rst_experiment(),
             qd.rst_file_types(),
+            qd.rst_file_types_optional(),
             qd.horizontal_resolution(),
         ]
     )

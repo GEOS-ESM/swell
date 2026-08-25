@@ -396,6 +396,18 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class rst_file_types_optional(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "rst_file_types_optional"
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Which of the rst_file_types are optional (fetch failures are not fatal)?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class rst_store_interval(TaskQuestion):
         default_value: str = None
         question_name: str = "rst_store_interval"

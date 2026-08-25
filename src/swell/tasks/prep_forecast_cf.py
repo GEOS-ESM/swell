@@ -75,6 +75,7 @@ class PrepForecastCf(taskBase):
         an_vars_long_tg = ['volume_mixing_ratio_of_no2',
                            'volume_mixing_ratio_of_co',
                            'volume_mixing_ratio_of_o3']
+        self.an_vars_compo_all = [an_var.split('_')[-1].upper() for an_var in an_vars_long_tg]
         self.an_vars_compo = []
         for an_var in an_vars_long_tg:
             if an_var in self.an_vars_long:
@@ -254,20 +255,16 @@ class PrepForecastCf(taskBase):
         shutil.copy(gridcomp_src, gridcomp_dst)
         self.replace_string(gridcomp_dst, '>>>SWELL_NUM_AN_VARS<<<', str(num_an_vars))
 
-        for index, an_var in enumerate(self.an_vars_compo):
-            self.replace_string(gridcomp_dst,
-                                f'#Analysis_Settings_Spec00{index + 1}:',
-                                f'Analysis_Settings_Spec00{index + 1}: '
-                                f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
-
-        # Update GEOSCHEMchem_AnaSettings_<var>.rc files placeholders
-        # -----------------------------------------------------------
-        for an_var in self.an_vars_compo:
-            ana_src = os.path.join(namelists_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
-            ana_dst = os.path.join(scratch_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
-            if os.path.exists(ana_src):
-                shutil.copy(ana_src, ana_dst)
-                self.replace_string(ana_dst, '>>>SWELL_RUNDIR<<<', scratch_dir)
+        # Update geoschem_analysis.yml placeholders (active species and run directory)
+        # -----------------------------------------------------------------------------
+        analysis_src = os.path.join(namelists_dir, 'geoschem_analysis.yml')
+        analysis_dst = os.path.join(scratch_dir, 'geoschem_analysis.yml')
+        shutil.copy(analysis_src, analysis_dst)
+        self.replace_string(analysis_dst, '>>>SWELL_NUM_AN_VARS<<<', str(num_an_vars))
+        self.replace_string(analysis_dst, '>>>SWELL_RUNDIR<<<', scratch_dir)
+        for an_var in self.an_vars_compo_all:
+            active = 'true' if an_var in self.an_vars_compo else 'false'
+            self.replace_string(analysis_dst, f'>>>SWELL_ACTIVE_{an_var}<<<', active)
 
         # Write cap_restart with window begin date
         # -----------------------------------------
