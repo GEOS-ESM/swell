@@ -167,7 +167,7 @@ class r2d2_server(SuiteQuestion):
         "Server/profile name in ~/.swell/r2d2_credentials.yaml "
         "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
     )
-    data_type: DType = DType.STRING
+    data_type: list = mutable_field([DType.STRING, DType.NONE])
 
 # --------------------------------------------------------------------------------------------------
 
@@ -181,7 +181,7 @@ class r2d2_datastore(SuiteQuestion):
         "Leave empty to let R2D2 pick the highest-priority writable datastore "
         "for your compute host."
     )
-    data_type: DType = DType.STRING
+    data_type: DType = mutable_field([DType.STRING, DType.NONE])
 
 # --------------------------------------------------------------------------------------------------
 
@@ -843,7 +843,7 @@ class gradient_norm_reduction(TaskQuestion):
         "all_models"
     ])
     prompt: str = "What value of gradient norm reduction for convergence?"
-    data_type: DType = DType.STRING
+    data_type: DType = DType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
 
@@ -865,7 +865,7 @@ class gsibec_nlats(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = "How many number of latutides in GSIBEC grid?"
-    data_type: DType = DType.STRING
+    data_type: DType = DType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
 
@@ -876,7 +876,7 @@ class gsibec_nlons(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = "How many number of longitudes in GSIBEC grid?"
-    data_type: DType = DType.STRING
+    data_type: DType = DType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
 
@@ -1289,7 +1289,7 @@ class observation_providers(TaskQuestion):
         "all_models"
     ])
     prompt: str = "Map observation names to their R2D2 providers."
-    data_type: DType = DType.STRING
+    data_type: DType = DType.MAPPING
 
 # --------------------------------------------------------------------------------------------------
 
@@ -1397,15 +1397,11 @@ class path_to_gsi_nc_diags(TaskQuestion):
 @dataclass
 class perhost(TaskQuestion):
     default_value: str = None
-    options: List[bool] = mutable_field([
-        True,
-        False
-    ])
     models: List[str] = mutable_field([
         "geos_atmosphere"
     ])
     prompt: str = "What is the number of processors per host?"
-    data_type: DType = DType.INTEGER
+    data_type: DType = mutable_field([DType.INTEGER, DType.NONE])
 
 # --------------------------------------------------------------------------------------------------
 

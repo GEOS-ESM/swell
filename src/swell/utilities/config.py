@@ -142,7 +142,12 @@ class Config():
         
         data_type = question_obj.data_type
 
-        if not data_type.is_type(default):
+        if isinstance(data_type, list):
+            if not any([dtype.is_type(default) for dtype in data_type]):
+                self.__logger__.warning(f'Warning: Experiment key {name} does not conform to any expected'
+                                        f' types {" ".join(data_type)}')
+
+        elif not data_type.is_type(default):
             self.__logger__.warning(f'Warning: Experiment key {name} does not conform to expected'
                                     f' type <{data_type.value}>.')
 

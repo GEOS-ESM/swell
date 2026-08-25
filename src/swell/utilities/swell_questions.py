@@ -31,9 +31,13 @@ class DataType(Enum):
     FLOAT = "float"
     LIST = "list"
     MAPPING = "mapping"
+    NONE = "none"
 
     def is_type(self, value) -> bool:
         """ Validate that the value matches the data type. """
+
+        if self == DataType.NONE:
+            return value is None
 
         # Ensure value is in ISO datetime format
         if self == DataType.ISO_DATETIME:

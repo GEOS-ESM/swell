@@ -20,9 +20,14 @@ class GetAnswerDefaults:
         default = val['default_value']
         data_type = val['data_type']
 
-        if not data_type.is_type(default):
-            logger.abort(f'Default value for {key}, {default}, does not conform to type '
-                         f'{data_type.base_type.__name__}, check the override file or '
+        if isinstance(data_type, list):
+            if not any([dtype.is_type(default) for dtype in data_type]):
+                self.__logger__.warning(f'Warning: Experiment key {name} does not conform to any expected'
+                                        f' types {" ".join(data_type)}')
+
+        elif not data_type.is_type(default):
+            logger.warning(f'Default value for {key}, {default}, does not conform to type '
+                         f'{data_type.value}, check the override file or '
                          'suite configuration.')
 
         return default
