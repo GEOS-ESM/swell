@@ -1,6 +1,6 @@
 # Swell Workflow Ecosystem, Layout and Launcher
 
-The swell system is developed by NASA's [Global Modeling and Assimilation Office](https://gmao.gsfc.nasa.gov/). It is used to generate experiments using the [JEDI](https://www.jcsda.org/jcsda-project-jedi) data assimilation system and NASA's [Goddard Earth Observing System (GEOS)](https://gmao.gsfc.nasa.gov/GEOS_systems/) numerical weather forecast model. Specifically, swell is designed with coupled data assimilation applications in mind and can be used to deploy cycled experiments for a coupled system.
+The swell system is developed by NASA's [Global Modeling and Assimilation Office](https://gmao.gsfc.nasa.gov/). It is used to generate experiments using the [JEDI](https://www.jcsda.org/jcsda-project-jedi) data assimilation system and NASA's [Goddard Earth Observing System (GEOS)](https://gmao.gsfc.nasa.gov/geos-systems/) numerical weather forecast model. Specifically, swell is designed with coupled data assimilation applications in mind and can be used to deploy cycled experiments for a coupled system.
 
 Swell is written entirely using Python with configuration files written using YAML.
 
