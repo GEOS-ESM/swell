@@ -16,6 +16,7 @@ from eva.eva_driver import eva
 
 from swell.swell_path import get_swell_path
 from swell.deployment.platforms.platforms import login_or_compute
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
@@ -41,11 +42,11 @@ class EvaComparisonObservations(taskBase):
 
         # Comparison log type
         # -------------------
-        log_type = self.config.comparison_log_type()
+        log_type = self.config.resolve(comparison_log_type)
 
         # Get the experiment paths
         # ------------------------
-        experiment_paths = self.config.comparison_experiment_paths()
+        experiment_paths = self.config.resolve(comparison_experiment_paths)
 
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
@@ -125,7 +126,7 @@ class EvaComparisonObservations(taskBase):
         eva_dicts = []  # Empty list of dictionaries
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
 
         for observation in observations:
             if self.get_model() == 'geos_atmosphere':

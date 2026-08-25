@@ -11,6 +11,7 @@
 import os
 
 from swell.swell_path import get_swell_path
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.filehandler import get_file_handler
 from swell.utilities.exceptions import SwellError
@@ -32,10 +33,10 @@ class StageJedi(taskBase):
         """
 
         # Extract potential template variables from config
-        horizontal_resolution = self.config.horizontal_resolution()
+        horizontal_resolution = self.config.resolve(horizontal_resolution)
 
-        swell_static_files_user = self.config.swell_static_files_user(None)
-        swell_static_files = self.config.swell_static_files()
+        swell_static_files_user = self.config.resolve(swell_static_files_user, default=None)
+        swell_static_files = self.config.resolve(swell_static_files)
 
         # Use static_files_user if present in config and contains files
         # -------------------------------------------------------------
@@ -45,13 +46,13 @@ class StageJedi(taskBase):
                 self.logger.info(f'Using swell static files in {swell_static_files_user}')
                 swell_static_files = swell_static_files_user
 
-        vertical_resolution = self.config.vertical_resolution()
-        npx_proc = self.config.npx_proc(None)
-        npy_proc = self.config.npy_proc(None)
-        gsibec_configuration = self.config.gsibec_configuration(None)
-        gsibec_nlats = self.config.gsibec_nlats(None)
-        gsibec_nlons = self.config.gsibec_nlons(None)
-        saber_central_block = self.config.saber_central_block(None)
+        vertical_resolution = self.config.resolve(vertical_resolution)
+        npx_proc = self.config.resolve(npx_proc, default=None)
+        npy_proc = self.config.resolve(npy_proc, default=None)
+        gsibec_configuration = self.config.resolve(gsibec_configuration, default=None)
+        gsibec_nlats = self.config.resolve(gsibec_nlats, default=None)
+        gsibec_nlons = self.config.resolve(gsibec_nlons, default=None)
+        saber_central_block = self.config.resolve(saber_central_block, default=None)
 
         # Add jedi interface template keys
         self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)

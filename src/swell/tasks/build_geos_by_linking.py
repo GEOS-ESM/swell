@@ -10,6 +10,7 @@
 
 import os
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs, link_path
 
@@ -32,16 +33,16 @@ class BuildGeosByLinking(taskBase):
 
         # Choice to link to existing build or build GEOS
         # ----------------------------------------------
-        if not self.config.geos_build_method() == 'use_existing':
-            self.logger.abort(f'Found \'{self.config.geos_build_method()}\' for ' +
+        if not self.config.resolve(geos_build_method) == 'use_existing':
+            self.logger.abort(f'Found \'{self.config.resolve(geos_build_method)}\' for ' +
                               f'geos_build_method in the experiment dictionary. Must be ' +
                               f'\'use_existing\'.')
 
         # Assert that the existing build directory contains a bin directory
-        if not os.path.exists(os.path.join(self.config.existing_geos_gcm_build_path(), 'bin')):
+        if not os.path.exists(os.path.join(self.config.resolve(existing_geos_gcm_build_path), 'bin')):
             self.logger.abort(f'Existing GEOS build directory is provided but a bin ' +
                               f'directory is not found in the path ' +
-                              f'\'{self.config.existing_geos_gcm_build_path()}\'')
+                              f'\'{self.config.resolve(existing_geos_gcm_build_path)}\'')
 
         # Write warning to user
         self.logger.info('Suitable GEOS build found, linking build directory. Warning: ' +
@@ -50,7 +51,7 @@ class BuildGeosByLinking(taskBase):
                          'this experiment may not be reproducible if the build changes.')
 
         # Link the source code directory
-        link_path(self.config.existing_geos_gcm_build_path(), geos_gcm_build_path)
+        link_path(self.config.resolve(existing_geos_gcm_build_path), geos_gcm_build_path)
 
 
 # --------------------------------------------------------------------------------------------------

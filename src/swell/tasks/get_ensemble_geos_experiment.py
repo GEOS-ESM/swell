@@ -12,6 +12,7 @@ import isodate
 import os
 import tarfile
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 
@@ -43,9 +44,9 @@ class GetEnsembleGeosExperiment(taskBase):
 
         # Parse config
         # ------------
-        background_experiment = self.config.background_experiment()
-        geos_x_ensemble_directory = self.config.geos_x_ensemble_directory()
-        background_time_offset = self.config.ebkg_time_offset()
+        background_experiment = self.config.resolve(background_experiment)
+        geos_x_ensemble_directory = self.config.resolve(geos_x_ensemble_directory)
+        background_time_offset = self.config.resolve(ebkg_time_offset)
 
         # Since this is an optional task, check if the geos_x_ensemble_directory is
         # set to /dev/null, if so fail the task

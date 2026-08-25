@@ -12,6 +12,7 @@ import copy
 import os
 from ruamel.yaml import YAML
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import update_dict
 from swell.utilities.run_jedi_executables import run_executable
@@ -32,14 +33,14 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_length = self.config.window_length()
-        bkg_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
-        single_observations = self.config.single_observations()
-        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        window_length = self.config.resolve(window_length)
+        bkg_time_offset = self.config.resolve(background_time_offset)
+        observations = self.config.resolve(observations)
+        single_observations = self.config.resolve(single_observations)
+        generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
 
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_length)
@@ -54,12 +55,12 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.mock_experiment(False):
+        if self.config.resolve(mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')

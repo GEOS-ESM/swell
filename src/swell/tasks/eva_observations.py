@@ -15,6 +15,7 @@ from ruamel.yaml import YAML
 from eva.eva_driver import eva
 
 from swell.deployment.platforms.platforms import login_or_compute
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
@@ -36,24 +37,24 @@ class EvaObservations(taskBase):
 
     def execute(self) -> None:
 
-        window_length = self.config.window_length()
+        window_length = self.config.resolve(window_length)
 
         # Compute window beginning time
         # -----------------------------
         window_begin = self.da_window_params.window_begin(window_length)
         background_time = self.da_window_params.background_time(
-                self.config.background_time_offset())
+                self.config.resolve(background_time_offset))
 
         # Create JEDI interface config templates dictionary
         # -------------------------------------------------
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Get the model
         # -------------
         model = self.get_model()
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
 
         # Determine if running on login or compute node and set workers
         # -------------------------------------------------------------
@@ -94,11 +95,11 @@ class EvaObservations(taskBase):
         eva_dicts = []  # Empty list of dictionaries
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
 
         yaml = YAML(typ='safe')
 
-        for observation in self.config.observations():
+        for observation in self.config.resolve(observations):
 
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)

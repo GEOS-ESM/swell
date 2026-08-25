@@ -11,6 +11,7 @@ import isodate
 import os
 from r2d2 import store
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -35,9 +36,9 @@ class SaveRestartCf(taskBase):
 
         # Parse config
         # ------------
-        window_length = self.config.window_length()
-        expid = self.config.r2d2_experiment_id()
-        horizontal_resolution = self.config.horizontal_resolution()
+        window_length = self.config.resolve(window_length)
+        expid = self.config.resolve(r2d2_experiment_id)
+        horizontal_resolution = self.config.resolve(horizontal_resolution)
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')
@@ -51,8 +52,8 @@ class SaveRestartCf(taskBase):
         next_window_begin = window_begin + isodate.parse_duration(window_length)
         checkpoint_time_str = next_window_begin.strftime('%Y%m%d_%H%Mz')
 
-        rst_file_types = self.config.rst_file_types()
-        rst_store_interval = self.config.rst_store_interval(None)
+        rst_file_types = self.config.resolve(rst_file_types)
+        rst_store_interval = self.config.resolve(rst_store_interval, default=None)
 
         # Determine whether to store as a symlink for this cycle
         # --------------------------------------------------------

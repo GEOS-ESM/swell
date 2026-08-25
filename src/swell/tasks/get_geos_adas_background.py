@@ -13,6 +13,7 @@ import glob
 import os
 import re
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 
 
@@ -25,7 +26,7 @@ class GetGeosAdasBackground(taskBase):
 
         # Get the path and pattern for the background files
         # -------------------------------------------------
-        background_path = self.config.path_to_geos_adas_background()
+        background_path = self.config.resolve(path_to_geos_adas_background)
 
         # Get list of ncdiags to test with
         # --------------------------------

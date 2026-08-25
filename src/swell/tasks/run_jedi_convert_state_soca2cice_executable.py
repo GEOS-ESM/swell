@@ -11,6 +11,7 @@
 import os
 from ruamel.yaml import YAML
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 
@@ -28,10 +29,10 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # ---------------------
         jedi_application = 'convert_state_soca2cice'
 
-        jedi_forecast_model = self.config.jedi_forecast_model(None)
-        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        window_type = self.config.window_type()
-        window_length = self.config.window_length()
+        jedi_forecast_model = self.config.resolve(jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
+        window_type = self.config.resolve(window_type)
+        window_length = self.config.resolve(window_length)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -44,8 +45,8 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
-        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(analysis_variables))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
 
         # Background and analysis times
         # -----------------------------
@@ -56,14 +57,14 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.mock_experiment(False):
+        if self.config.resolve(mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
         # Geometry
         # --------
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(total_processors, default=None))
 
         # Jedi configuration file
         # -----------------------

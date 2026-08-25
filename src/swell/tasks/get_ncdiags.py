@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from r2d2 import fetch
 from swell.utilities.r2d2 import load_r2d2_credentials
@@ -28,15 +29,15 @@ class GetNcdiags(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.r2d2_server(default=None),
+            r2d2_server=self.config.resolve(r2d2_server, default=None),
         )
 
         # Parse config
         # ------------
-        ncdiag_experiments = self.config.ncdiag_experiments()
-        observations = self.config.observations()
-        window_length = self.config.window_length()
-        background_time_offset = self.config.background_time_offset()
+        ncdiag_experiments = self.config.resolve(ncdiag_experiments)
+        observations = self.config.resolve(observations)
+        window_length = self.config.resolve(window_length)
+        background_time_offset = self.config.resolve(background_time_offset)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -46,11 +47,11 @@ class GetNcdiags(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
 
         # Set the JEDI rendering parameters. Model specific ones have None as default
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
 
         # Loop over ncdiag experiments
         # -------------------------------

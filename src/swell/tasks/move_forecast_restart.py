@@ -10,6 +10,7 @@
 import os
 import glob
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
 
@@ -32,7 +33,7 @@ class MoveForecastRestart(taskBase):
 
         # Next cycle folder name
         # -----------------------
-        self.forecast_duration = self.config.forecast_duration()
+        self.forecast_duration = self.config.resolve(forecast_duration)
 
         # Create cycle_dir and RESTART
         # ----------------------------

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 import os
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import link_all_files_from_first_in_hierarchy_of_sources
 
@@ -41,16 +42,16 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Get the flavor of static background error model
         # -----------------------------------------------
-        background_error_model = self.config.background_error_model()
+        background_error_model = self.config.resolve(background_error_model)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
-        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
+        self.jedi_rendering.add_key('background_error_model', self.config.resolve(background_error_model))
 
         # Extract general parts of the config
         # -----------------------------------
-        swell_static_files_main = self.config.swell_static_files()
-        swell_static_files_user = self.config.swell_static_files_user(None)
+        swell_static_files_main = self.config.resolve(swell_static_files)
+        swell_static_files_user = self.config.resolve(swell_static_files_user, default=None)
 
         # Set the destination directory
         # ------------------------------
@@ -64,8 +65,8 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Compute data assimilation window parameters to obtain the local background time
         # -------------------------------------------------------------------------------
-        window_length = self.config.window_length()
-        window_type = self.config.window_type()
+        window_length = self.config.resolve(window_length)
+        window_type = self.config.resolve(window_type)
         local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
 
@@ -79,8 +80,8 @@ class GenerateBClimatologyByLinking(taskBase):
         # long run.
         # ------------------------------------------------------------------------------
         if background_error_model == 'explicit_diffusion':
-            horizontal_resolution = self.config.horizontal_resolution()
-            vertical_resolution = self.config.vertical_resolution()
+            horizontal_resolution = self.config.resolve(horizontal_resolution)
+            vertical_resolution = self.config.resolve(vertical_resolution)
             res_path = horizontal_resolution + 'x' + vertical_resolution
 
             correlation_files = 'vt.' + local_background_time + '.nc'

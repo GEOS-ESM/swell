@@ -13,6 +13,7 @@ import os
 import subprocess
 import shutil
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------

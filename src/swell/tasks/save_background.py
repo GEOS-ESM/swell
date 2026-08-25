@@ -12,6 +12,7 @@ from datetime import timedelta
 import os
 from r2d2 import store
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
@@ -53,7 +54,7 @@ class SaveBackground(taskBase):
         # Load R2D2 credentials
         load_r2d2_credentials(self.logger, self.platform())
 
-        dry_run = self.config.dry_run(True)
+        dry_run = self.config.resolve(dry_run, default=True)
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be stored')
 
@@ -70,10 +71,10 @@ class SaveBackground(taskBase):
             )
 
         model = self.get_model()
-        source_template = self.config.background_source_path()
-        experiment = self.config.background_experiment('geos_cf_oper')
-        resolution = self.config.horizontal_resolution('c360')
-        store_as_symlink = self.config.store_as_symlink(True)
+        source_template = self.config.resolve(background_source_path)
+        experiment = self.config.resolve(background_experiment, default='geos_cf_oper')
+        resolution = self.config.resolve(horizontal_resolution, default='c360')
+        store_as_symlink = self.config.resolve(store_as_symlink, default=True)
 
         stored = 0
         skipped = 0

@@ -8,6 +8,7 @@
 import os
 from ruamel.yaml import YAML
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
@@ -222,12 +223,12 @@ class GenerateBClimatology(taskBase):
 
         # Parse configuration
         # -------------------
-        window_length = self.config.window_length()
-        window_type = self.config.window_type()
-        background_error_model = self.config.background_error_model()
+        window_length = self.config.resolve(window_length)
+        window_type = self.config.resolve(window_type)
+        background_error_model = self.config.resolve(background_error_model)
 
-        swell_static_files_user = self.config.swell_static_files_user(None)
-        self.swell_static_files = self.config.swell_static_files()
+        swell_static_files_user = self.config.resolve(swell_static_files_user, default=None)
+        self.swell_static_files = self.config.resolve(swell_static_files)
 
         # Use static_files_user if present in config and contains files
         # -------------------------------------------------------------
@@ -237,18 +238,18 @@ class GenerateBClimatology(taskBase):
                 self.logger.info(f'Using swell static files in {swell_static_files_user}')
                 self.swell_static_files = swell_static_files_user
 
-        self.horizontal_resolution = self.config.horizontal_resolution()
-        self.vertical_resolution = self.config.vertical_resolution()
-        self.generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        self.horizontal_resolution = self.config.resolve(horizontal_resolution)
+        self.vertical_resolution = self.config.resolve(vertical_resolution)
+        self.generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
-        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
-        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
-        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('npx_proc', self.config.resolve(npx_proc, default=None))
+        self.jedi_rendering.add_key('npy_proc', self.config.resolve(npy_proc, default=None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(total_processors, default=None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(analysis_variables))
+        self.jedi_rendering.add_key('background_error_model', self.config.resolve(background_error_model))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
         # Compute data assimilation window parameters
         # -------------------------------------------
         local_background_time = self.da_window_params.local_background_time(window_length,

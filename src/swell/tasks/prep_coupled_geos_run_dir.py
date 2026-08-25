@@ -11,6 +11,7 @@ import os
 import isodate
 import re
 
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
@@ -43,12 +44,12 @@ class PrepCoupledGeosRunDir(taskBase):
         # config.s to the cycle forecast directory
         self.geos_homdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_homdir')
 
-        if self.config.geos_expdir_different():
+        if self.config.resolve(geos_expdir_different):
             self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
         else:
             self.geos_expdir = self.geos_homdir
 
-        self.geos_build = self.config.existing_geos_gcm_build_path()
+        self.geos_build = self.config.resolve(existing_geos_gcm_build_path)
 
         self.logger.info('Preparing GEOS Forecast directory......')
         self.logger.info('Some steps involve modifying input files and replacing file contents.')
@@ -59,7 +60,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # context. So forecast start will be assigned as cycle_date - forecast_duration * 3/4
         # Need to convert forecast_duration to a datetime object first
         # -------------------------------------------------------------
-        self.forecast_duration = self.config.forecast_duration()
+        self.forecast_duration = self.config.resolve(forecast_duration)
         self.fc_dto = self.cycle_time_dto() - isodate.parse_duration(self.forecast_duration) * 3 / 4
 
         # Get static files
@@ -196,7 +197,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
         # be present in the INPUT directory, so this step is skipped.
         # --------------------------------------------------------------------------
-        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
+        if self.config.resolve(get_key_for_model, default='mom6_iau', 'geos_marine', False):
             if os.path.exists(self.forecast_dir('RESTART/mom6_increment.nc')):
 
                 self.logger.info('MOM6 Increment file found in RESTART directory')
@@ -206,8 +207,8 @@ class PrepCoupledGeosRunDir(taskBase):
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
                 mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
                 # P50D is just a random input for get_key_for_model to function
-                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
-                                                                'PT50D')
+self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)6self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)iself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)aself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)uself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)nself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)hself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)uself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)rself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)sself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)=self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)sself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)lself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)fself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',).self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)cself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)nself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)fself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)iself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)gself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',).self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)gself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)tself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)kself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)yself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)fself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)rself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)dself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)lself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)(self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)'self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)6self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)iself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)aself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)uself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)nself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)hself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)uself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)rself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)sself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)'self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',),self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',) self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)'self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)gself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)oself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)sself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)_self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)mself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)aself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)rself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)iself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)nself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)eself.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)'self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',),self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)
+self.config.resolve(get_key_for_model, default='mom6_iau_nhours', 'geos_marine',)                                                                'PT50D')
 
                 # convert ISO to 3.0
                 duration = isodate.parse_duration(mom6_iau_nhours)
@@ -261,7 +262,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
         self.logger.info('Modifying CAP.rc')
-        [time_string, days, _] = self.geos.iso_to_time_str(self.config.forecast_duration())
+        [time_string, days, _] = self.geos.iso_to_time_str(self.config.resolve(forecast_duration))
 
         # Prepend day information
         # -----------------------

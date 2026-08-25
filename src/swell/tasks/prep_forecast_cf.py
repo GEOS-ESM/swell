@@ -15,6 +15,7 @@ import isodate
 import xarray as xr
 
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_history
+from swell.configuration.question_defaults import *
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
 
@@ -47,20 +48,20 @@ class PrepForecastCf(taskBase):
         # Gather config values
         # --------------------
         self.expid = self.experiment_id()
-        self.window_length = self.config.window_length()
-        self.forecast_length = self.config.forecast_length()
-        self.forecast_output_frequency = self.config.forecast_output_frequency()
-        self.resolution = self.config.horizontal_resolution()
-        self.an_vars_long = self.config.analysis_variables()
+        self.window_length = self.config.resolve(window_length)
+        self.forecast_length = self.config.resolve(forecast_length)
+        self.forecast_output_frequency = self.config.resolve(forecast_output_frequency)
+        self.resolution = self.config.resolve(horizontal_resolution)
+        self.an_vars_long = self.config.resolve(analysis_variables)
 
-        self.geos_cf_run_dir = self.config.geos_cf_run_dir()
-        self.geos_cf_install_dir = self.config.geos_cf_install_dir()
+        self.geos_cf_run_dir = self.config.resolve(geos_cf_run_dir)
+        self.geos_cf_install_dir = self.config.resolve(geos_cf_install_dir)
 
         self.namelists_dir = os.path.join(self.experiment_config_path(),
                                           'jedi', 'interfaces', 'geos_cf', 'namelists')
 
-        self.fp_exp = self.config.geosfp_exp()
-        self.fp_loc = self.config.geosfp_path()
+        self.fp_exp = self.config.resolve(geosfp_exp)
+        self.fp_loc = self.config.resolve(geosfp_path)
 
         # Derive window times
         # -------------------
@@ -110,7 +111,7 @@ class PrepForecastCf(taskBase):
     def create_geos_cf_increments(self) -> None:
         """Convert JEDI increment files to GEOS-CF format using the increment template."""
 
-        inc_template = self.config.inc_template()
+        inc_template = self.config.resolve(inc_template)
 
         tstring_date = (self.parse_andate.strftime('%Y-%m-%d') + ' ' +
                         self.parse_andate.strftime('%H:%M:%S'))
