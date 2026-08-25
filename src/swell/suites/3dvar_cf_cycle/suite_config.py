@@ -92,7 +92,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/handle_inc/'
                 'GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
             ),
-            qd.geos_cf_install_dir('/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GEOSgcm_31062024/install'),
+            qd.geos_cf_install_dir('/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GEOSgcm_21042026/install-SLES15'),
             qd.geos_cf_run_dir('/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GCv14.0_GCMv1.17_c90_Skylab'),
             qd.swell_static_files('/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/SwellStaticFiles'),
             qd.geosfp_path('/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/GEOS-FP')
