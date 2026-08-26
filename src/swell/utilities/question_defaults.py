@@ -1427,6 +1427,34 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class npx_per_observer(TaskQuestion):
+        default_value: int = 1
+        question_name: str = "npx_per_observer"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("What is the number of parallelization in the x-direction "
+                       "you want to apply for each observer on each cube face?")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class npy_per_observer(TaskQuestion):
+        default_value: int = 1
+        question_name: str = "npy_per_observer"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("What is the number of parallelization in the y-direction "
+                       "you want to apply for each observer on each cube face?")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class number_of_iterations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "number_of_iterations"

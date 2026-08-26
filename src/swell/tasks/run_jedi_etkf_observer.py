@@ -39,6 +39,8 @@ class RunJediEtkfObserver(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
+        npx_per_observer = self.cofig.npx_per_observer
+        npy_per_observer = self.cofig.npy_per_observer
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -189,9 +191,7 @@ class RunJediEtkfObserver(taskBase):
         print(f'driver= {driver}')
 
         observers = jedi_config_dict["observations"]["observers"]
-        npx = 1
-        npy = 1
-        np = 6 * npx * npy
+        np = 6 * npx_per_observer * npy_per_observer
         cmd = """
         export SLURM_MPI_TYPE=pmi2
         export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
