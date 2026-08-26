@@ -13,6 +13,7 @@ from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 
@@ -26,10 +27,10 @@ class EvaIncrement(taskBase):
         # Get the model and window type
         # -----------------------------
         model = self.get_model()
-        window_type = self.config.window_type()
+        window_type = self.config.resolve(qd.window_type)
 
         if model == 'geos_marine':
-            marine_models = self.config.marine_models()
+            marine_models = self.config.resolve(qd.marine_models)
 
         # Read Eva template file into dictionary
         # --------------------------------------
@@ -46,12 +47,12 @@ class EvaIncrement(taskBase):
 
         # Create time strings for eva_override directory
         cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
-        window_begin_dto = self.da_window_params.window_begin(self.config.window_length(),
+        window_begin_dto = self.da_window_params.window_begin(self.config.resolve(qd.window_length),
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
         local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
-            self.config.window_length(), self.config.window_type(), dto=True)
+            self.config.window_length(), self.config.resolve(qd.window_length), dto=True)
         local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path

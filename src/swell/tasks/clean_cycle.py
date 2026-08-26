@@ -10,6 +10,7 @@
 import isodate
 import os
 import shutil
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from datetime import datetime as dt
@@ -32,7 +33,7 @@ class CleanCycle(taskBase):
     def execute(self) -> None:
 
         # Parse config
-        clean_patterns = self.config.clean_patterns(None)
+        clean_patterns = self.config.resolve(qd.clean_patterns, default=None)
 
         # If no cleaning requested then exit
         if clean_patterns is None:
@@ -91,7 +92,7 @@ class CleanCycle(taskBase):
 
         # Clean the previous cycle's scratch directory now that this cycle has retrieved
         # any restart/checkpoint files it needed (which may have been symlinked from there)
-        window_length = self.config.window_length(None)
+        window_length = self.config.resolve(qd.window_length, default=None)
 
         if window_length is not None and self.cycle_time_dto() != self.start_cycle_point_dto():
             prev_cycle_time = self.cycle_time_dto() - isodate.parse_duration(window_length)

@@ -10,6 +10,7 @@
 
 import os
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
@@ -32,21 +33,21 @@ class GenerateObservingSystemRecords(taskBase):
 
         # Parse GSI records and save yamls
         # --------------------------------
-        observing_system_records_path = self.config.observing_system_records_path(None)
+        observing_system_records_path = self.config.resolve(qd.observing_system_records_path, default=None)
         if observing_system_records_path == 'None':
             cycle_dir = self.cycle_dir()
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
 
         observing_system_records_path = os.path.expanduser(observing_system_records_path)
 
-        path_to_geos_mksi = os.path.expanduser(self.config.observing_system_records_mksi_path())
+        path_to_geos_mksi = os.path.expanduser(self.config.resolve(qd.observing_system_records_mksi_path))
         if path_to_geos_mksi == 'None':
             path_to_geos_mksi = os.path.join(self.experiment_path(), 'GEOS_mksi')
 
         # Parse sidb
         # ----------
         record_type = 'channel'
-        observations = self.config.observations()
+        observations = self.config.resolve(qd.observations)
         path_to_gsi_records = os.path.join(path_to_geos_mksi, 'sidb')
         sat_records = ObservingSystemRecords(record_type)
         sat_records.parse_records(path_to_gsi_records)

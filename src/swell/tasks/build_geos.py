@@ -10,6 +10,7 @@
 
 import os
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs
 from swell.utilities.shell_commands import run_subprocess, create_executable_file
@@ -34,7 +35,7 @@ class BuildGeos(taskBase):
 
         # Check that the choice is to create build
         # ----------------------------------------
-        if not self.config.geos_build_method() == 'create':
+        if not self.config.resolve(qd.geos_build_method) == 'create':
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
                               f'experiment dictionary. Must be \'create\'.')
 

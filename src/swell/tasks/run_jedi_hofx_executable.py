@@ -13,6 +13,7 @@ import os
 from ruamel.yaml import YAML
 from typing import Optional
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
 from swell.utilities.run_jedi_executables import run_executable
@@ -33,17 +34,17 @@ class RunJediHofxExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_type = self.config.window_type()
-        window_length = self.config.window_length()
-        forecast_length = self.config.forecast_length(window_length)
-        background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
-        jedi_forecast_model = self.config.jedi_forecast_model(None)
-        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        save_geovals = self.config.save_geovals(False)
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
+        forecast_length = self.config.resolve(qd.forecast_length, default=window_length)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        observations = self.config.resolve(qd.observations)
+        jedi_forecast_model = self.config.resolve(qd.jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(qd.generate_yaml_and_exit, default=False)
+        save_geovals = self.config.resolve(qd.save_geovals, default=False)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -65,28 +66,28 @@ class RunJediHofxExecutable(taskBase):
 
         # Background
         # ----------
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(qd.horizontal_resolution))
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
         # --------
-        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
-        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
-        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('npx', self.config.npx(None))
-        self.jedi_rendering.add_key('npy', self.config.npy(None))
+        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(qd.vertical_resolution))
+        self.jedi_rendering.add_key('npx_proc', self.config.resolve(qd.npx_proc, default=None))
+        self.jedi_rendering.add_key('npy_proc', self.config.resolve(qd.npy_proc, default=None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(qd.total_processors, default=None))
+        self.jedi_rendering.add_key('npx', self.config.resolve(qd.npx, default=None))
+        self.jedi_rendering.add_key('npy', self.config.resolve(qd.npy, default=None))
 
         # Observations
         # ------------
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(qd.crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.mock_experiment(False):
+        if self.config.resolve(qd.mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
@@ -94,7 +95,7 @@ class RunJediHofxExecutable(taskBase):
         # Model
         # -----
         if window_type == '4D':
-            self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
+            self.jedi_rendering.add_key('background_frequency', self.config.resolve(qd.background_frequency))
 
         # Get the JEDI interface metadata
         # -------------------------------
@@ -132,7 +133,7 @@ class RunJediHofxExecutable(taskBase):
                         'time interpolation': 'linear'
                     }
                 self.jedi_rendering.add_key('forecast_length',
-                                            self.config.forecast_length(window_length))
+                                            self.config.resolve(qd.forecast_length, default=window_length))
 
             # Update config filters to save the GeoVaLs from the model interface.
             # Add GOMsaver to either obs filters OR obs prior filters, if neither
@@ -270,7 +271,7 @@ class RunJediHofxExecutable(taskBase):
         # Add mem to the filename if it is not None
         mem_str = f'_mem{mem}' if mem is not None else ''
 
-        if not self.config.mock_experiment(False):
+        if not self.config.resolve(qd.mock_experiment, default=False):
             cycle_dir = self.cycle_dir()
         else:
             cycle_dir = 'cycle_dir'

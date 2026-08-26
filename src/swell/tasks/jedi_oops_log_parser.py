@@ -11,6 +11,7 @@
 import os
 import subprocess
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ class JediOopsLogParser(taskBase):
         cycle_time = self.__datetime__.string_directory()
         model = self.get_model()
 
-        log_type = self.config.comparison_log_type()
+        log_type = self.config.resolve(qd.comparison_log_type)
 
         # Build the command
         command = ['fgrep', '"Residual norm"'] + [
@@ -48,7 +49,7 @@ class JediOopsLogParser(taskBase):
 
         output_file = os.path.join(self.cycle_dir(), 'jedi_log_analysis.txt')
 
-        for parser_option in self.config.parser_options(['fgrep_residual_norm']):
+        for parser_option in self.config.resolve(qd.parser_options, default=['fgrep_residual_norm']):
             if parser_option == 'fgrep_residual_norm':
                 self.fgrep_residual_norm(output_file)
 

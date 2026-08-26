@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import r2d2
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
@@ -28,21 +29,21 @@ class SaveObsDiags(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.r2d2_server(default=None),
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None),
         )
 
-        r2d2_datastore = self.config.r2d2_datastore(default=None)
+        r2d2_datastore = self.config.resolve(qd.r2d2_datastore, default=None)
 
         # Parse config
         # ------------
-        background_time_offset = self.config.background_time_offset()
-        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        observations = self.config.observations()
-        window_length = self.config.window_length()
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        crtm_coeff_dir = self.config.resolve(qd.crtm_coeff_dir, default=None)
+        observations = self.config.resolve(qd.observations)
+        window_length = self.config.resolve(qd.window_length)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(qd.marine_models, default=None))
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_length)  # dto
@@ -86,7 +87,7 @@ class SaveObsDiags(taskBase):
             try:
                 store_kwargs = dict(
                     item='feedback',
-                    experiment=self.config.r2d2_experiment_id(),
+                    experiment=self.config.resolve(qd.r2d2_experiment_id),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
                     window_length='PT6H',

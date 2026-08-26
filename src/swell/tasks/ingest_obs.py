@@ -17,6 +17,7 @@ from datetime import datetime
 
 import requests
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
@@ -72,13 +73,13 @@ class IngestObs(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.r2d2_server(default=None),
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None),
         )
 
-        r2d2_datastore = self.config.r2d2_datastore(default=None)
+        r2d2_datastore = self.config.resolve(qd.r2d2_datastore, default=None)
 
         # Get list of observations to ingest (strings)
-        obs_to_ingest = self.config.obs_to_ingest([])
+        obs_to_ingest = self.config.resolve(qd.obs_to_ingest, default=[])
 
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
@@ -89,7 +90,7 @@ class IngestObs(taskBase):
         self.observation_providers = self.config.observation_providers(default={})
 
         # Get window parameters
-        window_length = self.config.window_length()
+        window_length = self.config.resolve(qd.window_length)
 
         # Beginning of the DA window
         window_start = self.da_window_params.window_begin_iso(window_length)
@@ -98,13 +99,13 @@ class IngestObs(taskBase):
         cycle_time = self.cycle_time()
 
         # Check for dry-run mode (default True for safety)
-        dry_run = self.config.dry_run(True)
+        dry_run = self.config.resolve(qd.dry_run, default=True)
 
         if dry_run:
             self.logger.info(
                 "DRY RUN MODE - No files will be ingested to R2D2")
 
-        store_as_symlink = self.config.store_as_symlink(False)
+        store_as_symlink = self.config.resolve(qd.store_as_symlink, default=False)
 
         total_ingested = 0
         total_failed = 0

@@ -12,6 +12,7 @@ import glob
 import os
 import subprocess
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 
@@ -28,7 +29,7 @@ class GetObsNotInR2d2(taskBase):
 
         # Get the path and pattern for the observation files
         # -------------------------------------------------
-        existing_path = self.config.ioda_locations_not_in_r2d2()
+        existing_path = self.config.resolve(qd.ioda_locations_not_in_r2d2)
 
         # Point to the model directory
         # ----------------------------

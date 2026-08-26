@@ -11,6 +11,7 @@ import os
 import shutil
 from pathlib import Path
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@ class PublishComparisons(taskBase):
     def execute(self) -> None:
 
         # Output path base to copy files to
-        publish_directory = self.config.publish_directory(None)
+        publish_directory = self.config.resolve(qd.publish_directory, default=None)
 
         # Skip this task if there is no publish directory
         if publish_directory is None:
@@ -40,7 +41,7 @@ class PublishComparisons(taskBase):
             experiment_id = github_run_id / experiment_id
 
         # Name the location after the experiment ID
-        publish_location = Path(self.config.publish_directory()) / experiment_id
+        publish_location = Path(self.config.resolve(qd.publish_directory)) / experiment_id
 
         self.logger.info(f'Copying comparison test results to {publish_location}')
 

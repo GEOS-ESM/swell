@@ -10,6 +10,7 @@
 
 import os
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 from r2d2 import fetch
@@ -26,17 +27,17 @@ class GetGeovals(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.r2d2_server(default=None),
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None),
         )
 
         # Parse config
         # ------------
-        geovals_experiment = self.config.geovals_experiment()
-        geovals_provider = self.config.geovals_provider()
-        background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
-        window_length = self.config.window_length()
-        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+        geovals_experiment = self.config.resolve(qd.geovals_experiment)
+        geovals_provider = self.config.resolve(qd.geovals_provider)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        observations = self.config.resolve(qd.observations)
+        window_length = self.config.resolve(qd.window_length)
+        crtm_coeff_dir = self.config.resolve(qd.crtm_coeff_dir, default=None)
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_length)

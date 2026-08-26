@@ -13,6 +13,7 @@ import os
 import re
 import numpy as np
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.comparisons import comparison_tags
 
@@ -27,7 +28,7 @@ class JediLogComparison(taskBase):
 
     def execute(self):
 
-        experiment_paths = self.config.comparison_experiment_paths()
+        experiment_paths = self.config.resolve(qd.comparison_experiment_paths)
 
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
@@ -59,7 +60,7 @@ class JediLogComparison(taskBase):
         # Boolean for whether fields fall within tolerances
         passed = True
 
-        log_type = self.config.comparison_log_type()
+        log_type = self.config.resolve(qd.comparison_log_type)
 
         for exp_tag, experiment_path in experiment_tag_paths.items():
 

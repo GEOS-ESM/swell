@@ -13,7 +13,7 @@ from typing import Callable
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger
 from swell.suites.all_suites import AllSuites
-
+from swell.utilities.swell_questions import SwellQuestion
 
 # --------------------------------------------------------------------------------------------------
 #  @package configuration
@@ -86,13 +86,9 @@ class Config():
         else:
             model_config = {}
 
+        self.all_model_configs = {}
         if 'models' in experiment_dict.keys():
-
-            # Add a dictionary tracking all model-dependent values
-            setattr(self, f'__all_model_configs__', experiment_dict['models'])
-
-            # Add a method to access the model-dependent dictionary
-            setattr(self, f'all_model_configs', self.get('all_model_configs'))
+            self.all_model_configs = experiment_dict['models']
 
         # Remove the model specific part from the full config
         if 'models' in experiment_dict.keys():
@@ -109,84 +105,71 @@ class Config():
         # supposed to act upon.
         experiment_dict.update(model_config)
 
+        self.experiment_dict = experiment_dict
+
         # Step 2: create variables in the object with the keys/values in the config
         # -------------------------------------------------------------------------
 
         # Check for suite questions
         suite_questions = AllSuites.get_config(
                 self.__suite_to_run__).get_all_question_names('suite')
-        question_list = []
+        self.question_list = []
 
         # Add suite questions if they aren't already set
         for question in suite_questions:
-            if not self.has_attr(question):
-                question_list.append(question)
+            if question not in self.question_list:
+                self.question_list.append(question)
 
         # Find the questions associated with the task
         if task_name in task_questions.get_all():
-            question_list.extend(task_questions[task_name].value.get_all_question_names())
-
-        # Loop through the experiment dictionary
-        for exp_key, exp_val in experiment_dict.items():
-
-            # Assign the value if needed by the task
-            if exp_key in question_list:
-
-                # Set as a variable to config
-                setattr(self, f'__{exp_key}__', exp_val)
-
-                # Add a get method to access variable
-                setattr(self, f'{exp_key}', self.get(exp_key))
+            self.question_list.extend(task_questions[task_name].value.get_all_question_names())
 
     # ----------------------------------------------------------------------------------------------
 
-    def get(self, experiment_key: str) -> Callable:
+    def resolve(self, question: SwellQuestion, default='LrZRExPGcQ'):
+        question_obj = question()
+        name = question_obj.question_name
 
-        def getter(default='None'):
-            return getattr(self, f'__{experiment_key}__')
-        return getter
+        # Check that the task has access to this question
+        if name in self.question_list and name in self.experiment_dict:
+            default = self.experiment_dict[name]
+        elif name in self.experiment_dict:
+            raise KeyError(f'Value {name} is present in config but this task has not been assigned'
+                           ' it in `task_questions.py`')
 
-    # ----------------------------------------------------------------------------------------------
+        # Check that a default has been provided
+        if default == 'LrZRExPGcQ':
+            raise KeyError(f'Trying to reference value {name} in config but this key does not '
+                           'exist and no default has been provided')
 
-    # Implementation to check if object has attribute that works with custom __get_attr__
-    def has_attr(self, name: str):
-        attr = getattr(self, f'__{name}__')
+        # Check that the provided value conforms to the expected type.
+        data_type = question_obj.data_type
+        if isinstance(data_type, list):
+            # Check for multiple items in list
+            if not any([dtype.is_type(default) for dtype in data_type]):
+                self.__logger__.warning(f'Warning: Experiment key {name} does not conform to any expected'
+                                        f' types {" ".join(data_type)}')
 
-        if hasattr(attr, '__name__') and attr.__name__ == 'variable_not_found':
-            return False
+        elif not data_type.is_type(default):
+            self.__logger__.warning(f'Warning: Experiment key {name} does not conform to expected'
+                                    f' type <{data_type.value}>.')
 
-        return True
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Implementation of __getattr__ to ensure there is no crash when a task requests a variable that
-    # does not exist. This is valid so long as the task provides a default value.
-    def __getattr__(self, name: str) -> Callable:
-        def variable_not_found(default='LrZRExPGcQ'):
-            if default == 'LrZRExPGcQ':
-                self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
-                                      f'this variable was not created. Ensure that the variable ' +
-                                      f'is in the experiment configuration and specified in ' +
-                                      f'the question list for the task (task_questions.py).')
-            else:
-                return default
-        return variable_not_found
+        return default
 
     # ----------------------------------------------------------------------------------------------
 
     def get_key_for_model(self, name: str, model: str, default='LrZRExPGcQ'):
         """ Access keys in any model component. Provide a default to avoid errors. """
 
-        if hasattr(self, 'all_model_configs'):
-            all_configs = self.all_model_configs()
-
-            if model in all_configs.keys() and name in all_configs[model].keys():
-                default = all_configs[model][name]
+        try:
+            default = self.all_model_configs[model][name]
+        except KeyError:
+            pass
 
         if default == 'LrZRExPGcQ':
             self.__logger__.abort(f"In config class, trying to reference value '{name}'" +
                                   f" for model '{model}', but config key does not exist and no" +
                                   f" default has been provided.")
         return default
-
+# self.config.resolve(skip_ensemble_hofx, True)
 # ----------------------------------------------------------------------------------------------

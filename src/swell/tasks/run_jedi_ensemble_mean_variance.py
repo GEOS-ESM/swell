@@ -11,6 +11,7 @@
 import os
 from ruamel.yaml import YAML
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 
@@ -30,14 +31,14 @@ class RunJediEnsembleMeanVariance(taskBase):
 
         # Parse configuration
         # -------------------
-        jedi_forecast_model = self.config.jedi_forecast_model(None)
-        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        npx_proc = self.config.npx_proc(None)
-        npy_proc = self.config.npy_proc(None)
+        jedi_forecast_model = self.config.resolve(qd.jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(qd.generate_yaml_and_exit, default=False)
+        npx_proc = self.config.resolve(qd.npx_proc, default=None)
+        npy_proc = self.config.resolve(qd.npy_proc, default=None)
 
         # Compute data assimilation window parameters
-        window_type = self.config.window_type()
-        window_length = self.config.window_length()
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
         local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
@@ -46,7 +47,7 @@ class RunJediEnsembleMeanVariance(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
         # Ensemble
         # ------------------------
@@ -56,27 +57,27 @@ class RunJediEnsembleMeanVariance(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
-        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(qd.analysis_variables))
 
         # Background
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(qd.horizontal_resolution))
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
-        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
+        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(qd.vertical_resolution))
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
 
         # Ensemble
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
+        self.jedi_rendering.add_key('ensemble_num_members', self.config.resolve(qd.ensemble_num_members, default=None))
 
-        self.logger.info(f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
-        meanvar_spec_dict = self.config.ensmeanvariance_spec()
+        self.logger.info(f'ensmeanvariance_spec = {self.config.resolve(qd.ensmeanvariance_spec)}')
+        meanvar_spec_dict = self.config.resolve(qd.ensmeanvariance_spec)
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.mock_experiment(False):
+        if self.config.resolve(qd.mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')

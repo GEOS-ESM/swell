@@ -12,6 +12,7 @@ import os
 
 from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
@@ -33,8 +34,8 @@ class BuildJedi(taskBase):
 
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
-        if self.config.jedi_build_method() not in ('create', 'pinned_create'):
-            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
+        if self.config.resolve(qd.jedi_build_method) not in ('create', 'pinned_create'):
+            self.logger.abort(f'Found \'{self.config.resolve(qd.jedi_build_method)}\' for ' +
                               f'jedi_build_method in the  experiment dictionary. Must be ' +
                               f'\'create\' or \'pinned_create\'.')
 
@@ -53,11 +54,11 @@ class BuildJedi(taskBase):
             bundles = get_bundles()
 
         use_pinned = False
-        if self.config.jedi_build_method() == 'pinned_create':
+        if self.config.resolve(qd.jedi_build_method) == 'pinned_create':
             use_pinned = True
 
         # Generate the build dictionary
-        jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
+        jedi_bundle_dict = set_jedi_bundle_config(self.config.resolve(qd.bundles, default=bundles),
                                                   jedi_bundle_source_path,
                                                   jedi_bundle_build_path, self.platform(),
                                                   use_pinned, 24)

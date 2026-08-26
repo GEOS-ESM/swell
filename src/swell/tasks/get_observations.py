@@ -18,6 +18,7 @@ from typing import Union
 from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities import s3 as swell_s3
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
@@ -210,32 +211,32 @@ class GetObservations(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.r2d2_server(default=None),
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None),
         )
 
-        r2d2_datastore = self.config.r2d2_datastore(default=None)
+        r2d2_datastore = self.config.resolve(qd.r2d2_datastore, default=None)
 
         # Parse config
         # ------------
-        obs_experiment = self.config.obs_experiment()
-        background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
-        observation_providers = self.config.observation_providers(default={})
-        window_length = self.config.window_length()
-        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        window_length = self.config.window_length()
-        cycling_varbc = self.config.cycling_varbc(None)
-        cache_fetch = self.config.cache_fetch(True)
+        obs_experiment = self.config.resolve(qd.obs_experiment)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        observations = self.config.resolve(qd.observations)
+        observation_providers = self.config.resolve(qd.observation_providers, default={})
+        window_length = self.config.resolve(qd.window_length)
+        crtm_coeff_dir = self.config.resolve(qd.crtm_coeff_dir, default=None)
+        window_length = self.config.resolve(qd.window_length)
+        cycling_varbc = self.config.resolve(qd.cycling_varbc, default=None)
+        cache_fetch = self.config.resolve(qd.cache_fetch, default=True)
         # When True, observations that have a fetch_observations_s3
         # registry entry are pulled directly from a public S3 bucket instead of
         # R2D2. When False (default) every observation goes through R2D2 as before.
-        fetch_obs_from_public_s3 = self.config.fetch_obs_from_public_s3(False)
+        fetch_obs_from_public_s3 = self.config.resolve(qd.fetch_obs_from_public_s3, default=False)
         # Get model component and translate to R2D2 model name
         model_component = self.get_model()
         r2d2_model = get_r2d2_model_name(model_component)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_length)
@@ -259,7 +260,7 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(qd.marine_models, default=None))
 
         # Read observation ioda names
         ioda_names_list = get_ioda_names_list()

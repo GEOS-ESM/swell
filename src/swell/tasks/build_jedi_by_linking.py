@@ -10,6 +10,7 @@
 
 import os
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs, link_path
 
@@ -21,8 +22,8 @@ class BuildJediByLinking(taskBase):
     def execute(self) -> None:
 
         # Abort if jedi build method isn't use_existing or use_pinned_existing
-        if self.config.jedi_build_method() not in ('use_existing', 'use_pinned_existing'):
-            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
+        if self.config.resolve(qd.jedi_build_method) not in ('use_existing', 'use_pinned_existing'):
+            self.logger.abort(f'Found \'{self.config.resolve(qd.jedi_build_method)}\' for ' +
                               f'jedi_build_method in the experiment dictionary. Must be ' +
                               f'\'use_existing\' or \'use_pinned_existing\'.')
 
@@ -34,10 +35,10 @@ class BuildJediByLinking(taskBase):
         jedi_bundle_build_path, jedi_bundle_source_path = build_and_source_dirs(jedi_bundle_path)
 
         # Set existing jedi build directory based on jedi build method
-        if self.config.jedi_build_method() == 'use_existing':
-            existing_jedi_build_directory = self.config.existing_jedi_build_directory()
+        if self.config.resolve(qd.jedi_build_method) == 'use_existing':
+            existing_jedi_build_directory = self.config.resolve(qd.existing_jedi_build_directory)
         else:
-            existing_jedi_build_directory = self.config.existing_jedi_build_directory_pinned()
+            existing_jedi_build_directory = self.config.resolve(qd.existing_jedi_build_directory_pinned)
 
         # Assert that the existing build directory contains a bin directory
         if not os.path.exists(os.path.join(existing_jedi_build_directory, 'bin')):

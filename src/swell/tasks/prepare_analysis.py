@@ -15,6 +15,7 @@ import shutil
 from typing import Union
 
 from swell.utilities.shell_commands import run_subprocess
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -40,8 +41,8 @@ class PrepareAnalysis(taskBase):
 
         # This will change with different model types
         # --------------------------------
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(qd.total_processors, default=None))
+        self.jedi_rendering.add_key('mom6_iau', self.config.resolve(qd.mom6_iau, default=False))
 
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
@@ -49,7 +50,7 @@ class PrepareAnalysis(taskBase):
         # --------------------------------
         self.cc_dto = self.cycle_time_dto()
 
-        window_length = self.config.window_length()
+        window_length = self.config.resolve(qd.window_length)
 
         # GEOS restarts have seconds in their filename
         # We want to use rst_dto at the beginning of the DA window (window offset is negative)
@@ -75,7 +76,7 @@ class PrepareAnalysis(taskBase):
 
         # Obtain MOM6 IAU bool
         # ----------------------
-        mom6_iau = self.config.mom6_iau()
+        mom6_iau = self.config.resolve(qd.mom6_iau)
 
         # Generic rst file format
         # ------------------------
@@ -90,7 +91,7 @@ class PrepareAnalysis(taskBase):
             f_rst = self.forecast_dir(['scratch', 'RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
                                        + seconds + '.nc'])
 
-        self.soca_ana = self.config.analysis_variables()
+        self.soca_ana = self.config.resolve(qd.analysis_variables)
 
         if mom6_iau:
             self.mom6_increment(f_rst, ana_path, incr_path)

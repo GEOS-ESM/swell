@@ -35,6 +35,7 @@ import yaml
 import isodate
 import requests
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities import s3 as swell_s3
 
@@ -79,9 +80,9 @@ class DownloadObs(taskBase):
 
     def execute(self) -> None:
 
-        obs_to_download = self.config.obs_to_download([])
-        window_length = self.config.window_length()
-        dry_run = self.config.dry_run(True)
+        obs_to_download = self.config.resolve(qd.obs_to_download, default=[])
+        window_length = self.config.resolve(qd.window_length)
+        dry_run = self.config.resolve(qd.dry_run, default=True)
 
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be downloaded')

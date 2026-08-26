@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -29,15 +30,15 @@ class GetRestartCf(taskBase):
         # ---------------------
         load_r2d2_credentials(self.logger, self.platform())
 
-        rst_file_types = self.config.rst_file_types()
+        rst_file_types = self.config.resolve(qd.rst_file_types)
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')
         model = self.__model__
 
-        horizontal_resolution = self.config.horizontal_resolution()
+        horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
 
-        window_length = self.config.window_length()
+        window_length = self.config.resolve(qd.window_length)
         window_begin = self.da_window_params.window_begin(window_length, dto=True)
 
         window_begin_prev = window_begin - isodate.parse_duration(window_length)
@@ -45,9 +46,9 @@ class GetRestartCf(taskBase):
 
         # Use rst_experiment for first cycle
         if self.cycle_time_dto() == self.start_cycle_point_dto():
-            rst_exp = self.config.rst_experiment()
+            rst_exp = self.config.resolve(qd.rst_experiment)
         else:
-            rst_exp = self.config.r2d2_experiment_id()
+            rst_exp = self.config.resolve(qd.r2d2_experiment_id)
 
         self.logger.info(f'Fetching rst files from experiment {rst_exp}')
 
