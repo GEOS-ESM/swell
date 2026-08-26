@@ -68,9 +68,9 @@ class PrepCoupledGeosRunDir(taskBase):
         self.get_static()
 
         # Modify ice_in and diag_table to allow different DA windows without changing the GEOSgcm
-        # experiment directory
+        # experiment directory. If background frequency is not available, use default PT3H
         # --------------------------------
-        bkgr_freq = self.config.get_key_for_model('background_frequency', 'geos_marine', 'PT00')
+        bkgr_freq = self.config.get_key_for_model('background_frequency', 'geos_marine', 'PT3H')
         self.geos.process_icein(bkgr_freq)
         self.geos.process_diag_table(bkgr_freq)
 
