@@ -475,7 +475,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_experiment(),
             qd.observation_providers(),
             qd.observing_system_records_path(),
-            qd.suite_to_run(),
             qd.window_length(),
         ]
     )
@@ -659,7 +658,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_time_offset(),
             qd.observing_system_records_path(),
             qd.observations(),
-            qd.suite_to_run(),
             qd.window_length(),
             qd.mock_experiment()
         ]
@@ -909,7 +907,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.marine_models()
+            qd.marine_models(),
         ]
     )
 

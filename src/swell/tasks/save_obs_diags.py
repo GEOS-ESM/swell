@@ -53,6 +53,9 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
