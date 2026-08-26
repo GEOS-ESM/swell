@@ -95,6 +95,6 @@ When loaded, the following environment variables are set:
 - `R2D2_API_KEY`: Your R2D2 API key  
 - `R2D2_HOST`: Compute host name
 - `R2D2_COMPILER`: Compiler type
+
 <!-- - `R2D2_SERVER_HOST`: (Optional) API server override
 - `R2D2_SERVER_PORT`: (Optional) API server port override -->
-

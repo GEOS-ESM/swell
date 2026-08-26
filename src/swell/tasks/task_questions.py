@@ -518,6 +518,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.dry_run(),
             qd.obs_to_ingest(),
+            qd.observation_providers(),
             qd.window_length(),
             qd.store_as_symlink(),
         ]
@@ -924,7 +925,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.marine_models()
+            qd.marine_models(),
         ]
     )
 
