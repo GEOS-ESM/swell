@@ -130,19 +130,22 @@ class Config():
         question_obj = question()
         name = question_obj.question_name
 
+        # Check that the task has access to this question
         if name in self.question_list and name in self.experiment_dict:
             default = self.experiment_dict[name]
         elif name in self.experiment_dict:
             raise KeyError(f'Value {name} is present in config but this task has not been assigned'
                            ' it in `task_questions.py`')
 
+        # Check that a default has been provided
         if default == 'LrZRExPGcQ':
             raise KeyError(f'Trying to reference value {name} in config but this key does not '
                            'exist and no default has been provided')
-        
-        data_type = question_obj.data_type
 
+        # Check that the provided value conforms to the expected type.
+        data_type = question_obj.data_type
         if isinstance(data_type, list):
+            # Check for multiple items in list
             if not any([dtype.is_type(default) for dtype in data_type]):
                 self.__logger__.warning(f'Warning: Experiment key {name} does not conform to any expected'
                                         f' types {" ".join(data_type)}')

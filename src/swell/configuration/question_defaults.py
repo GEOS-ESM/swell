@@ -21,6 +21,7 @@ from swell.utilities.dataclass_utils import mutable_field
 
 @dataclass
 class comparison_experiment_paths(SuiteQuestion):
+    '''Paths to two `experiment.yaml` files to be compared by the suite'''
     default_value: list = mutable_field([])
     prompt: str = "Provide paths to two experiments to run comparison tests on."
     data_type: DType = DType.LIST
@@ -29,6 +30,7 @@ class comparison_experiment_paths(SuiteQuestion):
 
 @dataclass
 class cycle_times(SuiteQuestion):
+    '''Cycle times that cylc will execute tasks for between the start and end cycle points'''
     default_value: str = "defer_to_model"
     options: str = "defer_to_model"
     models: List[str] = mutable_field([
@@ -41,6 +43,10 @@ class cycle_times(SuiteQuestion):
 
 @dataclass
 class cycling_varbc(SuiteQuestion):
+    '''
+    Cycling Variational Bias Correction - controls whether previous
+    cycle point will be used as forecast.
+    '''
     default_value: str = "defer_to_model"
     models: List[str] = mutable_field([
         "geos_atmosphere"
@@ -52,6 +58,11 @@ class cycling_varbc(SuiteQuestion):
 
 @dataclass
 class download_convert_pipeline(SuiteQuestion):
+    '''
+    Boolean option in `flow.cylc` deciding whether or not to run DownloadObs
+    and ConvertObsToIoda tasks.
+    '''
+    
     default_value: bool = False
     prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
                     "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
@@ -61,6 +72,10 @@ class download_convert_pipeline(SuiteQuestion):
 
 @dataclass
 class ensemble_hofx_packets(SuiteQuestion):
+    '''
+    Number of ensemble packets to run for HofX experiment
+    '''
+
     default_value: str = "defer_to_model"
     models: List[str] = mutable_field([
         "all_models"
@@ -72,6 +87,9 @@ class ensemble_hofx_packets(SuiteQuestion):
 
 @dataclass
 class ensemble_hofx_strategy(SuiteQuestion):
+    '''
+    Strategy to use for ensemble HofX experiment, serial or parallel.
+    '''
     default_value: str = "defer_to_model"
     models: List[str] = mutable_field([
         "all_models"
@@ -83,6 +101,9 @@ class ensemble_hofx_strategy(SuiteQuestion):
 
 @dataclass
 class experiment_id(SuiteQuestion):
+    '''
+    ID that swell and cylc will use to reference the experiment, defaults to `swell-<suite_name>`
+    '''
     default_value: str = "defer_to_code"
     prompt: str = "What is the experiment id?"
     data_type: DType = DType.STRING
@@ -91,6 +112,9 @@ class experiment_id(SuiteQuestion):
 
 @dataclass
 class experiment_root(SuiteQuestion):
+    '''
+    Root directory to place experiment in, defaults to `$NOBACKUP/SwellExperiments` on Discover.
+    '''
     default_value: str = "defer_to_platform"
     prompt: str = ("What is the experiment root (the directory where the "
                     "experiment will be stored)?")
@@ -100,6 +124,9 @@ class experiment_root(SuiteQuestion):
 
 @dataclass
 class final_cycle_point(SuiteQuestion):
+    '''
+    Final cycle point of experiment.
+    '''
     default_value: str = "2023-10-10T06:00:00Z"
     prompt: str = "What is the time of the final cycle (middle of the window)?"
     data_type: DType = DType.ISO_DATETIME
@@ -108,6 +135,9 @@ class final_cycle_point(SuiteQuestion):
 
 @dataclass
 class marine_models(SuiteQuestion):
+    '''
+    Marine models, relevant to `geos_marine` applications, includes `cice6` and `soca`.
+    '''
     default_value: str = "defer_to_model"
     options: str = "defer_to_model"
     models: List[str] = mutable_field([
@@ -120,6 +150,9 @@ class marine_models(SuiteQuestion):
 
 @dataclass
 class mock_experiment(SuiteQuestion):
+    '''
+    Dry-run option that simulates directories and other variables, used in comparing JEDI configs.
+    '''
     default_value: bool = False
     prompt: str = "Dry-run option for comparing configs."
     data_type: DType = DType.BOOLEAN
@@ -128,6 +161,10 @@ class mock_experiment(SuiteQuestion):
 
 @dataclass
 class model_components(SuiteQuestion):
+    '''
+    GEOS model components that the experiment will be running,
+    such as (geos_marine, geos_atmosphere, geos_cf)
+    '''
     default_value: str = "defer_to_code"
     options: str = "defer_to_code"
     prompt: str = "Enter the model components for this model."
@@ -386,6 +423,7 @@ class bufr_obs_classes(TaskQuestion):
 
 @dataclass
 class bundles(TaskQuestion):
+    '''Selected JEDI bundles to build.'''
     default_value: List[str] = mutable_field([
         "fv3-jedi",
         "soca",
