@@ -14,7 +14,7 @@ from r2d2 import store
 
 
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_filename, r2d2
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -40,10 +40,10 @@ class SaveForecastCf(taskBase):
 
         # Parse config
         # ------------
-        window_length = self.config.resolve(window_length)
-        forecast_length = self.config.resolve(forecast_length)
-        forecast_output_frequency = self.config.resolve(forecast_output_frequency)
-        expid = self.config.resolve(r2d2_experiment_id)
+        window_length = self.config.resolve(qd.window_length)
+        forecast_length = self.config.resolve(qd.forecast_length)
+        forecast_output_frequency = self.config.resolve(qd.forecast_output_frequency)
+        expid = self.config.resolve(qd.r2d2_experiment_id)
         fc_store = r2d2(self.jedi_rendering.__template_dict__)['store']['fc'][0]
 
         cycle_dir = self.cycle_dir()
@@ -76,7 +76,7 @@ class SaveForecastCf(taskBase):
                 item='forecast',
                 step=step,
                 experiment=expid,
-                resolution=self.config.resolve(horizontal_resolution),
+                resolution=self.config.resolve(qd.horizontal_resolution),
                 date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
                 source_file=source_file,
                 file_extension='nc',

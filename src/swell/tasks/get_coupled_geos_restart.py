@@ -10,7 +10,7 @@
 import os
 import glob
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
@@ -48,7 +48,7 @@ class GetCoupledGeosRestart(taskBase):
         swell_exp_path = self.experiment_path()
 
         # Obtain GEOS HOMDIR from user input
-        self.geos_homdir = self.config.resolve(geos_homdir)
+        self.geos_homdir = self.config.resolve(qd.geos_homdir)
         self.logger.info(f'GEOS HOME directory: {self.geos_homdir}')
 
         # Create GEOSgcm directory in the experiment folder if it doesn't exist yet
@@ -70,8 +70,8 @@ class GetCoupledGeosRestart(taskBase):
         geos_expdir_path = geos_homdir_path
 
         # If GEOS expdir is set to be different to homdir, create a link to expdir
-        if self.config.resolve(geos_expdir_different):
-            self.geos_expdir = self.config.resolve(geos_expdir)
+        if self.config.resolve(qd.geos_expdir_different):
+            self.geos_expdir = self.config.resolve(qd.geos_expdir)
             self.logger.info(f'GEOS EXPERIMENT directory: {self.geos_expdir}')
 
             if not os.path.exists(self.geos_expdir):
@@ -109,7 +109,7 @@ class GetCoupledGeosRestart(taskBase):
         # 3) Hotstart, just use the existing restarts in the forecast directory (e.g., from a
         # previous run or manually placed there)
         # ----------------------------------------------------
-        initial_restarts_method = self.config.resolve(initial_restarts_method, default='geos_expdir')
+        initial_restarts_method = self.config.resolve(qd.initial_restarts_method, default='geos_expdir')
 
         if initial_restarts_method == 'geos_expdir':
             self.initial_restarts_from_directory(geos_expdir_path)

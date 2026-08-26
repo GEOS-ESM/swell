@@ -13,7 +13,7 @@ from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.comparisons import comparison_tags
@@ -32,7 +32,7 @@ class EvaComparisonJediLog(taskBase):
 
         # Get the log type
         # ----------------
-        log_type = self.config.resolve(comparison_log_type)
+        log_type = self.config.resolve(qd.comparison_log_type)
 
         # Read Eva template file into dictionary
         # --------------------------------------
@@ -42,7 +42,7 @@ class EvaComparisonJediLog(taskBase):
             eva_str_template = eva_config_file_open.read()
 
         # Get the paths for the two experiments
-        experiment_paths = self.config.resolve(comparison_experiment_paths)
+        experiment_paths = self.config.resolve(qd.comparison_experiment_paths)
 
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 

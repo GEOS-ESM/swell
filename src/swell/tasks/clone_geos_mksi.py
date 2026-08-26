@@ -9,7 +9,7 @@
 
 
 import os
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import link_path
 
@@ -32,8 +32,8 @@ class CloneGeosMksi(taskBase):
 
         # Parse config
         # ------------
-        path_to_geos_mksi = self.config.resolve(observing_system_records_mksi_path)
-        tag = self.config.resolve(observing_system_records_mksi_path_tag)
+        path_to_geos_mksi = self.config.resolve(qd.observing_system_records_mksi_path)
+        tag = self.config.resolve(qd.observing_system_records_mksi_path_tag)
 
         # If observing_system_records_mksi_path is None, clone GEOS_mksi repo to experiment
         # directory
@@ -47,7 +47,7 @@ class CloneGeosMksi(taskBase):
                       + os.path.join(self.experiment_path(), 'GEOS_mksi'))
         else:
             # Link the source code directory
-            link_path(self.config.resolve(observing_system_records_mksi_path),
+            link_path(self.config.resolve(qd.observing_system_records_mksi_path),
                       os.path.join(self.experiment_path(), 'GEOS_mksi'))
 
 

@@ -18,7 +18,7 @@ import re
 import pyiodaconv.gsi_ncdiag as gsid
 from pyiodaconv.combine_obsspace import combine_obsspace
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.shell_commands import run_subprocess, create_executable_file
@@ -33,10 +33,10 @@ class GsiNcdiagToIoda(taskBase):
 
         # Parse configuration
         # -------------------
-        observations = self.config.resolve(observations)
-        single_observations = self.config.resolve(single_observations)
-        produce_geovals = self.config.resolve(produce_geovals)
-        window_length = self.config.resolve(window_length)
+        observations = self.config.resolve(qd.observations)
+        single_observations = self.config.resolve(qd.single_observations)
+        produce_geovals = self.config.resolve(qd.produce_geovals)
+        window_length = self.config.resolve(qd.window_length)
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_length)

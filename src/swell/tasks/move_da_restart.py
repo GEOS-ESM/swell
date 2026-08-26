@@ -12,7 +12,7 @@ import isodate
 import os
 import re
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
 
@@ -38,8 +38,8 @@ class MoveDaRestart(taskBase):
 
         # Obtain MOM6 IAU bool
         # ----------------------
-        self.mom6_iau = self.config.resolve(mom6_iau)
-        self.jedi_rendering.add_key('mom6_iau', self.config.resolve(mom6_iau, default=False))
+        self.mom6_iau = self.config.resolve(qd.mom6_iau)
+        self.jedi_rendering.add_key('mom6_iau', self.config.resolve(qd.mom6_iau, default=False))
 
         # Current and restart time objects
         # --------------------------------
@@ -77,7 +77,7 @@ class MoveDaRestart(taskBase):
         if int(agcm_dict.get('RECORD_FREQUENCY', '0')) > 0:
             self.logger.info('RECORD_FREQUENCY is turned on in AGCM.rc. Using _checkpoint files '
                              'with timestamps.')
-            window_length = self.config.resolve(window_length)
+            window_length = self.config.resolve(qd.window_length)
             an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
             rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
 
@@ -119,7 +119,7 @@ class MoveDaRestart(taskBase):
 
         if int(agcm_dict.get('RECORD_FREQUENCY', '0')) > 0:
 
-            window_length = self.config.resolve(window_length)
+            window_length = self.config.resolve(qd.window_length)
 
             an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
             rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)

@@ -11,7 +11,7 @@
 import glob
 import os
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 
@@ -24,7 +24,7 @@ class GetGsiNcdiag(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_diag_path = self.config.resolve(path_to_gsi_nc_diags)
+        gsi_diag_path = self.config.resolve(qd.path_to_gsi_nc_diags)
 
         # Replace gsi_diag_path datetime string with the actual datetime
         # --------------------------------------------------------------

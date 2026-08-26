@@ -12,7 +12,7 @@ import os
 from importlib import resources
 from ruamel.yaml import YAML
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_key
@@ -33,18 +33,18 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_type = self.config.resolve(window_type)
-        window_length = self.config.resolve(window_length)
-        background_time_offset = self.config.resolve(background_time_offset)
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
 
-        jedi_forecast_model = self.config.resolve(jedi_forecast_model, default=None)
-        generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
-        ensmean_only = self.config.resolve(ensmean_only)
-        ensmeanvariance_only = self.config.resolve(ensmeanvariance_only)
-        perhost = self.config.resolve(perhost, default=None)
+        jedi_forecast_model = self.config.resolve(qd.jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(qd.generate_yaml_and_exit, default=False)
+        ensmean_only = self.config.resolve(qd.ensmean_only)
+        ensmeanvariance_only = self.config.resolve(qd.ensmeanvariance_only)
+        perhost = self.config.resolve(qd.perhost, default=None)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(background_time_offset)
@@ -61,74 +61,74 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
-        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
-        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(analysis_variables))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(qd.marine_models, default=None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(qd.analysis_variables))
 
         # Background
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(horizontal_resolution))
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(qd.horizontal_resolution))
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.resolve(ensemble_num_members))
+        self.jedi_rendering.add_key('ensemble_num_members', self.config.resolve(qd.ensemble_num_members))
 
         # Geometry
-        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(vertical_resolution))
-        self.jedi_rendering.add_key('npx_proc', self.config.resolve(npx_proc, default=None))
-        self.jedi_rendering.add_key('npy_proc', self.config.resolve(npy_proc, default=None))
-        self.jedi_rendering.add_key('total_processors', self.config.resolve(total_processors, default=None))
+        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(qd.vertical_resolution))
+        self.jedi_rendering.add_key('npx_proc', self.config.resolve(qd.npx_proc, default=None))
+        self.jedi_rendering.add_key('npy_proc', self.config.resolve(qd.npy_proc, default=None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(qd.total_processors, default=None))
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(qd.crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Ensemble hofx components
-        self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.resolve(ensemble_hofx_strategy))
-        self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.resolve(ensemble_hofx_packets))
+        self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.resolve(qd.ensemble_hofx_strategy))
+        self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.resolve(qd.ensemble_hofx_packets))
 
         # Ensemble Localizations
         # ------------------------------
         if self.get_model() == 'geos_atmosphere':
             self.jedi_rendering.add_key('vertical_localization_method',
-                                        self.config.resolve(vertical_localization_method))
+                                        self.config.resolve(qd.vertical_localization_method))
             self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
-                                        self.config.resolve(vertical_localization_apply_log_transform))
+                                        self.config.resolve(qd.vertical_localization_apply_log_transform))
             self.jedi_rendering.add_key('vertical_localization_lengthscale',
-                                        self.config.resolve(vertical_localization_lengthscale))
+                                        self.config.resolve(qd.vertical_localization_lengthscale))
             self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
-                                        self.config.resolve(vertical_localization_ioda_vertical_coord))
+                                        self.config.resolve(qd.vertical_localization_ioda_vertical_coord))
             self.jedi_rendering.add_key(
                 'vertical_localization_ioda_vertical_coord_group',
-                self.config.resolve(vertical_localization_ioda_vertical_coord_group))
+                self.config.resolve(qd.vertical_localization_ioda_vertical_coord_group))
             self.jedi_rendering.add_key('vertical_localization_function',
-                                        self.config.resolve(vertical_localization_function))
+                                        self.config.resolve(qd.vertical_localization_function))
 
         # Driver
-        self.jedi_rendering.add_key('local_ensemble_solver', self.config.resolve(local_ensemble_solver))
+        self.jedi_rendering.add_key('local_ensemble_solver', self.config.resolve(qd.local_ensemble_solver))
         self.jedi_rendering.add_key('local_ensemble_inflation_rtps',
-                                    self.config.resolve(local_ensemble_inflation_rtps))
+                                    self.config.resolve(qd.local_ensemble_inflation_rtps))
         self.jedi_rendering.add_key('local_ensemble_inflation_rtpp',
-                                    self.config.resolve(local_ensemble_inflation_rtpp))
+                                    self.config.resolve(qd.local_ensemble_inflation_rtpp))
         self.jedi_rendering.add_key('local_ensemble_inflation_mult',
-                                    self.config.resolve(local_ensemble_inflation_mult))
+                                    self.config.resolve(qd.local_ensemble_inflation_mult))
         self.jedi_rendering.add_key('local_ensemble_save_posterior_mean',
-                                    self.config.resolve(local_ensemble_save_posterior_mean))
+                                    self.config.resolve(qd.local_ensemble_save_posterior_mean))
         self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble',
-                                    self.config.resolve(local_ensemble_save_posterior_ensemble))
+                                    self.config.resolve(qd.local_ensemble_save_posterior_ensemble))
         self.jedi_rendering.add_key('local_ensemble_save_posterior_mean_increment',
-                                    self.config.resolve(local_ensemble_save_posterior_mean_increment))
+                                    self.config.resolve(qd.local_ensemble_save_posterior_mean_increment))
         self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments',
-                                    self.config.resolve(local_ensemble_save_posterior_ensemble_increments))
+                                    self.config.resolve(qd.local_ensemble_save_posterior_ensemble_increments))
         self.jedi_rendering.add_key('ensmean_only',
-                                    self.config.resolve(ensmean_only))
+                                    self.config.resolve(qd.ensmean_only))
         self.jedi_rendering.add_key('ensmeanvariance_only',
-                                    self.config.resolve(ensmeanvariance_only))
+                                    self.config.resolve(qd.ensmeanvariance_only))
         self.jedi_rendering.add_key('local_ensemble_use_linear_observer',
-                                    self.config.resolve(local_ensemble_use_linear_observer))
-        self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.resolve(skip_ensemble_hofx))
+                                    self.config.resolve(qd.local_ensemble_use_linear_observer))
+        self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.resolve(qd.skip_ensemble_hofx))
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.resolve(mock_experiment, default=False):
+        if self.config.resolve(qd.mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
@@ -136,8 +136,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
-        if self.config.resolve(local_ensemble_save_posterior_mean) and \
-           self.config.resolve(local_ensemble_save_posterior_ensemble):
+        if self.config.resolve(qd.local_ensemble_save_posterior_mean) and \
+           self.config.resolve(qd.local_ensemble_save_posterior_ensemble):
             raise ValueError("'local_ensemble_save_posterior_mean' and\
             'local_ensemble_save_posterior_ensemble' cannot be both true!")
 
@@ -158,15 +158,15 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Assemble localizations
         # ----------------------
         # # Vertical localizations have bug(s) - Commented out for now...
-        # vertLoc = {'localization method': self.config.resolve(vertical_localization_method),
+        # vertLoc = {'localization method': self.config.resolve(qd.vertical_localization_method),
         #            'apply log transformation':
-        #            self.config.resolve(vertical_localization_apply_log_transform),
-        #            'vertical lengthscale': self.config.resolve(vertical_localization_lengthscale),
+        #            self.config.resolve(qd.vertical_localization_apply_log_transform),
+        #            'vertical lengthscale': self.config.resolve(qd.vertical_localization_lengthscale),
         #            'ioda vertical coordinate':
-        #            self.config.resolve(vertical_localization_ioda_vertical_coord),
+        #            self.config.resolve(qd.vertical_localization_ioda_vertical_coord),
         #            'ioda vertical coordinate group':
-        #            self.config.resolve(vertical_localization_ioda_vertical_coord_group),
-        #            'localization function': self.config.resolve(vertical_localization_function)}
+        #            self.config.resolve(qd.vertical_localization_ioda_vertical_coord_group),
+        #            'localization function': self.config.resolve(qd.vertical_localization_function)}
         # localizations = [horizLoc, vertLoc] if len(vertLoc) != 0 else [horizLoc]
 
         # Include ensemble localizations and halo types with each observation

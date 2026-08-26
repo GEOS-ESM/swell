@@ -13,7 +13,7 @@ import subprocess
 
 from datetime import datetime as dt
 from swell.utilities.datetime_util import datetime_formats
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ class GetBufr(taskBase):
 
         perl_executable_path = os.path.join(self.experiment_path(), 'GMAO_perllib')
         geos_mksi_obsysrc_path = os.path.join(self.experiment_path(),
-                                              self.config.resolve(obs_rc_path))
+                                              self.config.resolve(qd.obs_rc_path))
 
         # Environment variables for acquire_obsys
         env_dict = os.environ
@@ -60,7 +60,7 @@ class GetBufr(taskBase):
 
         # Get BUFR obs classes from mksi and acquire them
         # -----------------------------------------------
-        obsclasses = self.config.resolve(bufr_obs_classes)
+        obsclasses = self.config.resolve(qd.bufr_obs_classes)
 
         for obsclass in obsclasses:
 

@@ -16,7 +16,7 @@ import xarray as xr
 from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -37,13 +37,13 @@ class LinkCoupledGeosOutput(taskBase):
 
         # Parse configuration
         # -------------------
-        self.marine_models = self.config.resolve(marine_models, default=None) or []
-        self.window_type = self.config.resolve(window_type)
-        self.window_length = self.config.resolve(window_length)
+        self.marine_models = self.config.resolve(qd.marine_models, default=None) or []
+        self.window_type = self.config.resolve(qd.window_type)
+        self.window_length = self.config.resolve(qd.window_length)
         self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_length)
 
         if self.window_type == '4D' or 'fgat' in self.suite_name():
-            self.background_frequency = self.config.resolve(background_frequency)
+            self.background_frequency = self.config.resolve(qd.background_frequency)
 
         self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time(
             self.window_length,

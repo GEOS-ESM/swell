@@ -13,7 +13,7 @@ import isodate
 import os
 import tarfile
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 
@@ -45,9 +45,9 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Parse config
         # ------------
-        background_experiment = self.config.resolve(background_experiment)
-        geos_x_background_directory = self.config.resolve(geos_x_background_directory)
-        background_time_offset = self.config.resolve(background_time_offset)
+        background_experiment = self.config.resolve(qd.background_experiment)
+        geos_x_background_directory = self.config.resolve(qd.geos_x_background_directory)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
 
         # Since this is an optional task, check if the geos_x_background_directory is
         # set to /dev/null, if so fail the task

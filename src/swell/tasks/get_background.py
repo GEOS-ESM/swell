@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 
@@ -56,29 +56,29 @@ class GetBackground(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.resolve(r2d2_server, default=None),
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None),
         )
 
-        r2d2_datastore = self.config.resolve(r2d2_datastore, default=None)
+        r2d2_datastore = self.config.resolve(qd.r2d2_datastore, default=None)
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
 
         # Parse config
-        background_frequency = self.config.resolve(background_frequency, default=None)
-        horizontal_resolution = self.config.resolve(horizontal_resolution)
-        window_length = self.config.resolve(window_length)
-        window_type = self.config.resolve(window_type)
+        background_frequency = self.config.resolve(qd.background_frequency, default=None)
+        horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
+        window_length = self.config.resolve(qd.window_length)
+        window_type = self.config.resolve(qd.window_type)
 
         # For experiments with cycle in the suite name:
         # for the first cycle, use background_experiment in config
         # as the experiment id for fetching from r2d2 for cycles after
         # the first, use the current experiment id for fetching from r2d2
         if self.cycle_time_dto() != self.start_cycle_point_dto() and 'cycle' in self.suite_name():
-            background_experiment = self.config.resolve(r2d2_experiment_id)
+            background_experiment = self.config.resolve(qd.r2d2_experiment_id)
         else:
-            background_experiment = self.config.resolve(background_experiment)
+            background_experiment = self.config.resolve(qd.background_experiment)
 
         self.logger.info(f'Fetching background from experiment {background_experiment}')
 
@@ -89,7 +89,7 @@ class GetBackground(taskBase):
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
-        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(qd.marine_models, default=None))
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
         # Convert to datetime durations

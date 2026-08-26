@@ -20,7 +20,7 @@ import sys
 import yaml
 from datetime import datetime
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 
@@ -63,13 +63,13 @@ class ConvertObsToIoda(taskBase):
 
     def execute(self) -> None:
 
-        obs_to_convert = self.config.resolve(obs_to_download, default=[])
-        dry_run = self.config.resolve(dry_run, default=True)
+        obs_to_convert = self.config.resolve(qd.obs_to_download, default=[])
+        dry_run = self.config.resolve(qd.dry_run, default=True)
 
         if dry_run:
             self.logger.info('DRY RUN MODE - No converters will be run')
 
-        converter_path = self.config.resolve(converter_path, default='')
+        converter_path = self.config.resolve(qd.converter_path, default='')
         if converter_path:
             converter_bin = converter_path
         else:

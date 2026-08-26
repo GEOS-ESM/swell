@@ -11,7 +11,7 @@
 import os
 from ruamel.yaml import YAML
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
@@ -36,11 +36,11 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Parse configuration ... despite same block in RunJediHofxExecutable
         # -------------------------------------------------------------------
-        window_type = self.config.resolve(window_type)
-        window_length = self.config.resolve(window_length)
-        background_time_offset = self.config.resolve(background_time_offset)
-        jedi_forecast_model = self.config.resolve(jedi_forecast_model, default=None)
-        generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        jedi_forecast_model = self.config.resolve(qd.jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(qd.generate_yaml_and_exit, default=False)
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(background_time_offset)
@@ -53,9 +53,9 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Ensemble hofx components
         # ------------------------
-        ensemble_hofx_packets = self.config.resolve(ensemble_hofx_packets)
-        ensemble_hofx_strategy = self.config.resolve(ensemble_hofx_strategy)
-        ensemble_num_members = self.config.resolve(ensemble_num_members)
+        ensemble_hofx_packets = self.config.resolve(qd.ensemble_hofx_packets)
+        ensemble_hofx_strategy = self.config.resolve(qd.ensemble_hofx_strategy)
+        ensemble_num_members = self.config.resolve(qd.ensemble_num_members)
 
         # Force packets of equal size (i.e., members handled)
         # ---------------------------------------------------
@@ -84,24 +84,24 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
 
         # Background
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(horizontal_resolution))
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(qd.horizontal_resolution))
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
-        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(vertical_resolution))
-        self.jedi_rendering.add_key('npx_proc', self.config.resolve(npx_proc, default=None))
-        self.jedi_rendering.add_key('npy_proc', self.config.resolve(npy_proc, default=None))
-        self.jedi_rendering.add_key('total_processors', self.config.resolve(total_processors, default=None))
+        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(qd.vertical_resolution))
+        self.jedi_rendering.add_key('npx_proc', self.config.resolve(qd.npx_proc, default=None))
+        self.jedi_rendering.add_key('npy_proc', self.config.resolve(qd.npy_proc, default=None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(qd.total_processors, default=None))
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(qd.crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Model
         if window_type == '4D':
-            self.jedi_rendering.add_key('background_frequency', self.config.resolve(background_frequency))
+            self.jedi_rendering.add_key('background_frequency', self.config.resolve(qd.background_frequency))
 
         # Populate remaining entries of jedi interface templates dictionary
         # -----------------------------------------------------------------
@@ -110,7 +110,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
-        if self.config.resolve(mock_experiment, default=False):
+        if self.config.resolve(qd.mock_experiment, default=False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')

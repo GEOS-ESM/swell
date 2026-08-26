@@ -11,7 +11,7 @@
 import os
 import subprocess
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -26,8 +26,8 @@ class CloneGmaoPerllib(taskBase):
         experiment_perllib_path = os.path.join(swell_exp_path, 'GMAO_perllib')
 
         # Get the existing location of GMAO_perllib
-        existing_perllib_path = self.config.resolve(gmao_perllib_path, default=None)
-        gmao_perllib_tag = self.config.resolve(gmao_perllib_tag, default=None)
+        existing_perllib_path = self.config.resolve(qd.gmao_perllib_path, default=None)
+        gmao_perllib_tag = self.config.resolve(qd.gmao_perllib_tag, default=None)
 
         # Set the default tag to g1.0.1 if not specified
         if gmao_perllib_tag is None:

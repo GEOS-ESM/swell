@@ -12,7 +12,7 @@ import glob
 import os
 
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import write_dict_to_yaml
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -27,10 +27,10 @@ class GsiBcToIoda(taskBase):
 
         # Parse configuration
         # -------------------
-        observations = self.config.resolve(observations)
-        background_time_offset = self.config.resolve(background_time_offset)
-        window_length = self.config.resolve(window_length)
-        crtm_coeff_dir = self.config.resolve(crtm_coeff_dir, default=None)
+        observations = self.config.resolve(qd.observations)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        window_length = self.config.resolve(qd.window_length)
+        crtm_coeff_dir = self.config.resolve(qd.crtm_coeff_dir, default=None)
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_length)
@@ -48,7 +48,7 @@ class GsiBcToIoda(taskBase):
         sensors_tlapse = []
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
         for observation in observations:
 

@@ -14,7 +14,7 @@ import os
 import shutil
 import tarfile
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 
 
@@ -27,8 +27,8 @@ class GetGsiBc(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_bc_location = self.config.resolve(path_to_gsi_bc_coefficients)
-        window_length = self.config.resolve(window_length)
+        gsi_bc_location = self.config.resolve(qd.path_to_gsi_bc_coefficients)
+        window_length = self.config.resolve(qd.window_length)
 
         # Time of GSI analysis providing the bias correction coefficients
         # ---------------------------------------------------------------

@@ -11,7 +11,7 @@
 import os
 from ruamel.yaml import YAML
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import check_obs
 
@@ -23,26 +23,26 @@ class RenderJediObservations(taskBase):
     def execute(self) -> None:
 
         # List of observations
-        obs_list = self.config.resolve(observations)
+        obs_list = self.config.resolve(qd.observations)
 
         # Whether to run get_channels for obs
-        check_for_obs = self.config.resolve(check_for_obs, default=True)
+        check_for_obs = self.config.resolve(qd.check_for_obs, default=True)
 
         # Observing system records paths
-        observing_system_records_path = self.config.resolve(observing_system_records_path, default=None)
+        observing_system_records_path = self.config.resolve(qd.observing_system_records_path, default=None)
         self.jedi_rendering.set_obs_records_path(observing_system_records_path)
 
         # Marine models
-        marine_models = self.config.resolve(marine_models, default=None)
+        marine_models = self.config.resolve(qd.marine_models, default=None)
 
         # Window parameters
-        window_length = self.config.resolve(window_length)
-        background_time_offset = self.config.resolve(background_time_offset)
+        window_length = self.config.resolve(qd.window_length)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
 
         # Window parameters for observations
         window_begin = self.da_window_params.window_begin(window_length)
         background_time = self.da_window_params.background_time(background_time_offset)
-        crtm_coeff_dir = self.config.resolve(crtm_coeff_dir, default=None)
+        crtm_coeff_dir = self.config.resolve(qd.crtm_coeff_dir, default=None)
 
         # Set fields for obs files
         self.jedi_rendering.add_key('window_begin', window_begin)
@@ -52,7 +52,7 @@ class RenderJediObservations(taskBase):
 
         cwd = os.getcwd()
 
-        if self.config.resolve(mock_experiment, default=False):
+        if self.config.resolve(qd.mock_experiment, default=False):
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')

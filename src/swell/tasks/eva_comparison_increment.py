@@ -14,7 +14,7 @@ import glob
 
 from eva.eva_driver import eva
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
@@ -49,7 +49,7 @@ class EvaComparisonIncrement(taskBase):
             eva_str_template = eva_config_file_open.read()
 
         # Get the paths for the two experiments
-        experiment_paths = self.config.resolve(comparison_experiment_paths)
+        experiment_paths = self.config.resolve(qd.comparison_experiment_paths)
         print(experiment_paths)
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 

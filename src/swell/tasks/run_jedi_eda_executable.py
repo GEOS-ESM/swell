@@ -12,7 +12,7 @@ import glob
 import shutil
 from ruamel.yaml import YAML
 
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_string_value
@@ -32,25 +32,25 @@ class RunJediEdaExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_type = self.config.resolve(window_type)
-        window_length = self.config.resolve(window_length)
-        forecast_length = self.config.resolve(forecast_length, default=window_length)
-        background_time_offset = self.config.resolve(background_time_offset)
-        number_of_iterations = self.config.resolve(number_of_iterations)
-        jedi_forecast_model = self.config.resolve(jedi_forecast_model, default=None)
-        generate_yaml_and_exit = self.config.resolve(generate_yaml_and_exit, default=False)
-        perhost = self.config.resolve(perhost, default=None)
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
+        forecast_length = self.config.resolve(qd.forecast_length, default=window_length)
+        background_time_offset = self.config.resolve(qd.background_time_offset)
+        number_of_iterations = self.config.resolve(qd.number_of_iterations)
+        jedi_forecast_model = self.config.resolve(qd.jedi_forecast_model, default=None)
+        generate_yaml_and_exit = self.config.resolve(qd.generate_yaml_and_exit, default=False)
+        perhost = self.config.resolve(qd.perhost, default=None)
 
         # Set the observing system records path
-        self.jedi_rendering.set_obs_records_path(self.config.resolve(observing_system_records_path, default=None))
+        self.jedi_rendering.set_obs_records_path(self.config.resolve(qd.observing_system_records_path, default=None))
 
-        gsibec_nlats = self.config.resolve(gsibec_nlats, default=None)
-        gsibec_nlons = self.config.resolve(gsibec_nlons, default=None)
-        gsibec_configuration = self.config.resolve(gsibec_configuration, default=None)
-        npx_proc = self.config.resolve(npx_proc, default=None)
-        npy_proc = self.config.resolve(npy_proc, default=None)
-        npx = self.config.resolve(npx, default=None)
-        npy = self.config.resolve(npy, default=None)
+        gsibec_nlats = self.config.resolve(qd.gsibec_nlats, default=None)
+        gsibec_nlons = self.config.resolve(qd.gsibec_nlons, default=None)
+        gsibec_configuration = self.config.resolve(qd.gsibec_configuration, default=None)
+        npx_proc = self.config.resolve(qd.npx_proc, default=None)
+        npy_proc = self.config.resolve(qd.npy_proc, default=None)
+        npx = self.config.resolve(qd.npx, default=None)
+        npy = self.config.resolve(qd.npy, default=None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -62,8 +62,8 @@ class RunJediEdaExecutable(taskBase):
         window_begin = self.da_window_params.window_begin(window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
-        obs_pert_amplitude = self.config.resolve(obs_pert_amplitude)
-        nmember = self.config.resolve(ensemble_num_members)
+        obs_pert_amplitude = self.config.resolve(qd.obs_pert_amplitude)
+        nmember = self.config.resolve(qd.ensemble_num_members)
         imember = self.get_ensemble_imember()
 
         # Populate jedi interface templates dictionary
@@ -72,38 +72,38 @@ class RunJediEdaExecutable(taskBase):
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('forecast_length', forecast_length)
-        self.jedi_rendering.add_key('minimizer', self.config.resolve(minimizer))
+        self.jedi_rendering.add_key('minimizer', self.config.resolve(qd.minimizer))
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
-        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(analysis_variables))
-        self.jedi_rendering.add_key('saber_central_block', self.config.resolve(saber_central_block, default=None))
-        self.jedi_rendering.add_key('saber_outer_block', self.config.resolve(saber_outer_block, default=None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.resolve(qd.analysis_variables))
+        self.jedi_rendering.add_key('saber_central_block', self.config.resolve(qd.saber_central_block, default=None))
+        self.jedi_rendering.add_key('saber_outer_block', self.config.resolve(qd.saber_outer_block, default=None))
         self.jedi_rendering.add_key('gradient_norm_reduction',
-                                    self.config.resolve(gradient_norm_reduction))
-        self.jedi_rendering.add_key('marine_models', self.config.resolve(marine_models, default=None))
+                                    self.config.resolve(qd.gradient_norm_reduction))
+        self.jedi_rendering.add_key('marine_models', self.config.resolve(qd.marine_models, default=None))
 
         # Background
         # ----------
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(horizontal_resolution))
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.resolve(qd.horizontal_resolution))
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.resolve(ensemble_num_members))
+        self.jedi_rendering.add_key('ensemble_num_members', self.config.resolve(qd.ensemble_num_members))
         self.jedi_rendering.add_key('ensemble_imember', imember)
 
         # Geometry
         # --------
-        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(vertical_resolution))
+        self.jedi_rendering.add_key('vertical_resolution', self.config.resolve(qd.vertical_resolution))
         self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
         self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('npx', npx)
         self.jedi_rendering.add_key('npy', npy)
-        self.jedi_rendering.add_key('total_processors', self.config.resolve(total_processors, default=None))
+        self.jedi_rendering.add_key('total_processors', self.config.resolve(qd.total_processors, default=None))
 
         # Observations
         # ------------
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(crtm_coeff_dir, default=None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.resolve(qd.crtm_coeff_dir, default=None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Atmosphere background error model
@@ -118,7 +118,7 @@ class RunJediEdaExecutable(taskBase):
         # Model
         # -----
         if window_type == '4D':
-            self.jedi_rendering.add_key('background_frequency', self.config.resolve(background_frequency))
+            self.jedi_rendering.add_key('background_frequency', self.config.resolve(qd.background_frequency))
 
         # Jedi configuration file
         # -----------------------
