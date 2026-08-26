@@ -117,7 +117,7 @@ class Config():
 
         # Add suite questions if they aren't already set
         for question in suite_questions:
-            if question not in suite_questions:
+            if question not in self.question_list:
                 self.question_list.append(question)
 
         # Find the questions associated with the task
@@ -130,7 +130,7 @@ class Config():
         question_obj = question()
         name = question_obj.question_name
 
-        if name in self.question_list:
+        if name in self.question_list and name in self.experiment_dict:
             default = self.experiment_dict[name]
         elif name in self.experiment_dict:
             raise KeyError(f'Value {name} is present in config but this task has not been assigned'
