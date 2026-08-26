@@ -12,7 +12,7 @@ import os
 from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
@@ -60,10 +60,10 @@ class SaveForecast(taskBase):
         window type (and/or suite type) and length.
         """
 
-        self.marine_models = self.config.resolve(marine_models, default=None) or []
-        window_type = self.config.resolve(window_type)
-        self.window_length = self.config.resolve(window_length)
-        self.horizontal_resolution = self.config.resolve(horizontal_resolution)
+        self.marine_models = self.config.resolve(qd.marine_models, default=None) or []
+        window_type = self.config.resolve(qd.window_type)
+        self.window_length = self.config.resolve(qd.window_length)
+        self.horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
 
         load_r2d2_credentials(self.logger, self.platform())
 
@@ -102,7 +102,7 @@ class SaveForecast(taskBase):
         store(
             item='forecast',
             model=model_name,
-            experiment=self.config.resolve(r2d2_experiment_id),
+            experiment=self.config.resolve(qd.r2d2_experiment_id),
             resolution=self.horizontal_resolution,
             date=self.local_background_time_dto.strftime('%Y-%m-%d %H:%M:%S'),
             source_file=archive_path,

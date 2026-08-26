@@ -11,7 +11,7 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
@@ -36,13 +36,13 @@ class GetEnsemble(taskBase):
 
         # Parse configuration
         # -------------------
-        horizontal_resolution = self.config.resolve(horizontal_resolution)
-        vertical_resolution = self.config.resolve(vertical_resolution)
-        background_experiment = self.config.resolve(background_experiment)
+        horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
+        vertical_resolution = self.config.resolve(qd.vertical_resolution)
+        background_experiment = self.config.resolve(qd.background_experiment)
 
         # Get the path and pattern for the ensemble members
         # -------------------------------------------------
-        ensemble_path = self.config.resolve(path_to_ensemble)
+        ensemble_path = self.config.resolve(qd.path_to_ensemble)
 
         # For 3D window, analysis time is the cycle time
         # -------------------------------------------------

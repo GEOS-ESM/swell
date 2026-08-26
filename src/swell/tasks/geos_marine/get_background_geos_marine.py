@@ -13,7 +13,7 @@ import tarfile
 import r2d2
 
 from swell.tasks.base.task_base import taskBase
-from swell.configuration.question_defaults import *
+import swell.configuration.question_defaults as qd
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
@@ -55,15 +55,15 @@ class GetBackground(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_server=self.config.resolve(r2d2_server, default=None)
+            r2d2_server=self.config.resolve(qd.r2d2_server, default=None)
         )
 
-        r2d2_datastore = self.config.resolve(r2d2_datastore, default=None)
-        marine_models = self.config.resolve(marine_models, default=None) or []
-        window_type = self.config.resolve(window_type)
-        window_length = self.config.resolve(window_length)
-        horizontal_resolution = self.config.resolve(horizontal_resolution)
-        background_experiment = self.config.resolve(background_experiment)
+        r2d2_datastore = self.config.resolve(qd.r2d2_datastore, default=None)
+        marine_models = self.config.resolve(qd.marine_models, default=None) or []
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
+        horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
+        background_experiment = self.config.resolve(qd.background_experiment)
 
         local_background_time, local_background_time_dto = \
             self.da_window_params.local_background_time(window_length, window_type, dto=True)

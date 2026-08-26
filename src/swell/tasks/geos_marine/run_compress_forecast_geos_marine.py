@@ -13,8 +13,8 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
-from swell.configuration.question_defaults import *
 from swell.utilities.compress import compress_file
+import swell.configuration.question_defaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
@@ -53,16 +53,16 @@ class RunCompressForecast(taskBase):
         state files into a tar.gz archive.
         """
 
-        marine_models = self.config.resolve(marine_models, default=None) or []
-        window_type = self.config.resolve(window_type)
-        window_length = self.config.resolve(window_length)
+        marine_models = self.config.resolve(qd.marine_models, default=None) or []
+        window_type = self.config.resolve(qd.window_type)
+        window_length = self.config.resolve(qd.window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
-        horizontal_resolution = self.config.resolve(horizontal_resolution)
+        horizontal_resolution = self.config.resolve(qd.horizontal_resolution)
 
         is_4d = window_type == '4D' or 'fgat' in self.suite_name()
 
         if is_4d:
-            background_frequency = self.config.resolve(background_frequency)
+            background_frequency = self.config.resolve(qd.background_frequency)
 
         (local_background_time, local_background_time_dto) = \
             self.da_window_params.local_background_time(window_length, window_type, dto=True)
