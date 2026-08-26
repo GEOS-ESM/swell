@@ -369,13 +369,15 @@ class Geos():
         bkg_duration = isodate.parse_duration(bkg_freq)
         bkg_hours = int(bkg_duration.total_seconds() / 3600)
 
-        self.logger.info(f"Updating diag_table history frequency with background frequency: {bkg_freq}")
+        self.logger.info(f"Change diag_table history frequency to background frequency: {bkg_freq}")
 
         with open(diag_table_path, 'r') as infile:
             content = infile.read()
 
         pattern = re.compile(
-            r'("his%4yr%2mo%2dy%2hr"\s*,\s*)(\d+)(\s*,\s*"hours"\s*,\s*\d+\s*,\s*"hours"\s*,\s*"time"\s*,\s*)(\d+)(\s*,\s*"hours")'
+            r'("his%4yr%2mo%2dy%2hr"\s*,\s*)(\d+)'
+            r'(\s*,\s*"hours"\s*,\s*\d+\s*,\s*"hours"\s*,\s*"time"\s*,\s*)'
+            r'(\d+)(\s*,\s*"hours")'
         )
         updated_content, count = pattern.subn(
             lambda match: (
