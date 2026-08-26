@@ -39,8 +39,8 @@ class RunJediEtkfObserver(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
-        npx_per_observer = self.cofig.npx_per_observer
-        npy_per_observer = self.cofig.npy_per_observer
+        npx = self.config.npx_per_observer()
+        npy = self.config.npy_per_observer()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -180,8 +180,8 @@ class RunJediEtkfObserver(taskBase):
                                                        "variational bc", "static bc")
         model_component_meta = self.jedi_rendering.render_interface_meta()
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
-                                            'build', 'bin', jedi_executable)
+        jedi_executable_wi_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                               'build', 'bin', jedi_executable)
 
         # seperate each obs and write to disk
         # -------------------------------------------------------------------
@@ -191,7 +191,7 @@ class RunJediEtkfObserver(taskBase):
         print(f'driver= {driver}')
 
         observers = jedi_config_dict["observations"]["observers"]
-        np = 6 * npx_per_observer * npy_per_observer
+        np = 6 * npx * npy
         cmd = """
         export SLURM_MPI_TYPE=pmi2
         export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
@@ -209,7 +209,7 @@ class RunJediEtkfObserver(taskBase):
                 yaml.dump(x0, f)
             cmd += (
                 f"srun --exclusive --mpi=pmi2 -n {np} "
-                f"{jedi_executable_path} {tmp_file1} {tmp_file2} &\n"
+                f"{jedi_executable_wi_path} {tmp_file1} {tmp_file2} &\n"
             )
         cmd += f"wait \n"
         print(f'nobs = {i+1}')

@@ -863,6 +863,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_unit(),
             qd.vertical_localization_frac_retained_variance(),
             qd.vertical_localization_method(),
+            qd.npx_per_observer(),
+            qd.npy_per_observer(),
             qd.perhost(),
             qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
