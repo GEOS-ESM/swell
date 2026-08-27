@@ -267,6 +267,9 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
+
         # Read observation ioda names
         ioda_names_list = get_ioda_names_list()
 
