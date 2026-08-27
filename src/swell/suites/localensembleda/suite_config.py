@@ -39,8 +39,9 @@ class SuiteConfig(QuestionContainer, Enum):
                                            'rtodling/archive/Restarts/JEDI/541x'),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
                                          'rtodling/archive/541/Milan'),
-            qd.npx_proc(3),
-            qd.npy_proc(3),
+            qd.npx_proc(4),
+            qd.npy_proc(4),
+            qd.perhost(48),
             qd.cycle_times(['T00']),
             qd.ensemble_num_members(3),
             qd.skip_ensemble_hofx(True),
@@ -51,8 +52,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.local_ensemble_do_posterior_observer(True),
-            qd.obs_thinning_rej_fraction(0.75),
+            qd.local_ensemble_do_posterior_observer(False),
+            qd.obs_thinning_rej_fraction(0.98),
             qd.observations([
                 "atms_n20",
             ]),
