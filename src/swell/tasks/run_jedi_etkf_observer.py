@@ -121,6 +121,8 @@ class RunJediEtkfObserver(taskBase):
         self.jedi_rendering.add_key('local_ensemble_use_linear_observer',
                                     self.config.local_ensemble_use_linear_observer())
         self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
+        self.jedi_rendering.add_key('local_ensemble_do_posterior_observer',
+                                    self.config.local_ensemble_do_posterior_observer())
 
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
@@ -154,8 +156,9 @@ class RunJediEtkfObserver(taskBase):
         # -------------------------------------------------------------------
 
         swell_path = get_swell_path()
+        model_component = self.get_model()
         localization_path = os.path.join(swell_path,
-                                         f'configuration/jedi/interfaces/geos_atmosphere'
+                                         f'configuration/jedi/interfaces/{model_component}'
                                          f'/observations/localization')
         yaml = YAML()
         # update localizations in dict
@@ -188,7 +191,7 @@ class RunJediEtkfObserver(taskBase):
         driver = jedi_config_dict['driver']
         driver['run as observer only'] = True
         driver['read HX from disk'] = False
-        print(f'driver= {driver}')
+        driver.pop('do posterior observer', None)
 
         observers = jedi_config_dict["observations"]["observers"]
         np = 6 * npx * npy

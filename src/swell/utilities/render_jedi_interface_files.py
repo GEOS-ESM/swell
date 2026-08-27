@@ -112,6 +112,7 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_ensemble_increments',
             'local_ensemble_save_posterior_mean',
             'local_ensemble_save_posterior_mean_increment',
+            'local_ensemble_do_posterior_observer',
             'local_ensemble_solver',
             'local_ensemble_use_linear_observer',
             'marine_models',

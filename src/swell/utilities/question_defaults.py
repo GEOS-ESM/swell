@@ -1332,7 +1332,7 @@ class QuestionDefaults():
 
     @dataclass
     class skip_hofx_output(TaskQuestion):
-        default_value: bool = True
+        default_value: bool = False
         question_name: str = "skip_hofx_output"
         options: List[bool] = mutable_field([
             True,

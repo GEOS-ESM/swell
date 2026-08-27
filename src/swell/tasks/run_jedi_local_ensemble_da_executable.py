@@ -85,6 +85,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Ensemble hofx components
         self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.ensemble_hofx_strategy())
         self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.ensemble_hofx_packets())
+        self.jedi_rendering.add_key('local_ensemble_do_posterior_observer',
+                                    self.config.local_ensemble_do_posterior_observer())
 
         # Ensemble Localizations
         self.jedi_rendering.add_key('horizontal_localization_method',
@@ -93,10 +95,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                     self.config.horizontal_localization_lengthscale())
         self.jedi_rendering.add_key('horizontal_localization_max_nobs',
                                     self.config.horizontal_localization_max_nobs())
-
-        # Compute OMA in local_ensemble_da
-        self.jedi_rendering.add_key('do_posterior_observer'
-                                    self.config.local_ensemble_do_posterior_observer())
 
         # ------------------------------
         if self.get_model() == 'geos_atmosphere':
