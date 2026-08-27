@@ -15,7 +15,6 @@ from ruamel.yaml import YAML
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.yaml_utils import replace_key
 from swell.utilities.run_jedi_executables import run_executable
-from swell.utilities.yaml_utils import replace_key
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,6 +42,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         ensmeanvariance_only = self.config.ensmeanvariance_only()
         change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
         perhost = self.config.perhost(None)
+        skip_hofx_output = self.config.skip_hofx_output()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -94,10 +94,18 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('horizontal_localization_max_nobs',
                                     self.config.horizontal_localization_max_nobs())
 
+        # Compute OMA in local_ensemble_da
+        self.jedi_rendering.add_key('do_posterior_observer'
+                                    self.config.local_ensemble_do_posterior_observer())
+
         # ------------------------------
         if self.get_model() == 'geos_atmosphere':
             self.jedi_rendering.add_key('vertical_localization_method',
                                         self.config.vertical_localization_method())
+            self.jedi_rendering.add_key('vertical_localization_function',
+                                        self.config.vertical_localization_function())
+            self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
+                                        self.config.vertical_localization_frac_retained_variance())
             self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
                                         self.config.vertical_localization_apply_log_transform())
             self.jedi_rendering.add_key('vertical_localization_unit',
@@ -109,12 +117,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             self.jedi_rendering.add_key(
                 'vertical_localization_ioda_vertical_coord_group',
                 self.config.vertical_localization_ioda_vertical_coord_group())
-            self.jedi_rendering.add_key('vertical_localization_function',
-                                        self.config.vertical_localization_function())
-            self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
-                                        self.config.vertical_localization_frac_retained_variance())
-            self.jedi_rendering.add_key('vertical_localization_function',
-                                        self.config.vertical_localization_function())
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
@@ -206,10 +208,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 observer['obs space'].update(
                     {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
-        # bypass the writing of HofXs
-        # ---------------------------
-        bypass_HofXs = True
-        if bypass_HofXs:
+        # bypass the writing HofX output netCDF files
+        # -------------------------------------------
+        if skip_hofx_output:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
 

@@ -119,6 +119,11 @@ class RunJediEtkfSolver(taskBase):
                                     self.config.local_ensemble_use_linear_observer())
         self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
 
+        # Compute OMA in local_ensemble_da
+        self.jedi_rendering.add_key('do_posterior_observer'
+                                    self.config.local_ensemble_do_posterior_observer())
+        
+
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
@@ -200,6 +205,7 @@ class RunJediEtkfSolver(taskBase):
             obs['obs space']['obsdataout']['engine']['obsfile'] = (
                 os.path.join(dir_path, 'solver.' + file_name)
                 )
+
 
         with open(jedi_config_file, 'w') as f:
             yaml.dump(jedi_config_dict, f)

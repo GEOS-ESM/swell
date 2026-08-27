@@ -51,6 +51,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_do_posterior_observer(False),
+            qd.skip_hofx_output(True),            
             qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "atms_n20",
@@ -92,6 +94,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_do_posterior_observer(False),
+            qd.skip_hofx_output(True),
             qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "aircraft_temperature",

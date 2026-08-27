@@ -1270,6 +1270,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class local_ensemble_do_posterior_observer(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "local_ensemble_do_posterior_observer"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Do posterior observer (OMA) for Local Ensemble DA?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class local_ensemble_solver(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_solver"
@@ -1309,6 +1326,22 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Shall variational bc be changed to static bc in local ensemble DA yaml?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class skip_hofx_output(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "skip_hofx_output"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Shall netCDF files from HofX output be skipped for OMB and OMA?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -1866,7 +1899,7 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class vertical_localization_unit (TaskQuestion):
+    class vertical_localization_unit(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_unit"
         ask_question: bool = True
