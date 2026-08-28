@@ -104,7 +104,7 @@
             # Move restart to next cycle and then erase current forecast folder
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
-            {% if not skip_store_r2d2 %}
+            {% if store_r2d2 %}
             # Compress forecast on compute node, then store in R2D2 on login node
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}

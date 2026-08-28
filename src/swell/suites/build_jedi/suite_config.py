@@ -25,7 +25,6 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="build_jedi",
         questions=[
             sq.all_suites,
-            qd.skip_store_r2d2(True)
         ]
     )
 

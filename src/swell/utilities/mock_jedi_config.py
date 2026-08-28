@@ -52,7 +52,7 @@ def mock_jedi_config(suite: str,
 
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
                                 override=override_dict, advanced=False, slurm=None,
-                                skip_store_r2d2=True)
+                                store_r2d2=False)
 
     experiment_yaml = os.path.join(tempdir, experiment_id,
                                    f'{experiment_id}-suite', 'experiment.yaml')
