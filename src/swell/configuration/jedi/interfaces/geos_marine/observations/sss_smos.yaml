@@ -8,9 +8,11 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sss_smos.{{window_begin}}.nc4'
+{% if 'letkf' in suite_to_run %}
   distribution:
     name: Halo
     halo size: 3500.0e3
+{% endif %}
   simulated variables: [seaSurfaceSalinity]
 obs operator:
   name: Identity
@@ -43,6 +45,7 @@ obs filters:
   where:
   - variable: {name: GeoVaLs/distance_from_coast}
     minvalue: 100e3
+{% if 'letkf' in suite_to_run %}
 obs localizations:
 - localization method: Rossby
   base value: 100.0e3
@@ -50,3 +53,4 @@ obs localizations:
   min grid mult: 2.0
   min value: 200.0e3
   max value: 900.0e3
+{% endif %}
