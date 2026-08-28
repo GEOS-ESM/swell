@@ -217,9 +217,9 @@ class RunJediEtkfObserver(taskBase):
         cmd += f"wait \n"
         print(f'nobs = {i+1}')
         np_use = (i+1) * np
-        np_total = eval(str(model_component_meta['total_processors']))
-        error_msg = f'{i+1} obs: each {np} cores, np_use: {np_use} vs np_avail: {np_total}'
-        assert np_use <= np_total, error_msg
+        nnode_min = int(np_use/126) + 1
+        self.logger.info(f'{np_use} cores '
+                         f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
 
         if not generate_yaml_and_exit:
             subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
