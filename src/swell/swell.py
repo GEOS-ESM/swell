@@ -106,6 +106,7 @@ Set the cylc stall timeout manually for experiment. If unset, defaults to user v
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
 @click.option('-r', '--store-r2d2', 'store_r2d2',
               is_flag=True, default=False, help=store_r2d2_help)
+@click.option('-k', '--skip-store-r2d2', 'skip_store_r2d2', is_flag=True, default=False)
 def create(
     suite: str,
     input_method: str,
@@ -113,7 +114,8 @@ def create(
     override: Union[dict, str, None],
     advanced: bool,
     slurm: str,
-    store_r2d2: bool
+    store_r2d2: bool,
+    skip_store_r2d2: bool
 ) -> None:
     """
     Create a new experiment
@@ -127,6 +129,11 @@ def create(
 
     # Read override file
     override_dict = read_override_file(override)
+
+    if skip_store_r2d2:
+        print('Warning: As of PR #876, `-k`, or `skip-store-r2d2` is deprecated.')
+        print('By default, experiments will NOT be stored in R2D2.')
+        print('You should remove this flag from any existing scripts.')
 
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override_dict,
