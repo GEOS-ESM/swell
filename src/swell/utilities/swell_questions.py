@@ -16,7 +16,6 @@ from collections.abc import Mapping
 
 from swell.utilities.datetime_util import is_datetime, is_duration
 from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -49,13 +48,13 @@ class DataType(Enum):
 
         if self == DataType.STRING:
             return isinstance(value, str)
-        
+
         if self == DataType.BOOLEAN:
             return isinstance(value, bool)
 
         if self == DataType.INTEGER:
             return isinstance(value, int)
-        
+
         if self == DataType.INTEGER_LIST:
             if isinstance(value, list):
                 return all([isinstance(item, int) for item in value])
@@ -63,7 +62,7 @@ class DataType(Enum):
                 return False
 
         if self == DataType.FLOAT:
-            return isinstance(value, float)    
+            return isinstance(value, float)
 
         if self == DataType.LIST:
             return isinstance(value, list)

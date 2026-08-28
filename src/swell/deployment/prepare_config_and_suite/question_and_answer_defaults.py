@@ -27,8 +27,8 @@ class GetAnswerDefaults:
 
         elif not data_type.is_type(default):
             logger.warning(f'Default value for {key}, {default}, does not conform to type '
-                         f'{data_type.value}, check the override file or '
-                         'suite configuration.')
+                           f'{data_type.value}, check the override file or '
+                           'suite configuration.')
 
         return default
 

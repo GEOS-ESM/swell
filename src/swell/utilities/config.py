@@ -8,7 +8,6 @@
 
 
 from ruamel.yaml import YAML
-from typing import Callable
 
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger

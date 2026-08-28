@@ -66,10 +66,10 @@ class download_convert_pipeline(SuiteQuestion):
     Boolean option in `flow.cylc` deciding whether or not to run DownloadObs
     and ConvertObsToIoda tasks.
     '''
-    
+
     default_value: bool = False
     prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
-                    "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+                   "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
     data_type: DType = DType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
@@ -106,6 +106,7 @@ class ensemble_hofx_strategy(SuiteQuestion):
 # --------------------------------------------------------------------------------------------------
 
 
+@dataclass
 class experiment_id(SuiteQuestion):
     '''
     ID that swell and cylc will use to reference the experiment, defaults to `swell-<suite_name>`
@@ -124,7 +125,7 @@ class experiment_root(SuiteQuestion):
     '''
     default_value: str = "defer_to_platform"
     prompt: str = ("What is the experiment root (the directory where the "
-                    "experiment will be stored)?")
+                   "experiment will be stored)?")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -243,8 +244,8 @@ class r2d2_datastore(SuiteQuestion):
 class runahead_limit(SuiteQuestion):
     default_value: str = "P4"
     prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
-                    "that may be active ahead of the current cycle "
-                    "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
+                   "that may be active ahead of the current cycle "
+                   "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -384,7 +385,7 @@ class background_time_offset(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("How long before the middle of the analysis window did"
-                    " the background providing forecast begin?")
+                   " the background providing forecast begin?")
     data_type: DType = DType.ISO_DURATION
 
 # --------------------------------------------------------------------------------------------------
@@ -397,7 +398,7 @@ class ebkg_time_offset(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("How long before the middle of the analysis window did"
-                    " the ensemble background providing forecast begin?")
+                   " the ensemble background providing forecast begin?")
     data_type: DType = DType.ISO_DURATION
 
 # --------------------------------------------------------------------------------------------------
@@ -435,8 +436,8 @@ class rst_store_interval(TaskQuestion):
         "geos_cf"
     ])
     prompt: str = ("After how many cycles should restart files be stored as real files "
-                    "(not symlinks)? E.g. 28 means every 28th cycle (and multiples) stores "
-                    "real files. Leave unset to always store as symlinks.")
+                   "(not symlinks)? E.g. 28 means every 28th cycle (and multiples) stores "
+                   "real files. Leave unset to always store as symlinks.")
     data_type: DType = DType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
@@ -626,7 +627,7 @@ class ensmeanvariance_spec(TaskQuestion):
     models: List[str] = mutable_field([
         "all_models"
     ])
-    
+
     prompt: str = "Configure the ensemble mean and variance specifications:"
     data_type: DType = DType.STRING
 
@@ -796,7 +797,7 @@ class geos_build_method(TaskQuestion):
 class geos_homdir(TaskQuestion):
     default_value: str = "defer_to_platform"
     prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and "
-                    "gcm_setup) that contains model settings and RC files?")
+                   "gcm_setup) that contains model settings and RC files?")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -810,7 +811,7 @@ class geos_expdir_different(TaskQuestion):
         False
     ])
     prompt: str = ("Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, "
-                    "different than your GEOS HOME Directory?")
+                   "different than your GEOS HOME Directory?")
     data_type: DType = DType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
@@ -823,8 +824,8 @@ class geos_expdir(TaskQuestion):
         "geos_expdir_different": True
     })
     prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
-                    "output and restart files), if it is different than your GEOS HOME "
-                    "Directory?")
+                   "output and restart files), if it is different than your GEOS HOME "
+                   "Directory?")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1073,7 +1074,7 @@ class converter_path(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("Path to directory containing ioda-converter scripts"
-                    " (leave blank to use jedi_bin)")
+                   " (leave blank to use jedi_bin)")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1353,7 +1354,6 @@ class ncdiag_experiments(TaskQuestion):
 @dataclass
 class npx_proc(TaskQuestion):
     default_value: str = "defer_to_model"
-    
     models: List[str] = mutable_field([
         "geos_atmosphere",
         "geos_cf"
@@ -1367,7 +1367,6 @@ class npx_proc(TaskQuestion):
 @dataclass
 class npy_proc(TaskQuestion):
     default_value: str = "defer_to_model"
-    
     models: List[str] = mutable_field([
         "geos_atmosphere",
         "geos_cf"
@@ -1573,7 +1572,7 @@ class produce_geovals(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("When running the ncdiag to ioda converted do you "
-                    "want to produce GeoVaLs files?")
+                   "want to produce GeoVaLs files?")
     data_type: DType = DType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
@@ -1687,8 +1686,8 @@ class vertical_localization_apply_log_transform(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("Should a log (base 10) transformation be applied "
-                    "to vertical coordinate when "
-                    "constructing vertical localization?")
+                   "to vertical coordinate when "
+                   "constructing vertical localization?")
     data_type: DType = DType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
@@ -1728,7 +1727,7 @@ class vertical_localization_ioda_vertical_coord_group(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("Which vertical coordinate group should be used "
-                    "in constructing vertical localization?")
+                   "in constructing vertical localization?")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1754,7 +1753,7 @@ class vertical_localization_method(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("What localization scheme should be applied in "
-                    "constructing a vertical localization?")
+                   "constructing a vertical localization?")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1763,7 +1762,6 @@ class vertical_localization_method(TaskQuestion):
 @dataclass
 class vertical_resolution(TaskQuestion):
     default_value: str = "defer_to_model"
-    
     options: str = "defer_to_model"
     models: List[str] = mutable_field([
         "all_models"
@@ -1810,8 +1808,8 @@ class background_source_path(TaskQuestion):
     )
     models: List[str] = mutable_field(['geos_cf'])
     prompt: str = ("Path template for background files. Uses Python strftime format codes, "
-                    "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
-                    "20251002_0900z.")
+                   "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
+                   "20251002_0900z.")
     data_type: DType = DType.STRING
 
 # --------------------------------------------------------------------------------------------------
