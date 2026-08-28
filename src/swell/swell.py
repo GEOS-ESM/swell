@@ -131,9 +131,11 @@ def create(
     override_dict = read_override_file(override)
 
     if skip_store_r2d2:
+        print()
         print('Warning: As of PR #876, `-k`, or `skip-store-r2d2` is deprecated.')
         print('By default, experiments will NOT be stored in R2D2.')
         print('You should remove this flag from any existing scripts.')
+        print()
 
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override_dict,
