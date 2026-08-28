@@ -60,12 +60,10 @@
             # Get observations
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => fetch_obs-{{model_component}}
             {% else %}
-
             # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
+            fetch_obs-{{model_component}}
             {% endif %}
 
             # Perform staging that is cycle dependent
@@ -76,7 +74,6 @@
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
 
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -90,7 +87,7 @@
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
-            {% if not skip_r2d2 %}            
+            {% if store_r2d2 %}
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
             SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
@@ -141,9 +138,6 @@
     [[CloneGeosMksi-{{model_component}}]]
         script = "swell task CloneGeosMksi $config -m {{model_component}}"
 
-    [[GetObsNotInR2d2-{{model_component}}]]
-        script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
-
     [[GenerateObservingSystemRecords-{{model_component}}]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
 
@@ -156,8 +150,15 @@
     [[GetBackgroundGeosExperiment-{{model_component}} ]]
         script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
 
-    [[GetObservations-{{model_component}}]]
+    {% if fetch_from_r2d2 %}
+    # Fetch from R2D2
+    [[fetch_obs-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+    {% else %}
+    # Copy from local filesystem
+    [[fetch_obs-{{model_component}}]]
+        script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
+    {% endif %}
 
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"

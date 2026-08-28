@@ -29,7 +29,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
             qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
             qd.model_components(),
-            qd.runahead_limit(),
+            qd.runahead_limit()
         ]
     )
 
