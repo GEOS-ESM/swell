@@ -132,6 +132,7 @@ class JediConfigRendering():
             'skip_ensemble_hofx',
             'swell_static_files',
             'start_cycle_point',
+            'suite_to_run',
             'total_processors',
             'vertical_localization_apply_log_transform',
             'vertical_localization_function',

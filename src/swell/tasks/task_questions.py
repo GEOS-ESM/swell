@@ -923,7 +923,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.marine_models()
+            qd.marine_models(),
         ]
     )
 
