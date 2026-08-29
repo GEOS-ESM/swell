@@ -340,6 +340,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.horizontal_resolution(),
             qd.marine_models(),
+            qd.compress_output(),
         ]
     )
 
@@ -956,6 +957,9 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.horizontal_resolution(),
             qd.store_as_symlink(),
+            qd.compress_output(),
+            qd.compress_algorithm(),
+            qd.compress_pigz_threads(),
         ]
     )
 
