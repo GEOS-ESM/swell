@@ -457,6 +457,7 @@ class PrepareExperimentConfigAndSuite:
         # At this point the user should have provided the model components answer. Check that it is
         # in the experiment dictionary and retrieve the response
 
+        render_dict = copy.deepcopy(self.experiment_dict)
         if 'model_components' not in self.experiment_dict:
             self.logger.abort('The model components question has not been answered.')
 
@@ -473,6 +474,39 @@ class PrepareExperimentConfigAndSuite:
                     # Ask the question
                     self.ask_a_question(model_dict, question_key, model)
 
+                # pass special model-dep task questions/variables to render_dict
+                # for suite_str (jinja2) in step 7.
+                if model_dict[question_key]['question_type'] == 'task':
+
+                    ensemble_list = ['ensemble_'+s for s in ['num_members', 'num_chunks']]
+                    if question_key in ensemble_list:
+
+                        # a. Ensure the 'models' list exists
+                        if 'models' not in render_dict:
+                            render_dict['models'] = []
+
+                        # b. Check if this model is already in our list
+                        model_found = False
+                        for m in render_dict['models']:
+                            if model in m:
+                                # c. If found, incrementally add the new key!
+                                default_val = model_dict[question_key]['default_value']
+                                m[model][question_key] = default_val
+                                model_found = True
+                                break
+
+                        # d. If not found, add the model to the list for the first time
+                        if not model_found:
+                            default_val = model_dict[question_key]['default_value']
+                            render_dict['models'].append({
+                                model: {
+                                    question_key: default_val
+                                }
+                            })
+
+        # debug
+        # print(f'render_dict = {render_dict}')
+
         # 7. Perform a more exhaustive resolving of suite file templates
         # --------------------------------------------------------------
         # Note that we reset the suite file to avoid templates having been left unresolved
@@ -480,9 +514,14 @@ class PrepareExperimentConfigAndSuite:
         # of templates because there are things related to scheduling that are not yet able to be
         # resolved. In the future it might be good to bring some of that information into the
         # sphere of suite questions but that requires some careful thought so as not to overload
-        # the user with questions.
-        suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
-                                           True)
+        # the user with questions. A few model dep variables are needed to corectly parse tasks,
+        # e.g., in Eda ControlPert. Hence we use a render_dict for jinja2 here, only to parse
+        # the for loop around model task in .cycl file, e.g.,
+        # {% for i in range( 1, models[model_component]['ensemble_num_chunks'] + 1 ) %}
+        #  [[RunJediEdaControlPertExecutable_chunk{{i}}-{{model_component}}]]
+        # {% endfor %}
+
+        suite_str = template_string_jinja2(self.logger, self.suite_str, render_dict, True)
 
         # 8. Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
