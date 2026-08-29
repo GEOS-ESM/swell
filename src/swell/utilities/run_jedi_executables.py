@@ -74,25 +74,37 @@ def run_executable(
 
     # Run the JEDI executable
     # -----------------------
+    persistent_job_id = os.environ.get('SWELL_PERSISTENT_JOB_ID')
+
     if (perhost is None or perhost == "None"):
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
-        command = [
-            'mpirun',
-            '-np', str(np),
-            jedi_executable_path,
-            jedi_config_file
-        ]
+        if persistent_job_id:
+            nodes_env = os.environ.get('SWELL_SRUN_NODES')
+            command = ['srun', '--mpi=pmi2', '--jobid', persistent_job_id,
+                       '--exclusive', '-n', str(np)]
+            if nodes_env:
+                nodes = int(nodes_env)
+                command += ['--nodes', nodes_env, '--ntasks-per-node', str(np // nodes)]
+            command += [jedi_executable_path, jedi_config_file]
+        else:
+            command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
     else:
         logger.info(
             f"Running {jedi_executable_path} with {str(np)} processors & perhost {str(perhost)}"
         )
-        command = [
-            'mpirun',
-            '-np', str(np),
-            '-perhost', str(perhost),
-            jedi_executable_path,
-            jedi_config_file
-        ]
+        if persistent_job_id:
+            nodes_env = os.environ.get('SWELL_SRUN_NODES')
+            nodes = int(nodes_env) if nodes_env else (np // perhost if np % perhost == 0 else None)
+            command = ['srun', '--mpi=pmi2', '--jobid', persistent_job_id,
+                       '--exclusive', '-n', str(np), '--ntasks-per-node', str(perhost)]
+            if nodes:
+                command += ['--nodes', str(nodes)]
+            command += [jedi_executable_path, jedi_config_file]
+        else:
+            command = [
+                'mpirun', '-np', str(np), '-perhost', str(perhost),
+                jedi_executable_path, jedi_config_file
+            ]
         s = ('mpi_command='+" ".join(command)+' '+output_log)
         logger.debug(s)
 
