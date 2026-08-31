@@ -1070,6 +1070,21 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class download_obs_config_overrides(TaskQuestion):
+        default_value: dict = mutable_field({})
+        question_name: str = "download_obs_config_overrides"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Per-observation config overrides applied on top of the "
+                       "download_observations/<obs>.yaml file. Keys are obs names; "
+                       "values are dicts of fields to override (e.g. s3_source).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class converter_path(TaskQuestion):
         default_value: str = ""
         question_name: str = "converter_path"
