@@ -36,12 +36,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
 
         geos_cf=[
-            # 3D uses a single background at the window centre; 4D propagates the window with the
-            # PSEUDO model, reading one background per background_frequency step.
             qd.window_type("3D"),
             qd.window_length("PT6H"),
-            qd.background_frequency("PT3H"),
-            qd.jedi_forecast_model("pseudo_model"),
         ]
     )
 

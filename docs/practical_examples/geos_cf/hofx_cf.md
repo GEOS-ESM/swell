@@ -53,10 +53,37 @@ check_for_obs: false
 swell_static_files: /discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles
 ```
 
-`hofx_cf` does not add any `geos_cf`-specific overrides on top of these, so the `models.geos_cf` section
-of your generated `experiment.yaml` (window length, resolution, observations, etc.) will reflect the
-standard `geos_cf` question defaults. Inspect your own generated `experiment.yaml` for the exact values,
-and use an `override.yaml` (as above) to change them.
+The suite also sets these `geos_cf`-specific defaults:
+
+```yaml
+models:
+  geos_cf:
+    window_type: 3D
+    window_length: PT6H
+    background_frequency: PT3H
+    jedi_forecast_model: pseudo_model
+```
+
+The default 3D configuration uses a single background at the center of the window. To run H(x) over a
+4D window, set `window_type` to `4D` in your override file:
+
+```yaml
+models:
+  geos_cf:
+    window_type: 4D
+    window_length: PT6H
+    background_frequency: PT3H
+    jedi_forecast_model: pseudo_model
+```
+
+In 4D, the JEDI `PSEUDO` forecast model does not integrate GEOS-CF forward in time. Instead, it reads
+the precomputed backgrounds staged throughout the window, with one background for each
+`background_frequency` step. Adjust `window_length` and `background_frequency` together to match the
+available background times.
+
+Other values in the generated `models.geos_cf` section, such as resolution and observations, continue
+to use the standard `geos_cf` question defaults. Inspect your generated `experiment.yaml` for the exact
+values and use an `override.yaml` to change them.
 
 If you would like to change any of these parameters, it is suggested to copy `experiment.yaml`
 to `override.yaml`, make the desired configuration changes, then create the experiment again:
@@ -81,7 +108,8 @@ Executing this command will launch the experiment and bring up the TUI.
 For each cycle and each `model_component` (only `geos_cf` in this suite), the following tasks run, after
 `CloneJedi` and `BuildJedi`/`BuildJediByLinking` have completed:
 
-- `GetBackground`: fetch the background valid for the window.
+- `GetBackground`: fetch one background for a 3D window, or the sequence of precomputed backgrounds
+  needed at each `background_frequency` step for a 4D window.
 - `GetObservations`: fetch the observations for the window.
 - `StageJediCycle`: stage cycle-dependent files.
 - `RenderJediObservations`: render the JEDI observation configuration.
