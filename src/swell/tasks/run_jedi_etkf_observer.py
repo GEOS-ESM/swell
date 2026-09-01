@@ -12,6 +12,7 @@ import os
 import copy
 import subprocess
 from ruamel.yaml import YAML
+from pathlib import Path
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -195,12 +196,11 @@ class RunJediEtkfObserver(taskBase):
 
         observers = jedi_config_dict["observations"]["observers"]
         np = 6 * npx * npy
-        cmd = """
-        export SLURM_MPI_TYPE=pmi2
-        export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
-        """
-        cmd += f"cd {self.cycle_dir()} \n"
-        cmd += f"rm -f log.*  logfile*  \n"
+
+        cmds = []
+        env = {'SLURM_MPI_TYPE': 'pmi2', 'I_MPI_PMI_LIBRARY': '/usr/lib64/limpmi2.so'}
+        env = {**env, **os.environ}
+
         for i, obs in enumerate(observers):
             x0 = copy.deepcopy(jedi_config_dict)
             x0["observations"]["observers"] = [obs]
@@ -210,11 +210,9 @@ class RunJediEtkfObserver(taskBase):
             tmp_file2 = os.path.join(self.cycle_dir(), f'log.diag_{observation_name}')
             with open(tmp_file1, "w") as f:
                 yaml.dump(x0, f)
-            cmd += (
-                f"srun --exclusive --mpi=pmi2 -n {np} "
-                f"{jedi_executable_wi_path} {tmp_file1} {tmp_file2} &\n"
-            )
-        cmd += f"wait \n"
+
+            cmds.append(['srun', '--exclusive', '--mpi=pmi2', '-n', str(np), jedi_executable_wi_path, tmp_file1, tmp_file2])
+
         print(f'nobs = {i+1}')
         np_use = (i+1) * np
         nnode_min = int(np_use/126) + 1
@@ -222,8 +220,12 @@ class RunJediEtkfObserver(taskBase):
                          f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
 
         if not generate_yaml_and_exit:
-            subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE, check=True)
+            processes = [subprocess.Popen(cmd, env=env, cwd=self.cycle_dir(), stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in cmds]
+
+            for process in processes:
+                stdout, stderr = process.communicate()
+                print(stdout.decode())
+                print(stderr.decode())
         else:
             print(f'intended mpi_command = {cmd}')
             self.logger.info('YAML generated, now exiting.')
