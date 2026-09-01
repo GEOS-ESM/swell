@@ -198,8 +198,15 @@ class RunJediEtkfObserver(taskBase):
         np = 6 * npx * npy
 
         cmds = []
-        env = {'SLURM_MPI_TYPE': 'pmi2', 'I_MPI_PMI_LIBRARY': '/usr/lib64/limpmi2.so'}
-        env = {**env, **os.environ}
+
+        cycle_dir = Path(self.cycle_dir())
+        for file in cycle_dir.glob('log.*'):
+            if file.isfile():
+                file.unlink()
+
+        for file in cycle_dir.glob('logfile*'):
+            if file.isfile():
+                file.unlink()
 
         for i, obs in enumerate(observers):
             x0 = copy.deepcopy(jedi_config_dict)
@@ -220,14 +227,15 @@ class RunJediEtkfObserver(taskBase):
                          f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
 
         if not generate_yaml_and_exit:
-            processes = [subprocess.Popen(cmd, env=env, cwd=self.cycle_dir(), stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in cmds]
+            processes = [subprocess.Popen(cmd, cwd=self.cycle_dir(), stdout=subprocess.PIPE, stderr=subprocess.PIPE) for cmd in cmds]
 
             for process in processes:
                 stdout, stderr = process.communicate()
-                print(stdout.decode())
-                print(stderr.decode())
+
         else:
-            print(f'intended mpi_command = {cmd}')
+            print('intended mpi_command: ')
+            for cmd in cmds:
+                print(" ".join(cmd))
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
