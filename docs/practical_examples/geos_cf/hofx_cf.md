@@ -60,8 +60,6 @@ models:
   geos_cf:
     window_type: 3D
     window_length: PT6H
-    background_frequency: PT3H
-    jedi_forecast_model: pseudo_model
 ```
 
 The default 3D configuration uses a single background at the center of the window. To run H(x) over a
