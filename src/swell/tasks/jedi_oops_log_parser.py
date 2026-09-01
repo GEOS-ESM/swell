@@ -9,7 +9,6 @@
 
 
 import os
-import subprocess
 
 from swell.tasks.base.task_base import taskBase
 
