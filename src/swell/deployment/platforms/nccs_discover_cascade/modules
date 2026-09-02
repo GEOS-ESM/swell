@@ -21,10 +21,12 @@ module load gmao-swell-env/1.0.0
 module unload gsibec crtm fms
 module load fms/2024.02
 module unload bufr-query
+module load py-wxflow/0.2.0
 
 # JEDI Python Path
 # ----------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python{{python_majmin}}:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python{{python_majmin}}/site-packages:$PYTHONPATH
 
 # Aircraft Bias Python Path
 # -------------------------

@@ -32,6 +32,9 @@
             # Clone JEDI source code
             CloneJedi
 
+            # Clone spoc
+            CloneSpoc
+
             # Clone GMAO_perllib
             CloneGmaoPerllib
 
@@ -52,9 +55,10 @@
         {{cycle_time.cycle_time}} = """
         {% if cycle_time[model_component] %}
 
-            # Make sure GMAO_perllib, Mksi and JEDI are cloned and/or linked
+            # Make sure GMAO_perllib, Mksi, spoc and JEDI are cloned and/or linked
             CloneGmaoPerllib[^] => GetBufr-{{model_component}}
             CloneGeosMksi-{{model_component}}[^] => GetBufr-{{model_component}}
+            CloneSpoc[^] => BufrToIoda-{{model_component}}
             BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Convert BUFR to ioda
@@ -87,7 +91,10 @@
         script = "swell task CloneJedi $config"
 
     [[CloneGmaoPerllib]]
-	script = "swell task CloneGmaoPerllib $config"
+	    script = "swell task CloneGmaoPerllib $config"
+
+    [[CloneSpoc]]
+        script = "swell task CloneSpoc $config"
 
     [[BuildJediByLinking]]
         script = "swell task BuildJediByLinking $config"
