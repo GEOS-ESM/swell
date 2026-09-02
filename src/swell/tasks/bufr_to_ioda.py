@@ -10,6 +10,7 @@
 
 import subprocess
 from pathlib import Path
+import shutil
 
 from swell.tasks.base.task_base import taskBase
 
@@ -134,13 +135,26 @@ class BufrToIoda(taskBase):
         Converts collected bufr files to ioda using ObsBuilder python files
         """
 
+        # Copy the mapping yaml's to the script path
+        # ------------------------------------------
+        spoc_exp_path = Path(self.experiment_path()) / 'spoc'
+        config_path = spoc_exp_path / 'dump' / 'config' / 'atmosphere'
+        script_path = spoc_exp_path / 'dump' / 'scripts' / 'atmosphere'
+
+        spoc_script_path = Path(self.cycle_dir()) / 'spoc'
+        spoc_script_path.mkdir(exist_ok=True)
+
+        for config_file in list(config_path.glob('*yaml')):
+            shutil.copy(config_file, spoc_script_path)
+
+        for script in list(script_path.glob('*py')):
+            shutil.copy(script, spoc_script_path)
+
         bufr_dir = Path(self.cycle_dir()) / 'bufr'
 
         ioda_dir = Path(self.cycle_dir()) / 'ioda'
 
         ioda_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
-
-        spoc_script_path = Path(self.experiment_path()) / 'spoc' / 'dump' / 'scripts' / 'atmosphere'
 
         # Get the list of bufr files to convert
         bufr_path_files = list(bufr_dir.glob('*bufr*'))
