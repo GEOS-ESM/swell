@@ -31,6 +31,7 @@ def r2d2(template_dict: Mapping) -> Mapping:
         'store': {
             'fc': [
                 {'file_type': 'bkg',
+                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4',
                  'r2d2_model': 'geos'}
             ]
         }

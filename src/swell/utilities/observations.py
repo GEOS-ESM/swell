@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------------------------------
 
 
+from collections.abc import Mapping
 import os
+
 from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
@@ -33,8 +35,21 @@ def get_ioda_names_list() -> list:
 # Gets obs providers for each observation from observation_ioda_names.yaml
 def get_provider_for_observation(observation: str,
                                  ioda_names_list: list,
-                                 logger: Logger
-                                 ) -> list:
+                                 logger: Logger,
+                                 provider_overrides: Mapping[str, str] | None = None
+                                 ) -> str:
+    if provider_overrides is not None:
+        if not isinstance(provider_overrides, Mapping):
+            logger.abort("'observation_providers' must be a mapping of observation "
+                         "names to provider names")
+
+        if observation in provider_overrides:
+            provider = provider_overrides[observation]
+            if not isinstance(provider, str) or not provider.strip():
+                logger.abort(f"Provider override for observation {observation} must be a "
+                             "non-empty string")
+            return provider
+
     for sub_dict in ioda_names_list:
         if sub_dict['ioda name'] == observation:
             if 'provider' in sub_dict.keys():

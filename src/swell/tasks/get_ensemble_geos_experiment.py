@@ -45,7 +45,7 @@ class GetEnsembleGeosExperiment(taskBase):
         # ------------
         background_experiment = self.config.background_experiment()
         geos_x_ensemble_directory = self.config.geos_x_ensemble_directory()
-        background_time_offset = self.config.background_time_offset()
+        background_time_offset = self.config.ebkg_time_offset()
 
         # Since this is an optional task, check if the geos_x_ensemble_directory is
         # set to /dev/null, if so fail the task

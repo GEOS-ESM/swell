@@ -97,7 +97,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfcship",
                 "sfc",
                 "sondes",
-                "ssmis_f17"
+                "ssmis_f17",
+                # "tcp"
             ]),
             qd.ncdiag_experiments(['x0050_fgat']),
             qd.clean_patterns(['*.txt', '*.csv']),
