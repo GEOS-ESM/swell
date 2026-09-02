@@ -9,17 +9,18 @@
 
 
 import os
-from importlib import resources
+import copy
+import subprocess
 from ruamel.yaml import YAML
 
+from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.yaml_utils import replace_key
-from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediLocalEnsembleDaExecutable(taskBase):
+class RunJediEtkfObserver(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -28,7 +29,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Jedi application name
         # ---------------------
         jedi_application = 'localensembleda'
-        jedi_ensmeanvariance_application = 'ensmeanvariance'
 
         # Parse configuration
         # -------------------
@@ -38,11 +38,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        ensmean_only = self.config.ensmean_only()
-        ensmeanvariance_only = self.config.ensmeanvariance_only()
         change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
-        perhost = self.config.perhost(None)
-        skip_hofx_output = self.config.skip_hofx_output()
+        npx = self.config.npx_per_observer()
+        npy = self.config.npy_per_observer()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -62,8 +60,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
-        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
@@ -82,39 +78,29 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        # Ensemble hofx components
-        self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.ensemble_hofx_strategy())
-        self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.ensemble_hofx_packets())
-        self.jedi_rendering.add_key('local_ensemble_do_posterior_observer',
-                                    self.config.local_ensemble_do_posterior_observer())
-
         # Ensemble Localizations
-        self.jedi_rendering.add_key('horizontal_localization_method',
-                                    self.config.horizontal_localization_method())
-        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
-                                    self.config.horizontal_localization_lengthscale())
-        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
-                                    self.config.horizontal_localization_max_nobs())
-
-        # ------------------------------
-        if self.get_model() == 'geos_atmosphere':
-            self.jedi_rendering.add_key('vertical_localization_method',
-                                        self.config.vertical_localization_method())
-            self.jedi_rendering.add_key('vertical_localization_function',
-                                        self.config.vertical_localization_function())
-            self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
-                                        self.config.vertical_localization_frac_retained_variance())
-            self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
-                                        self.config.vertical_localization_apply_log_transform())
-            self.jedi_rendering.add_key('vertical_localization_unit',
-                                        self.config.vertical_localization_unit())
-            self.jedi_rendering.add_key('vertical_localization_lengthscale',
-                                        self.config.vertical_localization_lengthscale())
-            self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
-                                        self.config.vertical_localization_ioda_vertical_coord())
-            self.jedi_rendering.add_key(
-                'vertical_localization_ioda_vertical_coord_group',
-                self.config.vertical_localization_ioda_vertical_coord_group())
+#        self.jedi_rendering.add_key('horizontal_localization_method',
+#                                    self.config.horizontal_localization_method())
+#        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
+#                                    self.config.horizontal_localization_lengthscale())
+#        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
+#                                    self.config.horizontal_localization_max_nobs())
+        self.jedi_rendering.add_key('vertical_localization_method',
+                                    self.config.vertical_localization_method())
+        self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
+                                    self.config.vertical_localization_apply_log_transform())
+        self.jedi_rendering.add_key('vertical_localization_unit',
+                                    self.config.vertical_localization_unit())
+        self.jedi_rendering.add_key('vertical_localization_lengthscale',
+                                    self.config.vertical_localization_lengthscale())
+        self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
+                                    self.config.vertical_localization_frac_retained_variance())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
+                                    self.config.vertical_localization_ioda_vertical_coord())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
+                                    self.config.vertical_localization_ioda_vertical_coord_group())
+        self.jedi_rendering.add_key('vertical_localization_function',
+                                    self.config.vertical_localization_function())
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
@@ -132,20 +118,11 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                     self.config.local_ensemble_save_posterior_mean_increment())
         self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments',
                                     self.config.local_ensemble_save_posterior_ensemble_increments())
-        self.jedi_rendering.add_key('ensmean_only',
-                                    self.config.ensmean_only())
-        self.jedi_rendering.add_key('ensmeanvariance_only',
-                                    self.config.ensmeanvariance_only())
         self.jedi_rendering.add_key('local_ensemble_use_linear_observer',
                                     self.config.local_ensemble_use_linear_observer())
         self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
-
-        # Add placeholder names if mock experiment
-        # ----------------------------------------
-        if self.config.mock_experiment(False):
-            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
-            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
-            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+        self.jedi_rendering.add_key('local_ensemble_do_posterior_observer',
+                                    self.config.local_ensemble_do_posterior_observer())
 
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
@@ -154,14 +131,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
            self.config.local_ensemble_save_posterior_ensemble():
             raise ValueError("'local_ensemble_save_posterior_mean' and\
             'local_ensemble_save_posterior_ensemble' cannot be both true!")
-
-        # Jedi configuration file
-        # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
-
-        # Output log file
-        # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -185,85 +154,81 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Include ensemble localizations and halo types with each observation
         # -------------------------------------------------------------------
-        localization_path = resources.files('swell').joinpath('configuration', 'jedi',
-                                                              'interfaces', self.get_model(),
-                                                              'observations', 'localization')
 
-        if localization_path.exists():
-            for observer in jedi_config_dict['observations']['observers']:
+        swell_path = get_swell_path()
+        model_component = self.get_model()
+        localization_path = os.path.join(swell_path,
+                                         f'configuration/jedi/interfaces/{model_component}'
+                                         f'/observations/localization')
+        yaml = YAML()
+        # update localizations in dict
+        for observer in jedi_config_dict['observations']['observers']:
+            # Get observation name
+            observation_name = observer['observation_name']
+            config_file = os.path.join(localization_path, f'{observation_name}.yaml')
+            with open(config_file, 'r') as f:
+                loc_list = yaml.load(f)
+                horizLoc = loc_list['obs localizations']
+            localization = [horizLoc]
+            observer.update({'obs localizations': localization})
+            observer['obs space'].update(
+                {'distribution': {'name': 'RoundRobin', 'halo size': 1500.e3}})
 
-                # Read in safe mode
-                in_yaml = YAML(typ="safe")
-
-                # Get observation name
-                observation = observer['observation_name']
-                config_file = os.path.join(localization_path, f'{observation}.yaml')
-                with open(config_file, 'r') as f:
-                    loc_list = in_yaml.load(f)
-                    horizLoc = loc_list['obs localizations']
-                localization = [horizLoc]
-                observer.update({'obs localizations': localization})
-                observer['obs space'].update(
-                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
-
-        # bypass the writing HofX output netCDF files
-        # -------------------------------------------
-        if skip_hofx_output:
-            for observer in jedi_config_dict['observations']['observers']:
-                del observer['obs space']['obsdataout']
-
-        # TODO: Temporary handling, change variational bc to static bc
+        # change variational bc to static bc
         # -------------------------------------------------------------------
         if change_vbc_to_sbc:
             for observer in jedi_config_dict['observations']['observers']:
                 if 'obs bias' in observer:
                     observer['obs bias'] = replace_key(observer['obs bias'],
                                                        "variational bc", "static bc")
-
-        # Write the expanded dictionary to YAML file (in rt mode)
-        # ------------------------------------------
-        yaml = YAML()
-        yaml.default_flow_style = False
-        with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open)
-
-        # Get the JEDI interface metadata
-        # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
-
-        # Compute number of processors
-        # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
-
-        # Jedi executable name
-        # --------------------
-        jedi_ensmeanvariance_executable = model_component_meta['executables']
-        [f'{jedi_ensmeanvariance_application}']
-        jedi_ensmeanvariance_executable_path = os.path.join
-        (self.experiment_path(), 'jedi_bundle', 'build', 'bin', jedi_ensmeanvariance_executable)
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
+        jedi_executable_wi_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                               'build', 'bin', jedi_executable)
 
-        # Run the JEDI executable
-        # -----------------------
+        # seperate each obs and write to disk
+        # -------------------------------------------------------------------
+        driver = jedi_config_dict['driver']
+        driver['run as observer only'] = True
+        driver['read HX from disk'] = False
+        driver.pop('do posterior observer', None)
+
+        observers = jedi_config_dict["observations"]["observers"]
+        np = 6 * npx * npy
+        cmd = """
+        export SLURM_MPI_TYPE=pmi2
+        export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
+        """
+        cmd += f"cd {self.cycle_dir()} \n"
+        for i, obs in enumerate(observers):
+            x0 = copy.deepcopy(jedi_config_dict)
+            x0["observations"]["observers"] = [obs]
+            x0['geometry']['layout'] = [npx, npy]
+            observation_name = obs['observation_name']
+            tmp_file1 = os.path.join(self.cycle_dir(), f'diag_{observation_name}.yaml')
+            tmp_file2 = os.path.join(self.cycle_dir(), f'log.diag_{observation_name}')
+            with open(tmp_file1, "w") as f:
+                yaml.dump(x0, f)
+            cmd += (
+                f"srun --exclusive --mpi=pmi2 -n {np} "
+                f"{jedi_executable_wi_path} {tmp_file1} {tmp_file2} &\n"
+            )
+        cmd += f"wait \n"
+        print(f'nobs = {i+1}')
+        np_use = (i+1) * np
+        nnode_min = int(np_use/126) + 1
+        self.logger.info(f'{np_use} cores '
+                         f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
+
         if not generate_yaml_and_exit:
-            if ensmean_only | ensmeanvariance_only:
-                self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
-                                 ' with '+str(np)+' processors.')
-                self.logger.info('Running ensmean_only')
-                run_executable(self.logger, self.cycle_dir(), np,
-                               jedi_ensmeanvariance_executable_path,
-                               jedi_config_file, output_log_file, perhost=perhost)
-            else:
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file, perhost=perhost)
+            cycle_path = Path(self.cycle_dir())
+            for pattern in ("log.*", "logfile*"):
+                for filepath in cycle_path.glob(pattern):
+                    filepath.unlink(missing_ok=True)
+            subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, check=True)
         else:
-            mpi_command = "mpirun"
-            if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
-            print(f'intended mpi_command = {mpi_command}')
+            print(f'intended mpi_command = {cmd}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
