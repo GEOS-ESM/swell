@@ -129,6 +129,10 @@ ensemble_num_members:
   default_value: 16
   options: None
 
+ensemble_num_chunks:
+  default_value: 8
+  options: None
+
 geovals_experiment:
   default_value: x0050-geovals
   options:
@@ -199,6 +203,7 @@ minimizer:
   default_value: DRPCG
   options:
   - DRPCG
+  - DRPLanczos
 
 ncdiag_experiments:
   default_value: x0050_fgat

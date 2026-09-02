@@ -59,20 +59,20 @@ state_variables = [
 # --------------------------------------------------------------------------------------------------
 
 
-def background_eda(template_dict: Mapping) -> Mapping:
+def background_eda_control_pert(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
-    imem = template_dict['ensemble_imember']
-
+    ichunk = template_dict['ensemble_ichunk']
+    cycle_dir = template_dict['cycle_dir']
     background = {
         'datetime': template_dict['local_background_time_iso'],
         'filetype': 'cube sphere history',
         'provider': 'geos',
         'compute edge pressure from surface pressure': True,
         'max allowable geometry difference': 1e-3,
-        'datapath': template_dict['cycle_dir'],
+        'datapath': f'{cycle_dir}/ebkg_chunk/chunk{ichunk:03d}/geos.mem%mem_pad%/',
         'filenames': [
-            f'./ebkg/mem{imem:03d}/geos.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-            f'./fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
+            f'%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            f'../../../fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
         ],
         'state variables': state_variables,
         'field io names': field_io_names,
