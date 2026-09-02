@@ -200,7 +200,6 @@ class RunJediEtkfObserver(taskBase):
         export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
         """
         cmd += f"cd {self.cycle_dir()} \n"
-        cmd += f"rm -f log.*  logfile*  \n"
         for i, obs in enumerate(observers):
             x0 = copy.deepcopy(jedi_config_dict)
             x0["observations"]["observers"] = [obs]
@@ -222,6 +221,10 @@ class RunJediEtkfObserver(taskBase):
                          f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
 
         if not generate_yaml_and_exit:
+            cycle_path = Path(self.cycle_dir())
+            for pattern in ("log.*", "logfile*"):
+                for filepath in cycle_path.glob(pattern):
+                    filepath.unlink(missing_ok=True)
             subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE, check=True)
         else:
