@@ -272,6 +272,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class suite_to_run(SuiteQuestion):
+        default_value: str = "test"
+        question_name: str = "suite_to_run"
+        prompt: str = "Record of the suite being executed"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class window_type(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_type"
