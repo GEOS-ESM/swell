@@ -245,8 +245,6 @@ class BufrToIoda(taskBase):
 
         ioda_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
 
-        spoc_script_path = Path(self.experiment_path()) / 'spoc' / 'dump' / 'scripts' / 'atmosphere'
-        
         # Get the list of bufr files to convert
         bufr_path_files = list(bufr_dir.glob('*bufr*'))
 
