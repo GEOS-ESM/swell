@@ -78,14 +78,12 @@ set  OGCM_JM  = `grep '^\s*OGCM\.JM_WORLD:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
 # Calculate number of cores/nodes for IOSERVER
 # --------------------------------------------
 
-set USE_IOSERVER   = 0
-set AGCM_IOS_NODES = `grep '^\s*IOSERVER_NODES:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set USE_IOSERVER      = 1
+set NUM_OSERVER_NODES = `grep '^\s*IOSERVER_NODES:'  $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set NUM_BACKEND_PES   = `grep '^\s*NUM_BACKEND_PES:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
 
-if ($USE_IOSERVER == 0) then
-   set IOS_NODES = 0
-else
-   set IOS_NODES = $AGCM_IOS_NODES
-endif
+if ( "$NUM_BACKEND_PES" == "" ) set NUM_BACKEND_PES = 2
+if ( $NUM_OSERVER_NODES == 0 ) set USE_IOSERVER = 0
 
 # Check for Over-Specification of CPU Resources
 # ---------------------------------------------
@@ -99,43 +97,47 @@ endif
 
 @ MODEL_NPES = $NX * $NY
 
+set NCPUS_PER_NODE = 108
+set NUM_MODEL_NODES=`echo "scale=1;($MODEL_NPES / $NCPUS_PER_NODE)" | bc | awk 'function ceil(x, y){y=int(x); return(x>y?y+1:y)} {print ceil($1)}'`
+
 if ( $NCPUS != NULL ) then
 
    if ( $USE_IOSERVER == 1 ) then
 
-      set NCPUS_PER_NODE = 40
+      @ TOTAL_NODES = $NUM_MODEL_NODES + $NUM_OSERVER_NODES
 
-      @ NODES  = `echo "( ($MODEL_NPES + $NCPUS_PER_NODE) + ($AGCM_IOS_NODES * $NCPUS_PER_NODE) - 1)/$NCPUS_PER_NODE" | bc`
-      @ NPES   = $NODES * $NCPUS_PER_NODE
+      @ TOTAL_PES = $TOTAL_NODES * $NCPUS_PER_NODE
 
-      if( $NPES > $NCPUS ) then
+      if( $TOTAL_PES > $NCPUS ) then
          echo "CPU Resources are Over-Specified"
          echo "--------------------------------"
          echo "Allotted  NCPUs: $NCPUS"
-         echo "Requested NCPUs: $NPES"
+         echo "Requested NCPUs: $TOTAL_PES"
          echo ""
          echo "Specified NX: $NX"
          echo "Specified NY: $NY"
          echo ""
-         echo "Specified IOSERVER_NODES: $AGCM_IOS_NODES"
+         echo "Specified model nodes: $NUM_MODEL_NODES"
+         echo "Specified oserver nodes: $NUM_OSERVER_NODES"
          echo "Specified cores per node: $NCPUS_PER_NODE"
-         echo "Exit with  NPES > NCPUS 1"
          exit
       endif
 
    else
 
-      @ NPES = $MODEL_NPES
+      @ TOTAL_PES = $MODEL_NPES
 
-      if( $NPES > $NCPUS ) then
+      if( $TOTAL_PES > $NCPUS ) then
          echo "CPU Resources are Over-Specified"
          echo "--------------------------------"
          echo "Allotted  NCPUs: $NCPUS"
-         echo "Requested NCPUs: $NPES"
+         echo "Requested NCPUs: $TOTAL_PES"
          echo ""
          echo "Specified NX: $NX"
          echo "Specified NY: $NY"
-         echo "Exit with  NPES > NCPUS 2"
+         echo ""
+         echo "Specified model nodes: $NUM_MODEL_NODES"
+         echo "Specified cores per node: $NCPUS_PER_NODE"
          exit
       endif
 
@@ -144,7 +146,7 @@ if ( $NCPUS != NULL ) then
 else
    # This is for the desktop path
 
-   @ NPES = $MODEL_NPES
+   @ TOTAL_PES = $MODEL_NPES
 
 endif
 
@@ -485,7 +487,7 @@ endif
 
 # Link Boundary Conditions for Appropriate Date
 # ---------------------------------------------
-setenv YEAR 2023 #$yearc
+setenv YEAR $yearc
 ./linkbcs
 
 if (! -e tile.bin) then
@@ -597,16 +599,12 @@ endif
 
 # Environment variables for MPI, etc
 # ----------------------------------
-# potential ewok problem... 
+
+# OFI Provider Selection and Tuning
+setenv I_MPI_FABRICS shm:ofi                      # Use shared memory and OFI
+setenv I_MPI_OFI_PROVIDER psm3                    # Specify the PSM3 OFI provider
 setenv I_MPI_ADJUST_ALLREDUCE 12
 setenv I_MPI_ADJUST_GATHERV 3
-
-# This flag prints out the Intel MPI state. Uncomment if needed
-#setenv I_MPI_DEBUG 9
-setenv I_MPI_SHM_HEAP_VSIZE 512
-setenv PSM2_MEMORY large
-setenv I_MPI_EXTRA_FILESYSTEM 1
-setenv I_MPI_EXTRA_FILESYSTEM_FORCE gpfs
 
 
 # Run bundleParser.py
@@ -652,40 +650,14 @@ setenv OMP_NUM_THREADS 1
 if( $USE_SHMEM == 1 ) $GEOSBIN/RmShmKeys_sshmpi.csh >& /dev/null
 
 if( $USE_IOSERVER == 1 ) then
-   set IOSERVER_OPTIONS = "--npes_model $MODEL_NPES --nodes_output_server $IOS_NODES"
-
-   # Per SI Team, the multigroup server should always be used
-   # The ideal number of backend PEs is based on the number of HISTORY
-   # collections and number of IO nodes
-
-   # First we figure out the number of collections in the HISTORY.rc (this is not perfect, but is close to right)
-   set NUM_HIST_COLS = `cat HISTORY.rc | sed -n '/^COLLECTIONS:/,/^ *::$/{p;/^ *::$/q}' | grep -v '^ *#' | wc -l`
-
-   # Protect against divide by zero
-   if ($IOS_NODES == 0) then
-      echo "Something is wrong. IOSERVER asked for, but zero IO nodes provided"
-      exit 3
-   endif
-
-   # Now we divide that number of collections by the ioserver nodes
-   echo "NUM_BACKEND_PES = $NUM_BACKEND_PES"
-   set NUM_BACKEND_PES = `echo "scale=1;(($NUM_HIST_COLS - 1) / $IOS_NODES)" | bc | awk '{print int($1 + 0.5)}'`
-
-   # Finally multigroup requires at least two backend pes
-   if ($NUM_BACKEND_PES < 2) set NUM_BACKEND_PES = 2
-
-   echo "IOSERVER_EXTRA = $IOSERVER_EXTRA"
-   set IOSERVER_EXTRA = "--oserver_type multigroup --npes_backend_pernode $NUM_BACKEND_PES"
+   set IOSERVER_OPTIONS = "--npes_model $MODEL_NPES --nodes_output_server $NUM_OSERVER_NODES"
+   set IOSERVER_EXTRA   = "--oserver_type multigroup --npes_backend_pernode $NUM_BACKEND_PES"
 else
    set IOSERVER_OPTIONS = ""
-   set IOSERVER_EXTRA = ""
+   set IOSERVER_EXTRA   = ""
 endif
- 
- #set +e
- #$RUN_CMD $NPES ./GEOSgcm.x $IOSERVER_OPTIONS $IOSERVER_EXTRA --logging_config 'logging.yaml'
- $RUN_CMD $NPES ./GEOSgcm.x --logging_config 'logging.yaml'
- #exit_code=$?
- #set -e
+
+ $RUN_CMD $TOTAL_PES ./GEOSgcm.x $IOSERVER_OPTIONS $IOSERVER_EXTRA --logging_config 'logging.yaml'
 
 if( $USE_SHMEM == 1 ) $GEOSBIN/RmShmKeys_sshmpi.csh >& /dev/null
 
