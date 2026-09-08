@@ -21,12 +21,6 @@ from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
-# Suffix identifying a per-species GEOS-Chem analysis fragment file, named
-# '<species>_analysis.yaml' (e.g. 'no2_analysis.yaml'), under namelists/geoschem_analysis/.
-GEOSCHEM_ANALYSIS_SUFFIX = '_analysis.yaml'
-
-# --------------------------------------------------------------------------------------------------
-
 
 class PrepForecastCf(taskBase):
 
@@ -83,12 +77,12 @@ class PrepForecastCf(taskBase):
         # -------------------------------------------------------------------------------------
         geoschem_analysis_dir = os.path.join(self.namelists_dir, 'geoschem_analysis')
         self.geoschem_species_files = sorted(
-            f for f in os.listdir(geoschem_analysis_dir) if f.endswith(GEOSCHEM_ANALYSIS_SUFFIX)
+            f for f in os.listdir(geoschem_analysis_dir) if f.endswith('_analysis.yaml')
         )
 
         self.an_vars_compo = []
         for fname in self.geoschem_species_files:
-            species = fname[:-len(GEOSCHEM_ANALYSIS_SUFFIX)]
+            species = fname[:-len('_analysis.yaml')]
             if f'volume_mixing_ratio_of_{species}' in self.an_vars_long:
                 self.an_vars_compo.append(species.upper())
 
@@ -207,9 +201,6 @@ class PrepForecastCf(taskBase):
             replay_file = f'{self.met_replay_exp}.ana.eta.{anYYYY}{anMM}{anDD}_{anHH}00z.nc4'
             replay_src = os.path.join(self.met_replay_root, self.met_replay_exp, 'run', '...',
                                       'archive', 'ana', f'Y{anYYYY}', f'M{anMM}', replay_file)
-
-            if shutil.which('dmget'):
-                run_subprocess(self.logger, ['dmget', replay_src])
 
             shutil.copy(replay_src, self.scratch_dir)
 
