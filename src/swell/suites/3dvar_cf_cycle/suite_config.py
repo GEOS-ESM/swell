@@ -74,46 +74,33 @@ class SuiteConfig(QuestionContainer, Enum):
                                'ss_internal',
                                'su_internal',
                                'surf_import',
+                               'tr_import',
+                               'tr_internal',
                                'turb_import',
                                'turb_internal']),
-            qd.rst_file_types_optional(['aiau_import',
-                                        'geoschemchem_import',
-                                        'gocart_import',
-                                        'gwd_import',
-                                        'hemco_import',
-                                        'irrad_internal',
-                                        'moist_import',
-                                        'saltwater_import',
-                                        'solar_internal',
-                                        'surf_import',
-                                        'turb_import',
-                                        'turb_internal']),
             qd.observations([
                 "tempo_no2_tropo",
                 "tropomi_s5p_no2_tropo",
             ]),
-            # forecast settings
-            # mom6_iau is available. I don't know if we want run 3dvar without iau
             qd.iau(True),
             qd.forecast_length('PT12H'),
             qd.forecast_output_frequency('PT3H'),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
             qd.inc_template(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3/handle_inc/'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/handle_inc/'
                 'GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
-            ),
-            qd.geos_cf_install_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOSgcm_31062024/install'
                 ),
-            qd.geos_cf_run_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GCv14.0_GCMv1.17_c90'
+            qd.geos_cf_install_dir(
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOSgcm_21042026/install-SLES15'
+                ),
+            qd.geos_cf_rc_dir(
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/RC_CFv2/RC'
                 ),
             qd.swell_static_files(
                 '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles'
                 ),
-            qd.geosfp_path(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOS-FP'
-                )
+            qd.met_replay_exp('d5294_geosit_jan18'),
+            qd.met_replay_root('/home/dao_ops')
         ]
     )
 

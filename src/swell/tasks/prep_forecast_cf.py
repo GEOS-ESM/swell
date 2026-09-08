@@ -53,14 +53,14 @@ class PrepForecastCf(taskBase):
         self.resolution = self.config.horizontal_resolution()
         self.an_vars_long = self.config.analysis_variables()
 
-        self.geos_cf_run_dir = self.config.geos_cf_run_dir()
+        self.geos_cf_rc_dir = self.config.geos_cf_rc_dir()
         self.geos_cf_install_dir = self.config.geos_cf_install_dir()
 
         self.namelists_dir = os.path.join(self.experiment_config_path(),
                                           'jedi', 'interfaces', 'geos_cf', 'namelists')
 
-        self.fp_exp = self.config.geosfp_exp()
-        self.fp_loc = self.config.geosfp_path()
+        self.met_replay_exp = self.config.met_replay_exp()
+        self.met_replay_root = self.config.met_replay_root()
 
         # Derive window times
         # -------------------
@@ -86,10 +86,19 @@ class PrepForecastCf(taskBase):
         self.logger.info('Creating GEOS-CF increment files')
         self.create_geos_cf_increments()
 
-        # Section 3: Get GEOS FP analysis files for replay
-        # -----------------------------------------------
-        self.logger.info('Fetching GEOS FP analysis files for replay')
-        self.get_geosfp_replay_files()
+        # Section 3: Get meteorology replay analysis files
+        # -------------------------------------------------
+        self.logger.info('Fetching meteorology replay analysis files')
+        self.get_met_replay_files()
+
+        # Meteorology REPLAY settings for AGCM.rc: files are staged into scratch_dir
+        # under their original name, so location/file are the same for any source
+        # (GEOS FP, GEOS-IT, ...).
+        # ---------------------------------------------------------------------------
+        self.replay_expid = self.met_replay_exp
+        self.replay_location = self.scratch_dir
+        self.replay_file = f'{self.met_replay_exp}.ana.eta.%y4%m2%d2_%h200z.nc4'
+        self.replay_file09 = self.replay_file
 
         # Section 4: Copy and update GEOS-CF namelist files
         # ---------------------------------------------------
@@ -142,8 +151,13 @@ class PrepForecastCf(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_geosfp_replay_files(self) -> None:
-        """Fetch GEOS FP analysis files needed for replay over the forecast length."""
+    def get_met_replay_files(self) -> None:
+        """Fetch meteorology replay analysis files needed over the forecast length.
+
+        Works for any replay source (GEOS FP, GEOS-IT, ...) since they share the same
+        archive layout: <met_replay_root>/<met_replay_exp>/run/.../archive/ana/Y%y4/M%m2/
+        <met_replay_exp>.ana.eta.%y4%m2%d2_%h200z.nc4
+        """
 
         n_win_step = math.ceil(self.parse_fclen / self.parse_wlen)
         for wstep in range(n_win_step):
@@ -152,12 +166,15 @@ class PrepForecastCf(taskBase):
             anMM = fc_date.strftime('%m')
             anDD = fc_date.strftime('%d')
             anHH = fc_date.strftime('%H')
-            date_path = f'Y{anYYYY}/M{anMM}'
 
-            fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
-            fp_file = (f'{self.fp_exp}.ana.eta.'
-                       f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
-            shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
+            replay_file = f'{self.met_replay_exp}.ana.eta.{anYYYY}{anMM}{anDD}_{anHH}00z.nc4'
+            replay_src = os.path.join(self.met_replay_root, self.met_replay_exp, 'run', '...',
+                                      'archive', 'ana', f'Y{anYYYY}', f'M{anMM}', replay_file)
+
+            if shutil.which('dmget'):
+                run_subprocess(self.logger, ['dmget', replay_src])
+
+            shutil.copy(replay_src, self.scratch_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -168,14 +185,13 @@ class PrepForecastCf(taskBase):
         namelists_dir = self.namelists_dir
 
         resolution = self.resolution
-        fp_exp = self.fp_exp
         parse_wbegin = self.parse_wbegin
         parse_wend = self.parse_wend
         parse_fclen = self.parse_fclen
 
-        # Copy all static files in RC/ in GEOS-CF run directory to scratch
-        # ----------------------------------------------------------------
-        src_rc = os.path.join(self.geos_cf_run_dir, 'RC')
+        # Copy all static files in GEOS-CF RC directory to scratch
+        # ---------------------------------------------------------
+        src_rc = self.geos_cf_rc_dir
         self.logger.info(f'Copy files from {src_rc} to {scratch_dir}')
 
         for item in os.listdir(src_rc):
@@ -204,8 +220,10 @@ class PrepForecastCf(taskBase):
         # Update AGCM.rc placeholders
         # ---------------------------
         agcm_rc = os.path.join(scratch_dir, 'AGCM.rc')
-        self.replace_string(agcm_rc, '>>>SWELL_FP_EXP<<<', fp_exp)
-        self.replace_string(agcm_rc, '>>>SWELL_SCRATCHDIR<<<', scratch_dir)
+        self.replace_string(agcm_rc, '>>>SWELL_REPLAY_EXPID<<<', self.replay_expid)
+        self.replace_string(agcm_rc, '>>>SWELL_REPLAY_LOCATION<<<', self.replay_location)
+        self.replace_string(agcm_rc, '>>>SWELL_REPLAY_FILE09<<<', self.replay_file09)
+        self.replace_string(agcm_rc, '>>>SWELL_REPLAY_FILE<<<', self.replay_file)
 
         weYYYY = parse_wend.strftime('%Y')
         weMM = parse_wend.strftime('%m')
@@ -276,14 +294,24 @@ class PrepForecastCf(taskBase):
 
         # Copy and configure gcm_run.j
         # -----------------------------
-        gcm_run_src = os.path.join(namelists_dir, f'gcm_run_geoscf_{resolution}.j')
+        if resolution == 'c90':
+            sbatch_nodes = '8'
+            bcrslv = 'CF0090x6C_DE0360xPE0180'
+        elif resolution == 'c360':
+            sbatch_nodes = '32'
+            bcrslv = 'CF0360x6C_DE2880xPE1440'
+        else:
+            raise ValueError(
+                f'Unsupported horizontal resolution for gcm_run_geoscf.j: {resolution}'
+            )
+
+        gcm_run_src = os.path.join(namelists_dir, 'gcm_run_geoscf.j')
         gcm_run_dst = os.path.join(scratch_dir, 'gcm_run_geoscf.j')
         shutil.copy(gcm_run_src, gcm_run_dst)
         self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
-
-        # used in handling Saltwater Restart only
-        self.replace_string(gcm_run_dst, '>>>SWELL_GEOSRUN<<<', self.geos_cf_run_dir)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', sbatch_nodes)
+        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', bcrslv)
         os.chmod(gcm_run_dst, 0o755)
 
         # Update CAP.rc with forecast length

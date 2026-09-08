@@ -847,40 +847,43 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geos_cf_run_dir(TaskQuestion):
+    class geos_cf_rc_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "geos_cf_run_dir"
+        question_name: str = "geos_cf_rc_dir"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the GEOS-CF model run directory?"
+        prompt: str = "What is the path to the GEOS-CF RC directory?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geosfp_exp(TaskQuestion):
-        default_value: str = "f5295_fp"
-        question_name: str = "geosfp_exp"
+    class met_replay_exp(TaskQuestion):
+        default_value: str = "d5294_geosit_jan18"
+        question_name: str = "met_replay_exp"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the GEOS FP experiment ID used for IAU analysis files?"
+        prompt: str = ("What is the meteorology replay experiment ID (e.g. a GEOS FP "
+                       "experiment such as f5295_fp, or a GEOS-IT experiment such as "
+                       "d5294_geosit_jan18)?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geosfp_path(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "geosfp_path"
+    class met_replay_root(TaskQuestion):
+        default_value: str = "/home/dao_ops"
+        question_name: str = "met_replay_root"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the GEOS FP archive?"
+        prompt: str = ("What is the root directory containing the meteorology replay "
+                       "experiment (parent of <met_replay_exp>/run/.../archive)?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 #                     Batch Parameters for Run Job
 #######################################################################
 #SBATCH --time=00:40:00
-#SBATCH --nodes=8 --ntasks-per-node=108
+#SBATCH --nodes=>>>SWELL_SBATCH_NODES<<< --ntasks-per-node=108
 #SBATCH --job-name=CFv2rc1t13
 #SBATCH --output=CFv2_gcm_%j
 #SBATCH --constraint=mil
@@ -44,9 +44,7 @@ echo   VERSION: $GCMVER
 #######################################################################
 
 
-setenv  EXPID   GEOS_CF_c360_swell 
-setenv  EXPDIR  >>>SWELL_GEOSRUN<<<
-setenv  HOMDIR  $EXPDIR
+setenv  EXPID   ForecastCF_c360_swell 
 
 # Run GSI?
 set RUN_GSI = 0
@@ -215,7 +213,7 @@ echo " Link Boundary Datasets"
 setenv BCSDIR    /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds
 setenv SSTDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput/g5gcm/bcs/realtime/OSTIA_REYNOLDS/2880x1440/
 setenv CHMDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
-setenv BCRSLV    CF0090x6C_DE0360xPE0180
+setenv BCRSLV    >>>SWELL_BCRSLV<<<
 setenv DATELINE  DC
 setenv EMISSIONS OPS_EMISSIONS
 
@@ -501,56 +499,14 @@ endif
 #ln -sf $SSTDIR/dataoceanfile_MERRA2_ICE.${OGCM_IM}x${OGCM_JM}.${yy}.data fraci.data
 
 #######################################################################
-#                Split Saltwater Restart if detected
+#                    Check for Split Saltwater Restarts
 #######################################################################
 
 if ( (-e $SCRDIR/openwater_internal_rst) && (-e $SCRDIR/seaicethermo_internal_rst)) then
   echo "Saltwater internal state is already split, good to go!"
 else
- if ( ( ( -e $SCRDIR/saltwater_internal_rst ) || ( -e $EXPDIR/saltwater_internal_rst) ) && ( $counter == 1 ) ) then
-
-   echo "Found Saltwater internal state. Splitting..."
-
-   # If saltwater_internal_rst is in EXPDIR move to SCRDIR
-   # -----------------------------------------------------
-   if ( -e $EXPDIR/saltwater_internal_rst ) /bin/mv $EXPDIR/saltwater_internal_rst $SCRDIR
-
-   # The splitter script requires an OutData directory
-   # -------------------------------------------------
-   if (! -d OutData ) mkdir -p OutData
-
-   # Run the script
-   # --------------
-   $RUN_CMD 1 $GEOSBIN/SaltIntSplitter tile.data $SCRDIR/saltwater_internal_rst
-
-   # Move restarts
-   # -------------
-   /bin/mv OutData/openwater_internal_rst OutData/seaicethermo_internal_rst .
-
-   # Remove OutData
-   # --------------
-   /bin/rmdir OutData
-
-   # Make decorated copies for restarts tarball
-   # ------------------------------------------
-   cp openwater_internal_rst    $EXPID.openwater_internal_rst.${edate}.${GCMVER}.${BCTAG}_${BCRSLV}
-   cp seaicethermo_internal_rst $EXPID.seaicethermo_internal_rst.${edate}.${GCMVER}.${BCTAG}_${BCRSLV}
-
-   # Inject decorated copies into restarts tarball
-   # ---------------------------------------------
-   tar rf $CYCLEDIR/restarts/restarts.${edate}.tar $EXPID.*.${edate}.${GCMVER}.${BCTAG}_${BCRSLV}
-
-   # Remove the decorated restarts
-   # -----------------------------
-   /bin/rm $EXPID.*.${edate}.${GCMVER}.${BCTAG}_${BCRSLV}
-
-   # Remove the saltwater internal restart
-   # -------------------------------------
-   /bin/rm $SCRDIR/saltwater_internal_rst
- else
-   echo "Neither saltwater_internal_rst, nor openwater_internal_rst and seaicethermo_internal_rst were found. Abort!"
-   exit 6
- endif
+  echo "openwater_internal_rst and seaicethermo_internal_rst were not found. Abort!"
+  exit 6
 endif
 
 # Test Openwater Restart for Number of tiles correctness
