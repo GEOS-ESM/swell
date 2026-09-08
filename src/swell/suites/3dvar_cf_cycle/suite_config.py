@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_cf_cycle",
         questions=[
             sq.common,
-            qd.start_cycle_point("2023-08-10T00:00:00Z"),
-            qd.final_cycle_point("2023-08-10T06:00:00Z"),
+            qd.start_cycle_point("2025-04-02T06:00:00Z"),
+            qd.final_cycle_point("2025-04-02T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
@@ -79,7 +79,6 @@ class SuiteConfig(QuestionContainer, Enum):
                                'turb_import',
                                'turb_internal']),
             qd.observations([
-                "tempo_no2_tropo",
                 "tropomi_s5p_no2_tropo",
             ]),
             qd.iau(True),
