@@ -292,55 +292,8 @@ chmod +x linkbcs
 echo " Get Executable and RESTARTS"
 cp $GEOSBIN/GEOSgcm.x .
 
-set rst_files      = `grep "RESTART_FILE"    AGCM.rc | grep -v VEGDYN | grep -v "#" | cut -d ":" -f1 | cut -d "_" -f1-2`
-set rst_file_names = `grep "RESTART_FILE"    AGCM.rc | grep -v VEGDYN | grep -v "#" | cut -d ":" -f2`
-
-set chk_files      = `grep "CHECKPOINT_FILE" AGCM.rc | grep -v "#" | cut -d ":" -f1 | cut -d "_" -f1-2`
-set chk_file_names = `grep "CHECKPOINT_FILE" AGCM.rc | grep -v "#" | cut -d ":" -f2`
-
-set monthly_chk_names = `cat $CYCLEDIR/HISTORY.rc | grep -v '^[\t ]*#' | sed -n 's/\([^\t ]\+\).monthly:[\t ]*1.*/\1/p' | sed 's/$/_rst/' `
-
-# Remove possible bootstrap parameters (+/-)
-# ------------------------------------------
-set dummy = `echo $rst_file_names`
-set rst_file_names = ''
-foreach rst ( $dummy )
-  set length  = `echo $rst | awk '{print length($0)}'`
-  set    bit  = `echo $rst | cut -c1`
-  if(  "$bit" == "+" | \
-       "$bit" == "-" ) set rst = `echo $rst | cut -c2-$length`
-  set rst_file_names = `echo $rst_file_names $rst`
-end
-
-# Copy Restarts to Scratch Directory
-# ----------------------------------
-# Rsts moved to CYCLEDIR/scratch by getRSTGEOSCF
-#foreach rst ( $rst_file_names $monthly_chk_names )
-#  if(-e $CYCLEDIR/$rst ) cp $CYCLEDIR/$rst . &
-#end
-#wait
-
-# If any restart is binary, set NUM_READERS to 1 so that
-# +-style bootstrapping of missing files can occur in
-# MAPL. pbinary cannot do this, but pnc4 can.
-# ------------------------------------------------------
-# maybe delete
-set found_binary = 0
-
-foreach rst ( $rst_file_names )
-   if (-e $rst) then
-      set rst_type = `/usr/bin/file -Lb --mime-type $rst`
-      if ( $rst_type =~ "application/octet-stream" ) then
-         set found_binary = 1
-      endif
-   endif
-end
-
-if ($found_binary == 1) then
-   /bin/mv AGCM.rc AGCM.tmp
-   cat AGCM.tmp | sed -e "/^NUM_READERS/ s/\([0-9]\+\)/1/g" > AGCM.rc
-   /bin/rm AGCM.tmp
-endif
+# Restarts are staged into $CYCLEDIR/scratch by getRSTGEOSCF ahead of time,
+# so no optional/bootstrap (+/-) restart handling is needed here.
 
 ##################################################################
 ######
