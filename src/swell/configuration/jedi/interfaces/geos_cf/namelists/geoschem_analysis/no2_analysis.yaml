@@ -1,0 +1,21 @@
+### Species fragment assembled into geoschem_analysis.yml by prep_forecast_cf.py.
+### 'Active' is set programmatically based on the analysis_variables config question.
+
+SpeciesName: NO2
+AnalysisFreq: 1
+AnalysisHour: 0
+AnalysisMinute: 0
+ForwardLooking: false
+FileTemplate: '>>>SWELL_RUNDIR<<</jedi.inc.%y4%m2%d2.%h2z.nc'
+FileVarName: NO2
+FileVarUnit: v/v
+DryFlag: 0
+IsIncrement: true
+InStrat: false
+InTrop: true
+IAU: true
+AnaFraction: 1.0
+MaxChangeStrat: 0.0
+MaxChangeTrop: -1.0
+HasSpec2: 0
+ErrorMode: 1

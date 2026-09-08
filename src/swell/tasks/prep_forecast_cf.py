@@ -13,10 +13,17 @@ import shutil
 
 import isodate
 import xarray as xr
+import yaml
 
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_history
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
+
+# --------------------------------------------------------------------------------------------------
+
+# Suffix identifying a per-species GEOS-Chem analysis fragment file, named
+# '<species>_analysis.yaml' (e.g. 'no2_analysis.yaml'), under namelists/geoschem_analysis/.
+GEOSCHEM_ANALYSIS_SUFFIX = '_analysis.yaml'
 
 # --------------------------------------------------------------------------------------------------
 
@@ -70,16 +77,20 @@ class PrepForecastCf(taskBase):
         self.parse_wlen = isodate.parse_duration(self.window_length)
         self.parse_fclen = isodate.parse_duration(self.forecast_length)
 
-        # Determine analysis variables for GEOS-CF (NO2 and CO)
-        # -------------------------------------------------------
-        an_vars_long_tg = ['volume_mixing_ratio_of_no2',
-                           'volume_mixing_ratio_of_co',
-                           'volume_mixing_ratio_of_o3']
-        self.an_vars_compo_all = [an_var.split('_')[-1].upper() for an_var in an_vars_long_tg]
+        # Determine active GEOS-Chem composition species for this experiment: every
+        # '<species>_analysis.yaml' file under namelists/geoschem_analysis/ is a candidate,
+        # and it is active if 'volume_mixing_ratio_of_<species>' is in analysis_variables.
+        # -------------------------------------------------------------------------------------
+        geoschem_analysis_dir = os.path.join(self.namelists_dir, 'geoschem_analysis')
+        self.geoschem_species_files = sorted(
+            f for f in os.listdir(geoschem_analysis_dir) if f.endswith(GEOSCHEM_ANALYSIS_SUFFIX)
+        )
+
         self.an_vars_compo = []
-        for an_var in an_vars_long_tg:
-            if an_var in self.an_vars_long:
-                self.an_vars_compo.append(an_var.split('_')[-1].upper())
+        for fname in self.geoschem_species_files:
+            species = fname[:-len(GEOSCHEM_ANALYSIS_SUFFIX)]
+            if f'volume_mixing_ratio_of_{species}' in self.an_vars_long:
+                self.an_vars_compo.append(species.upper())
 
         # Section 2: Create GEOS-CF increment files
         # ------------------------------------------
@@ -148,6 +159,32 @@ class PrepForecastCf(taskBase):
 
         run_subprocess(self.logger, ['/bin/bash', '-c',
                                      f'ncatted -O -a units,time,o,c,"{tstring}" {jedigeosfile}'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def write_geoschem_analysis_yml(self, analysis_dst: str) -> None:
+        """Assemble geoschem_analysis.yml from one YAML fragment per species.
+        """
+
+        species_dir = os.path.join(self.namelists_dir, 'geoschem_analysis')
+
+        species_config = {}
+        for i, fname in enumerate(self.geoschem_species_files, start=1):
+            with open(os.path.join(species_dir, fname), 'r') as f:
+                species_def = yaml.safe_load(f)
+            species_def['Active'] = species_def['SpeciesName'] in self.an_vars_compo
+            species_config[f'Spc{i:03d}'] = species_def
+
+        analysis_config = {
+            'general': {
+                'runphase': 2,
+                'nspecies': len(self.an_vars_compo),
+            },
+            'species': species_config,
+        }
+
+        with open(analysis_dst, 'w') as f:
+            yaml.dump(analysis_config, f, sort_keys=False)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -273,16 +310,11 @@ class PrepForecastCf(taskBase):
         shutil.copy(gridcomp_src, gridcomp_dst)
         self.replace_string(gridcomp_dst, '>>>SWELL_NUM_AN_VARS<<<', str(num_an_vars))
 
-        # Update geoschem_analysis.yml placeholders (active species and run directory)
+        # Assemble geoschem_analysis.yml from per-species YAML fragments
         # -----------------------------------------------------------------------------
-        analysis_src = os.path.join(namelists_dir, 'geoschem_analysis.yml')
         analysis_dst = os.path.join(scratch_dir, 'geoschem_analysis.yml')
-        shutil.copy(analysis_src, analysis_dst)
-        self.replace_string(analysis_dst, '>>>SWELL_NUM_AN_VARS<<<', str(num_an_vars))
+        self.write_geoschem_analysis_yml(analysis_dst)
         self.replace_string(analysis_dst, '>>>SWELL_RUNDIR<<<', scratch_dir)
-        for an_var in self.an_vars_compo_all:
-            active = 'true' if an_var in self.an_vars_compo else 'false'
-            self.replace_string(analysis_dst, f'>>>SWELL_ACTIVE_{an_var}<<<', active)
 
         # Write cap_restart with window begin date
         # -----------------------------------------
