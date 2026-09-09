@@ -319,7 +319,7 @@ class PrepForecastCf(taskBase):
         # -----------------------------
         if resolution == 'c90':
             sbatch_nodes = '8'
-            bcrslv = 'CF0090x6C_DE0360xPE0180'
+            bcrslv = 'CF0090x6C_DE2880xPE1440'
         elif resolution == 'c360':
             sbatch_nodes = '32'
             bcrslv = 'CF0360x6C_DE2880xPE1440'
