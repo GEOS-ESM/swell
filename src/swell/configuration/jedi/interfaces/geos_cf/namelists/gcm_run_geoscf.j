@@ -210,7 +210,7 @@ set USE_SHMEM = `grep '^\s*USE_SHMEM:'    CAP.rc | cut -d: -f2`
 #                        Link Boundary Datasets
 #######################################################################
 echo " Link Boundary Datasets"
-setenv BCSDIR    /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds
+setenv BCSDIR    /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Ostia
 setenv SSTDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput/g5gcm/bcs/realtime/OSTIA_REYNOLDS/2880x1440/
 setenv CHMDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
 setenv BCRSLV    >>>SWELL_BCRSLV<<<
@@ -278,9 +278,9 @@ endif
 _EOF_
 
 
- echo "/bin/ln -sf $SSTDIR/dataoceanfile_OSTIA_REYNOLDS_SST.2880x1440.2023.data sst.data" >> $FILE
- echo "/bin/ln -sf $SSTDIR/dataoceanfile_OSTIA_REYNOLDS_ICE.2880x1440.2023.data fraci.data" >> $FILE
- echo "/bin/ln -sf $SSTDIR/SEAWIFS_KPAR_mon_clim.2880x1440 SEAWIFS_KPAR_mon_clim.data" >> $FILE
+ echo "/bin/ln -sf $SSTDIR"'/dataoceanfile_OSTIA_REYNOLDS_SST.2880x1440.$YEAR.data sst.data' >> $FILE
+ echo "/bin/ln -sf $SSTDIR"'/dataoceanfile_OSTIA_REYNOLDS_ICE.2880x1440.$YEAR.data fraci.data' >> $FILE
+ echo "/bin/ln -sf $SSTDIR"'/SEAWIFS_KPAR_mon_clim.2880x1440 SEAWIFS_KPAR_mon_clim.data' >> $FILE
 
 chmod +x linkbcs
 # Done in prep_forecast
