@@ -234,7 +234,7 @@ class PrepForecastCf(taskBase):
         # Copy template namelist files
         # --------------------------
         for fname in ['logging.yaml', 'GEOSCHEMchem_ExtData.yaml',
-                      'HEMCO_Config.rc', 'geoschem_config.yml']:
+                      'HEMCO_Config.rc', 'geoschem_config.yml', 'fvcore_layout.rc']:
 
             src = os.path.join(namelists_dir, fname)
             self.logger.info(f'Copy {src} to {scratch_dir}')
