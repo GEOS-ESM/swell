@@ -74,8 +74,6 @@ class SuiteConfig(QuestionContainer, Enum):
                                'ss_internal',
                                'su_internal',
                                'surf_import',
-                               'tr_import',
-                               'tr_internal',
                                'turb_import',
                                'turb_internal']),
             qd.observations([
