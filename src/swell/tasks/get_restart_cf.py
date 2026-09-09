@@ -39,6 +39,8 @@ class GetRestartCf(taskBase):
 
         window_length = self.config.window_length()
         window_begin = self.da_window_params.window_begin(window_length, dto=True)
+
+        window_begin_prev = window_begin - isodate.parse_duration(window_length)
         rst_step = window_length
 
         # Use rst_experiment for first cycle
@@ -59,7 +61,7 @@ class GetRestartCf(taskBase):
                 experiment=rst_exp,
                 step=rst_step,
                 resolution=horizontal_resolution,
-                date=window_begin.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                date=window_begin_prev.strftime('%Y-%m-%dT%H:%M:%SZ'),
                 target_file=target_file,
                 file_extension='nc',
                 file_type=file_type,
