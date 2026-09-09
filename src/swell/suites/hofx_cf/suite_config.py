@@ -36,6 +36,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
 
         geos_cf=[
+            qd.window_type("3D"),
+            qd.window_length("PT6H"),
         ]
     )
 
