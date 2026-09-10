@@ -172,7 +172,7 @@ class PrepForecastCf(taskBase):
         analysis_config = {
             'general': {
                 'runphase': 2,
-                'nspecies': len(self.an_vars_compo),
+                'nspecies': len(self.geoschem_species_files),
             },
             'species': species_config,
         }

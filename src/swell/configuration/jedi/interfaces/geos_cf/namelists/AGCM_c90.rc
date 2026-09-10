@@ -77,9 +77,9 @@ BERES_FILE_NAME: ExtData/g5gcm/gwd/newmfspectra40_dc25.nc
 # Ocean Model Configuration Parameters
 # ------------------------------------
       OGCM.GRID_TYPE: LatLon
-      OGCM.GRIDNAME: PE360x180-DE
-      OGCM.IM_WORLD: 360
-      OGCM.JM_WORLD: 180
+      OGCM.GRIDNAME: PE2880x1440-DE
+      OGCM.IM_WORLD: 2880
+      OGCM.JM_WORLD: 1440
       OGCM.LM: 34
 
         OGCM.POLE: 'PE'
