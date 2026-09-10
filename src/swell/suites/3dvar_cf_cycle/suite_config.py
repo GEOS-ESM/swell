@@ -42,7 +42,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution(72),
             qd.saber_central_block('bump_nicas'),
             qd.saber_outer_block('stddev_bkg_scaled'),
-            qd.analysis_variables(["volume_mixing_ratio_of_no2"]),
+            qd.analysis_variables([
+                "volume_mixing_ratio_of_o3",
+                "volume_mixing_ratio_of_no2",
+                "volume_mixing_ratio_of_co",
+                ]),
             qd.background_experiment("swell_test"),
             qd.rst_experiment("swell_test"),
             qd.rst_file_types(['achem_internal',
@@ -77,7 +81,9 @@ class SuiteConfig(QuestionContainer, Enum):
                                'turb_import',
                                'turb_internal']),
             qd.observations([
+                "omps_o3_nm_total",
                 "tropomi_s5p_no2_tropo",
+                "tropomi_s5p_co_total",  
             ]),
             qd.iau(True),
             qd.forecast_length('PT12H'),
