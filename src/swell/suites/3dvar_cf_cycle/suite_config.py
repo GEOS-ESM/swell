@@ -84,17 +84,20 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.forecast_output_frequency('PT3H'),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
             qd.inc_template(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/handle_inc/'
-                'GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+                'handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
                 ),
             qd.geos_cf_install_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/GEOSgcm_21042026/install-SLES15'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+                'GEOSgcm_21042026/install-SLES15'
                 ),
             qd.geos_cf_rc_dir(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/RC_CFv2/RC'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+                'RC_CFv2/RC'
                 ),
             qd.swell_static_files(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles'
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+                'SwellStaticFiles'
                 ),
             qd.met_replay_exp('d5294_geosit_jan18'),
             qd.met_replay_root('/home/dao_ops')
