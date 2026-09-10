@@ -273,18 +273,6 @@ class PrepForecastCf(taskBase):
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
                             history['template'])
 
-        if resolution == 'c90':
-            grid_label = 'PE90x540-CF'
-        elif resolution == 'c360':
-            grid_label = 'PE360x2160-CF'
-        else:
-            raise ValueError(
-                f'Unsupported horizontal resolution for '
-                f'HISTORY.rc grid label: {resolution}'
-            )
-
-        self.replace_string(history_dst, '>>>SWELL_GEOSCF_JEDI_GRID<<<', grid_label)
-
         freq_dur = isodate.parse_duration(self.forecast_output_frequency)
         freq_total_secs = int(freq_dur.total_seconds())
         freq_hh = freq_total_secs // 3600

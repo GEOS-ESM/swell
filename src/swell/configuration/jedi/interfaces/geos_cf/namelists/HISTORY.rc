@@ -18,10 +18,8 @@ GRID_LABELS:
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.archive:   '%c/Y%y4',
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.format:    'CFIO',
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.mode:      'instantaneous' ,
-  #>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.frequency:  010000,
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.ref_time:   000000,
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.grid_label: >>>SWELL_GEOSCF_JEDI_GRID<<<
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.fields:     'T'                       , 'DYN'           ,
                           'DELP'                    , 'DYN'           ,
                           'PS'                      , 'DYN'           ,
