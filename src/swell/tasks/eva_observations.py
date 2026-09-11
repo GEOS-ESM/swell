@@ -35,7 +35,7 @@ def run_eva(eva_dict: dict) -> eva:
 
 # Some IODA MetaData variables (e.g. qualityFlags) carry a 'coordinates' attribute pointing at
 # longitude/latitude. This makes xarray promote those into coordinates when eva opens the
-# MetaData group, causing a KeyError later when eva looks up 'MetaData::longitude'. Strip it.
+# MetaData group, causing a KeyError later when eva looks up 'MetaData::longitude'.
 def strip_coordinates_attribute(obs_path_file: str) -> None:
     with nc.Dataset(obs_path_file, 'a') as dataset:
         if 'MetaData' not in dataset.groups:
