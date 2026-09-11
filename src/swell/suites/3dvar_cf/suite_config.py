@@ -29,7 +29,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles"
                 ),
             qd.start_cycle_point("2025-04-02T06:00:00Z"),
-            qd.final_cycle_point("2025-04-02T12:00:00Z"),
+            qd.final_cycle_point("2025-04-02T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
