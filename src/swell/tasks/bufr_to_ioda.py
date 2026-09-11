@@ -111,18 +111,19 @@ class BufrToIoda(taskBase):
         # Aircraft profiles: a single bufr source that maps to a single
         # builder script.
         if 'acft_profiles' in filename or 'acftpfl' in filename:
-            return [('acft_profiles',('aircraft_wind',), 'prepbufr_aircraft_wind.py'),
-            ('acft_profiles',('aircraft_temperature',),'prepbufr_aircraft_temperature.py'),
-            ]
-
+            return [('acft_profiles', ('aircraft_wind',), 'prepbufr_aircraft_wind.py'),
+                    ('acft_profiles', ('aircraft_temperature',),
+                     'prepbufr_aircraft_temperature.py'),]
 
         # Conventional prepbufr (everything except aircraft): a single bufr
         # source that has to be run through two separate builder scripts to
         # produce all of its ioda output types.
         if 'prepbufr' in filename and 'acft' not in filename:
             return [
-                ('prepbufr',('sonde','pibal'), 'prepbufr_adpupa.py'),  # produces sonde and pibal ioda files
-                ('prepbufr',('sfc','sfcship'), 'prepbufr_sfc.py'),         # produces sfc and sfcship ioda files
+                # produces sonde and pibal ioda files
+                ('prepbufr', ('sonde', 'pibal'), 'prepbufr_adpupa.py'),
+                # produces sfc and sfcship ioda files
+                ('prepbufr', ('sfc', 'sfcship'), 'prepbufr_sfc.py'),
             ]
 
         return None
@@ -155,12 +156,12 @@ class BufrToIoda(taskBase):
     # --------------------------------------------------------------------------------------------------
 
     def process_bufr_file_conventional(self,
-                          bufr_path_file: Path,
-                          obs_type: str,
-                          obs_spaces: tuple,
-                          obs_builder_filename: str,
-                          spoc_script_path: Path,
-                          ioda_dir: Path) -> None:
+                                       bufr_path_file: Path,
+                                       obs_type: str,
+                                       obs_spaces: tuple,
+                                       obs_builder_filename: str,
+                                       spoc_script_path: Path,
+                                       ioda_dir: Path) -> None:
         """
         Handles subprocess call for conventional obs spaces - to handle scripts producing
         multiple obs spaces, conv ioda files are sent to temp directories based on obs_type
@@ -191,9 +192,11 @@ class BufrToIoda(taskBase):
 
         # Output IODA filepath
         if 'aircraft' in obs_builder_filename:
-            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{}'.format(obs_spaces[0]) +'.tm00.nc4')
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{}'.format(
+                obs_spaces[0]) + '.tm00.nc4')
         else:
-            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{splits/obsType}.tm00.nc4')
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] +
+                                               '.{splits/obsType}.tm00.nc4')
 
         existing_files = list(obs_type_dir.glob(f'{base_name}*'))
         if len(existing_files) > 0:
@@ -202,20 +205,18 @@ class BufrToIoda(taskBase):
             return
 
         subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
-                        '--output', ioda_file_target],cwd=spoc_script_path, check=True)
+                        '--output', ioda_file_target], cwd=spoc_script_path, check=True)
 
-        # Remove temporary obs_type directories and move ioda files to new directories for each obs space
+        # Remove temporary obs_type directories and move ioda files to new directories
+        # for each obs space
         for obs_space in obs_spaces:
-            obs_space_dir=ioda_dir / obs_space
+            obs_space_dir = ioda_dir / obs_space
             self.logger.info(f'obs_space_dir: {obs_space_dir}')
-            obs_space_dir.mkdir(mode=0o755,exist_ok=True)
-            output_file=list(obs_type_dir.glob(f"*{base_name}*{obs_space}.tm00.nc4"))[0]
+            obs_space_dir.mkdir(mode=0o755, exist_ok=True)
+            output_file = list(obs_type_dir.glob(f"*{base_name}*{obs_space}.tm00.nc4"))[0]
             output_file.rename(obs_space_dir / output_file.name)
 
         obs_type_dir.rmdir()
-
-
-
 
     # --------------------------------------------------------------------------------------------------
 
@@ -253,13 +254,15 @@ class BufrToIoda(taskBase):
             conventional_builders = self.get_conventional_obs_builders(bufr_path_file)
 
             if conventional_builders is not None:
-                for obs_type,obs_spaces,obs_builder_filename in conventional_builders:
-                    self.process_bufr_file_conventional(bufr_path_file, obs_type, obs_spaces, obs_builder_filename,
-                                           spoc_script_path, ioda_dir)
+                for obs_type, obs_spaces, obs_builder_filename in conventional_builders:
+                    self.process_bufr_file_conventional(bufr_path_file, obs_type, obs_spaces,
+                                                        obs_builder_filename, spoc_script_path,
+                                                        ioda_dir)
                 continue
 
             obs_type = self.find_obstype_match(bufr_path_file)
-            obs_builder_file = self.get_obs_builder_file(spoc_script_path, obs_builder_dict[obs_type])
+            obs_builder_file = self.get_obs_builder_file(spoc_script_path,
+                                                         obs_builder_dict[obs_type])
 
             if obs_builder_file is None:
                 self.logger.info(f'SKIPPING: No valid observation type '
@@ -290,6 +293,6 @@ class BufrToIoda(taskBase):
                 continue
 
             subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
-                            '--output', ioda_file_target],cwd=spoc_script_path, check=True)
+                            '--output', ioda_file_target], cwd=spoc_script_path, check=True)
 
 # --------------------------------------------------------------------------------------------------
