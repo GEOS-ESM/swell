@@ -10,6 +10,7 @@
 
 from multiprocessing import Pool
 import os
+import netCDF4 as nc
 from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
@@ -27,6 +28,21 @@ from swell.utilities.run_jedi_executables import check_obs
 # Pass through to avoid confusion with optional logger argument inside eva
 def run_eva(eva_dict: dict) -> eva:
     eva(eva_dict)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+# Some IODA MetaData variables (e.g. qualityFlags) carry a 'coordinates' attribute pointing at
+# longitude/latitude. This makes xarray promote those into coordinates when eva opens the
+# MetaData group, causing a KeyError later when eva looks up 'MetaData::longitude'. Strip it.
+def strip_coordinates_attribute(obs_path_file: str) -> None:
+    with nc.Dataset(obs_path_file, 'a') as dataset:
+        if 'MetaData' not in dataset.groups:
+            return
+        for variable in dataset.groups['MetaData'].variables.values():
+            if 'coordinates' in variable.ncattrs():
+                variable.delncattr('coordinates')
 
 
 # --------------------------------------------------------------------------------------------------
@@ -126,6 +142,10 @@ class EvaObservations(taskBase):
                     self.logger.abort(f'No observation file found for {obs_path_file} or ' +
                                       f'{obs_path_file_0000}')
                 obs_path_file = obs_path_file_0000
+
+            # Strip the 'coordinates' attribute from MetaData variables 
+            # ---------------------------------------------------------------------------------
+            strip_coordinates_attribute(obs_path_file)
 
             # Get instrument ioda and full name
             # ---------------------------------
