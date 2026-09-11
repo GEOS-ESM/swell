@@ -6,9 +6,9 @@ AnalysisFreq: 6
 AnalysisHour: 0
 AnalysisMinute: 0
 ForwardLooking: false
-FileTemplate: '>>>SWELL_RUNDIR<<</jedi.inc.%y4%m2%d2.%h2z.nc'
-FileVarName: ozone
-FileVarUnit: ppmv
+FileTemplate: '/discover/nobackup/jbarre/SwellExperiments/swell-3dvar_cf_cycle/run/20250402T060000Z/geos_cf/scratch/jedi.inc.%y4%m2%d2.%h2z.nc'
+FileVarName: O3
+FileVarUnit: v/v
 DryFlag: 0
 IsIncrement: true
 InStrat: true
@@ -20,6 +20,7 @@ AnaL3: 72
 AnaL4: 72
 AnaFraction: 1.0
 MaxChangeStrat: -1.0
-MaxChangeTrop:  -1.0
+MaxChangeTrop: -1.0
 HasSpec2: 0
 ErrorMode: 1
+Active: true
