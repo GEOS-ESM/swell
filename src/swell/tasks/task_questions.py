@@ -221,6 +221,7 @@ class TaskQuestions(QuestionContainer, Enum):
     DownloadObs = QuestionList(
         list_name="DownloadObs",
         questions=[
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
