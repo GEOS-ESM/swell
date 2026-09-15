@@ -82,6 +82,7 @@ class DownloadObs(taskBase):
         obs_to_download = self.config.obs_to_download([])
         window_length = self.config.window_length()
         dry_run = self.config.dry_run(True)
+        download_obs_config_overrides = self.config.download_obs_config_overrides({})
 
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be downloaded')
@@ -109,6 +110,15 @@ class DownloadObs(taskBase):
 
             with open(config_path, 'r') as fh:
                 obs_config = yaml.safe_load(fh)
+
+            # Apply any per-obs overrides from the experiment config.
+            # This allows, e.g., switching s3_source from NRTI to OFFL
+            # via the experiment override YAML without editing source files.
+            if obs_name in download_obs_config_overrides:
+                obs_config.update(download_obs_config_overrides[obs_name])
+                self.logger.info(
+                    f'  Applied download_obs_config_overrides for {obs_name}: '
+                    f'{download_obs_config_overrides[obs_name]}')
 
             downloaded, failed = self._download_obs(
                 obs_config, obs_name,

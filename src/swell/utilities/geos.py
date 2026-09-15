@@ -12,6 +12,7 @@ import f90nml
 import glob
 import isodate
 import os
+import re
 from typing import Tuple, Optional
 
 from swell.utilities.datetime_util import datetime_formats
@@ -309,7 +310,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_nml(
+    def process_inputnml(
         self,
         combine_fvcore: bool = False,
         cold_restart: bool = False
@@ -340,6 +341,94 @@ class Geos():
             nml_comb.update(nml2)
 
         with open(os.path.join(self.forecast_dir, 'input.nml'), 'w') as f:
+            f90nml.write(nml_comb, f, sort=False)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def process_diag_table(
+        self,
+        bkg_freq: str = "PT00",
+    ) -> None:
+        """
+        Adjusts the GEOS diag_table history entry to match the background frequency.
+
+        This file is not a namelist, so the change is implemented as a targeted text rewrite
+        for the history template line that uses the background interval.
+
+        TODO: In newer FMS version, a YAML file is used for diag_table, so this should be more
+        straightforward to set eventually.
+
+        Args:
+            bkg_freq (str): Frequency for background processing. Default "PT00" is not used.
+        """
+
+        diag_table_path = os.path.join(self.forecast_dir, 'diag_table')
+        if not os.path.exists(diag_table_path):
+            self.logger.abort(f"diag_table not found: {diag_table_path}")
+
+        bkg_duration = isodate.parse_duration(bkg_freq)
+        bkg_hours = int(bkg_duration.total_seconds() / 3600)
+
+        self.logger.info(f"Change diag_table history frequency to background frequency: {bkg_freq}")
+
+        with open(diag_table_path, 'r') as infile:
+            content = infile.read()
+
+        pattern = re.compile(
+            r'("his%4yr%2mo%2dy%2hr"\s*,\s*)(\d+)'
+            r'(\s*,\s*"hours"\s*,\s*\d+\s*,\s*"hours"\s*,\s*"time"\s*,\s*)'
+            r'(\d+)(\s*,\s*"hours")'
+        )
+        updated_content, count = pattern.subn(
+            lambda match: (
+                f"{match.group(1)}{bkg_hours}{match.group(3)}{bkg_hours}{match.group(5)}"
+            ),
+            content,
+        )
+
+        if count == 0:
+            pattern = re.compile(r'("his%4yr%2mo%2dy%2hr"\s*,\s*)(\d+)(\s*,\s*"hours")')
+            updated_content, count = pattern.subn(
+                lambda match: f"{match.group(1)}{bkg_hours}{match.group(3)}",
+                content,
+            )
+
+        if count == 0:
+            self.logger.warning('No diag_table history entry matched the expected pattern')
+            return
+
+        with open(diag_table_path, 'w') as outfile:
+            outfile.write(updated_content)
+
+    # --------------------------------------------------------------------------------------------------
+
+    def process_icein(
+        self,
+        bkg_freq: str = "PT00",
+    ) -> None:
+        """
+        Adjusts the ice_in namelist file for history output to match the background frequency.
+
+        Args:
+            bkg_freq (str): Frequency for background processing. Defaults to "PT00".
+        """
+
+        # Make sure icein.nml is set up properly for hot/cold restart
+        nml_comb = f90nml.read(os.path.join(self.forecast_dir, 'ice_in'))
+
+        # Convert background frequency to hours for histfreq_n
+        bkg_duration = isodate.parse_duration(bkg_freq)
+        bkg_hours = int(bkg_duration.total_seconds() / 3600)
+
+        self.logger.info(f"Updating ice_in history frequency with background frequency: {bkg_freq}")
+
+        # Replace `h` with background frequency
+        # histfreq = 'h', 'd', 'x', 'x', 'x'
+        # histfreq_n = 6, 1, 1, 1, 1
+        nml_comb['setup_nml']['histfreq'] = ['h', 'd', 'x', 'x', 'x']
+        nml_comb['setup_nml']['histfreq_n'][0] = bkg_hours
+
+        with open(os.path.join(self.forecast_dir, 'ice_in'), 'w') as f:
             f90nml.write(nml_comb, f, sort=False)
 
     # --------------------------------------------------------------------------------------------------

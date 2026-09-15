@@ -121,9 +121,6 @@ cost function:
           engine:
             type: H5File
             obsfile: cycle_dir/experiment_id.adt_jason3.20210701T000000Z.nc4
-        distribution:
-          name: Halo
-          halo size: 3500000.0
         simulated variables:
         - absoluteDynamicTopography
       obs operator:
@@ -153,13 +150,6 @@ cost function:
         - variable:
             name: GeoVaLs/distance_from_coast
           minvalue: 100000.0
-      obs localizations:
-      - localization method: Rossby
-        base value: 100000.0
-        rossby mult: 1.0
-        min grid mult: 2.0
-        min value: 200000.0
-        max value: 900000.0
       observation_name: adt_jason3
     - obs space:
         name: adt_saral
@@ -291,9 +281,6 @@ cost function:
           engine:
             type: H5File
             obsfile: cycle_dir/experiment_id.insitu_profile_argo.20210701T000000Z.nc4
-        distribution:
-          name: Halo
-          halo size: 3500000.0
         simulated variables:
         - waterTemperature
         - salinity
@@ -341,13 +328,6 @@ cost function:
         - variable:
             name: GeoVaLs/distance_from_coast
           minvalue: 100000.0
-      obs localizations:
-      - localization method: Rossby
-        base value: 100000.0
-        rossby mult: 1.0
-        min grid mult: 2.0
-        min value: 200000.0
-        max value: 900000.0
       observation_name: insitu_profile_argo
     - obs space:
         name: sst_ostia
@@ -405,9 +385,6 @@ cost function:
           engine:
             type: H5File
             obsfile: cycle_dir/experiment_id.sss_smos.20210701T000000Z.nc4
-        distribution:
-          name: Halo
-          halo size: 3500000.0
         simulated variables:
         - seaSurfaceSalinity
       obs operator:
@@ -445,13 +422,6 @@ cost function:
         - variable:
             name: GeoVaLs/distance_from_coast
           minvalue: 100000.0
-      obs localizations:
-      - localization method: Rossby
-        base value: 100000.0
-        rossby mult: 1.0
-        min grid mult: 2.0
-        min value: 200000.0
-        max value: 900000.0
       observation_name: sss_smos
     - obs space:
         name: sss_smapv5
@@ -613,9 +583,6 @@ cost function:
           engine:
             type: H5File
             obsfile: cycle_dir/experiment_id.sst_viirs_n20_l3u.20210701T000000Z.nc4
-        distribution:
-          name: Halo
-          halo size: 3500000.0
         simulated variables:
         - seaSurfaceTemperature
       get values:
@@ -656,13 +623,6 @@ cost function:
               - ObsError/seaSurfaceTemperature
               coefs:
               - 1.0
-      obs localizations:
-      - localization method: Rossby
-        base value: 100000.0
-        rossby mult: 1.0
-        min grid mult: 2.0
-        min value: 200000.0
-        max value: 900000.0
       observation_name: sst_viirs_n20_l3u
     - obs space:
         name: temp_profile_xbt

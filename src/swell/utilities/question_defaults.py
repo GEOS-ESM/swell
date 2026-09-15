@@ -272,6 +272,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class suite_to_run(SuiteQuestion):
+        default_value: str = "test"
+        question_name: str = "suite_to_run"
+        prompt: str = "Record of the suite being executed"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class window_type(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_type"
@@ -1057,6 +1066,21 @@ class QuestionDefaults():
         ])
         prompt: str = "Which observations do you want to download from remote servers?"
         widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class download_obs_config_overrides(TaskQuestion):
+        default_value: dict = mutable_field({})
+        question_name: str = "download_obs_config_overrides"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Per-observation config overrides applied on top of the "
+                       "download_observations/<obs>.yaml file. Keys are obs names; "
+                       "values are dicts of fields to override (e.g. s3_source).")
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 

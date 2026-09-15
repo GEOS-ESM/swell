@@ -10,10 +10,7 @@
 from datetime import datetime as dt
 import isodate
 import os
-from netCDF4 import Dataset
-import numpy as np
 import xarray as xr
-from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
@@ -193,60 +190,15 @@ class LinkCoupledGeosOutput(taskBase):
         # the dimensions and variables to match SOCA requirements
         ds = xr.open_dataset(src_history)
 
-        # rename the dimensions to xaxis_1 and yaxis_1 and rename the variables
+        # rename the dimensions to xaxis_1 and yaxis_1 and rename the variables, assumes all these
+        # variables are present in the CICE6 history output
+        # proxy for ncrename -d ni,xaxis_1 -d nj,yaxis_1 -v aice,aice_h -v hi,hi_h -v hs,hs_h
+        # -v Tsfc,Tsfc_h -v Tair,Tair_h -v sice,sice_h
         ds = ds.rename({'ni': 'xaxis_1', 'nj': 'yaxis_1'})
-        ds = ds.rename({'aice': 'aice_h', 'hi': 'hi_h', 'hs': 'hs_h'})
+        ds = ds.rename({'aice': 'aice_h', 'hi': 'hi_h', 'hs': 'hs_h', 'Tsfc': 'Tsfc_h',
+                        'Tair': 'Tair_h', 'sice': 'sice_h'})
 
         # Save as a new file
         ds.to_netcdf(dst_history, mode='w', format='NETCDF4')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def prepare_cice6_restart(self) -> Tuple[str, str]:
-        # CICE6 input in SOCA requires aggregation of multiple variables and
-        # time dimension added to the dataset.
-        # SOCA needs icea area (aicen), ice volume (vicen), and snow area (vsnon)
-        # --------------------------------------------------------------------
-        soca2cice_vars = {'aice_h': 'aicen',
-                          'hi_h': 'vicen',
-                          'hs_h': 'vsnon'}
-
-        # read CICE6 restart
-        # -----------------
-        ds = xr.open_dataset(self.forecast_dir(['scratch', 'RESTART', 'iced.nc']))
-        nj = np.shape(ds['aicen'])[1]
-        ni = np.shape(ds['aicen'])[2]
-
-        # populate xarray with aggregated quantities
-        # ------------------------------------------
-        aggds = xr.merge(xr.DataArray(
-                        name=varname,
-                        data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0),
-                                        (1, nj, ni)),
-                        dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys())
-
-        # remove fill value
-        # -----------------
-        encoding = {varname: {'_FillValue': False} for varname in soca2cice_vars.keys()}
-
-        fname_out = os.path.join(self.cycle_dir(), 'cice.res.' + self.bkgr_time_iso + '.nc')
-
-        # save datasets
-        # -------------
-        aggds.to_netcdf(fname_out, format='NETCDF4', unlimited_dims='time', encoding=encoding)
-
-        # xarray doesn't allow variables and dim that have the same name, switch to netCDF4
-        # ---------------------------------------------------------------------------------
-        ncf = Dataset(fname_out, 'a')
-        t = ncf.createVariable('time', 'f8', ('time'))
-        t[:] = 1.0
-        ncf.close()
-
-        # Generic CICE6 rst file source format for SOCA
-        # ---------------------------------------
-        src = self.forecast_dir(['scratch', 'RESTART', 'iced.nc'])
-        dst = 'iced.res.' + self.bkgr_time_iso + '.nc'
-
-        return src, dst
 
 # --------------------------------------------------------------------------------------------------

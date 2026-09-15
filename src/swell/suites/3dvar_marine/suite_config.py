@@ -112,3 +112,21 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    _3dvar_marine_5day = QuestionList(
+        list_name="3dvar_marine_5day",
+        questions=[
+            _3dvar_marine,
+            qd.start_cycle_point("2023-01-07T12:00:00Z"),
+            qd.final_cycle_point("2023-01-17T12:00:00Z"),
+            qd.forecast_duration("P10D"),
+        ],
+        geos_marine=[
+            qd.cycle_times(['T120']),
+            qd.window_length("P5D"),
+            qd.background_frequency("PT12H"),
+            qd.background_time_offset("P7DT12H"),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
