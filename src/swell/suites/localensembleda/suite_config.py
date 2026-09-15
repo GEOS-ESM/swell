@@ -31,6 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
+            qd.fetch_from_r2d2(True)
         ],
         geos_atmosphere=[
             qd.horizontal_resolution('91'),
@@ -71,6 +72,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
+            qd.fetch_from_r2d2(True)
         ],
         geos_atmosphere=[
             qd.horizontal_resolution('91'),

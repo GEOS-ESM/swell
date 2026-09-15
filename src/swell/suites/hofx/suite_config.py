@@ -31,6 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.save_geovals(True),
             qd.model_components(['geos_atmosphere']),
+            qd.fetch_from_r2d2(False)
         ],
         geos_atmosphere=[
             qd.horizontal_resolution("91"),
