@@ -35,6 +35,68 @@ obs filters:
   maxvalue: 2.0
   flag all filter variables if any test variable is out of bounds: true
 
+# CO observation-error tuning parameters (easy to change for experiments)
+# retrieval_error_inflation = F
+# fractional_obs_error = f
+- filter: Perform Action
+  filter variables:
+  - name: carbonmonoxideTotal
+  action:
+    name: inflate error
+    inflation factor: 5.0
+
+# Save the inflated retrieval error: inflated_error = F * ObsError
+- filter: Variable Assignment
+  assignments:
+  - name: TempObsErrorData/retrieval_inflated
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsErrorData/carbonmonoxideTotal
+
+# Build the fractional term: fractional_error = f * abs(ObsValue)
+- filter: Variable Assignment
+  assignments:
+  - name: TempObsErrorData/fractional_obs_error
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsValue/carbonmonoxideTotal
+        absolute value: [true]
+        total coefficient: 0.10
+
+# Combine in quadrature:
+# final_error = sqrt(inflated_error^2 + fractional_error^2)
+- filter: Variable Assignment
+  assignments:
+  - name: TempObsErrorData/final_obs_error
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: TempObsErrorData/retrieval_inflated
+        - name: TempObsErrorData/fractional_obs_error
+        exponents: [2.0, 2.0]
+        coefs: [1.0, 1.0]
+        total exponent: 0.5
+
+# Replace the ObsError used by JEDI cost function for this variable.
+- filter: Perform Action
+  filter variables:
+  - name: carbonmonoxideTotal
+  action:
+    name: assign error
+    error function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: TempObsErrorData/final_obs_error
+
 obs operator:
   name: ColumnRetrieval
   nlayers_retrieval: 50
