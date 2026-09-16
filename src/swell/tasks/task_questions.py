@@ -221,6 +221,7 @@ class TaskQuestions(QuestionContainer, Enum):
     DownloadObs = QuestionList(
         list_name="DownloadObs",
         questions=[
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
@@ -911,6 +912,24 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.perhost(),
             qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediPostprocSoca2ciceExecutable = QuestionList(
+        list_name="RunJediPostprocSoca2ciceExecutable",
+        questions=[
+            qd.analysis_variables(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.comparison_log_type('postproc_soca2cice'),
+            qd.mock_experiment()
         ]
     )
 

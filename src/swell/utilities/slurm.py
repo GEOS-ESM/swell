@@ -95,6 +95,7 @@ def prepare_scheduling_dict(
         'RunJediEtkfObserver',
         'RunJediEtkfSolver',
         'RunJediObsfiltersExecutable',
+        'RunJediPostprocSoca2ciceExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
         }
