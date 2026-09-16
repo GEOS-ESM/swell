@@ -127,6 +127,7 @@ class JediConfigRendering():
             'perhost',
             'saber_central_block',
             'saber_outer_block',
+            'stddev_scale_factor',
             'skip_ensemble_hofx',
             'swell_static_files',
             'start_cycle_point',
