@@ -52,11 +52,6 @@ obs_builder_dict = {
     'ncep_gpsro_bufr': 'gnssro.py',
     'gpsro': 'gnssro.py',
 
-    # prepbufr
-    'ncep_acftpfl_bufr': 'prepbufr_aircraft.py',
-    'acftpfl': 'prepbufr_aircraft.py',
-    'acft_profiles': 'prepbufr_aircraft.py',
-
     # Rest of obs_classes from GetBufr
     # 'gmao_amsr2_bufr': 'spoc_radiance_amsr2.py',
     # 'gmao_gmi_bufr': 'spoc_radiance_gmi.py',
@@ -105,20 +100,50 @@ class BufrToIoda(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
+    def get_conventional_obs_builders(self, bufr_path_file: Path):
+        """
+        For conventional data in prepbufr / prepbufr profile input files - returns input file type,
+        obs spaces produced, and name of obs builder conversion script
+        """
+
+        filename = bufr_path_file.name
+
+        # Aircraft profiles: a single bufr source that maps to a single
+        # builder script.
+        if 'acft_profiles' in filename or 'acftpfl' in filename:
+            return [('acft_profiles', ('aircraft_wind',), 'prepbufr_aircraft_wind.py'),
+                    ('acft_profiles', ('aircraft_temperature',),
+                     'prepbufr_aircraft_temperature.py'),]
+
+        # Conventional prepbufr (everything except aircraft): a single bufr
+        # source that has to be run through two separate builder scripts to
+        # produce all of its ioda output types.
+        if 'prepbufr' in filename and 'acft' not in filename:
+            return [
+                # produces sonde and pibal ioda files
+                ('prepbufr', ('sonde', 'pibal'), 'prepbufr_adpupa.py'),
+                # produces sfc and sfcship ioda files
+                ('prepbufr', ('sfc', 'sfcship'), 'prepbufr_sfc.py'),
+            ]
+
+        return None
+
+    # --------------------------------------------------------------------------------------------------
+
     def get_obs_builder_file(self,
                              spoc_script_path: Path,
-                             obs_type: str) -> Path:
+                             obs_builder_file: str) -> Path:
         """
         Returns the path to the ObsBuilder python file
 
         Parameters:
         spoc_script_path: Path to the spoc scripts
+        obs_builder_file: Filename of the ObsBuilder script (e.g. "radiance_atms.py")
 
         Returns:
         Path to the specific ObsBuilder python file
         """
 
-        obs_builder_file = obs_builder_dict[obs_type]
         obs_builder_glob = list(spoc_script_path.glob(obs_builder_file))
         if len(obs_builder_glob) > 0:
             return obs_builder_glob[0]
@@ -127,6 +152,71 @@ class BufrToIoda(taskBase):
                              'found in config directory.')
 
         return None
+
+    # --------------------------------------------------------------------------------------------------
+
+    def process_bufr_file_conventional(self,
+                                       bufr_path_file: Path,
+                                       obs_type: str,
+                                       obs_spaces: tuple,
+                                       obs_builder_filename: str,
+                                       spoc_script_path: Path,
+                                       ioda_dir: Path) -> None:
+        """
+        Handles subprocess call for conventional obs spaces - to handle scripts producing
+        multiple obs spaces, conv ioda files are sent to temp directories based on obs_type
+        and then sent to respective obs space directories after conversion
+        """
+
+        obs_builder_file = self.get_obs_builder_file(spoc_script_path, obs_builder_filename)
+
+        if obs_builder_file is None:
+            self.logger.info(f'SKIPPING: ObsBuilder file `{obs_builder_filename}` '
+                             f'not found for {bufr_path_file}')
+            return
+
+        self.logger.info(f' MATCH FOUND: [ {obs_builder_file} ]')
+
+        # Get the name of the output directory
+        obs_type_dir = ioda_dir / obs_type
+        obs_type_dir.mkdir(mode=0o755, exist_ok=True)
+
+        self.logger.info(f'obs_type_dir: {obs_type_dir}')
+
+        if bufr_path_file.suffix == '.bufr_d':
+            bufr_file_parts = bufr_path_file.name.rsplit('.', 2)
+            base_name = bufr_file_parts[0]
+        else:
+            bufr_file_parts = [bufr_path_file.name]
+            base_name = bufr_path_file.name
+
+        # Output IODA filepath
+        if 'aircraft' in obs_builder_filename:
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{}'.format(
+                obs_spaces[0]) + '.tm00.nc4')
+        else:
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] +
+                                               '.{splits/obsType}.tm00.nc4')
+
+        existing_files = list(obs_type_dir.glob(f'{base_name}*'))
+        if len(existing_files) > 0:
+            self.logger.info(f'SKIPPING: Output files already exist for {bufr_path_file}: '
+                             f'{existing_files}')
+            return
+
+        subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
+                        '--output', ioda_file_target], cwd=spoc_script_path, check=True)
+
+        # Remove temporary obs_type directories and move ioda files to new directories
+        # for each obs space
+        for obs_space in obs_spaces:
+            obs_space_dir = ioda_dir / obs_space
+            self.logger.info(f'obs_space_dir: {obs_space_dir}')
+            obs_space_dir.mkdir(mode=0o755, exist_ok=True)
+            output_file = list(obs_type_dir.glob(f"*{base_name}*{obs_space}.tm00.nc4"))[0]
+            output_file.rename(obs_space_dir / output_file.name)
+
+        obs_type_dir.rmdir()
 
     # --------------------------------------------------------------------------------------------------
 
@@ -160,8 +250,19 @@ class BufrToIoda(taskBase):
         bufr_path_files = list(bufr_dir.glob('*bufr*'))
 
         for bufr_path_file in bufr_path_files:
+
+            conventional_builders = self.get_conventional_obs_builders(bufr_path_file)
+
+            if conventional_builders is not None:
+                for obs_type, obs_spaces, obs_builder_filename in conventional_builders:
+                    self.process_bufr_file_conventional(bufr_path_file, obs_type, obs_spaces,
+                                                        obs_builder_filename, spoc_script_path,
+                                                        ioda_dir)
+                continue
+
             obs_type = self.find_obstype_match(bufr_path_file)
-            obs_builder_file = self.get_obs_builder_file(spoc_script_path, obs_type)
+            obs_builder_file = self.get_obs_builder_file(spoc_script_path,
+                                                         obs_builder_dict[obs_type])
 
             if obs_builder_file is None:
                 self.logger.info(f'SKIPPING: No valid observation type '
@@ -192,6 +293,6 @@ class BufrToIoda(taskBase):
                 continue
 
             subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
-                            '--output', ioda_file_target], check=True)
+                            '--output', ioda_file_target], cwd=spoc_script_path, check=True)
 
 # --------------------------------------------------------------------------------------------------
