@@ -34,6 +34,11 @@ horizontal_resolution:
   - 'c90'
   - 'c360'
 
+jedi_forecast_model:
+  default_value: pseudo_model
+  options:
+  - pseudo_model
+
 vertical_resolution:
   default_value: 72
   options:

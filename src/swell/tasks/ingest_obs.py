@@ -83,6 +83,11 @@ class IngestObs(taskBase):
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
 
+        # Per-observation provider overrides from the experiment configuration.
+        # Values here take precedence over the defaults in
+        # observation_ioda_names.yaml.
+        self.observation_providers = self.config.observation_providers(default={})
+
         # Get window parameters
         window_length = self.config.window_length()
 
@@ -162,7 +167,8 @@ class IngestObs(taskBase):
         failed = []
 
         provider = get_provider_for_observation(
-            obs_name, self.ioda_names_list, self.logger)
+            obs_name, self.ioda_names_list, self.logger,
+            provider_overrides=self.observation_providers)
 
         acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 

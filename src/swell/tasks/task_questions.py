@@ -221,6 +221,7 @@ class TaskQuestions(QuestionContainer, Enum):
     DownloadObs = QuestionList(
         list_name="DownloadObs",
         questions=[
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
@@ -518,6 +519,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.dry_run(),
             qd.obs_to_ingest(),
+            qd.observation_providers(),
             qd.window_length(),
             qd.store_as_symlink(),
         ]
@@ -770,6 +772,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
+            qd.marine_models(),
             qd.save_geovals(),
             qd.total_processors(),
             qd.comparison_log_type('ensemblehofx'),
@@ -831,6 +834,24 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.total_processors(),
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediPostprocSoca2ciceExecutable = QuestionList(
+        list_name="RunJediPostprocSoca2ciceExecutable",
+        questions=[
+            qd.analysis_variables(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.comparison_log_type('postproc_soca2cice'),
             qd.mock_experiment()
         ]
     )
@@ -919,7 +940,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.marine_models()
+            qd.marine_models(),
         ]
     )
 

@@ -62,11 +62,7 @@ class SuiteConfig(QuestionContainer, Enum):
                                 'tropomi_s5p_co_total', 'tempo_no2_tropo']),
             qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                               'tropomi_s5p_co_total', 'tempo_no2_tropo']),
-            qd.converter_path(
-                "/discover/nobackup/projects/jcsda/s2127/maryamao/"
-                "jedi-bundle/build-intel-1.9/bin/"
-            ),
-            qd.dry_run(False),
+            qd.dry_run(True),
             qd.store_as_symlink(False),
         ]
     )
@@ -85,8 +81,8 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_cf=[
             qd.dry_run(True),
             qd.background_source_path(),
-            qd.background_experiment(),
-            qd.horizontal_resolution(),
+            qd.background_experiment('geos_cf_oper'),
+            qd.horizontal_resolution('c360'),
             qd.store_as_symlink(True),
         ]
     )
