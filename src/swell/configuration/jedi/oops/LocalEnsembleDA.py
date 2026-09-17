@@ -25,6 +25,7 @@ class LocalEnsembleDA(OopsConfig):
             'increment variables': self.template_dict['analysis_variables'],
             'background': self.interface_model('background_ensemble'),
             'observations': {
+                'obs data container': 'OSDF',
                 'get values': self.interface_model('getvalues'),
                 'observers': self.special_observations()
             },
