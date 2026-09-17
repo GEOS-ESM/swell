@@ -22,6 +22,7 @@ class qc_thinning(OopsConfig):
                 'bound to include': 'begin'
             },
             'observations': {
+                'obs data container': 'OSDF',
                 'observers': self.special_observations()
             }
         }

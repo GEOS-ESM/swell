@@ -30,6 +30,7 @@ class fgat(OopsConfig):
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
                 'observations': {
+                    'obs data container': 'OSDF',
                     'observers': self.special_observations()
                 }
             },
