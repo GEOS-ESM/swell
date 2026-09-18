@@ -559,13 +559,6 @@ endif
 echo GEOSgcm Run Status: $rc
 if ( $rc == -1 ) exit -1
 
-# write geos complete file (this tells the GSI run to stop)
-if ( $RUN_GSI == 1 ) then
-   set geos_done = "geos_run.done"
-   touch ${geos_done}
-   echo "written geos checkpoint file: ${geos_done}"
-endif
-
 #######################################################################
 #   Rename Final Checkpoints => Restarts for Next Segment and Archive
 #        Note: cap_restart contains the current NYMD and NHMS
