@@ -28,8 +28,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.swell_static_files(
                 "/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles"
                 ),
-            qd.start_cycle_point("2023-08-05T18:00:00Z"),
-            qd.final_cycle_point("2023-08-05T18:00:00Z"),
+            qd.start_cycle_point("2025-04-02T06:00:00Z"),
+            qd.final_cycle_point("2025-04-02T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
@@ -45,11 +45,16 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution(72),
             qd.saber_central_block('bump_nicas'),
             qd.saber_outer_block('stddev_bkg_scaled'),
-            qd.analysis_variables(["volume_mixing_ratio_of_no2"]),
+            qd.analysis_variables([
+                "volume_mixing_ratio_of_o3",
+                "volume_mixing_ratio_of_no2",
+                "volume_mixing_ratio_of_co",
+                ]),
             qd.background_experiment("swell_test"),
             qd.observations([
-                "tempo_no2_tropo",
+                "omps_o3_nm_total",
                 "tropomi_s5p_no2_tropo",
+                "tropomi_s5p_co_total",  
             ]),
             qd.clean_patterns(['*.txt', 'logfile.*.out']),
         ]
