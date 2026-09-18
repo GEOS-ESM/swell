@@ -864,7 +864,7 @@ class QuestionDefaults():
 
     @dataclass
     class met_replay_root(TaskQuestion):
-        default_value: str = "/home/dao_ops"
+        default_value: str = "defer_to_platform"
         question_name: str = "met_replay_root"
         ask_question: bool = True
         models: List[str] = mutable_field([

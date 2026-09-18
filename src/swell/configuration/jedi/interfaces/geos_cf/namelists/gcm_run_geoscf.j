@@ -40,16 +40,6 @@ setenv GCMVER `cat $GEOSETC/.AGCM_VERSION`
 echo   VERSION: $GCMVER
 
 #######################################################################
-#             Experiment Specific Environment Variables
-#######################################################################
-
-
-setenv  EXPID   ForecastCF_c360_swell 
-
-# Run GSI?
-set RUN_GSI = 0
-
-#######################################################################
 #                 Create Experiment Sub-Directories
 #######################################################################
 echo "  Create Experiment Sub-Directories "
@@ -146,16 +136,6 @@ else
 
    @ TOTAL_PES = $MODEL_NPES
 
-endif
-
-# submit GSI standalone run, will run in parallel 
-if ( $RUN_GSI == 1 ) then
-   # make sure EXPID is correct
-   /bin/mv gsi_sa.j gsi_sa.tmp
-   cat gsi_sa.tmp | sed -e "s?setenv EXPID.*?setenv EXPID $EXPID?g" > gsi_sa.j
-   /bin/rm gsi_sa.tmp
-   echo "submitting gsi job to run in parallel..."
-   sbatch gsi_sa.j
 endif
 
 echo "finish Set Experiment Run Parameters"
@@ -578,13 +558,6 @@ else
 endif
 echo GEOSgcm Run Status: $rc
 if ( $rc == -1 ) exit -1
-
-# write geos complete file (this tells the GSI run to stop)
-if ( $RUN_GSI == 1 ) then
-   set geos_done = "geos_run.done"
-   touch ${geos_done}
-   echo "written geos checkpoint file: ${geos_done}"
-endif
 
 #######################################################################
 #   Rename Final Checkpoints => Restarts for Next Segment and Archive
