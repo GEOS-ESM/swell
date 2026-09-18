@@ -7,7 +7,7 @@ AnalysisHour: 0
 AnalysisMinute: 0
 ForwardLooking: false
 FileTemplate: '>>>SWELL_RUNDIR<<</jedi.inc.%y4%m2%d2.%h2z.nc'
-FileVarName: ozone
+FileVarName: O3
 FileVarUnit: ppmv
 DryFlag: 0
 IsIncrement: true
