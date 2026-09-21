@@ -18,8 +18,12 @@ class ensmeanvariance(OopsConfig):
         oops = {
             'geometry': self.interface_model('geometry'),
             'ensemble': self.interface_model('ensemble_block'),
-            'variance output': self.interface_model('ensemble_latlon_prior_variance_output'),
-            'mean output': self.interface_model('ensemble_latlon_prior_mean_output')
+            #
+            # full state variables do not work in ensemble
+            # 'ensemble': self.interface_model('state_ensemble'),
+            #
+            'variance output': self.interface_model('comp_variance_output'),
+            'mean output': self.interface_model('comp_mean_output')
         }
 
         return oops

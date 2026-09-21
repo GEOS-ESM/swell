@@ -41,7 +41,7 @@ class SaveBackground(taskBase):
         - ``background_source_path``: strftime path template, e.g.
           ``/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/
           GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4``
-        - ``background_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
+        - ``background_experiment``: R2D2 experiment name (default ``geos_cf_oper``)
         - ``horizontal_resolution``: R2D2 resolution string (default ``c360``)
         - ``store_as_symlink``: if ``True`` (default), register files as symlinks
           in R2D2 rather than copying them
@@ -71,7 +71,7 @@ class SaveBackground(taskBase):
 
         model = self.get_model()
         source_template = self.config.background_source_path()
-        experiment = self.config.background_experiment('geos_cf_v2')
+        experiment = self.config.background_experiment('geos_cf_oper')
         resolution = self.config.horizontal_resolution('c360')
         store_as_symlink = self.config.store_as_symlink(True)
 

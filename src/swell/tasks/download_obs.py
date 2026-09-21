@@ -36,6 +36,7 @@ import isodate
 import requests
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities import s3 as swell_s3
 
 
 class DownloadObs(taskBase):
@@ -81,6 +82,7 @@ class DownloadObs(taskBase):
         obs_to_download = self.config.obs_to_download([])
         window_length = self.config.window_length()
         dry_run = self.config.dry_run(True)
+        download_obs_config_overrides = self.config.download_obs_config_overrides({})
 
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be downloaded')
@@ -108,6 +110,15 @@ class DownloadObs(taskBase):
 
             with open(config_path, 'r') as fh:
                 obs_config = yaml.safe_load(fh)
+
+            # Apply any per-obs overrides from the experiment config.
+            # This allows, e.g., switching s3_source from NRTI to OFFL
+            # via the experiment override YAML without editing source files.
+            if obs_name in download_obs_config_overrides:
+                obs_config.update(download_obs_config_overrides[obs_name])
+                self.logger.info(
+                    f'  Applied download_obs_config_overrides for {obs_name}: '
+                    f'{download_obs_config_overrides[obs_name]}')
 
             downloaded, failed = self._download_obs(
                 obs_config, obs_name,
@@ -188,8 +199,7 @@ class DownloadObs(taskBase):
             remote_path = self._resolve_path(remote_path_template, slot_date)
             file_glob = self._resolve_filename(filename_pattern, slot_date, slot_hour)
 
-            file_regex = re.compile(
-                '^' + re.escape(file_glob).replace(r'\*', '.*') + '$')
+            file_regex = swell_s3.glob_to_regex(file_glob)
 
             listing_url = remote_host.rstrip('/') + '/' + remote_path.lstrip('/')
 
@@ -254,9 +264,6 @@ class DownloadObs(taskBase):
         Returns ``(n_downloaded, n_failed)``.
         """
         try:
-            import boto3
-            from botocore import UNSIGNED
-            from botocore.config import Config as BotocoreConfig
             from botocore.exceptions import BotoCoreError, ClientError
         except ImportError:
             self.logger.abort(
@@ -287,9 +294,7 @@ class DownloadObs(taskBase):
                     f'  [DRY RUN] Would list s3://{bucket}/{prefix}{pattern_info}')
             return 0, 0
 
-        s3_client = boto3.client(
-            's3',
-            config=BotocoreConfig(signature_version=UNSIGNED))
+        s3_client = swell_s3.anonymous_s3_client()
 
         downloaded = 0
         failed = 0
@@ -322,10 +327,8 @@ class DownloadObs(taskBase):
                 valid_hours = [h for d, h in self._hour_slots(search_start, search_end)
                                if d == day_date]
                 hours_window = [
-                    re.compile(
-                        '^' + re.escape(
-                            self._resolve_filename(filename_pattern, day_date, h)
-                        ).replace(r'\*', '.*') + '$')
+                    swell_s3.glob_to_regex(
+                        self._resolve_filename(filename_pattern, day_date, h))
                     for h in valid_hours
                 ]
                 keys = [k for k in keys
