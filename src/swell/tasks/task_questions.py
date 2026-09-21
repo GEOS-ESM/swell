@@ -760,6 +760,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
+            qd.marine_models(),
             qd.save_geovals(),
             qd.total_processors(),
             qd.comparison_log_type('ensemblehofx'),
