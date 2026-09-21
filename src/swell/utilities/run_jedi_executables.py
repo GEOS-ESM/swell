@@ -74,7 +74,7 @@ def run_executable(
 
     # Run the JEDI executable
     # -----------------------
-    if perhost is None:
+    if (perhost is None or perhost == "None"):
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
         command = [
             'mpirun',

@@ -68,6 +68,8 @@ class EvaIncrement(taskBase):
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
         if self.suite_name() == 'localensembleda':
             incr_file = f'geos.mean-inc.{local_bkg_time}.nc4'
+        elif self.suite_name().startswith('eda_') and 'atmos' in self.suite_name():
+            incr_file = f'eda.mean-inc.{local_bkg_time}.nc4'
         if window_type == '4D' and 'atmos' in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 
@@ -84,6 +86,15 @@ class EvaIncrement(taskBase):
             if 'cice6' in marine_models:
                 # sea-ice increment is optional
                 ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+                ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+                eva_override['ice_increment_file_path'] = ice_increment_file_path
+
+        # TODO: Yet another exception, need to handle this better
+        if self.suite_name() == 'letkf_marine':
+            incr_file = f'ocn.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
+
+            if 'cice6' in marine_models:
+                ice_incr_file = f'ice.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
                 ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
                 eva_override['ice_increment_file_path'] = ice_increment_file_path
 

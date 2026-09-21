@@ -49,6 +49,9 @@ class RenderJediObservations(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('marine_models', marine_models)
 
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
+
         cwd = os.getcwd()
 
         if self.config.mock_experiment(False):

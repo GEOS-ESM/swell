@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_sa1
 
 # --------------------------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
         'filename': f'{cycle_dir}/geos.mean-inc.',
-        'field io names': field_io_names_ensemble
+        'field io names': field_io_names_sa1
     }
 
     return ensemble_mean_increment_output

@@ -24,7 +24,7 @@
 (C) Copyright 2021- United States Government as represented by the Administrator of the National
 Aeronautics and Space Administration. All Rights Reserved.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/license/Apache-2.0)
 
 
 ### Description:
@@ -34,4 +34,4 @@ using a workflow manager and scheduler.
 
 ### Documentation
 
-Documentation for swell, which includes installation instructions, can be found at <a href="https://geos-esm.github.io/swell" target="_blank">https://geos-esm.github.io/swell</a>.
+Documentation for swell, which includes installation instructions, can be found at <a href="https://geos-esm.github.io/swell/" target="_blank">https://geos-esm.github.io/swell/</a>.

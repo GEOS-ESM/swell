@@ -26,14 +26,7 @@ limit stacksize unlimited
 setenv ARCH `uname`
 
 setenv SITE             NCCS
-#setenv GEOSDIR          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil
-#setenv GEOSBIN          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil/bin
-#setenv GEOSETC          /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil/etc
-#setenv GEOSUTIL         /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil
-
-#setenv GEOSDIR          /discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install
 setenv GEOSDIR          >>>SWELL_GEOSINSTALL<<<
-#setenv GEOSDIR          /discover/nobackup/vshah5/cf2/CFv2_code/GEOSgcm_rc1_t15/build_mil
 setenv GEOSBIN          $GEOSDIR/bin
 setenv GEOSETC          $GEOSDIR/etc
 setenv GEOSUTIL         $GEOSDIR
@@ -51,10 +44,8 @@ echo   VERSION: $GCMVER
 #######################################################################
 
 
-setenv  EXPID   GCv14.0_GCMv1.17_c90
-#setenv  EXPDIR  /discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab 
+setenv  EXPID   GCv14.0_GCMv1.17_c90b 
 setenv  EXPDIR  >>>SWELL_GEOSRUN<<<
-# EXPDIR and EXPID have to be the same 
 setenv  HOMDIR  $EXPDIR
 
 # Run GSI?
@@ -65,19 +56,7 @@ set RUN_GSI = 0
 #######################################################################
 echo "  Create Experiment Sub-Directories "
 setenv CYCLEDIR >>>SWELL_CYCLEDIR<<< # current_cycle
-
-
-#if (! -e $CYCLEDIR/restarts   ) mkdir -p $CYCLEDIR/restarts
-#if (! -e $CYCLEDIR/holding    ) mkdir -p $CYCLEDIR/holding
-
 setenv  SCRDIR  $CYCLEDIR
-# Remove the directory if it exists
-#if ( -d $SCRDIR ) then
-#    rm -rf $SCRDIR
-#endif
-
-# Create the directory
-#mkdir -p $SCRDIR
 
 #######################################################################
 #                   Set Experiment Run Parameters
@@ -184,14 +163,8 @@ echo "finish Set Experiment Run Parameters"
 #   Move to Scratch Directory and Copy RC Files from Home Directory
 #######################################################################
 echo " Move to Scratch Directory and Copy RC Files from Home Directory "
-cd $SCRDIR  # SCRDIR=$CYCLEDIR/scratch
+cd $SCRDIR 
 
-# done in prep_forecast
-#cp -rf  $CYCLEDIR/RC/* . #moved/edited in prepForecast
-#cp      $CYCLEDIR/cap_restart . 
-#cp -rf  $CYCLEDIR/*.rc .
-##cp -rf  $HOMDIR/*.nml .
-#cp -rf  $CYCLEDIR/*.yaml .
 cp     $GEOSBIN/bundleParser.py .
 
 cat fvcore_layout.rc >> input.nml

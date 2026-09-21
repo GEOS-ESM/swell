@@ -2,4 +2,4 @@
 # Source: output of ConvertObsToIoda, relative to the cycle work directory.
 
 acquisition_method: local
-source: ioda/omps_o3_nm_total/omps_o3_nm_total_%Y%m%d%H.nc # in CYCLE_DIR
+source: ioda/omps_o3_nm_total/omps_o3_nm_total_%Y%m%d%H.nc4 # in CYCLE_DIR

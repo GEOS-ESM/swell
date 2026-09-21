@@ -25,7 +25,9 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="hofx_cf",
         questions=[
             sq.common,
-            qd.swell_static_files("/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles"),
+            qd.swell_static_files(
+                "/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/SwellStaticFiles"
+                ),
             qd.start_cycle_point("2023-08-05T18:00:00Z"),
             qd.final_cycle_point("2023-08-05T18:00:00Z"),
             qd.jedi_build_method("use_existing"),
@@ -34,6 +36,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
 
         geos_cf=[
+            qd.window_type("3D"),
+            qd.window_length("PT6H"),
         ]
     )
 

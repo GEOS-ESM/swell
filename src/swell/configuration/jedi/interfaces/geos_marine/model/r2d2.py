@@ -12,18 +12,20 @@ from collections.abc import Mapping
 
 
 def r2d2(template_dict: Mapping) -> Mapping:
-    cycle_dir = template_dict['cycle_dir']
-    local_background_time = template_dict['local_background_time']
-    experiment_id = template_dict['experiment_id']
     analysis_time_iso = template_dict['analysis_time_iso']
+    cycle_dir = template_dict['cycle_dir']
+    experiment_id = template_dict['experiment_id']
+    local_background_time = template_dict['local_background_time']
 
     fc_list = [{'file_type': 'MOM.res',
                 'r2d2_model': 'mom6',
+                'file_extension': 'tar.gz',
                 'filename': f'{cycle_dir}/MOM6.res.{local_background_time}.nc'}]
 
     if 'cice6' in template_dict['marine_models']:
         fc_list.append({'file_type': 'cice.res',
                         'r2d2_model': 'cice6',
+                        'file_extension': 'tar.gz',
                         'filename': f'{cycle_dir}/cice.res.{local_background_time}.nc'})
 
     an_list = [{'file_type': 'ocn.incr',
