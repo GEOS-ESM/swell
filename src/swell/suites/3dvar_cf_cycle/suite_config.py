@@ -83,7 +83,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "omps_o3_nm_total",
                 "tropomi_s5p_no2_tropo",
-                "tropomi_s5p_co_total",  
+                "tropomi_s5p_co_total",
             ]),
             qd.iau(True),
             qd.forecast_length('PT12H'),

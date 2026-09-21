@@ -49,8 +49,8 @@ class RunJediVariationalExecutable(taskBase):
         npx = self.config.npx(None)
         npy = self.config.npy(None)
         stddev_scale_factor = self.config.get_key_for_model('stddev_scale_factor',
-                                     self.get_model(),
-                                     '0.25')
+                                                            self.get_model(),
+                                                            '0.25')
 
         # Compute data assimilation window parameters
         # --------------------------------------------
