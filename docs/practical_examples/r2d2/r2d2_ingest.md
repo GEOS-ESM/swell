@@ -171,6 +171,30 @@ machine urs.earthdata.nasa.gov login <username> password <password>
 
 `DownloadObs` task places files in `<cycle_dir>/download/<obs_name>/`.
 
+#### Overriding download config per-observation
+
+`download_obs_config_overrides` lets you override fields of a
+`download_observations/<obs>.yaml` file from the experiment's suite config,
+without editing the source YAML. This is useful for switching a source's
+provider stream (e.g. NRTI vs. OFFL) on a per-experiment basis, or making any
+other one-off adjustment to a download config.
+
+Set it alongside `obs_to_download` in `suite_config.py`:
+
+```python
+qd.obs_to_download(['my_obs'])
+qd.download_obs_config_overrides({
+    'my_obs': {
+        's3_source': 'OFFL'
+    }
+})
+```
+
+Keys are observation names (matching `obs_to_download`); values are dicts of
+fields to override in that observation's download YAML. `DownloadObs` applies
+these overrides on top of the loaded YAML immediately before downloading, so
+any key present in the download YAML can be overridden this way.
+
 ### Step 4: Create the converter YAML
 
 Create `src/swell/configuration/jedi/interfaces/<model>/convert_observations/my_obs.yaml`:
