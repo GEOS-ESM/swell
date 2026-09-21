@@ -96,7 +96,11 @@ This method retrieves restarts from the R2D2 data repository. **Note**: This fun
 initial_restarts_method: hotstart
 ```
 
-In hotstart mode, the task assumes restart files already exist in the forecast directory (e.g., manually placed or to resume from a previous run). No files are copied.
+In hotstart mode, the task assumes restart files already exist in the forecast directory (e.g., manually placed or to resume from a previous complete run). No files are copied via `GetCoupledRestart`.
+
+This approach requires recreating the experiment directory via `swell create` using a new `start_cycle_point` in the `override.yaml`, beginning from one cycle beyond the last experiment's `end_cycle_point`. This is necessary because the hotstart mode assumes that the necessary restart files are already in place and does not automatically fetch or generate them.
+
+If one wants to use the same R2D2 experiment ID as the previous run, that should also be defined in the `override.yaml` via `r2d2_experiment_id`.
 
 ### Directory Structure Setup
 
