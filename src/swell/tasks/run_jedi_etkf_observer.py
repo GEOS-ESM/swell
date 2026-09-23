@@ -12,6 +12,8 @@ import os
 import copy
 import subprocess
 from ruamel.yaml import YAML
+import glob
+import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -182,9 +184,9 @@ class RunJediEtkfObserver(taskBase):
                     observer['obs bias'] = replace_key(observer['obs bias'],
                                                        "variational bc", "static bc")
         model_component_meta = self.jedi_rendering.render_interface_meta()
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-        jedi_executable_wi_path = os.path.join(self.experiment_path(), 'jedi_bundle',
-                                               'build', 'bin', jedi_executable)
+        executable = model_component_meta['executables'][f'{jedi_application}']
+        jedi_executable = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                       'build', 'bin', executable)
 
         # seperate each obs and write to disk
         # -------------------------------------------------------------------
@@ -195,37 +197,69 @@ class RunJediEtkfObserver(taskBase):
 
         observers = jedi_config_dict["observations"]["observers"]
         np = 6 * npx * npy
-        cmd = """
-        export SLURM_MPI_TYPE=pmi2
-        export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi2.so
-        """
-        cmd += f"cd {self.cycle_dir()} \n"
-        cmd += f"rm -f log.*  logfile*  \n"
+        cycle_dir = self.cycle_dir()
+
+        for pattern in ("log.*", "logfile*"):
+            for filepath in glob.glob(os.path.join(cycle_dir, pattern)):
+                try:
+                    os.remove(filepath)
+                except OSError:
+                    pass
+        env = os.environ.copy()
+        env["SLURM_MPI_TYPE"] = "pmi2"
+        env["I_MPI_PMI_LIBRARY"] = "/usr/lib64/libpmi2.so"
+
+        processes = []
         for i, obs in enumerate(observers):
             x0 = copy.deepcopy(jedi_config_dict)
             x0["observations"]["observers"] = [obs]
-            x0['geometry']['layout'] = [npx, npy]
-            observation_name = obs['observation_name']
-            tmp_file1 = os.path.join(self.cycle_dir(), f'diag_{observation_name}.yaml')
-            tmp_file2 = os.path.join(self.cycle_dir(), f'log.diag_{observation_name}')
+            x0["geometry"]["layout"] = [npx, npy]
+
+            observation_name = obs["observation_name"]
+            tmp_file1 = os.path.join(cycle_dir, f"diag_{observation_name}.yaml")
+            tmp_file2 = os.path.join(cycle_dir, f"log.diag_{observation_name}")
+
             with open(tmp_file1, "w") as f:
                 yaml.dump(x0, f)
-            cmd += (
-                f"srun --exclusive --mpi=pmi2 -n {np} "
-                f"{jedi_executable_wi_path} {tmp_file1} {tmp_file2} &\n"
-            )
-        cmd += f"wait \n"
+
+            cmd = ["srun", "--exclusive", "--mpi=pmi2", "-n", str(np),
+                   str(jedi_executable), tmp_file1, tmp_file2]
+            if not generate_yaml_and_exit:
+                # launch proc, MPI cores donot overlap becaus of --exclusive
+                proc = subprocess.Popen(
+                    cmd,
+                    cwd=cycle_dir,
+                    env=env,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                processes.append((observation_name, proc))
+            else:
+                print(f'intended mpi_command = {cmd}')
+
         print(f'nobs = {i+1}')
         np_use = (i+1) * np
         nnode_min = int(np_use/126) + 1
-        self.logger.info(f'{np_use} cores '
-                         f'on minimum {nnode_min} nodes is needed to run etkf_observer!')
+        self.logger.info(
+            f"{np_use} cores on minimum {nnode_min} nodes is needed to run etkf_observer!"
+        )
 
+        #  Wait for processes to complete and collect stderr / stdout
         if not generate_yaml_and_exit:
-            subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE, check=True)
+            failed_observers = []
+            for obs_name, proc in processes:
+                if proc.returncode != 0:
+                    self.logger.error(
+                        f"Observer '{obs_name}' failed with return code {proc.returncode}."
+                    )
+                    failed_observers.append((obs_name, proc.returncode))
+                else:
+                    self.logger.info(f"Observer '{obs_name}' completed successfully.")
+
+            if failed_observers:
+                failed_names = [f[0] for f in failed_observers]
+                raise RuntimeError(f"Observer runs failed for: {', '.join(failed_names)}")
         else:
-            print(f'intended mpi_command = {cmd}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
