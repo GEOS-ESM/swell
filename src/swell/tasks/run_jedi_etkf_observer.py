@@ -10,10 +10,10 @@
 
 import os
 import copy
+import glob
+import shlex
 import subprocess
 from ruamel.yaml import YAML
-import glob
-import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -235,7 +235,7 @@ class RunJediEtkfObserver(taskBase):
                 )
                 processes.append((observation_name, proc))
             else:
-                print(f'intended mpi_command = {cmd}')
+                print(f'intended mpi_command = {shlex.join(cmd)}')
 
         print(f'nobs = {i+1}')
         np_use = (i+1) * np
