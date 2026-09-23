@@ -8,6 +8,9 @@ ensemble_hofx_strategy:
 ensemble_hofx_packets:
   default_value: 1
 
+fetch_from_r2d2:
+  default_value: false
+
 saber_central_block:
   default_value: None
 
