@@ -40,6 +40,7 @@ field_io_names = {
     'skin_temperature_at_surface': 'ts',
     'eastward_wind_at_surface': 'u10m',
     'northward_wind_at_surface': 'v10m',
+    'ratio_of_wind_at_surface_adjacent_layer_to_wind_at_10m': 'f10m',
     # sea_surface_temperature': 'ts_found',
     # mole_fraction_of_carbon_dioxide_in_air': 'co2',
 }
@@ -86,6 +87,7 @@ state_variables = [
     'soilm',
     'eastward_wind_at_surface',
     'northward_wind_at_surface',
+    'ratio_of_wind_at_surface_adjacent_layer_to_wind_at_10m'
     # 'sea_surface_temperature',
     # 'mole_fraction_of_carbon_dioxide_in_air',
 ]
