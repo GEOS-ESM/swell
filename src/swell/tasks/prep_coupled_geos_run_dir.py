@@ -24,8 +24,8 @@ class PrepCoupledGeosRunDir(taskBase):
     def execute(self) -> None:
 
         """
-        Copies GEOS HOMDIR files to the GEOSfcm forecast directory and prepares it before executing
-        gcm_run.j.
+        Copies GEOS HOMDIR files to the GEOSgcm forecast directory and prepares it before executing
+        `gcm_run.j`.
         Modifies certain resource files using python's re package according to cycle_date such as:
         CAP.rc, AGCM.rc, input.nml, and gcm_run.j.
 

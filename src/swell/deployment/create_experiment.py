@@ -168,7 +168,8 @@ def prepare_config(
     if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
             and not experiment_dict['skip_r2d2']:
 
-        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, \
+                unique_r2d2_id, experiment_exists
 
         load_r2d2_module(logger, platform)
         r2d2_server = experiment_dict.get('r2d2_server')
@@ -179,19 +180,23 @@ def prepare_config(
         import r2d2
 
         r2d2_id = experiment_dict['r2d2_experiment_id']
+        swell_experiment_id = experiment_dict['experiment_id']
 
-        unique_id = unique_r2d2_id(r2d2_id, platform)
-        experiment_dict['r2d2_experiment_id'] = unique_id
+        if r2d2_id == 'defer_to_code':
+
+            r2d2_id = unique_r2d2_id(swell_experiment_id, platform)
+            experiment_dict['r2d2_experiment_id'] = r2d2_id
 
         user = r2d2.get_client_user()
         host = r2d2.get_client_host()
         compiler = r2d2.get_client_compiler()
 
-        r2d2.register(item='experiment',
-                      name=unique_id,
-                      user=user,
-                      compute_host=f'{host}-{compiler}',
-                      lifetime='debug')
+        if not experiment_exists(r2d2_id):
+            r2d2.register(item='experiment',
+                          name=r2d2_id,
+                          user=user,
+                          compute_host=f'{host}-{compiler}',
+                          lifetime='debug')
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
