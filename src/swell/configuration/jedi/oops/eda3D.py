@@ -35,6 +35,7 @@ class eda3D(OopsConfig):
                 # Hybrid-B: not tested
                 # 'background error': self.interface_model('background_error_eda_hybridB'),
                 'observations': {
+                    'obs data container': 'OSDF',
                     'obs perturbations': False,
                     'get values': self.interface_model('getvalues'),
                     'observers': self.special_observations(),

@@ -166,6 +166,7 @@ cost function:
       input variables: *id001
       output variables: *id002
   observations:
+    obs data container: OSDF
     get values:
       variable change:
         variable change name: Model2GeoVaLs
