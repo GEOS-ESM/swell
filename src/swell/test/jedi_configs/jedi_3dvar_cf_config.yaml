@@ -69,6 +69,7 @@ cost function:
           filename: bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4
           field io names: *id001
   observations:
+    obs data container: OSDF
     get values:
     observers:
     - obs space:
