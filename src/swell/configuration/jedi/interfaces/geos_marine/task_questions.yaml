@@ -67,9 +67,9 @@ horizontal_resolution:
   - 1440x1080
 
 jedi_forecast_model:
-  default_value: NA
+  default_value: pseudo_model
   options:
-  - NA
+  - pseudo_model
 
 local_ensemble_inflation_mult:
   default_value: 1.1

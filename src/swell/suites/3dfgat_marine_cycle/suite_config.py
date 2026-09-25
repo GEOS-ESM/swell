@@ -168,12 +168,8 @@ class SuiteConfig(QuestionContainer, Enum):
                            "GEOS_v12_rc20/dataatm_025deg_om4_swell"),
         ],
         geos_marine=[
-            qd.cycle_times([
-                "P5D",
-            ]),
-            qd.marine_models([
-                "mom6",
-            ]),
+            qd.cycle_times(["P5D"]),
+            qd.marine_models(["mom6"]),
             qd.observations([
                 "adt_cryosat2n",
                 "adt_jason3",
@@ -182,7 +178,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "adt_sentinel3a",
                 "adt_sentinel3b",
                 "adt_sentinel6a",
-                "adt_swot_nadir",
                 "insitu_profile_argo",
                 "insitu_profile_ctd",
                 "insitu_profile_pirata",
