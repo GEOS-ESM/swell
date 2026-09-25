@@ -209,6 +209,7 @@ def launch(
 @click.option('-a', '--additional-parameter', 'additional_parameter',
               default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+@click.option('-ichunk', '--ensemble_ichunk', 'ichunk', type=int, default=None, help=ensemble_help)
 @click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
@@ -217,6 +218,7 @@ def task(
     model: Optional[str],
     additional_parameter: Optional[str],
     ensemblePacket: Optional[str],
+    ichunk: Optional[int],
     imember: Optional[int]
 ) -> None:
     """
@@ -230,7 +232,7 @@ def task(
 
     """
     task_wrapper(task, config, datetime, model, additional_parameter,
-                 ensemblePacket, imember)
+                 ensemblePacket, ichunk, imember)
 
 
 # --------------------------------------------------------------------------------------------------

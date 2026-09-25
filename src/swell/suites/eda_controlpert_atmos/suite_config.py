@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eda_atmos_tier1_fast = QuestionList(
-        list_name="eda_atmos_tier1_fast",
+    eda_controlpert_atmos_tier1_fast = QuestionList(
+        list_name="eda_controlpert_atmos_tier1",
         questions=[
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -36,22 +36,25 @@ class SuiteConfig(QuestionContainer, Enum):
                 "T00",
             ]),
             qd.background_experiment('x0050'),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev"
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
                                            "rtodling/archive/Restarts/JEDI/541x"),
             qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
-                                         "rtodling/archive/541/Milan"),
+                                         'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(5),
+            qd.perhost(120),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
             qd.gsibec_nlats("91"),
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
-            qd.ensemble_num_members(3),
+            qd.ensemble_num_members(4),
+            qd.ensemble_num_chunks(2),
             qd.obs_pert_amplitude(0.5),
-            qd.number_of_iterations([5]),
+            qd.number_of_iterations([10]),
             qd.gradient_norm_reduction(1.e-3),
+            qd.minimizer("DRPLanczos"),
             qd.analysis_variables([
                 "eastward_wind",
                 "northward_wind",
@@ -71,8 +74,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "skin_temperature_at_surface"
             ]),
             qd.observations([
-                "aircraft_temperature",
-                "aircraft_wind",
+                "sondes",
             ]),
             qd.obs_thinning_rej_fraction(0.8),
             qd.ensmeanvariance_spec([
@@ -100,8 +102,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-    eda_atmos_tier1 = QuestionList(
-        list_name="eda_atmos_tier1",
+    eda_controlpert_atmos_tier1 = QuestionList(
+        list_name="eda_controlpert_atmos_tier1",
         questions=[
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -115,12 +117,13 @@ class SuiteConfig(QuestionContainer, Enum):
                 "T00",
             ]),
             qd.background_experiment('x0050'),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev"
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
                                            "rtodling/archive/Restarts/JEDI/541x"),
             qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
-                                         "rtodling/archive/541/Milan"),
+                                         'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(5),
+            qd.perhost(120),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
@@ -128,9 +131,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
             qd.ensemble_num_members(32),
+            qd.ensemble_num_chunks(16),
             qd.obs_pert_amplitude(0.5),
-            qd.number_of_iterations([100]),
+            qd.number_of_iterations([50]),
             qd.gradient_norm_reduction(1.e-3),
+            qd.minimizer("DRPLanczos"),
             qd.analysis_variables([
                 "eastward_wind",
                 "northward_wind",
@@ -149,6 +154,9 @@ class SuiteConfig(QuestionContainer, Enum):
                 "fraction_of_ice",
                 "skin_temperature_at_surface"
             ]),
+            #
+            # Report first crash point: Bound-1
+            #
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
@@ -162,28 +170,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_n19",
                 "atms_n20",
                 "atms_npp",
-                "avhrr3_metop-b",
-                "avhrr3_n18",
-                "avhrr3_n19",
-                "cris-fsr_n20",
-                "cris-fsr_npp",
-                "gmi_gpm",
-                "gps",
-                "iasi_metop-b",
-                "iasi_metop-c",
-                "mhs_metop-b",
-                "mhs_metop-c",
-                "mhs_n19",
-                "mls55_aura",
-                "omi_aura",
-                "ompsnm_npp",
-                "pibal",
-                "satwind",
-                "scatwind",
-                "sfcship",
-                "sfc",
-                "sondes",
-                "ssmis_f17"
             ]),
             qd.obs_thinning_rej_fraction(0.8),
             qd.ensmeanvariance_spec([
@@ -213,11 +199,11 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eda_atmos = QuestionList(
-        list_name="eda_atmos",
+    eda_controlpert_atmos = QuestionList(
+        list_name="eda_controlpert_atmos",
         questions=[
-            eda_atmos_tier1_fast
+            eda_controlpert_atmos_tier1_fast
         ]
     )
-# normal run:  eda_atmos_tier1
+
     # --------------------------------------------------------------------------------------------------
