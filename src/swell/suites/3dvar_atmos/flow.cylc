@@ -14,6 +14,10 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+    {% if persistent_workers %}
+    [[events]]
+        shutdown handlers = sh -c 'JOB_ID=$(cat "$CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid" 2>/dev/null) && scancel "$JOB_ID" || true'
+    {% endif %}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,8 +31,14 @@
         R1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
+            {% if persistent_workers %}
+            # Acquire a persistent Slurm allocation; all heavy tasks run inside it.
+            Allocate
+            Allocate => CloneJedi
+            {% else %}
             # Clone JEDI source code
             CloneJedi
+            {% endif %}
 
             # Build JEDI source code by linking
             CloneJedi => BuildJediByLinking?
@@ -40,6 +50,15 @@
             # Clone geos ana for generating observing system records
             CloneGeosMksi-{{model_component}}
             {% endfor %}
+
+            {% if persistent_workers %}
+            # Deallocate only after every cycle's CleanCycle has finished
+            {% for ct in cycle_times %}
+            {% for mc in model_components %}
+            CleanCycle-{{mc}}[{{ct.cycle_time}}] => Deallocate
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
         """
 
         {% for cycle_time in cycle_times %}
@@ -124,6 +143,15 @@
         script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
+        {% if persistent_workers %}
+        platform = localhost
+        script = """
+            {% set _build_cpus = scheduling["BuildJedi"]["srun_directives"].get('ntasks-per-node', 1) -%}
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
+            --cpus-per-task={{ _build_cpus }} \
+            swell task BuildJedi $config
+        """
+        {% else %}
         script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
@@ -131,6 +159,7 @@
         {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+        {% endif %}
 
     {% for model_component in model_components %}
 
@@ -159,6 +188,17 @@
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
+        {% if persistent_workers %}
+        platform = localhost
+        script = """
+            export SWELL_PERSISTENT_JOB_ID=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid)
+            {% set _srun = scheduling["RunJediVariationalExecutable"].get("srun_directives_by_model", {}).get(model_component, scheduling["RunJediVariationalExecutable"]["srun_directives"]) -%}
+            {% if 'nodes' in _srun -%}
+            export SWELL_SRUN_NODES={{ _srun['nodes'] }}
+            {% endif -%}
+            swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}
+        """
+        {% else %}
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
@@ -166,6 +206,7 @@
         {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+        {% endif %}
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
@@ -174,6 +215,15 @@
         script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
+        {% if persistent_workers %}
+        platform = localhost
+        script = """
+            {% set _eva_cpus = scheduling["EvaObservations"]["srun_directives_by_model"].get(model_component, scheduling["EvaObservations"]["srun_directives"]).get('ntasks-per-node', 1) -%}
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) \
+            --ntasks=1 --cpus-per-task={{ _eva_cpus }} \
+            swell task EvaObservations $config -d $datetime -m {{model_component}}
+        """
+        {% else %}
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
@@ -181,6 +231,7 @@
         {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+        {% endif %}
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
@@ -188,5 +239,40 @@
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
+
+    {% if persistent_workers %}
+    [[Allocate]]
+        script = """
+            SALLOC_ARGS="{% for key, value in salloc_directives.items() %}{% if value %} --{{key}}={{value}}{% else %} --{{key}}{% endif %}{% endfor %}"
+            SALLOC_LOG=$(mktemp)
+            salloc --no-shell -J swell_${CYLC_WORKFLOW_NAME} $SALLOC_ARGS > "$SALLOC_LOG" 2>&1 &
+            SALLOC_PID=$!
+            # Read job ID from salloc's own output instead of polling squeue by
+            # name — eliminates cross-run interference when multiple experiments
+            # with the same workflow name run concurrently.
+            WAITED=0
+            while true; do
+                JOB_ID=$(sed -n 's/.*job allocation \([0-9]*\).*/\1/p' "$SALLOC_LOG" 2>/dev/null | head -n1)
+                [ -n "$JOB_ID" ] && break
+                if ! kill -0 $SALLOC_PID 2>/dev/null; then
+                    echo "salloc exited unexpectedly:" >&2 && cat "$SALLOC_LOG" >&2
+                    rm -f "$SALLOC_LOG" && exit 1
+                fi
+                sleep 2; WAITED=$((WAITED+2))
+                [ $WAITED -ge 60 ] && echo "Timed out getting salloc job ID" >&2 \
+                    && cat "$SALLOC_LOG" >&2 && rm -f "$SALLOC_LOG" && exit 1
+            done
+            rm -f "$SALLOC_LOG"
+            mkdir -p "$CYLC_WORKFLOW_RUN_DIR/share"
+            echo "$JOB_ID" > "$CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid"
+            wait $SALLOC_PID || true
+        """
+
+    [[Deallocate]]
+        script = """
+            JOB_ID=$(cat "$CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid" 2>/dev/null)
+            [ -n "$JOB_ID" ] && scancel "$JOB_ID" || true
+        """
+    {% endif %}
 
 # --------------------------------------------------------------------------------------------------
