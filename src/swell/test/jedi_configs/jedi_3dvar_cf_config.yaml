@@ -91,12 +91,12 @@ cost function:
       - filter: RejectList
         where:
         - variable:
-            name: MetaData/cloud_fraction
+            name: MetaData/cloudAmount
           minvalue: 0.15
       - filter: RejectList
         where:
         - variable:
-            name: MetaData/solar_zenith_angle
+            name: MetaData/solarZenithAngle
           minvalue: 70
       obs operator:
         name: ColumnRetrieval

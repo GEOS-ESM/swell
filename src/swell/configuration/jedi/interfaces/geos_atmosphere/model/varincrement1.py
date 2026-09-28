@@ -34,7 +34,7 @@ def varincrement1(template_dict: Mapping) -> Mapping:
                     'rain_water': 'qr',
                     'snow_water': 'qs',
                     'mole_fraction_of_ozone_in_air': 'o3ppmv',
-                    'geopotential_height_times_gravity_at_surface': 'phis',
+                    'geopotential_at_surface': 'phis',
                     'skin_temperature_at_surface': 'ts',
                     'air_pressure_at_surface': 'ps',
                     }

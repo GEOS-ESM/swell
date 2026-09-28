@@ -295,6 +295,14 @@ ioda instrument names:
     full name: CTD (In-situ)
     provider : odas
     inst type: conventional
+  - ioda name: insitu_temp_profile_wod_ctd
+    full name: CTD Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_ctd
+    full name: CTD Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
   - ioda name: insitu_profile_pirata
     full name: PIRATA (In-situ)
     provider : odas
@@ -536,7 +544,7 @@ ioda instrument names:
   - ioda name: tempo_no2_tropo
     full name: TEMPO tropospheric column NO2
     inst type: retrieval
-    provider :  nasa_VCD
+    provider : nasa_v4
   - ioda name: tempo_no2_total
     full name: TEMPO total column NO2
     inst type: retrieval

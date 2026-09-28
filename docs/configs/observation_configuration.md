@@ -1,3 +1,0 @@
-# Observation configuration
-
-To do
