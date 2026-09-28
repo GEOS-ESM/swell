@@ -8,7 +8,9 @@
 
 from collections.abc import Mapping
 from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
-        state_variables, field_io_names
+        field_io_names
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.background import \
+        state_variables
 
 # --------------------------------------------------------------------------------------------------
 
