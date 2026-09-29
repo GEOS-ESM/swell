@@ -227,12 +227,24 @@ ioda instrument names:
     full name: ADT Sentinel-3A
     provider : odas
     inst type: altimeter
+  - ioda name: adt_sentinel3a_oerr_fix
+    full name: ADT Sentinel-3A (Obs Error Fix)
+    provider : odas
+    inst type: altimeter
   - ioda name: adt_sentinel3b
     full name: ADT Sentinel-3B
     provider : odas
     inst type: altimeter
+  - ioda name: adt_sentinel3b_oerr_fix
+    full name: ADT Sentinel-3B (Obs Error Fix)
+    provider : odas
+    inst type: altimeter
   - ioda name: adt_sentinel6a
     full name: ADT Sentinel-6A
+    provider : odas
+    inst type: altimeter
+  - ioda name: adt_sentinel6a_oerr_fix
+    full name: ADT Sentinel-6A (Obs Error Fix)
     provider : odas
     inst type: altimeter
   - ioda name: adt_coperl4
@@ -243,6 +255,10 @@ ioda instrument names:
     full name: ADT Cryosat-2N
     provider : odas
     inst type: altimeter
+  - ioda name: adt_cryosat2n_oerr_fix
+    full name: ADT Cryosat-2N (Obs Error Fix)
+    provider : odas
+    inst type: altimeter
   - ioda name: adt_jason3
     full name: ADT Jason-3
     provider : odas
@@ -251,12 +267,24 @@ ioda instrument names:
     full name: ADT Jason-3N
     provider : odas
     inst type: altimeter
+  - ioda name: adt_jason3n_oerr_fix
+    full name: ADT Jason-3N (Obs Error Fix)
+    provider : odas
+    inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
     provider : odas
     inst type: altimeter
+  - ioda name: adt_saral_oerr_fix
+    full name: ADT SARAL (Obs Error Fix)
+    provider : odas
+    inst type: altimeter
   - ioda name: adt_swot_nadir
     full name: ADT SWOT Nadir
+    provider : odas
+    inst type: altimeter
+  - ioda name: adt_swot_nadir_oerr_fix
+    full name: ADT SWOT Nadir (Obs Error Fix)
     provider : odas
     inst type: altimeter
   - ioda name: rads_adt_3a
