@@ -306,12 +306,13 @@ class taskFactory():
 
         return getattr(task_module, task)
 
-    
+    # --------------------------------------------------------------------------------------------------
+
     def get_task(self,
                  task: str,
                  config: str,
                  model: str):
-        
+
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
@@ -353,6 +354,8 @@ class taskFactory():
         # Return task object
         return task_class
 
+    # --------------------------------------------------------------------------------------------------
+
     def create_task(
         self,
         task: str,
@@ -365,7 +368,7 @@ class taskFactory():
     ) -> taskBase:
 
         task_class = self.get_task(task, config, model)
-    
+
         return task_class(config, datetime, model, ensemblePacket,
                           additional_parameter, imember, task)
 
