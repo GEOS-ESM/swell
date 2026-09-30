@@ -17,6 +17,8 @@ import os
 import time
 from datetime import datetime as dt
 from typing import Union, Optional
+import importlib.util
+import sys
 
 # swell imports
 from swell.swell_path import get_swell_path
@@ -285,23 +287,37 @@ class taskBase(ABC):
 
 class taskFactory():
 
-    def create_task(
-        self,
-        task: str,
-        config: str,
-        datetime: Union[str, dt, None],
-        model: str,
-        additional_parameter: str | None,
-        ensemblePacket: Optional[str],
-        imember: int | None = None,
-    ) -> taskBase:
-
-        # Convert camel case string to snake case
+    def get_task(self,
+                 task: str,
+                 config: str,
+                 model: str):
+        
+                # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
         task_class = None
 
         factory_logger = get_logger('TaskFactory')
+
+        experiment_task_dir = os.path.join(os.path.dirname(config), '..', 'tasks')
+
+        if model is not None:
+            task_file = os.path.join(experiment_task_dir, model, f'{task_lower}_{model}.py')
+            if os.path.exists(task_file):
+                module_name = f"swell.experiment.tasks.{task_lower}"
+                spec = importlib.util.spec_from_file_location(module_name, task_file)
+                task_module = importlib.util.module_from_spec(spec)
+                
+                return getattr(task_module, task)
+
+        else:
+            task_file = os.path.join(experiment_task_dir, f'{task_lower}.py')
+            if os.path.exists(task_file):
+                module_name = f"swell.experiment.tasks.{task_lower}"
+                spec = importlib.util.spec_from_file_location(module_name, task_file)
+                task_module = importlib.util.module_from_spec(spec)
+                
+                return getattr(task_module, task)
 
         # Try to use the model-specific task if it exists
         if model is not None:
@@ -322,6 +338,21 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
+        return task_class
+
+    def create_task(
+        self,
+        task: str,
+        config: str,
+        datetime: Union[str, dt, None],
+        model: str,
+        additional_parameter: str | None,
+        ensemblePacket: Optional[str],
+        imember: int | None = None,
+    ) -> taskBase:
+
+        task_class = self.get_task(task, config, model)
+    
         return task_class(config, datetime, model, ensemblePacket,
                           additional_parameter, imember, task)
 
