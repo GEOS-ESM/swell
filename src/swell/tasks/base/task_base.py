@@ -295,6 +295,7 @@ class taskFactory():
 
         task_lower = camel_case_to_snake_case(task)
 
+        # Create imported module for external file
         module_name = f"swell.experiment.tasks.{task_lower}"
         spec = importlib.util.spec_from_file_location(module_name, task_file)
         task_module = importlib.util.module_from_spec(spec)
@@ -311,7 +312,7 @@ class taskFactory():
                  config: str,
                  model: str):
         
-                # Convert camel case string to snake case
+        # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
         task_class = None
@@ -320,6 +321,7 @@ class taskFactory():
 
         experiment_task_dir = Path(os.path.dirname(config)) / '..' / 'tasks'
 
+        # Check for task files under the experiment directory
         if model is not None:
             task_file = experiment_task_dir / model / f'{task_lower}_{model}.py'
             if task_file.exists():

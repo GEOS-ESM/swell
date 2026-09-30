@@ -326,10 +326,14 @@ def copy_task_files(
     suite_path: str
 ) -> None:
 
+    # Copy the source tasks to an experiment path, which will be used by the suite
     experiment_task_files = f'{suite_path}/../tasks/'
+    src_task_files = os.path.join(get_swell_path(), 'tasks')
+
+    print(f'Copying {src_task_files} to {experiment_task_files}')
 
     shutil.rmtree(experiment_task_files)
-    shutil.copytree(os.path.join(get_swell_path(), 'tasks'), experiment_task_files)
+    shutil.copytree(src_task_files, experiment_task_files)
 
 # --------------------------------------------------------------------------------------------------
 
