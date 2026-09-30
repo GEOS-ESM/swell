@@ -9,8 +9,6 @@ obs space:
       type: H5File
       allow overwrite: true
       obsfile: '{{cycle_dir}}/{{experiment_id}}.tempo_no2_tropo.{{window_begin}}.nc4'
-  io pool:
-    max pool size: 24
   simulated variables: [nitrogendioxideColumn]
   observed variables: [nitrogendioxideColumn]
 monitoring only: false
