@@ -96,6 +96,7 @@ cost function:
         ksshts:
           nlayers: 2
   observations:
+    obs data container: OSDF
     observers:
     - obs space:
         name: adt_cryosat2n
