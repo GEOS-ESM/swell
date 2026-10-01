@@ -162,8 +162,7 @@ obs post filters:
       channels: *airs_aqua_channels
       options:
         channels: *airs_aqua_channels
-        # copy from ufo file, why is it using microwave formula or it is a typo?
-        sensor: microwave
+        sensor: infrared
         height groups:
         - channels: 1-6, 15
           #height: 2000 #default
