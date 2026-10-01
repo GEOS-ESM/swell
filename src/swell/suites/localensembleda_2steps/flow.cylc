@@ -58,7 +58,7 @@
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediLocalEnsembleDaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediEtkfSolver-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
@@ -78,7 +78,8 @@
             RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
             {% if skip_ensemble_hofx %}
-               RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               RunJediObsfiltersExecutable-{{model_component}} => RunJediEtkfObserver-{{model_component}}
+               RunJediEtkfObserver-{{model_component}} => RunJediEtkfSolver-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
@@ -101,13 +102,13 @@
 
 
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediEtkfSolver-{{model_component}} => EvaIncrement-{{model_component}}
 
             # EvaObservations
-            # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediEtkfSolver-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
-            # RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            # RunJediEtkfSolver-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
             # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
@@ -223,6 +224,24 @@
         execution time limit = {{scheduling["RunJediLocalEnsembleDaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunJediEtkfObserver-{{model_component}}]]
+        script = "swell task RunJediEtkfObserver $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEtkfObserver"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEtkfObserver"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunJediEtkfSolver-{{model_component}}]]
+        script = "swell task RunJediEtkfSolver $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEtkfSolver"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEtkfSolver"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 
