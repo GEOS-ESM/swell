@@ -197,7 +197,7 @@ obs post filters:
       channels: *iasi_metop-c_channels
       options:
         channels: *iasi_metop-c_channels
-        sensor: *Sensor_ID
+        sensor: infrared
 # Transmittance Top Check
 - filter: BlackList
   filter variables:
