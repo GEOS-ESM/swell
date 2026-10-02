@@ -1,24 +1,24 @@
 obs space:
-  name: ABI GOES-16
+  name: ABI GOES-18
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/abi_g16.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/abi_g19.{{window_begin}}.nc4'
       missing file action: warn
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.abi_g16.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.abi_g19.{{window_begin}}.nc4'
   io pool:
     max pool size: 6
   simulated variables: [brightnessTemperature]
-  channels: &abi_g16_channels {{abi_g16_avail_channels}}
+  channels: &abi_g19_channels {{abi_g19_avail_channels}}
 
 obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   obs options:
-    Sensor_ID: abi_g16
+    Sensor_ID: abi_g19
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
@@ -29,16 +29,16 @@ obs operator:
     - 1170.0
 
 obs bias:
-  input file: '{{cycle_dir}}/abi_g16.{{background_time}}.satbias.nc4'
-  output file: '{{cycle_dir}}/abi_g16.{{window_begin}}.satbias.nc4'
+  input file: '{{cycle_dir}}/abi_g19.{{background_time}}.satbias.nc4'
+  output file: '{{cycle_dir}}/abi_g19.{{window_begin}}.satbias.nc4'
   variational bc:
     predictors:
     - name: constant
     - name: lapseRate
       order: 2
-      tlapse: &abi_g16_tlapse '{{cycle_dir}}/abi_g16.{{background_time}}.tlapse.txt'
+      tlapse: &abi_g19_tlapse '{{cycle_dir}}/abi_g19.{{background_time}}.tlapse.txt'
     - name: lapseRate
-      tlapse: *abi_g16_tlapse
+      tlapse: *abi_g19_tlapse
     - name: emissivityJacobian
     - name: sensorScanAngle
       var_name: sensorScanPosition
@@ -57,17 +57,17 @@ obs bias:
     step size: 1.0e-4
     largest analysis variance: 10000.0
     prior:
-      input file: '{{cycle_dir}}/abi_g16.{{background_time}}.satbias_cov.nc4'
+      input file: '{{cycle_dir}}/abi_g19.{{background_time}}.satbias_cov.nc4'
       inflation:
         ratio: 1.1
         ratio for small dataset: 2.0
-    output file: '{{cycle_dir}}/abi_g16.{{window_begin}}.satbias_cov.nc4'
+    output file: '{{cycle_dir}}/abi_g19.{{window_begin}}.satbias_cov.nc4'
 
 obs prior filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   action:
     name: assign error
     error parameter vector: [1.4,3.0,3.0,3.5,2.0,2.0,2.0,2.0,2.0,2.0]      
@@ -77,13 +77,13 @@ obs post filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   test variables:
   - name: ObsFunction/ChannelUseflagCheckRad
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
     options:
-      channels: *abi_g16_channels
-      use_flag: &useflag_abi_g16 {{abi_g16_active_channels}}
+      channels: *abi_g19_channels
+      use_flag: &useflag_abi_g19 {{abi_g19_active_channels}}
   minvalue: 1.0e-12
   action:
     name: reject
@@ -92,7 +92,7 @@ obs post filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   test variables:
   - name: MetaData/sensorZenithAngle
   maxvalue: 65.
@@ -112,7 +112,7 @@ obs post filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: GeoVaLs/ice_area_fraction
@@ -120,7 +120,7 @@ obs post filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: GeoVaLs/surface_snow_area_fraction
@@ -128,7 +128,7 @@ obs post filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: GeoVaLs/land_area_fraction
@@ -151,7 +151,7 @@ obs post filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   minvalue: 0.0
   maxvalue: 1000.0
   action:
@@ -161,34 +161,34 @@ obs post filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTopoRad
-      channels: *abi_g16_channels
+      channels: *abi_g19_channels
       options:
-        channels: *abi_g16_channels
+        channels: *abi_g19_channels
         sensor: infrared
 
 # Model top transmittance check
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTransmitTopRad
-      channels: *abi_g16_channels
+      channels: *abi_g19_channels
       options:
-        channels: *abi_g16_channels
+        channels: *abi_g19_channels
 
 # Scene Consistency Check based on ch13 (10.3 micron) SDTB
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: ClearSkyStdDev/brightnessTemperature
@@ -199,7 +199,7 @@ obs post filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: ClearSkyStdDev/brightnessTemperature
@@ -270,13 +270,13 @@ obs post filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   test variables:
   - name: ObsFunction/NearSSTRetCheckIR
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
     options:
-      channels: *abi_g16_channels
-      use_flag: *useflag_abi_g16
+      channels: *abi_g19_channels
+      use_flag: *useflag_abi_g19
   maxvalue: 1.0e-12
   action:
     name: reject
@@ -285,15 +285,15 @@ obs post filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorSurfJacobianRad
-      channels: *abi_g16_channels
+      channels: *abi_g19_channels
       options:
-        channels: *abi_g16_channels
-        sensor: abi_g16
+        channels: *abi_g19_channels
+        sensor: abi_g19
         obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
         obserr_dtempf: [0.5, 2.0, 4.0, 2.0, 4.0]
 
@@ -301,7 +301,7 @@ obs post filters:
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   where:
   - variable:
       name: MetaData/cloud_frac
@@ -346,21 +346,21 @@ obs post filters:
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundIR
-    channels: *abi_g16_channels
+    channels: *abi_g19_channels
     options:
-      channels: *abi_g16_channels
+      channels: *abi_g19_channels
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
         options:
           latitude_parameters: [0.0, 0.0, 0.0, 0.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *abi_g16_channels
+        channels: *abi_g19_channels
         options:
-          channels: *abi_g16_channels
+          channels: *abi_g19_channels
       obserr_bound_max: [2.5,4.0,4.0,4.0,2.5,2.5,2.5,2.5,2.5,2.5]
   action: 
     name: reject

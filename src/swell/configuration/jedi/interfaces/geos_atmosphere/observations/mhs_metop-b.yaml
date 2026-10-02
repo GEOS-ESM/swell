@@ -320,7 +320,7 @@ obs filters:
         channels: *mhs_metop-b_available_channels
         options:
           channels: *mhs_metop-b_available_channels
-          sensor: *Sensor_ID
+          sensor: microwave
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *mhs_metop-b_available_channels
