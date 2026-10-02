@@ -10,6 +10,8 @@
 
 import click
 from typing import Union, Optional, Literal
+import shutil
+import os
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -22,6 +24,7 @@ from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 from swell.utilities.datetime_util import is_duration
 from swell.utilities.suite_utils import read_override_file
+from swell.swell_path import get_swell_path
 
 
 # --------------------------------------------------------------------------------------------------
@@ -315,6 +318,24 @@ def t2test(
     """
     run_suite(suite, platform, TestSuite.TIER2)
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+@swell_driver.command()
+@click.argument('suite_path')
+def copy_task_files(
+    suite_path: str
+) -> None:
+
+    # Copy the source tasks to an experiment path, which will be used by the suite
+    experiment_task_files = f'{suite_path}/../tasks/'
+    src_task_files = os.path.join(get_swell_path(), 'tasks')
+
+    print(f'Copying {src_task_files} to {experiment_task_files}')
+
+    shutil.rmtree(experiment_task_files)
+    shutil.copytree(src_task_files, experiment_task_files)
 
 # --------------------------------------------------------------------------------------------------
 

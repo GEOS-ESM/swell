@@ -17,6 +17,9 @@ import os
 import time
 from datetime import datetime as dt
 from typing import Union, Optional
+import importlib.util
+import sys
+from pathlib import Path
 
 # swell imports
 from swell.swell_path import get_swell_path
@@ -285,16 +288,30 @@ class taskBase(ABC):
 
 class taskFactory():
 
-    def create_task(
-        self,
-        task: str,
-        config: str,
-        datetime: Union[str, dt, None],
-        model: str,
-        additional_parameter: str | None,
-        ensemblePacket: Optional[str],
-        imember: int | None = None,
-    ) -> taskBase:
+    def import_from_file(self,
+                         task: str,
+                         task_file: str,
+                         logger):
+
+        task_lower = camel_case_to_snake_case(task)
+
+        # Create imported module for external file
+        module_name = f"swell.experiment.tasks.{task_lower}"
+        spec = importlib.util.spec_from_file_location(module_name, task_file)
+        task_module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = task_module
+        spec.loader.exec_module(task_module)
+
+        logger.info(f'Using experiment version of {task}, located in {task_file.resolve()}')
+
+        return getattr(task_module, task)
+
+    # --------------------------------------------------------------------------------------------------
+
+    def get_task(self,
+                 task: str,
+                 config: str,
+                 model: str):
 
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
@@ -302,6 +319,19 @@ class taskFactory():
         task_class = None
 
         factory_logger = get_logger('TaskFactory')
+
+        experiment_task_dir = Path(os.path.dirname(config)) / '..' / 'tasks'
+
+        # Check for task files under the experiment directory
+        if model is not None:
+            task_file = experiment_task_dir / model / f'{task_lower}_{model}.py'
+            if task_file.exists():
+                return self.import_from_file(task, task_file, factory_logger)
+
+        else:
+            task_file = experiment_task_dir / f'{task_lower}.py'
+            if task_file.exists():
+                return self.import_from_file(task, task_file, factory_logger)
 
         # Try to use the model-specific task if it exists
         if model is not None:
@@ -322,6 +352,23 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
+        return task_class
+
+    # --------------------------------------------------------------------------------------------------
+
+    def create_task(
+        self,
+        task: str,
+        config: str,
+        datetime: Union[str, dt, None],
+        model: str,
+        additional_parameter: str | None,
+        ensemblePacket: Optional[str],
+        imember: int | None = None,
+    ) -> taskBase:
+
+        task_class = self.get_task(task, config, model)
+
         return task_class(config, datetime, model, ensemblePacket,
                           additional_parameter, imember, task)
 
