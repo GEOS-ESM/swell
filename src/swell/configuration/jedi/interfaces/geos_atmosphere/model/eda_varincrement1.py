@@ -15,7 +15,7 @@ def eda_varincrement1(template_dict: Mapping) -> Mapping:
 
     experiment_id = template_dict['experiment_id']
     imem = template_dict.get('ensemble_imember', None)
-    suite_name = template_dict['suite_name']
+    suite_name = 'eda_atmos'
     varincrement1 = {
         'write increment': True,
         'increment': {
@@ -23,7 +23,7 @@ def eda_varincrement1(template_dict: Mapping) -> Mapping:
                 'filetype': 'auxgrid',
                 'gridtype': 'latlon',
                 'datapath': '.',
-                'filename': f'analysis/mem{imem:03d}/{suite_name}.inc_iter1.',
+                'filename': f'analysis/mem{imem:03d}/{suite_name}.inc_iter1.ceta.',
                 'field io names': {
                     'eastward_wind': 'ua',
                     'northward_wind': 'va',
