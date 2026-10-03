@@ -83,17 +83,17 @@ class SuiteConfig(QuestionContainer, Enum):
                  "grid_type": ['cs', 'latlon']},
                 {"state": "analysis",
                  "fn_input": "analysis/mem%mem%/eda_atmos.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "eda_atmos.ana_mean",
-                 "fn_output_variance": "eda_atmos.ana_variance",
+                 "fn_output_mean": "analysis/mean/eda_atmos.ana",
+                 "fn_output_variance": "analysis/variance/eda_atmos.ana",
                  "grid_type": ['cs', 'latlon']},
                 ]),
             qd.diffstates_spec({
                 "state1":
                 {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state2":
-                {"fn_input": "eda_atmos.ana_mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                {"fn_input": "analysis/mean/eda_atmos.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state_diff":
-                {"fn_output": "eda_atmos.inc_mean", "grid_type": ['cs', 'latlon']},
+                {"fn_output": "analysis/mean/eda_atmos.inc_iter1", "grid_type": ['cs', 'latlon']},
                 "state_type": "ensemble"
                 }),
             qd.clean_patterns(['*.txt', '*.csv']),
@@ -194,17 +194,17 @@ class SuiteConfig(QuestionContainer, Enum):
                  "grid_type": ['cs', 'latlon']},
                 {"state": "analysis",
                  "fn_input": "analysis/mem%mem%/eda_atmos.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "eda_atmos.ana_mean",
-                 "fn_output_variance": "eda.ana_atmos_variance",
+                 "fn_output_mean": "analysis/mean/eda_atmos.ana",
+                 "fn_output_variance": "analysis/variance/eda.ana_atmos.ana",
                  "grid_type": ['cs', 'latlon']},
                 ]),
             qd.diffstates_spec({
                 "state1":
                 {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state2":
-                {"fn_input": "eda_atmos.ana_mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                {"fn_input": "analysis/mean/eda_atmos.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state_diff":
-                {"fn_output": "eda_atmos.inc_mean", "grid_type": ['cs', 'latlon']},
+                {"fn_output": "analysis/mean/eda_atmos.inc_iter1", "grid_type": ['cs', 'latlon']},
                 "state_type": "ensemble"
                 }),
             qd.clean_patterns(['*.txt', '*.csv']),
