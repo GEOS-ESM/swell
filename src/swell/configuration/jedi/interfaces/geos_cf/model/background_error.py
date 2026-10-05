@@ -50,9 +50,11 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
 
 def _build_stddev_bkg_scaled(template_dict: Mapping) -> Mapping:
     """Standard deviation outer block"""
+    stddev_scale_factor = template_dict.get('stddev_scale_factor', '0.25')
+
     return {
         'saber block name': 'StdDev',
-        'stddev scale factor': '0.25',
+        'stddev scale factor': str(stddev_scale_factor),
         'read': {
             'model file': {
                 'datetime': template_dict['local_background_time_iso'],
