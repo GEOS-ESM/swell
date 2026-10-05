@@ -47,6 +47,9 @@ def prepare_scheduling_dict(
         "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
+        'RunJediLocalEnsembleDaExecutable': {"all": {"nodes": 2, "ntasks-per-node": 120}},
+        "RunJediEtkfObserver": {"all": {"nodes": 2}},
+        "RunJediEtkfSolver": {"all": {"nodes": 2, "ntasks-per-node": 120}},
         "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}}
     }
 
@@ -89,6 +92,8 @@ def prepare_scheduling_dict(
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
+        'RunJediEtkfObserver',
+        'RunJediEtkfSolver',
         'RunJediObsfiltersExecutable',
         'RunJediPostprocSoca2ciceExecutable',
         'RunJediUfoTestsExecutable',

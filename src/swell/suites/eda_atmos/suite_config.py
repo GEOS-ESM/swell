@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eda_atmos_tier1_fast = QuestionList(
-        list_name="eda_atmos_tier1_fast",
+    eda_atmos_tier1 = QuestionList(
+        list_name="eda_atmos_tier1",
         questions=[
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -49,7 +49,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlats("91"),
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
-            qd.ensemble_num_members(3),
+            qd.ensemble_num_members(2),
             qd.obs_pert_amplitude(0.5),
             qd.number_of_iterations([5]),
             qd.gradient_norm_reduction(1.e-3),
@@ -65,7 +65,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "rain_water",
                 "snow_water",
                 "mole_fraction_of_ozone_in_air",
-                "geopotential_height_times_gravity_at_surface",
+                "geopotential_at_surface",
                 "fraction_of_ocean",
                 "fraction_of_lake",
                 "fraction_of_ice",
@@ -75,7 +75,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "aircraft_temperature",
                 "aircraft_wind",
             ]),
-            qd.obs_thinning_rej_fraction(0.8),
+            qd.obs_thinning_rej_fraction(0.98),
             qd.ensmeanvariance_spec([
                 {"state": "bkg",
                  "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
@@ -101,8 +101,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-    eda_atmos_tier1 = QuestionList(
-        list_name="eda_atmos_tier1",
+    eda_atmos_tier2 = QuestionList(
+        list_name="eda_atmos_tier2",
         questions=[
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -130,7 +130,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution("72"),
             qd.ensemble_num_members(32),
             qd.obs_pert_amplitude(0.5),
-            qd.number_of_iterations([100]),
+            qd.number_of_iterations([50]),
             qd.gradient_norm_reduction(1.e-3),
             qd.analysis_variables([
                 "eastward_wind",
@@ -144,7 +144,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "rain_water",
                 "snow_water",
                 "mole_fraction_of_ozone_in_air",
-                "geopotential_height_times_gravity_at_surface",
+                "geopotential_at_surface",
                 "fraction_of_ocean",
                 "fraction_of_lake",
                 "fraction_of_ice",
@@ -217,8 +217,8 @@ class SuiteConfig(QuestionContainer, Enum):
     eda_atmos = QuestionList(
         list_name="eda_atmos",
         questions=[
-            eda_atmos_tier1_fast
+            eda_atmos_tier2
         ]
     )
-# normal run:  eda_atmos_tier1
+
     # --------------------------------------------------------------------------------------------------
