@@ -142,17 +142,17 @@ class RunJediEdaExecutable(taskBase):
         else:
             jedi_config_dict['cost function']['observations'].update({'obs perturbations': True})
 
-        # create subdir
-        mem_dir = f'analysis/mem{imember:003d}/'
-        xdir = os.path.join(self.cycle_dir(), mem_dir)
-        os.makedirs(xdir, exist_ok=True)
-
         # create subdir for mean and variance
         mean_dir = f'analysis/mean'
         xdir = os.path.join(self.cycle_dir(), mean_dir)
         os.makedirs(xdir, exist_ok=True)
         var_dir = f'analysis/variance'
         xdir = os.path.join(self.cycle_dir(), var_dir)
+        os.makedirs(xdir, exist_ok=True)
+
+        # create subdir
+        mem_dir = f'analysis/mem{imember:003d}/'
+        xdir = os.path.join(self.cycle_dir(), mem_dir)
         os.makedirs(xdir, exist_ok=True)
 
         for observer in jedi_config_dict['cost function']['observations']['observers']:
