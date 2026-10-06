@@ -14,6 +14,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 def eda_analysis(template_dict: Mapping) -> Mapping:
 
+    experiment_id = template_dict['experiment_id']
     imem = template_dict.get('ensemble_imember', None)
     analysis = {
         'filetype': 'cube sphere history',

@@ -151,6 +151,11 @@ class RunJediEdaExecutable(taskBase):
         os.makedirs(xdir, exist_ok=True)
 
         # create subdir
+        dir_list = ["analysis/mean", "analysis/variance"]
+        for i in dir_list:
+            xdir = os.path.join(self.cycle_dir(), i)
+            os.makedirs(xdir, exist_ok=True)
+
         mem_dir = f'analysis/mem{imember:003d}/'
         xdir = os.path.join(self.cycle_dir(), mem_dir)
         os.makedirs(xdir, exist_ok=True)

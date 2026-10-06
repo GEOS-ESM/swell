@@ -20,10 +20,10 @@ def eda_varincrement1(template_dict: Mapping) -> Mapping:
         'write increment': True,
         'increment': {
             'state component': {
-                'filetype': 'auxgrid',
-                'gridtype': 'latlon',
+                'filetype': 'cube sphere history',
+                'provider': 'geos',
                 'datapath': '.',
-                'filename': f'analysis/mem{imem:03d}/{suite_name}.inc_iter1.ceta.',
+                'filename': f'analysis/mem{imem:03d}/ead_atmos.inc_iter1.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
                 'field io names': {
                     'eastward_wind': 'ua',
                     'northward_wind': 'va',
