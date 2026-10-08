@@ -49,6 +49,8 @@
     - [3DVAR GEOS-CF Cycle](/practical_examples/geos_cf/3dvar_cf_cycle.md)
   - Background and Observation Ingestion
     - [Storing Observations and Backgrounds in R2D2](/practical_examples/r2d2/r2d2_ingest.md)
+  - GEOS Model Runs
+    - [Coupled marine GEOS runs and workflow](/practical_examples/cycling_geos/coupled_marine_geos_runs.md)
   - Comparison and Evaluation
     - [Comparing Experiment Outputs](/practical_examples/generic_suites/comparison_workflows.md)
 
