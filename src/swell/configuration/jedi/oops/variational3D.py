@@ -28,6 +28,7 @@ class variational3D(OopsConfig):
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
                 'observations': {
+                    'obs data container': 'OSDF',
                     'get values': self.interface_model('getvalues'),
                     'observers': self.special_observations(),
                 }

@@ -69,6 +69,7 @@ cost function:
         ksshts:
           nlayers: 2
   observations:
+    obs data container: OSDF
     get values:
     observers:
     - obs space:
