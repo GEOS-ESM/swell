@@ -28,6 +28,9 @@ geos_homdir:
 initial_restarts_method:
   default_value: geos_expdir
 
+met_replay_root:
+  default_value: /home/dao_ops
+
 path_to_bufr:
   default_value: None
 
