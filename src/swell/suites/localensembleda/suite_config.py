@@ -48,10 +48,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_solver("Deterministic GETKF"),
             qd.local_ensemble_use_linear_observer(True),
             qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(True),
-            qd.local_ensemble_save_posterior_mean_increment(True),
-            qd.local_ensemble_save_posterior_ensemble(False),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_save_posterior_mean(False),
+            qd.local_ensemble_save_posterior_mean_increment(False),
+            qd.local_ensemble_save_posterior_ensemble(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(True),
             qd.local_ensemble_do_posterior_observer(False),
             qd.obs_thinning_rej_fraction(0.98),
             qd.observations([
@@ -90,10 +90,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_solver("Deterministic GETKF"),
             qd.local_ensemble_use_linear_observer(True),
             qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(True),
-            qd.local_ensemble_save_posterior_mean_increment(True),
-            qd.local_ensemble_save_posterior_ensemble(False),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_save_posterior_mean(False),
+            qd.local_ensemble_save_posterior_mean_increment(False),
+            qd.local_ensemble_save_posterior_ensemble(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(True),
             qd.local_ensemble_do_posterior_observer(False),
             qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
@@ -118,6 +118,7 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
+# GETKF 1-step was slower at the observer steps; now oops PR3342 changed it.
 # wait for oops 3342 to activate all non-IR-obs
 #                "airs_aqua",
 #                "cris-fsr_n20",

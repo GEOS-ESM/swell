@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_sa1
 
 # --------------------------------------------------------------------------------------------------
 
@@ -14,22 +15,14 @@ from collections.abc import Mapping
 def ensemble_members_increment_output(template_dict: Mapping) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']
+    suite_name = template_dict['suite_name']
 
     ensemble_members_increment_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.mem%{{member}}%-inc',
-        'field io names': {
-            'eastward_wind': 'ua',
-            'northward_wind': 'va',
-            'air_temperature': 't',
-            'air_pressure_at_surface': 'ps',
-            'air_pressure_levels': 'pe',
-            'water_vapor_mixing_ratio_wrt_moist_air': 'q',
-            'cloud_liquid_ice': 'qi',
-            'cloud_liquid_water': 'ql',
-            'mole_fraction_of_ozone_in_air': 'o3ppmv',
-        }
+        'datapath':  f'{cycle_dir}/analysis/' + 'mem%{member}%',
+        'filename': f'{suite_name}.inc.eta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'field io names': field_io_names_sa1
     }
 
     return ensemble_members_increment_output

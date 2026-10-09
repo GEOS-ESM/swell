@@ -17,12 +17,14 @@ from enum import Enum
 
 # --------------------------------------------------------------------------------------------------
 
+_suite = "localensembleda_2steps"
+
 class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_2steps_tier1 = QuestionList(
-        list_name="localensembleda_2steps_tier1",
+        list_name = _suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -53,10 +55,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_localization_lengthscale(2.0),
             qd.vertical_localization_frac_retained_variance(0.95),
             qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(True),
-            qd.local_ensemble_save_posterior_mean_increment(True),
-            qd.local_ensemble_save_posterior_ensemble(False),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_save_posterior_mean(False),
+            qd.local_ensemble_save_posterior_mean_increment(False),
+            qd.local_ensemble_save_posterior_ensemble(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(True),
             qd.local_ensemble_do_posterior_observer(False),
             qd.obs_thinning_rej_fraction(0.98),
             qd.observations([
@@ -98,7 +100,7 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     localensembleda_2steps_tier2 = QuestionList(
-        list_name="localensembleda_2steps_tier2",
+        list_name = _suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -109,6 +111,9 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
+            qd.cycle_times([
+                "T00",
+            ]),
             qd.horizontal_resolution('91'),
             qd.background_experiment('x0050'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
@@ -120,7 +125,9 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npx_per_observer(1),
             qd.npy_per_observer(1),
             qd.perhost(48),
-            qd.cycle_times(['T00']),
+            qd.window_length("PT6H"),
+            qd.window_type("3D"),
+            qd.change_vbc_to_sbc(False),
             qd.ensemble_num_members(32),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("Deterministic GETKF"),
@@ -129,12 +136,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_localization_lengthscale(2.0),
             qd.vertical_localization_frac_retained_variance(0.95),
             qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(True),
-            qd.local_ensemble_save_posterior_mean_increment(True),
-            qd.local_ensemble_save_posterior_ensemble(False),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
+            qd.local_ensemble_save_posterior_mean(False),
+            qd.local_ensemble_save_posterior_mean_increment(False),
+            qd.local_ensemble_save_posterior_ensemble(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(True),
             qd.local_ensemble_do_posterior_observer(False),
-            qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
@@ -166,9 +172,29 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
-            qd.window_length("PT6H"),
-            qd.window_type("3D"),
-            qd.change_vbc_to_sbc(False),
+            qd.obs_thinning_rej_fraction(0.75),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
+                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2":
+                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff":
+                {"fn_output": f"analysis/mean/{_suite}.inc",
+                 "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
+                }),
             qd.clean_patterns(['*.txt'])
         ]
     )
@@ -182,7 +208,7 @@ class SuiteConfig(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_2steps = QuestionList(
-        list_name="localensembleda_2steps",
+        list_name = _suite,
         questions=[
             localensembleda_2steps_tier2
         ]
