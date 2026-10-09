@@ -2,11 +2,11 @@
 # Atmospheric Model Configuration Parameters
 # ------------------------------------------
 
-       NX: 24
-       NY: 144
+       NX: 60
+       NY: 120
 
  IOSERVER_NODES: 4
-NUM_BACKEND_PES: 6
+NUM_BACKEND_PES: 24
 
       AGCM_IM: 360
       AGCM_JM: 2160
@@ -254,17 +254,13 @@ RECORD_REF_TIME: >>>SWELL_FC6H_H<<< 120000
 #   ASSIMILATION_CYCLE:  nnnnnn       #  (Default: 21600)
 #   IAU_DIGITAL_FILTER:  YES or NO    #  (Default: YES  )
  
-# Typical MERRA-2 Regular REPLAY Configuration
-# --------------------------------------------
-    REPLAY_ANA_EXPID: >>>SWELL_FP_EXP<<<
-    REPLAY_ANA_LOCATION: >>>SWELL_SCRATCHDIR<<<
+# Regular REPLAY Configuration (source set via met_replay_exp / met_replay_root)
+# --------------------------------------------------------------------------------
+    REPLAY_ANA_EXPID: >>>SWELL_REPLAY_EXPID<<<
+    REPLAY_ANA_LOCATION: >>>SWELL_REPLAY_LOCATION<<<
     REPLAY_MODE: Regular
-    REPLAY_FILE: >>>SWELL_FP_EXP<<<.ana.eta.%y4%m2%d2_%h200z.nc4
-
-    #REPLAY_ANA_EXPID:   d5294_geosit_jan18
-    #REPLAY_ANA_LOCATION: /home/dao_ops/d5294_geosit_jan18/run/.../archive
-    #REPLAY_MODE: Regular
-    #REPLAY_FILE: ana/Y%y4/M%m2/d5294_geosit_jan18.bkg.eta.%y4%m2%d2_%h200z.nc4
+    REPLAY_FILE: >>>SWELL_REPLAY_FILE<<<
+    REPLAY_FILE09: >>>SWELL_REPLAY_FILE09<<<
 
 #   4DIAU (recreate analysis tendency on the fly)
 #   ---------------------------------------------

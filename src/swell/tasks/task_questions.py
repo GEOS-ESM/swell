@@ -625,12 +625,12 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_length(),
             qd.forecast_output_frequency(),
             qd.geos_cf_install_dir(),
-            qd.geos_cf_run_dir(),
-            qd.geosfp_exp(),
-            qd.geosfp_path(),
+            qd.geos_cf_rc_dir(),
             qd.horizontal_resolution(),
             qd.iau(),
             qd.inc_template(),
+            qd.met_replay_exp(),
+            qd.met_replay_root(),
             qd.window_length(),
             qd.rst_experiment()
         ]
