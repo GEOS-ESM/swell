@@ -187,7 +187,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 ]),
             qd.diffstates_spec({
                 "state1":
-                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state2":
                 {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state_diff":
