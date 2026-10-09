@@ -209,7 +209,7 @@ class RunJediEtkfSolver(taskBase):
             yaml.dump(jedi_config_dict, f)
 
         # create subdir
-        for imem in range( 1, ensemble_num_members + 1 ):
+        for imem in range(1, ensemble_num_members + 1):
             mem_dir = f'analysis/mem{imem:003d}/'
             xdir = os.path.join(self.cycle_dir(), mem_dir)
             os.makedirs(xdir, exist_ok=True)
@@ -217,7 +217,6 @@ class RunJediEtkfSolver(taskBase):
         for j in dir_list:
             xdir = os.path.join(self.cycle_dir(), j)
             os.makedirs(xdir, exist_ok=True)
-
 
         model_component_meta = self.jedi_rendering.render_interface_meta()
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']

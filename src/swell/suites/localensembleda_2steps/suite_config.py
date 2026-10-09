@@ -17,14 +17,16 @@ from enum import Enum
 
 # --------------------------------------------------------------------------------------------------
 
+
 _suite = "localensembleda_2steps"
+
 
 class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_2steps_tier1 = QuestionList(
-        list_name = _suite,
+        list_name=_suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -100,7 +102,7 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     localensembleda_2steps_tier2 = QuestionList(
-        list_name = _suite,
+        list_name=_suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -208,7 +210,7 @@ class SuiteConfig(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_2steps = QuestionList(
-        list_name = _suite,
+        list_name=_suite,
         questions=[
             localensembleda_2steps_tier2
         ]
