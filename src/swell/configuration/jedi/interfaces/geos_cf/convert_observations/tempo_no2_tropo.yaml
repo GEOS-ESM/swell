@@ -21,4 +21,4 @@ output_filename_template: "tempo_no2_tropo_%Y%m%d%H.nc4"
 extra_flags:
   --column: troposphere   # retrieval layer: troposphere column
   --variable: no2         # variable: nitrogen dioxide
-  --save_grid_indices:     # write native L2 grid indices 
+  --save_grid_indices:     # write native L2 grid indices
