@@ -1,52 +1,42 @@
-# Configuring different R2D2 servers and datastores with Swell on Discover
+# Configuring the GEOS-CF R2D2 server on Discover
 
-Swell reads R2D2 credentials from `~/.swell/r2d2_credentials.yaml` and connects to the server
-specified by `r2d2_server` in `experiment.yaml`. The target datastore is set via `r2d2_datastore`.
+This page contains the settings specific to the GEOS-CF R2D2 server. For the credentials-file
+format, profile-selection order, environment precedence, and datastore overrides, see
+[R2D2 v3 credentials and server selection](../configuration_reference/r2d2_v3_credentials.md).
 
-| Field | Default | Description |
-|-------|---------|-------------|
-| `r2d2_server` | *(empty)* | Named entry in `~/.swell/r2d2_credentials.yaml`. If left empty, the first entry in the file is used automatically. |
-| `r2d2_datastore` | *(empty)* | Datastore for all fetch/store operations. If left empty, R2D2 picks the highest-priority datastore available on your compute host. |
+## 1. Configure the server profile
 
-## 1. Set up ~/.swell/r2d2_credentials.yaml
+Add the `gmao_server` profile shown in the credentials reference to
+`~/.swell/r2d2_credentials.yaml`, using the GEOS-CF server's API URL, port, username, and API
+key. Add AWS credentials to that profile only when access to its S3 datastore is required.
 
-The credentials file supports named server profiles. Each profile is a named block:
+## 2. Select the server
+
+Add the profile name to the override passed to `swell create`:
 
 ```yaml
-# JCSDA R2D2 — public API, no custom server needed
-jcsda_server:
-  user: <your_username>
-  api_key: <your_jcsda_api_key>
-  r2d2_host: discover-gmao
-  r2d2_compiler: intel
-
-# GMAO R2D2 — custom server with local and S3 datastores
-gmao_server:
-  user: <your_username>
-  api_key: <your_gmao_api_key>
-  r2d2_host: discover
-  r2d2_compiler: intel
-  r2d2_server_host: "http://13.217.72.149"
-  r2d2_server_port: "8080"
-  # AWS credentials — required only for the S3 datastore
-  # aws_access_key_id: <access_key_id>
-  # aws_secret_access_key: <secret_access_key>
-  # aws_session_token: <session_token>
+r2d2_server: gmao_server
 ```
 
-If `r2d2_server` is not set in `experiment.yaml`, Swell automatically selects the first entry in the file.
-If `r2d2_datastore` is not set, R2D2 picks the highest-priority datastore available on your compute host for the selected server.
+For example:
 
-## 2. GMAO R2D2 datastores
+```bash
+swell create ingest_background_cf --override ingest_background.yaml
+```
 
-| Name | Location | AWS credentials required? |
-|------|----------|--------------------------|
-| `r2d2-geos-cf-dev` | `/discover/nobackup/projects/gmao/geos_cf_dev/r2d2-geos-cf-dev` | No |
-| `r2d2-experiments-prod-us-east-1` | S3 bucket (us-east-1) | Yes |
+The generated experiment configuration carries this selection to all R2D2 tasks, including
+background, forecast, observation, diagnostic, and restart operations.
 
-Use `r2d2-geos-cf-dev` for the Discover-local store (no AWS keys needed). Use `r2d2-experiments-prod-us-east-1` for the S3 datastore - this requires AWS credentials in your credentials file.
+## 3. Check the available datastores
 
-To list all datastores accessible from your compute host:
+Known datastores on this server include:
+
+| Name | Basedir or storage | AWS credentials required? |
+|---|---|---|
+| `r2d2-geos-cf` | `/discover/nobackup/projects/gmao/geos_cf_dev` | No |
+| `r2d2-experiments-prod-us-east-1` | S3, `us-east-1` | Yes |
+
+List the datastores currently visible to the Discover compute host:
 
 ```bash
 python src/swell/utilities/scripts/discover_r2d2_datastores.py \
@@ -54,36 +44,18 @@ python src/swell/utilities/scripts/discover_r2d2_datastores.py \
     --server gmao_server
 ```
 
-## 3. Ingest observations
+Normally, leave `r2d2_datastore` unset and let R2D2 apply the server's data-hub and compute-host
+priority configuration.
 
-```bash
-# Create the experiment
-swell create ingest_obs_marine
+## 4. Verify the selection
 
-# Edit experiment.yaml to pick a specific server or datastore (both are optional):
-#   r2d2_server: gmao_server          # leave empty to use the first entry in r2d2_credentials.yaml
-#   r2d2_datastore: r2d2-geos-cf-dev  # leave empty to let R2D2 pick automatically
-#   dry_run: false
+Experiment creation and each R2D2 task should log the selected profile:
 
-# Run the suite
-swell launch /path/to/suite/swell-ingest_obs/swell-ingest_obs-suite
+```text
+Loading R2D2 credentials from /home/<user>/.swell/r2d2_credentials.yaml
+Using R2D2 credentials for server: 'gmao_server'
+YAML r2d2_host ('discover') overrides platform default ('discover-gmao')
 ```
 
-This runs `IngestObs` for `adt_cryosat2n` across the date range.
-
-### Verify it is stored
-
-```python
-python3 -c "
-import r2d2
-results = r2d2.search(
-    item='observation',
-    observation_type='adt_cryosat2n',
-    window_start='20230702T060000Z',
-    window_length='PT6H'
-)
-print(f'Found {len(results)} records')
-for r in results:
-    print(r)
-"
-```
+The datastore-listing command above also verifies the connection: it loads `gmao_server` through
+Swell and should return `r2d2-geos-cf` with the expected basedir.
