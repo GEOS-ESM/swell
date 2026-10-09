@@ -6,8 +6,10 @@
 #   python3 <jedi_bundle>/build/bin/tempo_nc2ioda.py
 #       -i <granule1.nc> <granule2.nc> ...
 #       -o <cycle_dir>/ioda/tempo_no2_tropo/tempo_no2_tropo_YYYYMMDDHH.nc4
-#       -c troposphere
-#       -v no2
+#       --column troposphere
+#       --variable no2
+#       --save_grid_indices
+
 
 # Name of the ioda-converters Python script.
 converter_script: tempo_nc2ioda.py
@@ -17,5 +19,6 @@ output_filename_template: "tempo_no2_tropo_%Y%m%d%H.nc4"
 
 # Additional flags passed verbatim to the converter after -i and -o.
 extra_flags:
-  -c: troposphere   # retrieval layer: troposphere column
-  -v: no2           # variable: nitrogen dioxide
+  --column: troposphere   # retrieval layer: troposphere column
+  --variable: no2         # variable: nitrogen dioxide
+  --save_grid_indices:     # write native L2 grid indices 
