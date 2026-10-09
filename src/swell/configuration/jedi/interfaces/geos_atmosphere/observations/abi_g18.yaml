@@ -169,7 +169,7 @@ obs post filters:
       channels: *abi_g18_channels
       options:
         channels: *abi_g18_channels
-        sensor: infrared
+        sensor: abi_g18
 
 # Model top transmittance check
 - filter: Perform Action

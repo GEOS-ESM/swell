@@ -126,7 +126,7 @@ obs post filters:
       channels: *avhrr3_metop-c_channels
       options:
         channels: *avhrr3_metop-c_channels
-        sensor: infrared
+        sensor: *Sensor_ID
 # Transmittance Top Check
 - filter: BlackList
   filter variables:

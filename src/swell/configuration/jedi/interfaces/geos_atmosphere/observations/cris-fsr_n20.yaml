@@ -175,7 +175,7 @@ obs post filters:
       channels: *cris-fsr_n20_channels
       options:
         channels: *cris-fsr_n20_channels
-        sensor: infrared
+        sensor: *Sensor_ID
 # Transmittance Top Check
 - filter: BlackList
   filter variables:

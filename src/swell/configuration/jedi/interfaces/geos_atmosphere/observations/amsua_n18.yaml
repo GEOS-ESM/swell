@@ -122,7 +122,7 @@ obs post filters:
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *amsua_n18_available_channels
         options:
-          sensor: microwave
+          sensor: *Sensor_ID
           channels: *amsua_n18_available_channels
 # Transmittance Top Check
   - filter: BlackList
@@ -178,7 +178,7 @@ obs post filters:
           channels: *amsua_n18_available_channels
           options:
             channels: *amsua_n18_available_channels
-            sensor: microwave
+            sensor: *Sensor_ID
         error parameter vector: *amsua_n18_oberr
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
