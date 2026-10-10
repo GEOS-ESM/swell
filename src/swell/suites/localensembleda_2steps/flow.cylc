@@ -101,11 +101,15 @@
             {% endif %}
 
 
-            # EvaIncrement
-            RunJediEtkfSolver-{{model_component}} => EvaIncrement-{{model_component}}
+            # bkg/ana : mean/variance
+            RunJediEtkfSolver-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
+            RunJediEnsembleMeanVariance-{{model_component}} => RunJediDiffstates-{{model_component}}
 
-            # EvaObservations
-            RunJediEtkfSolver-{{model_component}} => EvaObservations-{{model_component}}
+            # EvaIncrement
+            RunJediDiffstates-{{model_component}} => EvaIncrement-{{model_component}}
+
+#            # EvaObservations
+#            RunJediDiffstates-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
             # RunJediEtkfSolver-{{model_component}} => SaveObsDiags-{{model_component}}
@@ -180,12 +184,22 @@
 
     [[RunJediEnsembleMeanVariance-{{model_component}}]]
         script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
-	platform = {{platform}}
-	execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediEnsembleMeanVariance"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[RunJediDiffstates-{{model_component}}]]
+        script = "swell task RunJediDiffstates $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediDiffstates"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediDiffstates"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
