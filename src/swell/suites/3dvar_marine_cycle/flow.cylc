@@ -105,9 +105,10 @@
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
             {% if not skip_r2d2 %}
-            # Compress forecast on compute node, then store in R2D2 on login node
-            LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            # Compress forecast on compute node, then save in R2D2 on login node; (state space) forecast, analysis, and (obs space) observation outputs.
+            LinkCoupledGeosOutput-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
             # Clean up large files
@@ -251,14 +252,17 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
+    [[SaveAnalysis-{{model_component}}]]
+        script = "swell task SaveAnalysis $config -d $datetime -m {{model_component}}"
+
     [[SaveForecast-{{model_component}}]]
         script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
-
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[PrepareAnalysis-{{model_component}}]]
         script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
