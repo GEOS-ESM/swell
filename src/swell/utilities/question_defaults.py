@@ -107,6 +107,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class fetch_from_r2d2(SuiteQuestion):
+        default_value: str = True
+        question_name: str = "fetch_from_r2d2"
+        ask_question: bool = True
+        prompt: str = ("Fetch observations from r2d2, or local filesystem?")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class final_cycle_point(SuiteQuestion):
         default_value: str = "2023-10-10T06:00:00Z"
         question_name: str = "final_cycle_point"
@@ -253,9 +263,9 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class skip_r2d2(SuiteQuestion):
+    class store_r2d2(SuiteQuestion):
         default_value: bool = False
-        question_name: str = "skip_r2d2"
+        question_name: str = "store_r2d2"
         prompt: str = "Skip registering and storing results of this experiment in R2D2?"
         widget_type: WType = WType.BOOLEAN
 

@@ -58,11 +58,7 @@
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediLocalEnsembleDaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
-            {% else %}
-
-            # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}}[-PT6H] => fetch_obs-{{model_component}}
             {% endif %}
 
             # Perform staging that is cycle dependent
@@ -186,11 +182,15 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[GetObservations-{{model_component}}]]
+    {% if fetch_from_r2d2 %}
+    # Fetch from R2D2
+    [[fetch_obs-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
-
-    [[GetObsNotInR2d2-{{model_component}}]]
+    {% else %}
+    # Copy from local filesystem
+    [[fetch_obs-{{model_component}}]]
         script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
+    {% endif %}
 
     {% if not skip_ensemble_hofx %}
     {% if ensemble_hofx_strategy == 'serial' %}

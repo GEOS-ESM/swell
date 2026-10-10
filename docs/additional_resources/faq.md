@@ -18,7 +18,7 @@
 
 - R2D2 is not working for me
 
-    > Please see [R2D2 settings](../configuration_reference/r2d2_v3_credentials.md). As of the writing of this documentation, the same shared gmao-user API key is used, but this will change soon. Alternatively, the `--skip-r2d2` or `-k` argument can be used for `geos_atmosphere` applications to bypass R2D2 and use Ricardo's x00** experiment directories.
+    > Please see [R2D2 settings](../configuration_reference/r2d2_v3_credentials.md). As of the writing of this documentation, the same shared gmao-user API key is used, but this will change soon. Alternatively, the `--skip-store-r2d2` or `-k` argument can be used for `geos_atmosphere` applications to bypass R2D2 and use Ricardo's x00** experiment directories.
 
 - Can I view Cylc logs with my own editor?
 
