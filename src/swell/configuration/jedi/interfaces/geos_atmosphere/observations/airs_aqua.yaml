@@ -162,7 +162,12 @@ obs post filters:
       channels: *airs_aqua_channels
       options:
         channels: *airs_aqua_channels
-        sensor: *Sensor_ID
+        sensor: infrared
+        height groups:
+        - channels: 1-6, 15
+          #height: 2000 #default
+        - channels: 7
+          height: 4000
 #  Transmittance Top Check
 - filter: BlackList
   filter variables:
