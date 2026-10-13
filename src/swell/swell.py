@@ -334,7 +334,7 @@ def copy_task_files(
 
     print(f'Copying {src_task_files} to {experiment_task_files}')
 
-    shutil.rmtree(experiment_task_files)
+    shutil.rmtree(experiment_task_files, ignore_errors=True)
     shutil.copytree(src_task_files, experiment_task_files)
 
 # --------------------------------------------------------------------------------------------------
