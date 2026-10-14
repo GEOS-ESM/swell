@@ -23,7 +23,7 @@ def eda_varincrement1(template_dict: Mapping) -> Mapping:
                 'filetype': 'cube sphere history',
                 'provider': 'geos',
                 'datapath': '.',
-                'filename': f'analysis/mem{imem:03d}/ead_atmos.inc_iter1.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+                'filename': f'analysis/mem{imem:03d}/eda_atmos.inc_iter1.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
                 'field io names': {
                     'eastward_wind': 'ua',
                     'northward_wind': 'va',
