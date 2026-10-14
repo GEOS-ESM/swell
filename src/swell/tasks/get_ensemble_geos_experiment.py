@@ -118,15 +118,15 @@ class GetEnsembleGeosExperiment(taskBase):
                     member_date_str = member_file.name.split('.')[-2]
                     member_type_str = member_file.name.split('.')[-3]
                     if member_type_str == "bkg_clcv":
-                       member_date_dto = dt.strptime(member_date_str, '%Y%m%d_%H00z')
+                        member_date_dto = dt.strptime(member_date_str, '%Y%m%d_%H00z')
 
-                       # Create JEDI filename with member info
-                       jedi_date = member_date_dto.strftime(datetime_formats["ensemble_format"])
-                       ens_filename_jedi = f'geos.mem{member_num}.{jedi_date}.nc4'
+                        # Create JEDI filename with member info
+                        jedi_date = member_date_dto.strftime(datetime_formats["ensemble_format"])
+                        ens_filename_jedi = f'geos.mem{member_num}.{jedi_date}.nc4'
 
-                       # Extract file to member directory
-                       member_file.name = ens_filename_jedi
-                       cycle_tar_file.extract(member_file, member_path)
-                       eff_path = member_path.split('/')[-2:] + [ens_filename_jedi]
-                       self.logger.info(f' Extracted and renamed file to: {"/".join(eff_path)}')
+                        # Extract file to member directory
+                        member_file.name = ens_filename_jedi
+                        cycle_tar_file.extract(member_file, member_path)
+                        eff_path = member_path.split('/')[-2:] + [ens_filename_jedi]
+                        self.logger.info(f' Extracted and renamed file to: {"/".join(eff_path)}')
 # --------------------------------------------------------------------------------------------------
