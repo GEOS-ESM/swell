@@ -186,9 +186,10 @@ class PrepCoupledGeosRunDir(taskBase):
         # -----------------------------------------------------------------------------------
         if cylc_nodes and gcm_nodes_required:
             if cylc_nodes < gcm_nodes_required:
-                self.logger.abort('Not enough nodes requested in flow.cylc for RunGeos, compared'
-                                  ' to those required in gcm_run.j. This will cause RunGeos to '
-                                  'fail. Please fix flow.cylc, then re-launch the suite.')
+                self.logger.abort('Not enough nodes requested in flow.cylc for RunGeos '
+                                  f'({cylc_nodes}), compared to those required in gcm_run.j '
+                                  f'({gcm_nodes_required}). This will cause RunGeos to fail. '
+                                  'Please fix flow.cylc, then re-launch the suite.')
             else:
                 self.logger.info('Proper amount of nodes set in flow.cylc')
 
