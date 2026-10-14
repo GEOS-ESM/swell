@@ -149,6 +149,49 @@ class PrepCoupledGeosRunDir(taskBase):
         with open(self.forecast_dir('cap_restart'), 'w') as file:
             file.write(self.fc_dto.strftime("%Y%m%d %H%M%S"))
 
+        # Parse flow.cylc for the number of nodes set by RunGeos
+        # ------------------------------------------------------
+        cylc_file = os.path.join(self.experiment_path(), self.experiment_id()+'-suite',
+                                 'flow.cylc')
+        with open(cylc_file, 'r') as f:
+            content = f.read()
+
+        cylc_regex_pattern = r'\[\[\s*RunGeos\s*\]\][\s\S]*\[\[\[\s*directives\s*\]\]\][\s\S]*--.*'
+        node_regex_pattern = r'--nodes\s*=\s*\d*'
+        cylc_nodes = None
+        try:
+            gcm_run_section = re.search(cylc_regex_pattern, content).group()
+            node_line = re.search(node_regex_pattern, gcm_run_section).group()
+            cylc_nodes = int(node_line.split('=')[1].strip())
+        except TypeError:
+            self.logger.warning('Could not ascertain the number of nodes assigned to `RunGeos`.'
+                                ' Please check that the proper number of nodes are requested '
+                                'in `flow.cylc`, otherwise RunGeos may fail without indication.')
+
+        with open(self.forecast_dir('gcm_run.j'), 'r') as f:
+            content = f.read()
+
+        # Parse gcm_run.j for the required number of nodes
+        # ------------------------------------------------
+        gcm_nodes_required = None
+        try:
+            gcm_node_line = re.search(node_regex_pattern, content).group()
+            gcm_nodes_required = int(gcm_node_line.split('=')[1].strip())
+        except TypeError:
+            self.logger.warning('Could not ascertain the number of nodes required by `gcm_run.j`.'
+                                ' Please check that the proper number of nodes are requested '
+                                'in `flow.cylc`, otherwise RunGeos may fail without indication.')
+
+        # Check the number of nodes set by flow.cylc exceeds the number required in gcm_run.j
+        # -----------------------------------------------------------------------------------
+        if cylc_nodes and gcm_nodes_required:
+            if cylc_nodes < gcm_nodes_required:
+                self.logger.abort('Not enough nodes requested in flow.cylc for RunGeos, compared'
+                                  ' to those required in gcm_run.j. This will cause RunGeos to '
+                                  'fail. Please fix flow.cylc, then re-launch the suite.')
+            else:
+                self.logger.info('Proper amount of nodes set in flow.cylc')
+
     # ----------------------------------------------------------------------------------------------
 
     def get_static(self) -> None:
