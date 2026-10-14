@@ -25,7 +25,7 @@ state_variables_to_inverse = [
     'fraction_of_ocean',
     'fraction_of_lake',
     'fraction_of_ice',
-    'geopotential_height_times_gravity_at_surface',
+    'geopotential_at_surface',
     'skin_temperature_at_surface',
 ]
 

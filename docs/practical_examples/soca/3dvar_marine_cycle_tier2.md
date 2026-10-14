@@ -35,6 +35,8 @@ With this, the following experiment folder will be created:
 
 Another critical input argument for `swell create` is  `-s slurmfile.yaml`. Please see [slurm config instructions](../../configuration_reference/slurm_configuration.md) for more details on how to use it for high resolution tests.
 
+For details on how GEOS is called and executed see [Coupled Marine GEOS Cycling in SWELL](../cycling_geos/coupled_marine_geos_runs.md).
+
 Before launching the experiment, let's take a look at the `experiment.yaml`.
 
 ## Inside `experiment.yaml`:
@@ -65,6 +67,24 @@ model_components:
 # Set the Cylc runahead limit: the maximum number of cycles that may be active ahead of the current cycle (e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).
 runahead_limit: P2
 
+# What experiment_id should r2d2 reference for experiment?
+r2d2_experiment_id: swell-3dvar_marine_cycle-b44dee51
+
+# Server/profile name in ~/.swell/r2d2_credentials.yaml (e.g. 'gmao_server'). Leave empty if credentials are at the root level.
+r2d2_server:
+
+# Datastore name passed to R2D2 fetch and store operations (e.g. a Discover directory store or an S3 bucket store). Run scripts/discover_r2d2_datastores.py to list available datastores. Leave empty to let R2D2 pick the highest-priority writable datastore for your compute host.
+r2d2_datastore:
+
+# Skip registering and storing results of this experiment in R2D2?
+skip_r2d2: false
+
+# Record of the suite being executed
+suite_to_run: 3dvar_marine_cycle
+
+# Dry-run option for comparing configs.
+mock_experiment: false
+
 # Do you want to use an existing JEDI build or create a new build?
 jedi_build_method: use_existing
 
@@ -75,31 +95,28 @@ geos_build_method: use_existing
 forecast_duration: PT12H
 
 # What is the location for the HOME Directory (HOMDIR in gcm_run and gcm_setup) that contains model settings and RC files?
-geos_homdir: /discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/GEOS_v12_rc20/dataatm_025deg_access
-
-# What is the path to the existing GEOS source code directory?
-existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/
-
-# What is the path to the existing JEDI source code directory?
-existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/
-
-# Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, different than your GEOS HOME Directory?
-geos_expdir_different: false
-
-# How should initial GEOS restarts be obtained?
-initial_restarts_method: geos_expdir
-
-# What is the path to the Swell Static files directory?
-swell_static_files: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+geos_homdir: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/dataatm_025
 
 # What is the path to the user provided Swell Static Files directory?
 swell_static_files_user: None
 
+# Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, different than your GEOS HOME Directory?
+geos_expdir_different: false
+
 # What is the path to the existing GEOS build directory?
 existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/install
 
+# What is the path to the existing JEDI source code directory?
+existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_08142026/
+
 # What is the path to the existing JEDI build directory?
-existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/build-intel-release/
+existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_08142026/build-intel-release/
+
+# What is the path to the existing GEOS source code directory?
+existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/
+
+# How should initial GEOS restarts be obtained?
+initial_restarts_method: geos_expdir
 
 # Configurations for the model components.
 models:
@@ -121,6 +138,9 @@ models:
     # Provide the log naming convention (e.g. 'variational', 'fgat').
     comparison_log_type: variational
 
+    # What is the path to the Swell Static files directory?
+    swell_static_files: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+
     # Do you wish to use IAU for MOM6?
     mom6_iau: true
 
@@ -132,6 +152,35 @@ models:
 
     # What is the vertical resolution for the forecast model and background?
     vertical_resolution: '75'
+
+    # What are the analysis variables?
+    analysis_variables:
+    - sea_water_salinity
+    - sea_water_potential_temperature
+    - sea_surface_height_above_geoid
+    - sea_water_cell_thickness
+
+    # Which background error model do you want to use?
+    background_error_model: explicit_diffusion
+
+    # What value of gradient norm reduction for convergence?
+    gradient_norm_reduction: 1e-10
+
+    # Do you want to use a 3D or 4D (including FGAT) window?
+    window_type: 3D
+
+    # Which data assimilation minimizer do you wish to use?
+    minimizer: RPCG
+
+    # What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
+    number_of_iterations:
+    - 50
+
+    # What is the number of processors for JEDI?
+    total_processors: 720
+
+    # What is the duration for the data assimilation window?
+    window_length: PT6H
 
     # How long before the middle of the analysis window did the background providing forecast begin?
     background_time_offset: PT9H
@@ -161,34 +210,8 @@ models:
     - sst_viirs_npp_l3u
     - temp_profile_xbt
 
-    # What is the duration for the data assimilation window?
-    window_length: PT6H
-
-    # Do you want to use a 3D or 4D (including FGAT) window?
-    window_type: 3D
-
-    # What are the analysis variables?
-    analysis_variables:
-    - sea_water_salinity
-    - sea_water_potential_temperature
-    - sea_surface_height_above_geoid
-    - sea_water_cell_thickness
-
-    # What value of gradient norm reduction for convergence?
-    gradient_norm_reduction: 1e-10
-
-    # Which data assimilation minimizer do you wish to use?
-    minimizer: RPCG
-
-    # What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
-    number_of_iterations:
-    - 50
-
-    # What is the number of processors for JEDI?
-    total_processors: 720
-
-    # What is the database providing the observations?
-    obs_experiment: s2s_v1
+    # Perform check for observations? Set to false for debugging purposes.
+    check_for_obs: true
 
     # Provide a list of patterns that you wish to remove from the cycle directory.
     clean_patterns:
@@ -197,26 +220,26 @@ models:
     - '*.rc'
     - '*.bin'
 
-    # Perform check for observations? Set to false for debugging purposes.
-    check_for_obs: true
+    # What is the database providing the observations?
+    obs_experiment: s2s_v1
 
-    # Treat observations as 'local' to the directory?
-    set_obs_as_local: false
-
-    # Which background error model do you want to use?
-    background_error_model: explicit_diffusion
+    # Map observation names to their R2D2 providers.
+    observation_providers: {}
 
 # Generate JEDI executable YAML and exit?
 generate_yaml_and_exit: false
 
+# Use cached observation files if they already exist?
+cache_fetch: true
+
+# Fetch observations directly from a public S3 bucket if they are available?
+fetch_obs_from_public_s3: false
+
 # Datetime this file was created (auto added)
-datetime_created: 20260223_123248Z
+datetime_created: 20260921_101947Z
 
 # Computing platform to run the experiment
 platform: nccs_discover_sles15
-
-# Record of the suite being executed
-suite_to_run: 3dvar_marine_cycle
 
 slurm_directives_tasks:
   RunJediVariationalExecutable:

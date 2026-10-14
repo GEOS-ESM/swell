@@ -328,6 +328,19 @@ skip_ensemble_hofx:
   - true
   - false
 
+horizontal_localization_lengthscale:
+  default_value: 10000e3
+
+horizontal_localization_max_nobs:
+  default_value: 1000
+
+horizontal_localization_method:
+  default_value: Horizontal Gaspari-Cohn
+  options:
+  - Horizontal Gaspari-Cohn
+  - Horizontal SOAR
+  - Horizontal Box car
+
 vertical_localization_function:
   default_value: Gaspari Cohn
   options:
@@ -343,8 +356,17 @@ vertical_localization_ioda_vertical_coord_group:
   options:
   - MetaData
 
+vertical_localization_unit:
+  default_value: 'logp'
+  options:
+  - 'levels'
+  - 'logp'
+
 vertical_localization_lengthscale:
-  default_value: 4
+  default_value: 2
+
+vertical_localization_frac_retained_variance:
+  default_value: 0.95
 
 vertical_localization_method:
   default_value: Vertical localization
