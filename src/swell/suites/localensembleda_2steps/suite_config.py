@@ -97,6 +97,28 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_length("PT6H"),
             qd.window_type("3D"),
             qd.change_vbc_to_sbc(False),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
+                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2":
+                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff":
+                {"fn_output": f"analysis/mean/{_suite}.inc",
+                 "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
+                }),
             qd.clean_patterns(['*.txt'])
         ]
     )

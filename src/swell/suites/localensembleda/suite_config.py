@@ -17,12 +17,14 @@ from enum import Enum
 
 # --------------------------------------------------------------------------------------------------
 
+_suite = "localensembleda"
+
 class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_tier1 = QuestionList(
-        list_name="localensembleda",
+        list_name=_suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -59,12 +61,34 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
+                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2":
+                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff":
+                {"fn_output": f"analysis/mean/{_suite}.inc",
+                 "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
+                }),
             qd.clean_patterns(['*.txt'])
         ]
     )
 
     localensembleda_tier2 = QuestionList(
-        list_name="localensembleda",
+        list_name=_suite,
         questions=[
             sq.marine,
             qd.ensemble_hofx_packets(),
@@ -114,6 +138,28 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
+                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2":
+                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff":
+                {"fn_output": f"analysis/mean/{_suite}.inc",
+                 "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
+                }),
             qd.clean_patterns(['*.txt'])
         ]
     )
@@ -144,7 +190,7 @@ class SuiteConfig(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     localensembleda = QuestionList(
-        list_name="localensembleda",
+        list_name=_suite,
         questions=[
             localensembleda_tier2
         ]

@@ -20,8 +20,7 @@ def ensemble_members_increment_output(template_dict: Mapping) -> Mapping:
     ensemble_members_increment_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
-        'datapath':  f'{cycle_dir}/analysis/' + 'mem%{member}%',
-        'filename': f'{suite_name}.inc.eta.',
+        'filename': f'{cycle_dir}/analysis/' + 'mem%{member}%/' + f'{suite_name}.inc.eta.',
         'field io names': field_io_names_sa1
     }
 

@@ -35,6 +35,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
+        ensemble_num_members = self.config.ensemble_num_members()
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
@@ -70,7 +71,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
+        self.jedi_rendering.add_key('ensemble_num_members', ensemble_num_members)
 
         # Geometry
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
@@ -227,6 +228,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         yaml.default_flow_style = False
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
+
+        # create subdir
+        for imem in range(1, ensemble_num_members + 1):
+            mem_dir = f'analysis/mem{imem:003d}/'
+            xdir = os.path.join(self.cycle_dir(), mem_dir)
+            os.makedirs(xdir, exist_ok=True)
+        dir_list = ["analysis/mean", "analysis/variance"]
+        for j in dir_list:
+            xdir = os.path.join(self.cycle_dir(), j)
+            os.makedirs(xdir, exist_ok=True)
 
         # Get the JEDI interface metadata
         # -------------------------------
