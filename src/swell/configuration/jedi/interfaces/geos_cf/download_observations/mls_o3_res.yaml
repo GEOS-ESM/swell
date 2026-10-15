@@ -1,0 +1,30 @@
+# Aura MLS Ozone (O3) L2GP, research ("RES") product. Default: version 5 (ML2O3.005).
+# Source: NASA GES DISC (Earthdata authentication required in ~/.netrc)
+#
+# One file per UTC day, covering that whole day, named
+#   MLS-Aura_L2GP-O3_v05-04-c01_YYYYdJJJ.he5
+# A DA window crossing midnight (e.g. 21z-03z) therefore needs two files; both
+# are downloaded, and the converter keeps only the profiles inside the window.
+
+# Requires earthdata token in `~/.netrc`.
+# Follow the instruction in the documentations
+retrieval_method: https
+remote_host: https://data.gesdisc.earthdata.nasa.gov
+remote_path_template: /data/Aura_MLS_Level2/ML2O3.005/YYYY/
+filename_pattern: MLS-Aura_L2GP-O3_v05-*-c01_YYYYdJJJ.he5
+max_orbit_duration: PT0H
+
+# Product version, passed to the converter (--mls-version, see
+# convert_observations/mls_o3_res.yaml). Must be consistent with the two
+# keys above.
+mls_version: v5
+
+# To use version 6 (ML2O3.006) instead, set this override in the experiment
+# (suite_config.py or experiment.yaml). It is applied to both DownloadObs and
+# ConvertObsToIoda:
+#
+#   download_obs_config_overrides:
+#     mls_o3_res:
+#       remote_path_template: /data/Aura_MLS_Level2/ML2O3.006/YYYY/
+#       filename_pattern: MLS-Aura_L2GP-O3_v06-*-c01_YYYYdJJJ.he5
+#       mls_version: v6
