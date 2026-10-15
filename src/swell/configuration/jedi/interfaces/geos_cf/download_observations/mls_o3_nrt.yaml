@@ -1,0 +1,41 @@
+# Aura MLS Ozone (O3) L2GP, near-real-time (NRT) product, version 5
+# Source: NASA GES DISC NRT archive (Earthdata authentication required in ~/.netrc)
+#
+# NRT data is only kept online for about 7 days. For older dates use the
+# research product (mls_o3_res, v5 or v6), or local files on Discover
+# (see the override example at the end of this file).
+#
+# The product is a set of ~17 minute chunks, one every 15 minutes, named
+#   MLS-Aura_L2GP-O3_v05-03-NRT-20-c01_YYYYdJJJtHHMM.he5
+# where HHMM is the UTC start time of the chunk. The matching *.he5.xml
+# metadata files are not downloaded.
+
+# Requires earthdata token in `~/.netrc`.
+# Follow the instruction in the documentations
+retrieval_method: https
+remote_host: https://discnrt1.gesdisc.eosdis.nasa.gov
+remote_path_template: /data/Aura_NRT/ML2O3_NRT.005/YYYY/JJJ/
+filename_pattern: MLS-Aura_L2GP-O3_v05-*-NRT-*-c01_YYYYdJJJtHH*.he5
+
+# Chunks are ~17 minutes long: also pick up the chunk starting just before
+# window_begin. The start time is read from the file name (day of year + HHMM)
+# and only chunks that start in [window_begin - max_orbit_duration, window_end]
+# are kept.
+max_orbit_duration: PT30M
+granule_start_regex: '\d{4}d\d{3}t\d{4}'
+granule_start_format: '%Yd%jt%H%M'
+
+# To use the local NRT archive on NCCS Discover (2025 and part of 2026) instead
+# of GES DISC, set an override in the experiment (suite_config.py or
+# experiment.yaml):
+#
+#   download_obs_config_overrides:
+#     mls_o3_nrt:
+#       retrieval_method: local
+#       local_file_template: <dir>/MLS-Aura_L2GP-O3_v05-*-NRT-*-c01_%Yd%jt*.he5
+#
+# The .he5 chunk files are used as is (linked into the cycle download
+# directory; tar files are not supported). `local_file_template` is a strftime
+# template (%Y, %m, %d, %j = day of year) resolved for each day of the window,
+# with `*` wildcards. Chunks are filtered with granule_start_* above, like for
+# the remote source.
