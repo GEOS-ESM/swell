@@ -8,9 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import glob
-import os
 import subprocess
+from pathlib import Path
 import shutil
 
 from swell.tasks.base.task_base import taskBase
@@ -28,360 +27,272 @@ from swell.tasks.base.task_base import taskBase
 # + "npp_ompsnm_bufr,r21c_npp_ompslp_nc,m2scr_n21_ompslp_nc,gmao_mlst_bufr"
 # '''
 
-bufr2ioda_obs_type_dict = {
-    '1bamua': 'spoc_radiance_1bamua.yaml',
-    '1bmhs': 'spoc_radiance_1bmhs.yaml',
-    'atms': 'spoc_radiance_atms.yaml',
+obs_builder_dict = {
+    '1bamua': 'radiance_amsua_1bamua.py',
+    '1bmhs': 'radiance_mhs_1bmhs.py',
+    'atms': 'radiance_atms.py',
 
     # avhrr
-    'avhrr': 'spoc_radiance_avhrr.yaml',
-    'ncep_avcsam_bufr': 'spoc_radiance_avhrr.yaml',
-    'ncep_avcspm_bufr': 'spoc_radiance_avhrr.yaml',
-    'avcsam': 'spoc_radiance_avhrr.yaml',
-    'avcspm': 'spoc_radiance_avhrr.yaml',
+    'avhrr': 'radiance_avhrr.py',
+    'ncep_avcsam_bufr': 'radiance_avhrr.py',
+    'ncep_avcspm_bufr': 'radiance_avhrr.py',
+    'avcsam': 'radiance_avhrr.py',
+    'avcspm': 'radiance_avhrr.py',
 
     # cris
-    # 'cris': 'spoc_radiance_cris-fsr.yaml',
-    # 'crisf4': 'spoc_radiance_cris-fsr.yaml',
-    # 'ncep_crisfsr_bufr': 'spoc_radiance_cris-fsr.yaml',
+    # 'cris': 'spoc_radiance_cris-fsr.py',
+    # 'crisf4': 'spoc_radiance_cris-fsr.py',
+    # 'ncep_crisfsr_bufr': 'spoc_radiance_cris-fsr.py',
 
-    'mtiasi': 'spoc_radiance_mtiasi.yaml',
-    'ssmis': 'spoc_radiance_ssmis.yaml',
-    # 'ssmisu': 'spoc_radiance_ssmis.yaml',
+    'mtiasi': 'radiance_iasi.py',
+    'ssmis': 'radiance_ssmis.py',
+    # 'ssmisu': 'spoc_radiance_ssmis.py',
 
     # gpsro
-    'ncep_gpsro_bufr': 'spoc_gnssro.yaml',
-    'gpsro': 'spoc_gnssro.yaml',
-
-    # prepbufr
-    'ncep_acftpfl_bufr': 'spoc_prepbufr_aircraft.yaml',
-    'acftpfl': 'spoc_prepbufr_aircraft.yaml',
-    'acft_profiles': 'spoc_prepbufr_aircraft.yaml',
+    'ncep_gpsro_bufr': 'gnssro.py',
+    'gpsro': 'gnssro.py',
 
     # Rest of obs_classes from GetBufr
-    # 'gmao_amsr2_bufr': 'spoc_radiance_amsr2.yaml',
-    # 'gmao_gmi_bufr': 'spoc_radiance_gmi.yaml',
-    # 'ncep_1bamua_bufr': 'spoc_radiance_amsua_1bamua.yaml',
-    # 'ncep_acftpfl_bufr': 'spoc_prepbufr_aircraft.yaml',
-    # 'ncep_atms_bufr': 'spoc_radiance_atms.yaml',
-    # 'ncep_aura_omi_bufr': 'spoc_retrieval_ozone_omi.yaml',
-    # 'ncep_avcsam_bufr': 'spoc_radiance_avhrr.yaml',
-    # 'ncep_avcspm_bufr': 'spoc_radiance_avhrr.yaml',
-    # 'ncep_crisfsr_bufr': 'spoc_radiance_cris-fsr.yaml',
-    # 'ncep_gpsro_bufr': 'spoc_gnssro.yaml',
-    # 'ncep_mhs_bufr': 'spoc_radiance_mhs_1bmhs.yaml',
-    # 'ncep_mtiasi_bufr': 'spoc_radiance_iasi.yaml',
-    # 'ncep_ssmis_bufr': 'spoc_radiance_ssmis.yaml',
-    # 'npp_ompsnm_bufr': 'spoc_retrieval_ozone_ompstc.yaml',
-    # 'r21c_npp_ompslp_nc': 'spoc_retrieval_ozone_ompslp.yaml',
-    # 'm2scr_n21_ompslp_nc': 'spoc_retrieval_ozone_ompslp.yaml',
-    # 'disc_amsua_bufr': 'spoc_radiance_amsua_esamua.yaml'
+    # 'gmao_amsr2_bufr': 'spoc_radiance_amsr2.py',
+    # 'gmao_gmi_bufr': 'spoc_radiance_gmi.py',
+    # 'ncep_1bamua_bufr': 'spoc_radiance_amsua_1bamua.py',
+    # 'ncep_acftpfl_bufr': 'spoc_prepbufr_aircraft.py',
+    # 'ncep_atms_bufr': 'spoc_radiance_atms.py',
+    # 'ncep_aura_omi_bufr': 'spoc_retrieval_ozone_omi.py',
+    # 'ncep_avcsam_bufr': 'spoc_radiance_avhrr.py',
+    # 'ncep_avcspm_bufr': 'spoc_radiance_avhrr.py',
+    # 'ncep_crisfsr_bufr': 'spoc_radiance_cris-fsr.py',
+    # 'ncep_gpsro_bufr': 'spoc_gnssro.py',
+    # 'ncep_mhs_bufr': 'spoc_radiance_mhs_1bmhs.py',
+    # 'ncep_mtiasi_bufr': 'spoc_radiance_iasi.py',
+    # 'ncep_ssmis_bufr': 'spoc_radiance_ssmis.py',
+    # 'npp_ompsnm_bufr': 'spoc_retrieval_ozone_ompstc.py',
+    # 'r21c_npp_ompslp_nc': 'spoc_retrieval_ozone_ompslp.py',
+    # 'm2scr_n21_ompslp_nc': 'spoc_retrieval_ozone_ompslp.py',
+    # 'disc_amsua_bufr': 'spoc_radiance_amsua_esamua.py'
 }
 # --------------------------------------------------------------------------------------------------
 
 
 class BufrToIoda(taskBase):
 
-    # python split filename by delimiter period and then search for string in the resulting list
-    def find_obstype_match(self, filename):
+    def find_obstype_match(self, bufr_path_file: Path) -> str:
         """
-        Splits the filename by '.' and returns the first match found in obs_type_search_dict.
-        Prints the match if found, otherwise prints 'No match found.'
+        Find the observation type from obs_builder_dict
 
-        Dictionary:
-        bufr2ioda_obs_type_dict = {
-                # ... see above ...
-                # ... subject to change ...
-        }
+        Parameters:
+        bufr_path_file: Path to input bufr file (e.g. "gdas1.20231010.t00z.atms.tm00.bufr_d")
 
+        Returns:
+        obs type matching the filename (e.g. "atms")
         """
-        parts = filename.split('.')
 
+        parts = bufr_path_file.name.split('.')
         for part in parts:
-            if part in bufr2ioda_obs_type_dict:
-                self.logger.info(f"Match found: {part}")
+            if part in obs_builder_dict:
+                self.logger.info(f'Match found: {part}')
                 return part
 
-        valid_obs_types = list(bufr2ioda_obs_type_dict.keys())
-        self.logger.info(f"No match found in filename '{filename}'. "
+        valid_obs_types = list(obs_builder_dict.keys())
+        self.logger.info(f"No match found in file `{bufr_path_file}`. "
                          f"A valid obs_type part must be one of {valid_obs_types}")
+        return None
+
+    # --------------------------------------------------------------------------------------------------
+
+    def get_conventional_obs_builders(self, bufr_path_file: Path):
+        """
+        For conventional data in prepbufr / prepbufr profile input files - returns input file type,
+        obs spaces produced, and name of obs builder conversion script
+        """
+
+        filename = bufr_path_file.name
+
+        # Aircraft profiles: a single bufr source that maps to a single
+        # builder script.
+        if 'acft_profiles' in filename or 'acftpfl' in filename:
+            return [('acft_profiles', ('aircraft_wind',), 'prepbufr_aircraft_wind.py'),
+                    ('acft_profiles', ('aircraft_temperature',),
+                     'prepbufr_aircraft_temperature.py'),]
+
+        # Conventional prepbufr (everything except aircraft): a single bufr
+        # source that has to be run through two separate builder scripts to
+        # produce all of its ioda output types.
+        if 'prepbufr' in filename and 'acft' not in filename:
+            return [
+                # produces sonde and pibal ioda files
+                ('prepbufr', ('sonde', 'pibal'), 'prepbufr_adpupa.py'),
+                # produces sfc and sfcship ioda files
+                ('prepbufr', ('sfc', 'sfcship'), 'prepbufr_sfc.py'),
+            ]
 
         return None
 
     # --------------------------------------------------------------------------------------------------
-    def get_bufr_mapping_yaml(self,
-                              bufr_file_source_path,
-                              ioda_file_target_path,
-                              path_to_ioda_conv_yaml_tmpl_dir,
-                              yaml_file_source=None,
-                              yaml_file_target=None):
-        '''
-        obsdatain: input file path to be inserted into the conversion yaml
-        obsdataout: output file path to be inserted into the conversion yaml
-        obs_type: observation type ~ 'amsua,atms,1bmhs...'
-        yaml_file_source: yaml file to use to replicate the structure for the specific obs_type
-        yaml_file_target:
-        '''
 
-        # Log a summary of all input variables
-        self.logger.info(
-            f"\n"
-            f"--- get_bufr_mapping_yaml Input Summary ---\n"
-            f"  bufr_file_source_path           : {bufr_file_source_path}\n"
-            f"  ioda_file_target_path           : {ioda_file_target_path}\n"
-            f"  path_to_ioda_conv_yaml_tmpl_dir : {path_to_ioda_conv_yaml_tmpl_dir}\n"
-            f"  yaml_file_source                : {yaml_file_source}\n"
-            f"  yaml_file_target                : {yaml_file_target}\n"
-            f"-------------------------------------------"
-        )
+    def get_obs_builder_file(self,
+                             spoc_script_path: Path,
+                             obs_builder_file: str) -> Path:
+        """
+        Returns the path to the ObsBuilder python file
 
-        # Find the obs type from file name
-        # -----------------------------------
-        bufr_file_obs_type = self.find_obstype_match(bufr_file_source_path)
+        Parameters:
+        spoc_script_path: Path to the spoc scripts
+        obs_builder_file: Filename of the ObsBuilder script (e.g. "radiance_atms.py")
 
-        if bufr_file_obs_type is None:
-            self.logger.abort(f"Cannot determine obs type for {bufr_file_source_path}")
+        Returns:
+        Path to the specific ObsBuilder python file
+        """
 
-        # Determine the source YAML file path based on obs_type
-        # yaml_file_source ~ default location: src/swell/configuration/jedi/bufr2ioda/bufr2netcdf_x/
-        # ------------------------------------------------------------------------------------------
-        if yaml_file_source is None:
-            try:
-                yaml_template_name = bufr2ioda_obs_type_dict[bufr_file_obs_type]
-                yaml_file_source = os.path.join(path_to_ioda_conv_yaml_tmpl_dir, yaml_template_name)
-            except KeyError:
-                valid_obs_types = list(bufr2ioda_obs_type_dict.keys())
-                self.logger.abort(f"Error: '{bufr_file_obs_type}' not found in dict. "
-                                  f"obs_type must be one of {valid_obs_types}",
-                                  exception=KeyError)
+        obs_builder_glob = list(spoc_script_path.glob(obs_builder_file))
+        if len(obs_builder_glob) > 0:
+            return obs_builder_glob[0]
+        else:
+            self.logger.info(f'ObsBuilder file `{obs_builder_file}` not '
+                             'found in config directory.')
 
-        # Determine the target path of the generated yaml file
-        # yaml_file_target ~ location in the cycle_dir to copy the yaml_file_source to
-        # ----------------------------------------------------------------------------
-        yaml_file_target = os.path.join(
-            self.cycle_dir(), f'spoc_radiance_{bufr_file_obs_type}.yaml')
-
-        self.logger.info(f'bufr_file_obs_type: {bufr_file_obs_type}')
-        self.logger.info(f'YAML template used: {yaml_file_source}')
-        self.logger.info(f'YAML file will be saved as: {yaml_file_target}')
-
-        # Copy the yaml file yaml_file_source to yaml_file_target
-        try:
-            shutil.copy(yaml_file_source, yaml_file_target)
-            self.logger.info(f'Successfully copied YAML file to {yaml_file_target}')
-
-        except FileNotFoundError:
-            # If the source file doesn't actually exist on disk, abort cleanly
-            self.logger.abort(f'Error: Source YAML file "{yaml_file_source}" not found.',
-                              exception=FileNotFoundError)
-        except PermissionError:
-            self.logger.abort(f'Error: Permission denied when copying to "{yaml_file_target}".',
-                              exception=PermissionError)
-
-        return yaml_file_target
+        return None
 
     # --------------------------------------------------------------------------------------------------
 
-    def execute(self) -> None:
+    def process_bufr_file_conventional(self,
+                                       bufr_path_file: Path,
+                                       obs_type: str,
+                                       obs_spaces: tuple,
+                                       obs_builder_filename: str,
+                                       spoc_script_path: Path,
+                                       ioda_dir: Path) -> None:
+        """
+        Handles subprocess call for conventional obs spaces - to handle scripts producing
+        multiple obs spaces, conv ioda files are sent to temp directories based on obs_type
+        and then sent to respective obs space directories after conversion
+        """
 
-        # Set Bufr File Directory (Input)
-        bufr_dir = os.path.join(self.cycle_dir(), 'bufr')
+        obs_builder_file = self.get_obs_builder_file(spoc_script_path, obs_builder_filename)
 
-        # Set Ioda File Directory (Output) and create if needed
-        ioda_dir = os.path.join(self.cycle_dir(), 'ioda')
-        os.makedirs(ioda_dir, 0o755, exist_ok=True)
+        if obs_builder_file is None:
+            self.logger.info(f'SKIPPING: ObsBuilder file `{obs_builder_filename}` '
+                             f'not found for {bufr_path_file}')
+            return
 
-        # Set the Bufr2Ioda Yaml Template Directory
-        path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(),
-                                                       'configuration/jedi',
-                                                       'bufr2ioda/bufr2netcdf_x/')
-        self.logger.info(f'Path to yaml files found: {path_to_ioda_conv_yaml_tmpl_dir}')
+        self.logger.info(f' MATCH FOUND: [ {obs_builder_file} ]')
 
-        # Get list of all files in cycle dir with .bufr_d suffix or *bufr*
-        bufr_path_files_pattern = os.path.join(bufr_dir, '*bufr*')
-        bufr_path_files = glob.glob(bufr_path_files_pattern)
+        # Get the name of the output directory
+        obs_type_dir = ioda_dir / obs_type
+        obs_type_dir.mkdir(mode=0o755, exist_ok=True)
 
-        self.logger.info(f'Bufr files found: {bufr_path_files}')
+        self.logger.info(f'obs_type_dir: {obs_type_dir}')
 
-        # Assert that some files were found
-        self.logger.assert_abort(len(bufr_path_files) != 0, f'No bufr ' +
-                                 f'files found in the source directory ' +
-                                 f'\'{bufr_path_files_pattern}\'')
+        if bufr_path_file.suffix == '.bufr_d':
+            bufr_file_parts = bufr_path_file.name.rsplit('.', 2)
+            base_name = bufr_file_parts[0]
+        else:
+            bufr_file_parts = [bufr_path_file.name]
+            base_name = bufr_path_file.name
 
-        # Convert Bufr Files (one by one)
-        # ------------------------------------------------------------------------------------------
+        # Output IODA filepath
+        if 'aircraft' in obs_builder_filename:
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{}'.format(
+                obs_spaces[0]) + '.tm00.nc4')
+        else:
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] +
+                                               '.{splits/obsType}.tm00.nc4')
+
+        existing_files = list(obs_type_dir.glob(f'{base_name}*'))
+        if len(existing_files) > 0:
+            self.logger.info(f'SKIPPING: Output files already exist for {bufr_path_file}: '
+                             f'{existing_files}')
+            return
+
+        subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
+                        '--output', ioda_file_target], cwd=spoc_script_path, check=True)
+
+        # Remove temporary obs_type directories and move ioda files to new directories
+        # for each obs space
+        for obs_space in obs_spaces:
+            obs_space_dir = ioda_dir / obs_space
+            self.logger.info(f'obs_space_dir: {obs_space_dir}')
+            obs_space_dir.mkdir(mode=0o755, exist_ok=True)
+            output_file = list(obs_type_dir.glob(f"*{base_name}*{obs_space}.tm00.nc4"))[0]
+            output_file.rename(obs_space_dir / output_file.name)
+
+        obs_type_dir.rmdir()
+
+    # --------------------------------------------------------------------------------------------------
+
+    def execute(self):
+        """
+        Converts collected bufr files to ioda using ObsBuilder python files
+        """
+
+        # Copy the mapping yaml's to the script path
+        # ------------------------------------------
+        spoc_exp_path = Path(self.experiment_path()) / 'spoc'
+        config_path = spoc_exp_path / 'dump' / 'config' / 'atmosphere'
+        script_path = spoc_exp_path / 'dump' / 'scripts' / 'atmosphere'
+
+        spoc_script_path = Path(self.cycle_dir()) / 'spoc'
+        spoc_script_path.mkdir(exist_ok=True)
+
+        for config_file in list(config_path.glob('*yaml')):
+            shutil.copy(config_file, spoc_script_path)
+
+        for script in list(script_path.glob('*py')):
+            shutil.copy(script, spoc_script_path)
+
+        bufr_dir = Path(self.cycle_dir()) / 'bufr'
+
+        ioda_dir = Path(self.cycle_dir()) / 'ioda'
+
+        ioda_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
+
+        # Get the list of bufr files to convert
+        bufr_path_files = list(bufr_dir.glob('*bufr*'))
+
         for bufr_path_file in bufr_path_files:
 
-            # Source file ~ bufr file to be converted
-            bufr_file_source_path = os.path.basename(bufr_path_file)
-            self.logger.info("\n" + "=" * 85)
-            self.logger.info(f"PROCESSING FILE: {bufr_file_source_path}")
+            conventional_builders = self.get_conventional_obs_builders(bufr_path_file)
 
-            # Target file ~ conversion output file name (should end in .nc4).
-            # Use the same name but replace the suffix.
-
-            # Obs Type directories
-            # find the obs type from file name
-            bufr_file_obs_type = self.find_obstype_match(bufr_file_source_path)
-
-            # -----------------------------------------------------
-            # --- CHECK: Skip if no matching obs type was found ---
-            if bufr_file_obs_type is None:
-                self.logger.info(f'SKIPPING: No valid observation type mapping'
-                                 ' found for {bufr_file_source_path}.')
+            if conventional_builders is not None:
+                for obs_type, obs_spaces, obs_builder_filename in conventional_builders:
+                    self.process_bufr_file_conventional(bufr_path_file, obs_type, obs_spaces,
+                                                        obs_builder_filename, spoc_script_path,
+                                                        ioda_dir)
                 continue
 
-            self.logger.info(f' MATCH FOUND: [ {bufr_file_obs_type} ] ')
+            obs_type = self.find_obstype_match(bufr_path_file)
+            obs_builder_file = self.get_obs_builder_file(spoc_script_path,
+                                                         obs_builder_dict[obs_type])
 
-            obs_type_dir = os.path.join(ioda_dir, bufr_file_obs_type)
-            os.makedirs(obs_type_dir, 0o755, exist_ok=True)
+            if obs_builder_file is None:
+                self.logger.info(f'SKIPPING: No valid observation type '
+                                 f'mapping found for {bufr_path_file}')
+                continue
+
+            self.logger.info(f' MATCH FOUND: [ {obs_builder_file} ]')
+
+            # Get the name of the output directory
+            obs_type_dir = ioda_dir / obs_type
+            obs_type_dir.mkdir(mode=0o755, exist_ok=True)
             self.logger.info(f'obs_type_dir: {obs_type_dir}')
 
-            if bufr_file_source_path.endswith('.bufr_d'):
-                # Strips off .tm00.bufr_d
-                bufr_file_parts = bufr_file_source_path.rsplit('.', 2)  # noqa
-                base_name = bufr_file_source_path.rsplit('.', 2)[0]  # noqa
+            if bufr_path_file.suffix == '.bufr_d':
+                bufr_file_parts = bufr_path_file.name.rsplit('.', 2)
+                base_name = bufr_path_file.name.rsplit('.', 2)[0]
             else:
-                # Use the full name for files like gdas1.20231010.t00z.prepbufr.acft_profiles
-                bufr_file_parts = bufr_file_source_path
-                base_name = bufr_file_source_path
+                bufr_file_parts = bufr_path_file.name
+                base_name = bufr_path_file.name
 
-            ioda_file_target_name = bufr_file_parts[0] + '.{splits/satId}.tm00.nc4'
-            ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
+            # Output IODA filepath
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{splits/satId}.tm00.nc4')
 
-            # --------------------------------------------------------------------
-            # --- CHECK: Skip if output files already exist for this bufr file ---
-            # Check if any .nc4 files matching the base filename already exist in obs_type_dir
-            existing_files_pattern = os.path.join(obs_type_dir, f"{base_name}*")
-            self.logger.info(f'Checking existing_files_pattern: {existing_files_pattern}')
-            existing_files = glob.glob(existing_files_pattern)
-
+            existing_files = list(obs_type_dir.glob(f'{base_name}*'))
             if len(existing_files) > 0:
-                self.logger.info('SKIPPING: Output files already exist for '
-                                 f'{bufr_file_source_path} {existing_files}')
+                self.logger.info(f'SKIPPING: Output files already exist for {bufr_path_file}: '
+                                 f'{existing_files}')
                 continue
 
-            bufr2ioda_conv_yaml = self.get_bufr_mapping_yaml(bufr_path_file, ioda_file_target_path,
-                                                             path_to_ioda_conv_yaml_tmpl_dir)
-            self.logger.info(f'bufr_path_file: {bufr_path_file}')
-            self.logger.info(f'bufr2ioda_conv_yaml: {bufr2ioda_conv_yaml}')
+            subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
+                            '--output', ioda_file_target], cwd=spoc_script_path, check=True)
 
-            # Execute CLI Conversion
-            # --------------------------------------------------------------------------------------
-
-            # Jedi executable name (IODA Converter Name)
-            # ------------------------------------------
-            jedi_executable = os.path.join(self.experiment_path(), 'jedi_bundle',
-                                           'build', 'bin', 'bufr2netcdf.x')
-            cli_execution_line = (f"{jedi_executable} --no-gather "
-                                  f"{bufr_path_file} {bufr2ioda_conv_yaml}")
-
-            # Log a summary of the execution variables for this specific file
-            self.logger.info(
-                f"\n"
-                f"--- Conversion Execution Summary ---\n"
-                f"  obs_type              : {bufr_file_obs_type}\n"
-                f"  jedi_executable       : {jedi_executable}\n"
-                f"  input_bufr_file       : {bufr_path_file}\n"
-                f"  mapping_yaml_file     : {bufr2ioda_conv_yaml}\n"
-                f"  ioda_target_path      : {ioda_file_target_path}\n"
-                f"  full_cli_execution    : {cli_execution_line}\n"
-                f"------------------------------------"
-            )
-
-            # CLI Command Structure
-            # ---------------------
-            # bufr2netcdf.x [bufr file] [bufr_mapping.yaml]     <---- omitting the target path
-
-            try:
-                subprocess.run([jedi_executable, '--no-gather', bufr_path_file,
-                                bufr2ioda_conv_yaml], check=True)
-
-            except FileNotFoundError:
-                # This ONLY triggers if 'bufr2netcdf.x' is not found in the system PATH
-                self.logger.abort(f'Error: Executable "{jedi_executable}" not found.',
-                                  exception=FileNotFoundError)
-
-            except subprocess.CalledProcessError as e:
-                # This triggers if bufr2netcdf.x crashes, or if it can't find files passed to it
-                self.logger.abort(f'Conversion failed! {jedi_executable} returned exit status '
-                                  f'{e.returncode}.', exception=subprocess.CalledProcessError)
-
-            else:
-                self.logger.info(f'Conversion to ioda complete for {bufr_file_obs_type}.')
-
-            # Rename converted output files
-            # from bufr2netcdf.x standard name to name based on the input bufr file.
-            # current work around for {splits/satid} functionality
-            # --------------------------------------------------------------------------------------
-            try:
-                # moving the output to ioda/{obs_type_dir}
-                temporary_files_pattern = os.path.join(os.getcwd(), 'temporary_*.nc')
-                self.logger.info(f'Moving converted {bufr_file_obs_type} files to {obs_type_dir}')
-                temporary_ioda_files = glob.glob(temporary_files_pattern)
-                for temporary_ioda_file in temporary_ioda_files:
-                    shutil.move(str(temporary_ioda_file), str(obs_type_dir))
-
-                # change file names
-                # Get list of all files named temporary_*.nc and rename them
-                # based on the name of the original bufr file
-                temporary_files_pattern = os.path.join(obs_type_dir, 'temporary_*.nc')
-                temporary_ioda_files = glob.glob(temporary_files_pattern)
-                for temporary_ioda_file in temporary_ioda_files:
-                    if os.path.exists(temporary_ioda_file):
-
-                        base_temp_name = os.path.basename(temporary_ioda_file)
-
-                        # Example: 'temporary_cosmic2_755_1778082291.nc'
-                        # Becomes: ['temporary', 'cosmic2', '755', '1778082291.nc']
-                        parts = base_temp_name.split('_')
-                        split_satid = '_'.join(parts[1:-1])  # 'cosmic2', '755',
-
-                        # Construct the new filename
-                        new_filename = bufr_file_parts[0] + '.' + split_satid + '.tm00.nc4'
-                        new_file_path = os.path.join(obs_type_dir, new_filename)
-
-                        # Log a summary of the renaming variables for this file
-                        self.logger.info(
-                            f"\n"
-                            f"--- File Renaming Summary ---\n"
-                            f"  temp_file_source : {temporary_ioda_file}\n"
-                            f"  extracted_satid  : {split_satid}\n"
-                            f"  base_bufr_name   : {bufr_file_parts[0]}\n"
-                            f"  obs_type_dir    : {obs_type_dir}\n"
-                            f"  new_filename    : {new_filename}\n"
-                            f"  new_file_path    : {new_file_path}\n"
-                            f"-----------------------------"
-                        )
-
-                        # Rename or remove if already exists
-                        if not os.path.exists(new_file_path):
-                            os.rename(temporary_ioda_file, new_file_path)
-                            self.logger.info(
-                                f'File {temporary_ioda_file} renamed to {new_filename}.')
-                        else:
-                            self.logger.info(
-                                f'File already exists {new_file_path}. File will not be renamed.')
-
-                            # Clean up the orphaned temporary file so it doesn't take up space
-                            try:
-                                os.remove(temporary_ioda_file)
-                                self.logger.info('Cleaned up orphaned temporary file: '
-                                                 f'{temporary_ioda_file}')
-                            except OSError as e:
-                                self.logger.info(f'Failed to delete temporary file '
-                                                 f'{temporary_ioda_file}: {e}')
-
-            except FileNotFoundError:
-                self.logger.info(f'Error: executable = "{jedi_executable}" not found.')
-            else:
-                self.logger.info(
-                    "\n"
-                    f"Current bufr_to_ioda workflow: {jedi_executable} --no-gather "
-                    f"{bufr_path_file} {bufr2ioda_conv_yaml}.\n"
-                    "Will make the ioda files in the current directory. bufr_to_ioda.py "
-                    "will then move them to the run directory and rename them.\n"
-                    "This current method is a work around for {splits/satid} functionality.\n"
-                    " --------- "
-                )
 # --------------------------------------------------------------------------------------------------
