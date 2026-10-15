@@ -124,8 +124,12 @@ obs post filters:
         name: ObsFunction/ObsErrorFactorTopoRad
         channels: *atms_n20_channels
         options:
-          sensor: *Sensor_ID
+          sensor: microwave
           channels: *atms_n20_channels
+          height groups:
+          - channels: 1-7, 16-22
+          - channels: 8
+            height: 4000
 # Transmittance Top Check
   - filter: BlackList
     filter variables:
@@ -180,7 +184,11 @@ obs post filters:
           channels: *atms_n20_channels
           options:
             channels: *atms_n20_channels
-            sensor: *Sensor_ID
+            sensor: microwave
+            height groups:
+            - channels: 1-7, 16-22
+            - channels: 8
+              height: 4000
         error parameter vector: *atms_n20_oberr
         obserr_bound_max: [4.5, 4.5, 3.0, 3.0, 1.0,
                            1.0, 1.0, 1.0, 1.0, 1.0,
