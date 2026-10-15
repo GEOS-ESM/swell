@@ -186,10 +186,11 @@ class PrepCoupledGeosRunDir(taskBase):
         # -----------------------------------------------------------------------------------
         if cylc_nodes and gcm_nodes_required:
             if cylc_nodes < gcm_nodes_required:
-                self.logger.abort('Not enough nodes requested in flow.cylc for RunGeos '
-                                  f'({cylc_nodes}), compared to those required in gcm_run.j '
-                                  f'({gcm_nodes_required}). This will cause RunGeos to fail. '
-                                  'Please fix flow.cylc, then re-launch the suite.')
+                self.logger.abort('Insufficient amount of nodes were requested in slurmfile '
+                                  f'for RunGeos. Needed: ({gcm_nodes_required}), Requested: '
+                                  f'({cylc_nodes}). Please see the link for correction: '
+                                  'https://geos-esm.github.io/swell/#/configuration_reference/'
+                                  'slurm_configuration?id=slurm-configuration')
             else:
                 self.logger.info('Proper amount of nodes set in flow.cylc')
 
