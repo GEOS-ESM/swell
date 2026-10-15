@@ -1,100 +1,126 @@
-# R2D2 v3 Credentials Configuration
+# R2D2 v3 credentials and server selection
 
-This document explains how to configure R2D2 v3 credentials for SWELL workflows.
+Swell loads R2D2 credentials from `~/.swell/r2d2_credentials.yaml`. The file can contain
+multiple named profiles, allowing an experiment to select a different R2D2 server without
+changing exported environment variables.
 
-## Overview
+## Create the credentials file
 
-SWELL now uses R2D2 v3 for metadata-driven data storage and retrieval. R2D2 v3 requires authentication credentials to access the centralized API. SWELL automatically loads these credentials from a YAML configuration file.
-
-## Quick Setup
-
-1. **Create the credentials directory:**
-   ```bash
-   mkdir -p ~/.swell
-   ```
-
-2. **Create the credentials file:**
-   ```bash
-   cp /path/to/swell/r2d2_credentials.yaml ~/.swell/r2d2_credentials.yaml
-   ```
-
-3. **Edit with your credentials:**
-   ```bash
-   vim ~/.swell/r2d2_credentials.yaml
-   ```
-
-4. **Set secure permissions:**
-   ```bash
-   chmod 600 ~/.swell/r2d2_credentials.yaml
-   ```
-
-## Credentials File Format
-
-Create `~/.swell/r2d2_credentials.yaml` with the following structure:
-
-```yaml
-# R2D2 v3 credentials file
-# Save this as ~/.swell/r2d2_credentials.yaml
-# Set permissions: chmod 600 ~/.swell/r2d2_credentials.yaml
-
-# Required credentials
-user: your_username              # Your R2D2 username
-api_key: your_api_key            # Your R2D2 API key
-
-# Platform-specific values (automatically determined by SWELL with an option to use YAML-first)
-# host: discover-gmao            # Automatically set based on platform
-# compiler: intel                # Automatically set based on platform
-
+```bash
+mkdir -p ~/.swell
+touch ~/.swell/r2d2_credentials.yaml
+chmod 600 ~/.swell/r2d2_credentials.yaml
 ```
 
-## Required Fields
+Add one named block for each R2D2 server:
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `user` | Your R2D2 username | `jdoe` |
-| `api_key` | Your R2D2 API authentication key | `abcd1234-ef56-7890-abcd-1234567890ab` |
+```yaml
+jcsda_server:
+  user: <jcsda-user>
+  api_key: <jcsda-api-key>
+  r2d2_host: discover-gmao
+  r2d2_compiler: intel
 
-## Platform-Specific Fields (Automatically Set)
+gmao_server:
+  user: <gmao-user>
+  api_key: <gmao-api-key>
+  r2d2_host: discover
+  r2d2_compiler: intel
+  r2d2_server_host: "http://<ec2-hostname-or-ip>"
+  r2d2_server_port: "8080"
+```
 
-| Field | Description | NCCS Discover Value |
-|-------|-------------|---------------------|
-| `host` | Compute host identifier | `discover-gmao` |
-| `compiler` | Compiler type used | `intel` |
+`r2d2_server_host` and `r2d2_server_port` are not needed for the JCSDA profile because the
+R2D2 client uses the production JCSDA API by default.
 
-**Important**: `host` and `compiler` are automatically determined by SWELL based on your platform configuration. You can also set these manually in your credentials file.
+AWS credentials may be added to a profile when that server exposes an S3 datastore:
 
-### Loading Precedence
+```yaml
+  aws_access_key_id: <access-key-id>
+  aws_secret_access_key: <secret-access-key>
+  aws_session_token: <session-token>  # only when temporary credentials are used
+```
 
-The credential loading follows this priority order:
+## Select a different server for an experiment
 
-1. **Environment Variables** (highest priority)
-2. **YAML Configuration File** 
-3. **Platform Detection** (for host/compiler only)
+Set the profile name in an override file:
 
-**For host and compiler specifically:**
-- YAML `host`/`compiler` values override platform detection
-- Platform detection is used as fallback when not specified in YAML
+```yaml
+r2d2_server: gmao_server
+```
 
-### Platform-Specific Configuration
+Then create the experiment with that override:
 
-SWELL automatically determines `host` and `compiler` based on your platform:
+```bash
+swell create <suite-name> --override override.yaml
+```
 
-| Platform | R2D2 Host | R2D2 Compiler | Notes |
-|----------|-----------|---------------|-------|
-| `nccs_discover_sles15` | `discover-gmao` | `intel` | NCCS Discover SLES15 |
-| `nccs_discover_cascade` | `discover-gmao` | `intel` | NCCS Discover Cascade |
-<!-- | `aws` | `aws-gmao` | `intel` | AWS cloud platform |
-| `generic` | `None` | `None` | Fallback to YAML/env vars | -->
+Every Swell task that communicates with R2D2 uses the selected profile, including observation,
+background, forecast, diagnostic, and restart fetch/store tasks.
 
+The profile is selected in this order:
 
-## Environment Variables Set
+1. `r2d2_server` in the experiment configuration
+2. The `R2D2_SERVER` environment variable
+3. The first named profile in `~/.swell/r2d2_credentials.yaml`
 
-When loaded, the following environment variables are set:
+Setting `r2d2_server` explicitly is recommended because relying on the order of YAML entries can
+select the wrong server after the file is reorganized.
 
-- `R2D2_USER`: Your R2D2 username
-- `R2D2_API_KEY`: Your R2D2 API key  
-- `R2D2_HOST`: Compute host name
-- `R2D2_COMPILER`: Compiler type
+## Configuration precedence
 
-<!-- - `R2D2_SERVER_HOST`: (Optional) API server override
-- `R2D2_SERVER_PORT`: (Optional) API server port override -->
+For values inside the selected profile, Swell uses this precedence:
+
+1. An existing environment variable
+2. The selected YAML profile
+3. The detected platform default, for `R2D2_HOST` and `R2D2_COMPILER`
+
+The relevant environment variables are:
+
+| Environment variable | Profile key | Purpose |
+|---|---|---|
+| `R2D2_USER` | `user` | R2D2 username |
+| `R2D2_API_KEY` | `api_key` | API authentication key |
+| `R2D2_HOST` | `r2d2_host` | Compute-host identity sent to R2D2 |
+| `R2D2_COMPILER` | `r2d2_compiler` | Compiler identity sent to R2D2 |
+| `R2D2_SERVER_HOST` | `r2d2_server_host` | R2D2 API URL |
+| `R2D2_SERVER_PORT` | `r2d2_server_port` | R2D2 API port |
+
+Existing environment variables are deliberately not overwritten. Before selecting a different
+profile, unset any conflicting values that should come from the profile:
+
+```bash
+unset R2D2_USER R2D2_API_KEY R2D2_HOST R2D2_COMPILER
+unset R2D2_SERVER_HOST R2D2_SERVER_PORT
+```
+
+On Discover, the platform defaults for `R2D2_HOST` and `R2D2_COMPILER` are
+`discover-gmao` and `intel`. A profile can override these defaults, as `gmao_server` does above.
+
+## Datastore selection
+
+Normally, leave `r2d2_datastore` unset. R2D2 selects a datastore registered to the compute host
+on the selected server according to its data-hub and priority configuration. This keeps datastore
+placement in R2D2 rather than embedding storage policy in a Swell experiment.
+
+`r2d2_datastore` remains available as an advanced override for testing or administrative work:
+
+```yaml
+r2d2_datastore: <registered-datastore-name>
+```
+
+Only use an explicit datastore after confirming that it exists on the selected server and is
+available to the configured compute host.
+
+## Legacy single-profile files
+
+Swell still accepts the original root-level format:
+
+```yaml
+user: <user>
+api_key: <api-key>
+r2d2_host: discover-gmao
+r2d2_compiler: intel
+```
+
+This format cannot switch between named servers. Use named profiles for new configurations.

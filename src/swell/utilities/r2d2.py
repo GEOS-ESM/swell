@@ -152,7 +152,8 @@ def load_r2d2_credentials(
         r2d2_server: Server/profile name in the credentials YAML
             (e.g. 'gmao', 'jcsda'). Selects which named credential block to load.
             If not set, uses ``R2D2_SERVER`` env var if available.
-            If neither is set, uses the root of the YAML file.
+            If neither is set, selects the first named profile. Legacy files with
+            credentials at the YAML root continue to use the root mapping.
     """
     yaml_path = os.path.expanduser(yaml_path)
 
