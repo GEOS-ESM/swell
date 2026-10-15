@@ -259,6 +259,10 @@ ioda instrument names:
     full name: ADT SWOT Nadir
     provider : odas
     inst type: altimeter
+  - ioda name: adt_swot_karin
+    full name: ADT SWOT KaRIn
+    provider : aviso
+    inst type: altimeter
   - ioda name: rads_adt_3a
     full name: RADS ADT Sentinel-3A
     provider : gdas_marine
