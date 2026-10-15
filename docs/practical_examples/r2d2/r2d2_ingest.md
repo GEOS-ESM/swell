@@ -195,6 +195,57 @@ fields to override in that observation's download YAML. `DownloadObs` applies
 these overrides on top of the loaded YAML immediately before downloading, so
 any key present in the download YAML can be overridden this way.
 
+##### Using a local archive instead of downloading
+
+`retrieval_method: local` links granule files that already exist on a local filesystem (for
+example on NCCS Discover) into the cycle download directory instead of downloading them. The
+files are used as is; tar files are not supported and must be extracted beforehand. It is not
+the default of any observation; select it with an override:
+
+```python
+qd.download_obs_config_overrides({
+    'mls_o3_nrt': {
+        'retrieval_method': 'local',
+        'local_file_template': '/discover/.../MLS_nrt/Y%Y/M%m/MLS-Aura_L2GP-O3_v05-*-NRT-*-c01_%Yd%jt*.he5',
+    }
+})
+```
+
+`local_file_template` is a `strftime` template (`%Y`, `%m`, `%d`, `%j` = day of year) resolved
+for every day touched by the search window; `*` wildcards are allowed. If
+`granule_start_regex`/`granule_start_format` are set in the download YAML, only granules
+starting inside the window are kept.
+
+##### Aura MLS ozone (`mls_o3_nrt`, `mls_o3_res`)
+
+Two observations share the converter `mls_o3_nc2ioda.py`. Pick one by listing it in
+`obs_to_download` and `obs_to_ingest` (each is stored in R2D2 under its own observation type):
+
+| Observation | Product | Files | Availability |
+|-------------|---------|-------|--------------|
+| `mls_o3_nrt` | NRT v5, GES DISC `Aura_NRT/ML2O3_NRT.005` | ~17 min chunks every 15 min | Last ~7 days online; older files must come from a local copy (e.g. on Discover) |
+| `mls_o3_res` | Research, v5 (`ML2O3.005`) by default | one file per UTC day | Older dates |
+
+A DA window that crosses midnight (e.g. 21z-03z) downloads two daily files for the research
+product. `ConvertObsToIoda` passes the DA window to the converter with the `{window_begin}` and
+`{window_end}` placeholders of `extra_flags`, so only profiles inside the window are written.
+`mls_o3_res` (v5) is part of the default `ingest_obs_cf` suite.
+
+To use research v6 instead of v5, override the download keys; `ConvertObsToIoda` applies the same
+overrides, and `{mls_version}` in its `extra_flags` is taken from the (overridden) download YAML:
+
+```python
+qd.download_obs_config_overrides({
+    'mls_o3_res': {
+        'remote_path_template': '/data/Aura_MLS_Level2/ML2O3.006/YYYY/',
+        'filename_pattern': 'MLS-Aura_L2GP-O3_v06-*-c01_YYYYdJJJ.he5',
+        'mls_version': 'v6',
+    }
+})
+```
+
+Note that v5 and v6 data are both stored under the `mls_o3_res` observation type.
+
 ### Step 4: Create the converter YAML
 
 Create `src/swell/configuration/jedi/interfaces/<model>/convert_observations/my_obs.yaml`:
