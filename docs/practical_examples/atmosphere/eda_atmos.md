@@ -74,16 +74,16 @@ geos_atmosphere
 ├── analysis
 │   ├── mem001
 │   │   ├── eda.amsua_metop-b.20231009T210000Z.nc4
-│   │   ├── eda.ana.mem001.20231010_000000z.nc4
+│   │   ├── eda_atmos.ana.ceta.20231010_000000z.nc4
 │   │   ├── eda.iasi_metop-b.20231009T210000Z.nc4
-│   │   ├── eda.inc_iter1.mem001.20231010_000000z.nc4
+│   │   ├── eda_atmos.inc_iter1.ceta.20231010_000000z.nc4
 │   │   ├── eda.sfcship.20231009T210000Z.nc4
 │   │   └── eda.sondes.20231009T210000Z.nc4
 │   └── mem002
 │       ├── eda.amsua_metop-b.20231009T210000Z.nc4
-│       ├── eda.ana.mem002.20231010_000000z.nc4
+│       ├── eda_atmos.ana.ceta.20231010_000000z.nc4
 │       ├── eda.iasi_metop-b.20231009T210000Z.nc4
-│       ├── eda.inc_iter1.mem002.20231010_000000z.nc4
+│       ├── eda_atmos.inc_iter1.ceta.20231010_000000z.nc4
 │       ├── eda.sfcship.20231009T210000Z.nc4
 │       └── eda.sondes.20231009T210000Z.nc4
 
@@ -108,10 +108,10 @@ geos.prior.mean.ll.20231010_000000z.nc4     [... in LL grid]
 geos.prior.variance.20231010_000000z.nc4    [variance of ebkg in CS grid]
 geos.prior.variance.ll.20231010_000000z.nc4 [... in LL grid]
 ...
-eda.ana.mean.20231010_000000z.nc4           [mean of analysis in CS grid]
-eda.ana.mean.ll.20231010_000000z.nc4        [... in LL grid]
-eda.ana.variance.20231010_000000z.nc4       [variance of anlaysis in CS grid]
-eda.ana.variance.ll.20231010_000000z.nc4    [... in LL grid]
+eda_atmos.ana_mean.ceta.20231010_000000z.nc4           [mean of analysis in CS grid]
+eda_atmos.ana_mean.eta.20231010_000000z.nc4        [... in LL grid]
+eda_atmos.ana_variance.ceta.20231010_000000z.nc4       [variance of anlaysis in CS grid]
+eda_atmos.ana.variance.eta.20231010_000000z.nc4    [... in LL grid]
 ...
 eda.mean-inc.20231010_000000z.nc4           [mean increment in LL grid]
 eda.mean-inc.cs.20231010_000000z.nc4        [... in CS grid]
@@ -129,11 +129,11 @@ The output directory will look like
 ```
 analysis/
 ├── mem001
-│   ├── eda.ana.mem001.20231010_000000z.nc4
-│   ├── eda.inc_iter1.mem001.20231010_000000z.nc4
+│   ├── eda_atmos.ana.ceta.20231010_000000z.nc4
+│   ├── eda_atmos.inc_iter1.ceta.20231010_000000z.nc4
 └── mem002
-    ├── eda.ana.mem002.20231010_000000z.nc4
-    ├── eda.inc_iter1.mem002.20231010_000000z.nc4
+    ├── eda_atmos.ana.ceta.20231010_000000z.nc4
+    ├── eda_atmos.inc_iter1.ceta.20231010_000000z.nc4
 ```
 
 
