@@ -19,6 +19,7 @@ from enum import Enum
 
 _suite = "localensembleda"
 
+
 class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
@@ -53,7 +54,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean(False),
             qd.local_ensemble_save_posterior_mean_increment(False),
             qd.local_ensemble_save_posterior_ensemble(True),
-            qd.local_ensemble_save_posterior_ensemble_increments(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(False),
             qd.local_ensemble_do_posterior_observer(False),
             qd.obs_thinning_rej_fraction(0.98),
             qd.observations([
@@ -117,7 +118,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean(False),
             qd.local_ensemble_save_posterior_mean_increment(False),
             qd.local_ensemble_save_posterior_ensemble(True),
-            qd.local_ensemble_save_posterior_ensemble_increments(True),
+            qd.local_ensemble_save_posterior_ensemble_increments(False),
             qd.local_ensemble_do_posterior_observer(False),
             qd.obs_thinning_rej_fraction(0.75),
             qd.observations([

@@ -10,10 +10,10 @@
 
 import os
 from ruamel.yaml import YAML
+import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_key
 
 # --------------------------------------------------------------------------------------------------
@@ -224,14 +224,23 @@ class RunJediEtkfSolver(taskBase):
                                             jedi_executable)
         np = eval(str(model_component_meta['total_processors']))
         perhost = self.config.perhost(None)
+
+        # explicit command
+        #
+        mpi_command = "mpirun"
+        if not (perhost is None or perhost == "None"):
+            mpi_command += f" -perhost {perhost}"
+        mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+
+        cmd = f"cd {self.cycle_dir()} \n"
+        cmd += mpi_command
+
         if not generate_yaml_and_exit:
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file, perhost=perhost)
+            # TODO: memory issue with IO write (ana+inc)
+            # run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+            #               jedi_config_file, output_log_file, perhost=perhost)
+            subprocess.run(cmd, shell=True, check=True)
         else:
-            mpi_command = "mpirun"
-            if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 

@@ -11,6 +11,7 @@
 import os
 from importlib import resources
 from ruamel.yaml import YAML
+import subprocess
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.yaml_utils import replace_key
@@ -257,6 +258,15 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
+        # explicit command
+        #
+        mpi_command = "mpirun"
+        if not (perhost is None or perhost == "None"):
+            mpi_command += f" -perhost {perhost}"
+        mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+        cmd = f"cd {self.cycle_dir()} \n"
+        cmd += mpi_command
+
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
@@ -268,13 +278,12 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                jedi_ensmeanvariance_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
             else:
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file, perhost=perhost)
+                # TODO: memory issue with IO write (ana+inc)
+                #   run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                #   jedi_config_file, output_log_file, perhost=perhost)
+                #
+                subprocess.run(cmd, shell=True, check=True)
         else:
-            mpi_command = "mpirun"
-            if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
