@@ -1,5 +1,6 @@
 # Aura MLS Ozone (O3) L2GP, near-real-time (NRT) product, version 5
-# Source: NASA GES DISC NRT archive (Earthdata authentication required in ~/.netrc)
+# Source: NASA CMR search + GES DISC HTTPS download
+#         (Earthdata authentication required in ~/.netrc)
 #
 # NRT data is only kept online for about 7 days. For older dates use the
 # research product (mls_o3_res, v5 or v6), or local files on Discover
@@ -12,10 +13,9 @@
 
 # Requires earthdata token in `~/.netrc`.
 # Follow the instruction in the documentations
-retrieval_method: https
-remote_host: https://discnrt1.gesdisc.eosdis.nasa.gov
-remote_path_template: /data/Aura_NRT/ML2O3_NRT.005/YYYY/JJJ/
-filename_pattern: MLS-Aura_L2GP-O3_v05-*-NRT-*-c01_YYYYdJJJtHH*.he5
+retrieval_method: cmr
+cmr_short_name: ML2O3_NRT
+cmr_version: '005'
 
 # Chunks are ~17 minutes long: also pick up the chunk starting just before
 # window_begin. The start time is read from the file name (day of year + HHMM)
