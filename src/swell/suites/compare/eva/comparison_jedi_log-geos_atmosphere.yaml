@@ -1,27 +1,27 @@
 datasets:
 
 - type: JediLog
-  collection_name: JediLogTest_1
-  jedi_log_to_parse: '{{cycle_dir_1}}/jedi_variational_log.log'
+  collection_name: JediLogTest_exp
+  jedi_log_to_parse: '{{cycle_dir_exp}}/jedi_variational_log.log'
   data_to_parse:
     convergence: true
 
 - type: JediLog
-  collection_name: JediLogTest_2
-  jedi_log_to_parse: '{{cycle_dir_2}}/jedi_variational_log.log'
+  collection_name: JediLogTest_ctl
+  jedi_log_to_parse: '{{cycle_dir_ctl}}/jedi_variational_log.log'
   data_to_parse:
     convergence: true
 
 transforms:
 - transform: arithmetic
-  new name: JediLogTest_1::convergence::${variable}_log
-  equals: log(JediLogTest_1::convergence::${variable})
+  new name: JediLogTest_exp::convergence::${variable}_log
+  equals: log(JediLogTest_exp::convergence::${variable})
   for:
     variable: [residual_norm, norm_reduction]
 
 - transform: arithmetic
-  new name: JediLogTest_2::convergence::${variable}_log
-  equals: log(JediLogTest_2::convergence::${variable})
+  new name: JediLogTest_ctl::convergence::${variable}_log
+  equals: log(JediLogTest_ctl::convergence::${variable})
   for:
     variable: [residual_norm, norm_reduction]
 
@@ -41,32 +41,32 @@ graphics:
         layers:
         - type: LinePlot
           x:
-            variable: JediLogTest_1::convergence::total_iteration
+            variable: JediLogTest_exp::convergence::total_iteration
           y:
-            variable: JediLogTest_1::convergence::residual_norm_log
+            variable: JediLogTest_exp::convergence::residual_norm_log
           color: 'red'
-          label: '{{experiment_tag_1}} Log(residual norm)'
+          label: '{{experiment_tag_exp}} Log(residual norm)'
         - type: LinePlot
           x:
-            variable: JediLogTest_2::convergence::total_iteration
+            variable: JediLogTest_ctl::convergence::total_iteration
           y:
-            variable: JediLogTest_2::convergence::residual_norm_log
+            variable: JediLogTest_ctl::convergence::residual_norm_log
           color: 'blue'
-          label: '{{experiment_tag_2}} Log(residual norm)'
+          label: '{{experiment_tag_ctl}} Log(residual norm)'
         - type: LinePlot
           x:
-            variable: JediLogTest_1::convergence::total_iteration
+            variable: JediLogTest_exp::convergence::total_iteration
           y:
-            variable: JediLogTest_1::convergence::norm_reduction_log
+            variable: JediLogTest_exp::convergence::norm_reduction_log
           color: 'yellow'
-          label: '{{experiment_tag_1}} Log norm reduction'
+          label: '{{experiment_tag_exp}} Log norm reduction'
         - type: LinePlot
           x:
-            variable: JediLogTest_2::convergence::total_iteration
+            variable: JediLogTest_ctl::convergence::total_iteration
           y:
-            variable: JediLogTest_2::convergence::norm_reduction_log
+            variable: JediLogTest_ctl::convergence::norm_reduction_log
           color: 'green'
-          label: '{{experiment_tag_1}} Log norm reduction'
+          label: '{{experiment_tag_exp}} Log norm reduction'
 
   - figure:
       title: 'Cost Function Plot'
@@ -75,39 +75,39 @@ graphics:
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Quadratic Cost Function'
         add_legend:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}}) diff'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}}) diff'
         layers:
         - type: LinePlot
-          label: '{{experiment_tag_1}} jb'
+          label: '{{experiment_tag_exp}} jb'
           x:
-            variable: JediLogTest_1::convergence::total_iteration
+            variable: JediLogTest_exp::convergence::total_iteration
           y:
-            variable: JediLogTest_1::convergence::jb
+            variable: JediLogTest_exp::convergence::jb
           color: 'red'
           linestyle: '--'
           markersize: 2
         - type: LinePlot
-          label: '{{experiment_tag_1}} jojc'
+          label: '{{experiment_tag_exp}} jojc'
           x:
-            variable: JediLogTest_1::convergence::total_iteration
+            variable: JediLogTest_exp::convergence::total_iteration
           y:
-            variable: JediLogTest_1::convergence::jojc
+            variable: JediLogTest_exp::convergence::jojc
           color: 'blue'
           markersize: 2
         - type: LinePlot
-          label: '{{experiment_tag_2}} jb'
+          label: '{{experiment_tag_ctl}} jb'
           x:
-            variable: JediLogTest_2::convergence::total_iteration
+            variable: JediLogTest_ctl::convergence::total_iteration
           y:
-            variable: JediLogTest_2::convergence::jb
+            variable: JediLogTest_ctl::convergence::jb
           color: 'green'
           linestyle: '--'
           markersize: 2
         - type: LinePlot
-          label: '{{experiment_tag_2}} jojc'
+          label: '{{experiment_tag_ctl}} jojc'
           x:
-            variable: JediLogTest_2::convergence::total_iteration
+            variable: JediLogTest_ctl::convergence::total_iteration
           y:
-            variable: JediLogTest_2::convergence::jojc
+            variable: JediLogTest_ctl::convergence::jojc
           color: 'black'
           markersize: 2

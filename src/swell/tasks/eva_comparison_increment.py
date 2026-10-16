@@ -52,15 +52,15 @@ class EvaComparisonIncrement(taskBase):
         print(experiment_paths)
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
-        experiment_tag_2 = list(experiment_tag_paths.keys())[1]
+        experiment_tag_ctl = list(experiment_tag_paths.keys())[0]
+        experiment_tag_exp = list(experiment_tag_paths.keys())[1]
 
-        experiment_path_1 = list(experiment_tag_paths.values())[0]
-        experiment_path_2 = list(experiment_tag_paths.values())[1]
+        experiment_path_ctl = list(experiment_tag_paths.values())[0]
+        experiment_path_exp = list(experiment_tag_paths.values())[1]
 
-        experiment_id_1, experiment_id_2 = experiment_ids(experiment_paths)
+        experiment_id_ctl, experiment_id_exp = experiment_ids(experiment_paths)
 
-        window_type, window_length = self.window_info_from_config(experiment_path_1)
+        window_type, window_length = self.window_info_from_config(experiment_path_ctl)
 
         # Create the cycle dir for this experiment
         cycle_dir = self.cycle_dir()
@@ -93,12 +93,12 @@ class EvaComparisonIncrement(taskBase):
         # which is currenly manually set in varincrement1.yaml
         # For now we are only plotting the first one
         iter_no = 1
-        incr_file_1 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-        incr_file_2 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        incr_file_ctl = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        incr_file_exp = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
 
         if window_type == '4D' and self.get_model() == 'geos_atmosphere':
-            incr_file_1 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
-            incr_file_2 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
+            incr_file_ctl = f'*.increment-iter{iter_no}.{window_begin}.nc4'
+            incr_file_exp = f'*.increment-iter{iter_no}.{window_begin}.nc4'
 
         # Create dictionary used to override the eva config
         eva_override = {}
@@ -106,33 +106,33 @@ class EvaComparisonIncrement(taskBase):
         # Soca case
         if model == 'geos_marine':
             ocn_cycle_time = cycle_time_dto.strftime('%Y-%m-%dT%H:%M:%SZ')
-            incr_file_1 = f'ocn.*.incr.{ocn_cycle_time}.nc'
-            incr_file_2 = f'ocn.*.incr.{ocn_cycle_time}.nc'
+            incr_file_ctl = f'ocn.*.incr.{ocn_cycle_time}.nc'
+            incr_file_exp = f'ocn.*.incr.{ocn_cycle_time}.nc'
 
-        cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
+        cycle_dir_ctl = os.path.join(os.path.dirname(experiment_path_ctl), '..', 'run',
                                    self.__datetime__.string_directory(), self.get_model())
-        cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
+        cycle_dir_exp = os.path.join(os.path.dirname(experiment_path_exp), '..', 'run',
                                    self.__datetime__.string_directory(), self.get_model())
 
         # Files to fill the template in the config file
-        increment_file_path_1 = glob.glob(os.path.join(cycle_dir_1, incr_file_1))[0]
-        increment_file_path_2 = glob.glob(os.path.join(cycle_dir_2, incr_file_2))[0]
+        increment_file_path_ctl = glob.glob(os.path.join(cycle_dir_ctl, incr_file_ctl))[0]
+        increment_file_path_exp = glob.glob(os.path.join(cycle_dir_exp, incr_file_exp))[0]
 
         eva_override['cycle_dir'] = cycle_dir
         eva_override['window_begin'] = window_begin
 
-        eva_override['cycle_dir_1'] = cycle_dir_1
-        eva_override['cycle_dir_2'] = cycle_dir_2
+        eva_override['cycle_dir_ctl'] = cycle_dir_ctl
+        eva_override['cycle_dir_exp'] = cycle_dir_exp
 
         eva_override['cycle_time'] = cycle_time_reformat
-        eva_override['increment_file_path_1'] = increment_file_path_1
-        eva_override['increment_file_path_2'] = increment_file_path_2
+        eva_override['increment_file_path_ctl'] = increment_file_path_ctl
+        eva_override['increment_file_path_exp'] = increment_file_path_exp
 
-        eva_override['experiment_tag_1'] = experiment_tag_1
-        eva_override['experiment_tag_2'] = experiment_tag_2
+        eva_override['experiment_tag_ctl'] = experiment_tag_ctl
+        eva_override['experiment_tag_exp'] = experiment_tag_exp
 
-        eva_override['experiment_id_1'] = experiment_id_1
-        eva_override['experiment_id_2'] = experiment_id_2
+        eva_override['experiment_id_ctl'] = experiment_id_ctl
+        eva_override['experiment_id_exp'] = experiment_id_exp
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
