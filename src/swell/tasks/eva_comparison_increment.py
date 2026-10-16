@@ -52,11 +52,11 @@ class EvaComparisonIncrement(taskBase):
         print(experiment_paths)
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        experiment_tag_ctl = list(experiment_tag_paths.keys())[0]
-        experiment_tag_exp = list(experiment_tag_paths.keys())[1]
+        experiment_tag_exp = list(experiment_tag_paths.keys())[0]
+        experiment_tag_ctl = list(experiment_tag_paths.keys())[1]
 
-        experiment_path_ctl = list(experiment_tag_paths.values())[0]
-        experiment_path_exp = list(experiment_tag_paths.values())[1]
+        experiment_path_exp = list(experiment_tag_paths.values())[0]
+        experiment_path_ctl = list(experiment_tag_paths.values())[1]
 
         experiment_id_ctl, experiment_id_exp = experiment_ids(experiment_paths)
 
