@@ -15,6 +15,15 @@ datasets:
     - name: EffectiveQC0
     - name: EffectiveQC1
 
+{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tempo_no2_total', 'tropomi_s5p_no2_tropo', 'tropomi_s5p_no2_total'] and ('nitrogendioxideColumn' in simulated_variables or 'nitrogendioxideTotal' in simulated_variables) %}
+{% set no2_column_conversion = 211936.47557841247 %}
+{% set no2_column_units = '1e-15 molec cm-2' %}
+{% set no2_column_vmin = 0 %}
+{% set no2_column_vmax = 20 %}
+{% set no2_column_omb_vmin = -10 %}
+{% set no2_column_omb_vmax = 10 %}
+{% set map_domain = 'conus' if instrument.startswith('tempo') else 'global' %}
+
 transforms:
 
 # Generate Increment for JEDI
@@ -69,6 +78,51 @@ transforms:
   for:
     variable: *variables
 
+{% if convert_no2_column %}
+# Convert NO2 column from mol m-2 to 1e-15 molec cm-2 for plotting.
+- transform: arithmetic
+  new name: experiment::ObsValueConverted::${variable}
+  equals: experiment::ObsValue::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::hofx0PassedQcConverted::${variable}
+  equals: experiment::hofx0PassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::hofx1PassedQcConverted::${variable}
+  equals: experiment::hofx1PassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::ombgPassedQcConverted::${variable}
+  equals: experiment::ombgPassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::omanPassedQcConverted::${variable}
+  equals: experiment::omanPassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::ObsValuePassedQcConverted::${variable}
+  equals: experiment::ObsValuePassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::incrementConverted::${variable}
+  equals: experiment::increment::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+{% endif %}
+
 graphics:
 
   plotting_backend: Emcpy
@@ -85,25 +139,25 @@ graphics:
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
     plots:
-      - add_xlabel: 'Observation Value'
-        add_ylabel: 'JEDI h(x)'
+      - add_xlabel: 'Observation Value{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
+        add_ylabel: 'JEDI h(x){% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
         add_grid:
         add_legend:
           loc: 'upper left'
         layers:
         - type: Scatter
           x:
-            variable: experiment::ObsValue::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
           y:
-            variable: experiment::hofx0PassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}hofx0PassedQcConverted{% else %}hofx0PassedQc{% endif %}::${variable}
           markersize: 5
           color: 'black'
           label: 'JEDI h(x)_0 versus obs (passed QC in JEDI)'
         - type: Scatter
           x:
-            variable: experiment::ObsValue::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
           y:
-            variable: experiment::hofx1PassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}hofx1PassedQcConverted{% else %}hofx1PassedQc{% endif %}::${variable}
           markersize: 5
           color: 'red'
           label: 'JEDI h(x)_1 versus obs (passed QC in JEDI)'
@@ -116,28 +170,28 @@ graphics:
       variables: *variables
     dynamic options:
       - type: histogram_bins
-        data variable: experiment::omanPassedQc::${variable}
+        data variable: experiment::{% if convert_no2_column %}omanPassedQcConverted{% else %}omanPassedQc{% endif %}::${variable}
         number of bins rule: 'rice'
     figure:
       layout: [1,1]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/ombg_oman_{{instrument}}_${variable}.png'
     plots:
-      - add_xlabel: 'Difference'
+      - add_xlabel: 'Difference{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
         add_ylabel: 'Count'
         set_xlim: [-5e-4, 5e-4]
         add_legend:
           loc: 'upper left'
         statistics:
           fields:
-            - field_name: experiment::ombgPassedQc::${variable}
+            - field_name: experiment::{% if convert_no2_column %}ombgPassedQcConverted{% else %}ombgPassedQc{% endif %}::${variable}
               xloc: 0.5
               yloc: -0.10
               kwargs:
                 color: 'black'
                 fontsize: 8
                 fontfamily: monospace
-            - field_name: experiment::omanPassedQc::${variable}
+            - field_name: experiment::{% if convert_no2_column %}omanPassedQcConverted{% else %}omanPassedQc{% endif %}::${variable}
               xloc: 0.5
               yloc: -0.13
               kwargs:
@@ -153,7 +207,7 @@ graphics:
         layers:
         - type: Histogram
           data:
-            variable: experiment::ombgPassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}ombgPassedQcConverted{% else %}ombgPassedQc{% endif %}::${variable}
           color: 'red'
           label: 'observations minus background '
           bins: ${dynamic_bins}
@@ -161,7 +215,7 @@ graphics:
           density: true
         - type: Histogram
           data:
-            variable: experiment::omanPassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}omanPassedQcConverted{% else %}omanPassedQc{% endif %}::${variable}
           color: 'blue'
           label: 'observations minus analysis'
           bins: ${dynamic_bins}
@@ -175,7 +229,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::ombgPassedQc::${variable}
+        data variable: experiment::{% if convert_no2_column %}ombgPassedQcConverted{% else %}ombgPassedQc{% endif %}::${variable}
     figure:
       figure size: [20,10]
       layout: [2,1]
@@ -184,10 +238,10 @@ graphics:
     plots:
       - mapping:
           projection: plcarr
-          domain: global
+          domain: {{map_domain}}
         add_map_features: ['coastline']
         add_colorbar:
-          label: ObsValue
+          label: OmBg{% if convert_no2_column %} ({{no2_column_units}}){% endif %}
         add_grid:
         layers:
         - type: MapScatter
@@ -196,35 +250,45 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::ombgPassedQc::${variable}
-          markersize: 1
-          label: OmAn
-          colorbar: true
-          cmap: ${dynamic_cmap}
-          vmin: ${dynamic_vmin}
-          vmax: ${dynamic_vmax}
-
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: ObsValue
-        add_grid:
-        layers:
-        - type: MapScatter
-          longitude:
-            variable: experiment::MetaData::longitude
-          latitude:
-            variable: experiment::MetaData::latitude
-          data:
-            variable: experiment::omanPassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}ombgPassedQcConverted{% else %}ombgPassedQc{% endif %}::${variable}
           markersize: 1
           label: OmBg
           colorbar: true
           cmap: ${dynamic_cmap}
+          {% if convert_no2_column %}
+          vmin: {{no2_column_omb_vmin}}
+          vmax: {{no2_column_omb_vmax}}
+          {% else %}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
+          {% endif %}
+
+      - mapping:
+          projection: plcarr
+          domain: {{map_domain}}
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: OmAn{% if convert_no2_column %} ({{no2_column_units}}){% endif %}
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::{% if convert_no2_column %}omanPassedQcConverted{% else %}omanPassedQc{% endif %}::${variable}
+          markersize: 1
+          label: OmAn
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          {% if convert_no2_column %}
+          vmin: {{no2_column_omb_vmin}}
+          vmax: {{no2_column_omb_vmax}}
+          {% else %}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+          {% endif %}
 
   - batch figure:
       variables: *variables
@@ -239,7 +303,7 @@ graphics:
     plots:
       - mapping:
           projection: plcarr
-          domain: global
+          domain: {{map_domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: EffectiveQC1
@@ -263,7 +327,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::increment::${variable}
+        data variable: experiment::{% if convert_no2_column %}incrementConverted{% else %}increment{% endif %}::${variable}
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -272,10 +336,10 @@ graphics:
     plots:
       - mapping:
           projection: plcarr
-          domain: global
+          domain: {{map_domain}}
         add_map_features: ['coastline']
         add_colorbar:
-          label: Increment (OmBg - OmAn)
+          label: Increment (OmBg - OmAn){% if convert_no2_column %} ({{no2_column_units}}){% endif %}
         add_grid:
         layers:
         - type: MapScatter
@@ -284,10 +348,15 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::increment::${variable}
+            variable: experiment::{% if convert_no2_column %}incrementConverted{% else %}increment{% endif %}::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
           cmap: ${dynamic_cmap}
+          {% if convert_no2_column %}
+          vmin: {{no2_column_omb_vmin}}
+          vmax: {{no2_column_omb_vmax}}
+          {% else %}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
+          {% endif %}
