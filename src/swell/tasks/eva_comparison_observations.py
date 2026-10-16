@@ -71,8 +71,8 @@ class EvaComparisonObservations(taskBase):
 
         # JEDI config file 1
         jedi_config_file_ctl = os.path.join(os.path.dirname(experiment_path_ctl), '..', 'run',
-                                          self.__datetime__.string_directory(), model,
-                                          f'jedi_{log_type}_config.yaml')
+                                            self.__datetime__.string_directory(), model,
+                                            f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_ctl, 'r') as f:
             jedi_config = yaml.safe_load(f)
@@ -80,8 +80,8 @@ class EvaComparisonObservations(taskBase):
 
         # JEDI config file 2
         jedi_config_file_exp = os.path.join(os.path.dirname(experiment_path_exp), '..', 'run',
-                                          self.__datetime__.string_directory(), model,
-                                          f'jedi_{log_type}_config.yaml')
+                                            self.__datetime__.string_directory(), model,
+                                            f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_exp, 'r') as f:
             jedi_config = yaml.safe_load(f)
@@ -147,11 +147,13 @@ class EvaComparisonObservations(taskBase):
                 continue
 
             # Check if IODA observation input and output have non-zero location dimensions
-            use_obs_ctl = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                  observation_dict_ctl, self.cycle_time_dto(), input_and_output=True)
+            use_obs_ctl = check_obs(self.jedi_rendering.observing_system_records_path,
+                                    observation, observation_dict_ctl, self.cycle_time_dto(),
+                                    input_and_output=True)
 
-            use_obs_exp = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                  observation_dict_exp, self.cycle_time_dto(), input_and_output=True)
+            use_obs_exp = check_obs(self.jedi_rendering.observing_system_records_path,
+                                    observation, observation_dict_exp, self.cycle_time_dto(),
+                                    input_and_output=True)
 
             use_obs = use_obs_ctl and use_obs_exp
 

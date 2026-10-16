@@ -63,9 +63,9 @@ class EvaComparisonJediLog(taskBase):
         experiment_id_exp = experiment_dict_exp['experiment_id']
 
         cycle_dir_ctl = os.path.join(os.path.dirname(experiment_path_ctl), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                     self.__datetime__.string_directory(), self.get_model())
         cycle_dir_exp = os.path.join(os.path.dirname(experiment_path_exp), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                     self.__datetime__.string_directory(), self.get_model())
 
         # Info to task log
         info_string = 'Running Eva to plot from the jedi_log file'

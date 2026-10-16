@@ -110,9 +110,9 @@ class EvaComparisonIncrement(taskBase):
             incr_file_exp = f'ocn.*.incr.{ocn_cycle_time}.nc'
 
         cycle_dir_ctl = os.path.join(os.path.dirname(experiment_path_ctl), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                     self.__datetime__.string_directory(), self.get_model())
         cycle_dir_exp = os.path.join(os.path.dirname(experiment_path_exp), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                     self.__datetime__.string_directory(), self.get_model())
 
         # Files to fill the template in the config file
         increment_file_path_ctl = glob.glob(os.path.join(cycle_dir_ctl, incr_file_ctl))[0]
