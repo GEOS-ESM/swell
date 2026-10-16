@@ -914,7 +914,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.perhost(),
             qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
- ]
+        ]
     )
 
     # --------------------------------------------------------------------------------------------------
