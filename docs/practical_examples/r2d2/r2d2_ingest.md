@@ -237,8 +237,7 @@ overrides, and `{mls_version}` in its `extra_flags` is taken from the (overridde
 ```python
 qd.download_obs_config_overrides({
     'mls_o3_res': {
-        'remote_path_template': '/data/Aura_MLS_Level2/ML2O3.006/YYYY/',
-        'filename_pattern': 'MLS-Aura_L2GP-O3_v06-*-c01_YYYYdJJJ.he5',
+        'cmr_version': '006',
         'mls_version': 'v6',
     }
 })
