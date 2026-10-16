@@ -565,3 +565,11 @@ ioda instrument names:
     full name: OMPS total column O3 (Nadir Mapper)
     inst type: retrieval
     provider : nasa
+  - ioda name: mls_o3_nrt
+    full name: Aura MLS O3 profile (near-real-time v5)
+    inst type: retrieval
+    provider : nasa
+  - ioda name: mls_o3_res
+    full name: Aura MLS O3 profile (research, v5 by default or v6)
+    inst type: retrieval
+    provider : nasa
