@@ -167,9 +167,9 @@ class JediLogComparison(taskBase):
 
                     out_string += key + ' ' * (widths['key'] - len(key))
                     out_string += val_dict[exp_tag_exp] + ' ' * (widths[exp_tag_exp] -
-                                                               len(val_dict[exp_tag_exp]))
+                                                                 len(val_dict[exp_tag_exp]))
                     out_string += val_dict[exp_tag_ctl] + ' ' * (widths[exp_tag_ctl] -
-                                                               len(val_dict[exp_tag_ctl]))
+                                                                 len(val_dict[exp_tag_ctl]))
                     out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
                     out_string += str(val_dict['pass']) + ' ' * (
                             widths['pass'] - len(str(val_dict['pass'])))
