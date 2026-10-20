@@ -260,12 +260,20 @@
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+	execution retry delays = '2 * PT30S'
 
     [[PrepareAnalysis-{{model_component}}]]
         script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-SKIPPED-{{model_component}}]]
+        script = """
+            touch {{experiment_root}}/run/{{model_component}}/__CLEAN_SKIPPED__
+            cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip
+        """
+
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

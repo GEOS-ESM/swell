@@ -85,8 +85,9 @@ class SaveObsDiags(taskBase):
 
             # Store to R2D2
             # ---------------
-
+            failed_to_store = []
             try:
+                raise Exception
                 store_kwargs = dict(
                     item='feedback',
                     experiment=self.config.r2d2_experiment_id(),
@@ -101,8 +102,13 @@ class SaveObsDiags(taskBase):
                     store_kwargs['data_store'] = r2d2_datastore
                 r2d2.store(**store_kwargs)
                 self.logger.info(f'Successfully stored feedback file for {observation}')
-
             except Exception as e:
                 self.logger.info(f'Failed to store feedback file for {observation}: {str(e)}')
                 # Don't abort - continue with other observations
+                failed_to_store.append(observation)
                 continue
+
+        # If all do not succeed - cause failure
+        # -------------------------------------
+        if len(failed_to_store):
+            self.logger.abort('Storing to R2D2 failed for the following obs: {failed_to_store}')
