@@ -172,7 +172,7 @@
 
     [[CleanCycle-SKIPPED-{{model_component}}]]
         script = """
-            touch {{experiment_root}}/{{experiment_id}}/run/$datetime/{{model_component}}/__CLEAN_SKIPPED__
+            touch {{experiment_root}}/{{experiment_id}}/run/${datetime:0:-1}00Z/{{model_component}}/__CLEAN_SKIPPED__
             cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip
         """
 
