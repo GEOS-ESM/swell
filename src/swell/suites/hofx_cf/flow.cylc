@@ -78,7 +78,7 @@
             {% endif %}
 
             # Clean up large files
-            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
