@@ -43,7 +43,7 @@ class SaveForecastCf(taskBase):
         forecast_length = self.config.forecast_length()
         forecast_output_frequency = self.config.forecast_output_frequency()
         expid = self.config.r2d2_experiment_id()
-        fc_store = r2d2(self.jedi_rendering.__template_dict__)['store']['fc'][0]
+        fc_store_list = r2d2(self.jedi_rendering.__template_dict__)['store']['fc']
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')
@@ -63,23 +63,25 @@ class SaveForecastCf(taskBase):
             step = isodate.duration_isoformat(step_dur)
 
             file_time = forecast_start + step_dur
-            fname = forecast_filename(file_time)
-            source_file = os.path.join(scratch_dir, fname)
-            if not os.path.isfile(source_file):
-                self.logger.abort(f'Expected forecast file not found: {source_file}')
 
-            self.logger.info(f'Storing {fname} at step {step}')
+            for fc_store in fc_store_list:
+                fname = forecast_filename(file_time, fc_store['file_type'])
+                source_file = os.path.join(scratch_dir, fname)
+                if not os.path.isfile(source_file):
+                    self.logger.abort(f'Expected forecast file not found: {source_file}')
 
-            store(
-                model=fc_store['r2d2_model'],
-                item='forecast',
-                step=step,
-                experiment=expid,
-                resolution=self.config.horizontal_resolution(),
-                date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
-                source_file=source_file,
-                file_extension='nc',
-                file_type=fc_store['file_type'],
-                store_as_symlink=False,
-            )
+                self.logger.info(f'Storing {fname} at step {step}')
+
+                store(
+                    model=fc_store['r2d2_model'],
+                    item='forecast',
+                    step=step,
+                    experiment=expid,
+                    resolution=self.config.horizontal_resolution(),
+                    date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
+                    source_file=source_file,
+                    file_extension='nc',
+                    file_type=fc_store['file_type'],
+                    store_as_symlink=False,
+                )
             step_dur += forecast_frequency_dur
