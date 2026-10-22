@@ -87,7 +87,6 @@ class SaveObsDiags(taskBase):
             # ---------------
             failed_to_store = []
             try:
-                raise Exception
                 store_kwargs = dict(
                     item='feedback',
                     experiment=self.config.r2d2_experiment_id(),
