@@ -46,6 +46,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "abi_g16",
                 "abi_g18",
+                "abi_g19",
                 "aircraft",
                 "airs_aqua",
                 "amsr2_gcom-w1",

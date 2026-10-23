@@ -169,7 +169,7 @@ obs post filters:
       channels: *abi_g16_channels
       options:
         channels: *abi_g16_channels
-        sensor: abi_g16
+        sensor: infrared
 
 # Model top transmittance check
 - filter: Perform Action
@@ -307,7 +307,7 @@ obs post filters:
       name: MetaData/cloud_frac
     maxvalue: 1
 
-# For surface and ch10 (7.3 micron), use split window chns to remove oqaque clouds
+# For surface and ch10 (7.3 micron), use split window chns to remove opaque clouds
 # step 1: calculate splitWindowDiff with Tb_obs and Tb_sim (hofx, restored to before BC)
 - filter: Variable Assignment
   assignments:
