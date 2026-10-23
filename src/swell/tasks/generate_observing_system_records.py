@@ -42,23 +42,26 @@ class GenerateObservingSystemRecords(taskBase):
         path_to_geos_mksi = os.path.expanduser(self.config.observing_system_records_mksi_path())
         if path_to_geos_mksi == 'None':
             path_to_geos_mksi = os.path.join(self.experiment_path(), 'GEOS_mksi')
+            path_to_radiance_records = os.path.join(path_to_geos_mksi, 'sidb')
+            path_to_ozone_records = os.path.join(path_to_geos_mksi, 'ozinfo.db')
+        else:
+            path_to_radiance_records = os.path.join(path_to_geos_mksi, 'gmao_satinfo.db')
+            path_to_ozone_records = os.path.join(path_to_geos_mksi, 'gmao_ozinfo.db')
 
         # Parse sidb
         # ----------
         record_type = 'channel'
         observations = self.config.observations()
-        path_to_gsi_records = os.path.join(path_to_geos_mksi, 'sidb')
         sat_records = ObservingSystemRecords(record_type)
-        sat_records.parse_records(path_to_gsi_records)
+        sat_records.parse_records(path_to_radiance_records)
         sat_records.save_yamls(observing_system_records_path, observations)
         self.logger.info('Completed sidb processing.')
 
         # Parse ozone.db
         # --------------
         record_type = 'level'
-        path_to_gsi_records = os.path.join(path_to_geos_mksi, 'ozinfo.db')
         sat_records = ObservingSystemRecords(record_type)
-        sat_records.parse_records(path_to_gsi_records)
+        sat_records.parse_records(path_to_ozone_records)
         sat_records.save_yamls(observing_system_records_path)
         self.logger.info('Completed ozinfo.db processing')
 
