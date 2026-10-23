@@ -3,7 +3,9 @@ EXPID:  >>>SWELL_GEOSCF_FORECAST_EXPID<<<
 EXPDSC: JEDI
 EXPSRC: GEOSgcm-v10.23.0+GEOSChem-14.0.0
 
-COLLECTIONS:  '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<'
+COLLECTIONS: '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<'
+             '>>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<'
+             '>>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<'
              ::
 
 ##################################################
@@ -12,14 +14,26 @@ COLLECTIONS:  '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<'
 ##################################################
 
 GRID_LABELS:
+PC360x181-DC
 ::
 
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.template:  '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.archive:   '%c/Y%y4',
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.format:    'CFIO',
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.mode:      'instantaneous' ,
+PC360x181-DC.GRID_TYPE: LatLon
+PC360x181-DC.IM_WORLD: 360
+PC360x181-DC.JM_WORLD: 181
+PC360x181-DC.POLE: PC
+PC360x181-DC.DATELINE: DC
+PC360x181-DC.LM: 72
+
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.template:   '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.archive:    '%c/Y%y4',
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.descr:      '3d,Hourly,Instantaneous,model-level,Chemistry and Meteorology Fields on native C90 cube-sphere grid' ,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.format:     'CFIO' ,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.mode:       'instantaneous' ,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.deflate:    1  ,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.nbits:      15  ,
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
-  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.ref_time:   000000,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.duration:   >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.ref_time:   000000 ,
   >>>SWELL_GEOSCF_FORECAST_COLLECTION<<<.fields:     'T'                       , 'DYN'           ,
                           'DELP'                    , 'DYN'           ,
                           'PS'                      , 'DYN'           ,
@@ -30,3 +44,57 @@ GRID_LABELS:
                           'SpeciesConc_NO2'         , 'GEOSCHEMCHEM'  , 'NO2'   ,
                           'SpeciesConc_CO'          , 'GEOSCHEMCHEM'  , 'CO'    ,
                           ::
+
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.template:   '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.archive:    '%c/Y%y4',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.descr:      '3d,1-Hourly,Instantaneous,Model-Level,Chemistry Fields',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.format:     'CFIO',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.mode:       'instantaneous',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.duration:   >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.ref_time:   000000,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.deflate:    1 ,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.nbits:      15 ,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.chunksize:   360 181 1 1 ,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.grid_label: PC360x181-DC,
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.regrid_method: 'BILINEAR',
+  >>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<.fields:     'SpeciesConc_NO2'      , 'GEOSCHEMCHEM' , 'NO2'         ,
+                              'SpeciesConc_NO'         , 'GEOSCHEMCHEM' , 'NO'            ,
+                              'SpeciesConc_O3'         , 'GEOSCHEMCHEM' , 'O3'            ,
+                              'SpeciesConc_CO'         , 'GEOSCHEMCHEM' , 'CO'            ,
+                              'SpeciesConc_CH2O'       , 'GEOSCHEMCHEM' , 'HCHO'          ,
+                              'NOy'                    , 'GEOSCHEMCHEM' , 'NOy'           ,
+                              'SpeciesConc_HNO3'       , 'GEOSCHEMCHEM' , 'HNO3'          ,
+                              ::
+
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.template:   '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.archive:    '%c/Y%y4',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.descr:      '3d,1-Hourly,Instantaneous,Model-Level,Meteorology Fields',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.format:     'CFIO',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.mode:       'instantaneous',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.duration:   >>>SWELL_FC_OUTPUT_FREQ<<<,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.ref_time:   000000,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.deflate:    1 ,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.nbits:      15 ,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.chunksize:   360 181 1 1 ,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.grid_label: PC360x181-DC,
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.regrid_method: 'BILINEAR',
+  >>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<.fields:     'Q'          , 'MOIST'        ,
+                              'U'          , 'DYN'          ,
+                              'V'          , 'DYN'          ,
+                              'DELP'       , 'DYN'          ,
+                              'PS'         , 'DYN'          ,
+                              'ZL'         , 'DYN'          ,
+                              'PL'         , 'DYN'          ,
+                              'T'          , 'DYN'          ,
+                              'PHIS'       , 'AGCM'         ,
+                              'QCTOT'      , 'AGCM'         ,
+                              'OMEGA'         , 'DYN'        ,
+                              'EPV'           , 'DYN'        ,
+                              'TROPP_BLENDED' , 'AGCM'   , 'TROPPB' ,
+                              'TROPP_THERMAL' , 'AGCM'   , 'TROPPT' ,
+                              'TROPP_EPV'     , 'AGCM'   , 'TROPPV' ,
+                              'ZPBL'          , 'TURBULENCE' ,
+                              'PPBL'          , 'TURBULENCE' ,
+                              ::

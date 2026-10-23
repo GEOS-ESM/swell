@@ -268,8 +268,13 @@ class PrepForecastCf(taskBase):
         history = forecast_history()
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_EXPID<<<',
                             history['expid'])
-        self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
-                            history['collection'])
+        collection_placeholders = {
+            'bkg': '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
+            'chm': '>>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<',
+            'met': '>>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<',
+        }
+        for file_type, placeholder in collection_placeholders.items():
+            self.replace_string(history_dst, placeholder, history['collections'][file_type])
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
                             history['template'])
 
