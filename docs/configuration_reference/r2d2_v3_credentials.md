@@ -82,7 +82,6 @@ SWELL automatically determines `host` and `compiler` based on your platform:
 | Platform | R2D2 Host | R2D2 Compiler | Notes |
 |----------|-----------|---------------|-------|
 | `nccs_discover_sles15` | `discover-gmao` | `intel` | NCCS Discover SLES15 |
-| `nccs_discover_cascade` | `discover-gmao` | `intel` | NCCS Discover Cascade |
 <!-- | `aws` | `aws-gmao` | `intel` | AWS cloud platform |
 | `generic` | `None` | `None` | Fallback to YAML/env vars | -->
 
