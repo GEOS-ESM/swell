@@ -210,6 +210,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="ConvertObsToIoda",
         questions=[
             qd.converter_path(),
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
