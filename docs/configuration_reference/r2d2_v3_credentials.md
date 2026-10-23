@@ -109,6 +109,12 @@ placement in R2D2 rather than embedding storage policy in a Swell experiment.
 r2d2_datastore: <registered-datastore-name>
 ```
 
+| Platform | R2D2 Host | R2D2 Compiler | Notes |
+|----------|-----------|---------------|-------|
+| `nccs_discover_sles15` | `discover-gmao` | `intel` | NCCS Discover SLES15 |
+<!-- | `aws` | `aws-gmao` | `intel` | AWS cloud platform |
+| `generic` | `None` | `None` | Fallback to YAML/env vars | -->
+
 Only use an explicit datastore after confirming that it exists on the selected server and is
 available to the configured compute host.
 
