@@ -51,15 +51,23 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
 def _build_stddev_bkg_scaled(template_dict: Mapping) -> Mapping:
     """Standard deviation outer block: background-file stddev, scaled per analysis variable.
     """
-    default_scale_factor = 0.25
     scale_factors = template_dict.get('stddev_scale_factors') or {}
+    analysis_variables = template_dict.get('analysis_variables', [])
+
+    missing_variables = [var for var in analysis_variables if var not in scale_factors]
+    if missing_variables:
+        raise ValueError(
+            "stddev_scale_factors is missing an entry for analysis variable(s): "
+            f"{missing_variables}. Set a scale factor for every analysis variable "
+            "in an override file"
+        )
 
     standard_deviations = [
         {
             'variable': var,
-            'scale factor': scale_factors.get(var, default_scale_factor)
+            'scale factor': scale_factors[var]
         }
-        for var in template_dict.get('analysis_variables', [])
+        for var in analysis_variables
     ]
 
     return {
