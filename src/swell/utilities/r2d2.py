@@ -33,10 +33,6 @@ _R2D2_MODULE_CONFIG = {
         'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
         'module_name': 'r2d2-client/112025',
     },
-    'nccs_discover_cascade': {
-        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
-        'module_name': 'r2d2-client/112025',
-    },
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -109,10 +105,6 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
     # Note: ~/.swell/r2d2_credentials.yaml overrides these values if specified
     platform_configs = {
         'nccs_discover_sles15': {
-            'host': 'discover-gmao',
-            'compiler': 'intel'
-        },
-        'nccs_discover_cascade': {
             'host': 'discover-gmao',
             'compiler': 'intel'
         },
