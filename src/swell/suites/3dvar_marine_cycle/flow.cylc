@@ -95,24 +95,25 @@
             PrepareAnalysis-{{model_component}} => RunJediPostprocSoca2ciceExecutable-{{model_component}}
             # RunJediPostprocSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
             RunJediPostprocSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
-            RunJediPostprocSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediPostprocSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}?
             {% else %}
             # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
             PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
             # Move restart to next cycle and then erase current forecast folder
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}?
 
             {% if not skip_r2d2 %}
             # Compress forecast on compute node, then store in R2D2 on login node
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}}?
         {% endfor %}
         """
         {% endfor %}
@@ -259,12 +260,20 @@
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        execution retry delays = '2 * PT30S'
 
     [[PrepareAnalysis-{{model_component}}]]
         script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-SKIPPED-{{model_component}}]]
+        script = """
+            touch {{experiment_root}}/{{experiment_id}}/run/${datetime:0:-1}00Z/{{model_component}}/__CLEAN_SKIPPED__
+            cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip
+        """
+
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

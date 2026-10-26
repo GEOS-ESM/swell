@@ -44,6 +44,12 @@ class ConvertObsToIoda(taskBase):
             -o <output_file>
             [additional flags from converter config]
 
+    ``extra_flags`` values may use the ``{window_begin}`` and ``{window_end}``
+    placeholders, replaced by the DA window bounds (``%Y-%m-%dT%H:%M:%SZ``), and
+    ``{key}`` placeholders for any string/number key of the obs' download YAML
+    (after ``download_obs_config_overrides`` are applied), e.g. ``{mls_version}``.
+    The input files are those matching the (overridden) ``filename_pattern``.
+
     Args:
         config: Inherited from ``taskBase``.  Relevant keys:
 
@@ -53,6 +59,7 @@ class ConvertObsToIoda(taskBase):
               scripts. Falls back to ``<experiment>/jedi_bundle/build/bin`` if
               not set.
             - ``dry_run``: if ``True``, log the command but do not run it.
+            - ``download_obs_config_overrides``: same overrides as for ``DownloadObs``.
 
     Example:
         In a Cylc suite::
@@ -68,6 +75,8 @@ class ConvertObsToIoda(taskBase):
         if dry_run:
             self.logger.info('DRY RUN MODE - No converters will be run')
 
+        download_obs_config_overrides = self.config.download_obs_config_overrides({})
+
         converter_path = self.config.converter_path('')
         if converter_path:
             converter_bin = converter_path
@@ -76,6 +85,16 @@ class ConvertObsToIoda(taskBase):
                 self.experiment_path(), 'jedi_bundle', 'build', 'bin')
 
         cycle_time_dto = self.cycle_time_dto()
+
+        # DA window bounds, available to converter flags as {window_begin} / {window_end}
+        window_length = self.config.window_length()
+        window_format = '%Y-%m-%dT%H:%M:%SZ'
+        window_placeholders = {
+            '{window_begin}': self.da_window_params.window_begin_iso(
+                window_length, dto=True).strftime(window_format),
+            '{window_end}': self.da_window_params.window_end_iso(
+                window_length, dto=True).strftime(window_format),
+        }
 
         for obs_name in obs_to_convert:
             self.logger.info(f'Converting: {obs_name}')
@@ -94,20 +113,25 @@ class ConvertObsToIoda(taskBase):
             with open(config_path, 'r') as fh:
                 conv_config = yaml.safe_load(fh)
 
+            # The download config (with the experiment overrides applied) tells which
+            # files were downloaded and provides {key} placeholders for extra_flags.
+            dl_config = self._load_download_config(obs_name, download_obs_config_overrides)
+            placeholders = {f'{{{key}}}': str(value) for key, value in dl_config.items()
+                            if isinstance(value, (str, int, float))}
+            placeholders.update(window_placeholders)
+
             self._run_converter(
-                obs_name, conv_config, converter_bin, cycle_time_dto, dry_run)
+                obs_name, conv_config, dl_config, converter_bin, cycle_time_dto,
+                placeholders, dry_run)
 
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _input_glob_from_download_config(self, obs_name: str) -> str:
-        """Derive a glob pattern from the download config's filename_pattern.
-
-        Replaces all date/time placeholders (YYYY, MM, DD, JJJ, HH) with '*'
-        so that every file downloaded for this obs matches regardless of timestamp.
-        Falls back to '*' if no download config is found.
-        """
+    def _load_download_config(self, obs_name: str, overrides: dict) -> dict:
+        """Load download_observations/<obs_name>.yaml with the per-obs
+        ``download_obs_config_overrides`` applied (as DownloadObs does).
+        Returns an empty dict if there is no download config."""
         download_config_path = os.path.join(
             self.experiment_path(),
             'configuration', 'jedi', 'interfaces',
@@ -116,11 +140,21 @@ class ConvertObsToIoda(taskBase):
             f'{obs_name}.yaml')
 
         if not os.path.exists(download_config_path):
-            return '*'
+            return {}
 
         with open(download_config_path, 'r') as fh:
-            dl_config = yaml.safe_load(fh)
+            dl_config = yaml.safe_load(fh) or {}
 
+        dl_config.update(overrides.get(obs_name, {}))
+        return dl_config
+
+    def _input_glob_from_download_config(self, dl_config: dict) -> str:
+        """Derive a glob pattern from the download config's filename_pattern.
+
+        Replaces all date/time placeholders (YYYY, MM, DD, JJJ, HH) with '*'
+        so that every file downloaded for this obs matches regardless of timestamp.
+        Falls back to '*' if the download config has no filename_pattern.
+        """
         pattern = dl_config.get('filename_pattern', '*')
         for placeholder in ('YYYY', 'MM', 'DD', 'JJJ', 'HH'):
             pattern = pattern.replace(placeholder, '*')
@@ -130,8 +164,10 @@ class ConvertObsToIoda(taskBase):
         self,
         obs_name: str,
         conv_config: dict,
+        dl_config: dict,
         converter_bin: str,
         cycle_time_dto: datetime,
+        placeholders: dict,
         dry_run: bool,
     ) -> None:
         """Build and run the ioda-converter command for one observation type."""
@@ -139,7 +175,7 @@ class ConvertObsToIoda(taskBase):
         # Collect all downloaded input files using the filename pattern from
         # the download config rather than a separate input_glob in the convert config.
         download_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
-        file_glob = self._input_glob_from_download_config(obs_name)
+        file_glob = self._input_glob_from_download_config(dl_config)
         input_pattern = os.path.join(download_dir, file_glob)
         input_files = sorted(glob.glob(input_pattern))
 
@@ -173,12 +209,16 @@ class ConvertObsToIoda(taskBase):
                '-i', *input_files,
                '-o', output_file]
 
-        # Append any additional flags defined in the converter config
+        # Append any additional flags defined in the converter config. Values may
+        # contain placeholders (see the class docstring).
         for flag, value in conv_config.get('extra_flags', {}).items():
             cmd.append(flag)
             # A YAML null value denotes a value-less command-line switch.
             if value is not None:
-                cmd.append(str(value))
+                value = str(value)
+                for placeholder, replacement in placeholders.items():
+                    value = value.replace(placeholder, replacement)
+                cmd.append(value)
 
         self.logger.info(f'  Command: {" ".join(cmd)}')
 

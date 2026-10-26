@@ -145,6 +145,8 @@ The `PrepCoupledGeosRunDir` task configures the forecast directory for the curre
 
 Some of the DA required setup is assumed to happen in the `geos_homdir` already as they are not handled by `gcm_setup` automatically. One critical component is including the `MOM_oda_incupd` file for MOM6 IAU configuration in the `forecast` directory. Most of this is described under the appropriate [model configurations](../../configuration_reference/model_configurations) page.
 
+This task also checks the experiment's `flow.cylc` to make sure that the `directives` from `RunGeos` request the proper amount of nodes (that matches the nodes requested in `gcm_run.j`). If the task detects that less nodes are requested than are required, it will fail with an error message. This is done because an insufficient assignment of nodes will cause `gcm_run.j` to fail in execution while appearing to succeed (and without any clear indication of this). For more information on setting slurm paramters, see [slurm configuration](../../configuration_reference/slurm_configuration)
+
 ### Main Operations
 
 #### 1. Copy Static Files

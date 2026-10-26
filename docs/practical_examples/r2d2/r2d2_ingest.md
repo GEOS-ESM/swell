@@ -104,7 +104,7 @@ Same as the direct-copy pipeline, add an entry to `observation_ioda_names.yaml`.
 Create `src/swell/configuration/jedi/interfaces/<model>/download_observations/my_obs.yaml`.
 
 The `retrieval_method` key selects how files are discovered and downloaded.
-Two methods are supported:
+Three remote methods are supported:
 
 ---
 
@@ -134,6 +134,26 @@ Supported placeholders in `remote_path_template` and `filename_pattern`:
 - With `auth_type` set to `earthdata_token`, authentication uses `~/.netrc` and no tokens are stored in the config.
 - Follow the instructions on the NASA Earthdata website [here](https://urs.earthdata.nasa.gov/documentation/for_users/data_access/create_net_rc_file) to create
 - an account and set up the authentication.
+
+---
+
+#### `retrieval_method: s3_public`
+
+Lists and downloads objects from a publicly readable S3 bucket using
+anonymous access (no AWS credentials). This is used for TROPOMI products.
+
+```yaml
+retrieval_method: s3_public
+s3_source: s3://meeo-s5p/NRTI/L2__NO2___/YYYY/MM/DD
+filename_pattern: S5P_NRTI_L2__NO2____YYYYMMDDTHH*.nc
+max_orbit_duration: PT2H
+```
+
+| Key | Required | Description |
+|-----|----------|-------------|
+| `s3_source` | Yes | S3 URI template including placeholders (`YYYY`, `MM`, `DD`) |
+| `filename_pattern` | No | Optional filename filter using placeholders/wildcards |
+| `max_orbit_duration` | No | ISO-8601 duration for backward window extension |
 
 ---
 
@@ -194,6 +214,28 @@ Keys are observation names (matching `obs_to_download`); values are dicts of
 fields to override in that observation's download YAML. `DownloadObs` applies
 these overrides on top of the loaded YAML immediately before downloading, so
 any key present in the download YAML can be overridden this way.
+
+##### Using a local archive instead of downloading
+
+`retrieval_method: local` links granule files that already exist on a local filesystem (for
+example on NCCS Discover) into the cycle download directory instead of downloading them. The
+files are used as is; tar files are not supported and must be extracted beforehand. It is not
+the default of any observation; select it with an override:
+
+```python
+qd.download_obs_config_overrides({
+    'mls_o3_nrt': {
+        'retrieval_method': 'local',
+        'local_file_template': '/discover/.../MLS_nrt/Y%Y/M%m/MLS-Aura_L2GP-O3_v05-*-NRT-*-c01_%Yd%jt*.he5',
+    }
+})
+```
+
+`local_file_template` is a `strftime` template (`%Y`, `%m`, `%d`, `%j` = day of year) resolved
+for every day touched by the search window; `*` wildcards are allowed. If
+`granule_start_regex`/`granule_start_format` are set in the download YAML, only granules
+starting inside the window are kept.
+
 
 ### Step 4: Create the converter YAML
 
@@ -364,7 +406,7 @@ Key config keys (set in `experiment.yaml` under `geos_cf`):
 | `dry_run` | `true` | Log what would be stored without writing to R2D2 |
 
 
-### `ingest_obs_cf` — TEMPO NO2 and OMPS-NM ozone
+### `ingest_obs_cf` — GEOS-CF composition observations
 
 ```bash
 swell create ingest_obs_cf
@@ -375,18 +417,34 @@ Downloads raw granules from remote servers, converts them to IODA format, and
 ingests the result into R2D2. Uses the `DownloadObs → ConvertObsToIoda → IngestObs`
 pipeline. Requires Earthdata credentials in `~/.netrc`.
 
-Currently configured observations:
+Ingestable observation configurations for `geos_cf`:
 
 | Observation | Retrieval method | Source |
 |-------------|-----------------|--------|
-| `tempo_no2_tropo` | `cmr` | NASA CMR + ASDC HTTPS (`TEMPO_NO2_L2 V03`) |
-| `omps_o3_nm_total` | `https` | NASA GES DISC |
+| `tempo_no2_tropo` | `cmr` | NASA CMR + ASDC HTTPS |
+| `omps_o3_nm_total` | `https` | NASA GES DISC directory listing |
+| `tropomi_s5p_no2_tropo` | `s3_public` | Public S3 (`s3://meeo-s5p/.../L2__NO2___/...`) |
+| `tropomi_s5p_co_total` | `s3_public` | Public S3 (`s3://meeo-s5p/.../L2__CO____/...`) |
+| `mls_o3_res` | `cmr` | NASA CMR |
+| `mls_o3_nrt` | `cmr` (default) or `local` (override) | NASA CMR / local Discover archive |
+
+The default `ingest_obs_cf` suite currently includes:
+
+- `omps_o3_nm_total`
+- `tropomi_s5p_no2_tropo`
+- `tropomi_s5p_co_total`
+- `tempo_no2_tropo`
+- `mls_o3_res`
 
 Suite configuration:
 ```python
 qd.download_convert_pipeline(True)
-qd.obs_to_download(['tempo_no2_tropo'])
-qd.obs_to_ingest(['tempo_no2_tropo'])
+qd.obs_to_download(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
+                    'tropomi_s5p_co_total', 'tempo_no2_tropo',
+                    'mls_o3_res'])
+qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
+                  'tropomi_s5p_co_total', 'tempo_no2_tropo',
+                  'mls_o3_res'])
 qd.converter_path('/path/to/jedi-bundle/build/bin/')
 qd.window_length("PT6H")
 qd.dry_run(False)
