@@ -173,6 +173,7 @@
         [[[directives]]]
             --time = 00:40:00
             --nodes = 8
+            --qos = debug
             --ntasks-per-node = 108
             --job-name = CFv2rc1t13
             --output = /dev/null

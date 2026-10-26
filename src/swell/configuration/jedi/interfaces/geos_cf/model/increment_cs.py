@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
@@ -20,7 +22,8 @@ def increment_cs(template_dict: Mapping) -> Mapping:
             'states': [{
                 'filetype': 'cube sphere history',
                 'datapath': f'{cycle_dir}',
-                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+                'field io names': field_io_names,
             }]
         }
     }
