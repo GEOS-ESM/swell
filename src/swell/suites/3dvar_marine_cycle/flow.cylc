@@ -84,10 +84,16 @@
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            # Run analysis diagnostics
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            {% if run_eva %}
+            # EvaObservations
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
+
+            # EvaJediLog
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
+
+            # EvaIncrement
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
+            {% endif %}
 
             # Prepare analysis for next forecast
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
@@ -111,9 +117,6 @@
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
-            # Clean up large files
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
-            CleanCycle-{{model_component}}?
         {% endfor %}
         """
         {% endfor %}
