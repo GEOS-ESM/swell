@@ -44,8 +44,8 @@ class IngestObs(taskBase):
         config: Inherited from ``taskBase``. Provides task configuration
             including:
 
-            - ``obs_to_ingest``: List of observation names to ingest
-              (e.g. ``['adt_cryosat2n']``).
+            - ``obs_name``: Set by cylc using the `-a` cli flag based on ``obs_to_ingest``,
+              a list of observation names to ingest (e.g. ``['adt_cryosat2n']``).
             - ``window_length``: Length of the DA window as an ISO-8601 duration
               (e.g. ``"PT6H"``).
             - ``dry_run``: If ``True``, only log which files would be ingested.
@@ -54,7 +54,7 @@ class IngestObs(taskBase):
         In a Cylc suite:
 
         ```bash
-        swell task IngestObs experiment.yaml -d 2021-07-02T06:00:00Z -m geos_marine
+        swell task IngestObs experiment.yaml -d 2021-07-02T06:00:00Z -m geos_marine -a tempo_no2_tropo
         ```
 
         With an ``experiment.yaml`` snippet:
@@ -63,7 +63,7 @@ class IngestObs(taskBase):
         obs_to_ingest: ['adt_cryosat2n']
         dry_run: true
         ```
-    """
+    """  # noqa
 
     def execute(self) -> None:
 
@@ -77,8 +77,8 @@ class IngestObs(taskBase):
 
         r2d2_datastore = self.config.r2d2_datastore(default=None)
 
-        # Get list of observations to ingest (strings)
-        obs_to_ingest = self.config.obs_to_ingest([])
+        # Get name of observation to ingest (strings)
+        obs_name = self.get_parameter()
 
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
@@ -106,50 +106,40 @@ class IngestObs(taskBase):
 
         store_as_symlink = self.config.store_as_symlink(False)
 
-        total_ingested = 0
-        total_failed = 0
+        self.logger.info(f"Preparing to ingest: {obs_name}")
 
-        # Iterate over the simple list of names
-        for obs_name in obs_to_ingest:
-            self.logger.info(f"Preparing to ingest: {obs_name}")
+        # Locate the configuration file from the experiment directory.
+        # Look in the experiment directory for the configuration file.
+        config_path = os.path.join(
+            self.experiment_path(),
+            'configuration',
+            'jedi',
+            'interfaces',
+            self.get_model(),
+            'ingest_observations',
+            f'{obs_name}.yaml')
 
-            # Locate the configuration file from the experiment directory.
-            # Look in the experiment directory for the configuration file.
-            config_path = os.path.join(
-                self.experiment_path(),
-                'configuration',
-                'jedi',
-                'interfaces',
-                self.get_model(),
-                'ingest_observations',
-                f'{obs_name}.yaml')
+        if not os.path.exists(config_path):
+            self.logger.abort(
+                f"Config file not found for {obs_name} at {config_path}")
 
-            if not os.path.exists(config_path):
-                self.logger.error(
-                    f"Config file not found for {obs_name} at {config_path}")
-                total_failed += 1
-                continue
+        # Load the YAML config
+        with open(config_path, 'r') as f:
+            obs_config = yaml.safe_load(f)
 
-            # Load the YAML config
-            with open(config_path, 'r') as f:
-                obs_config = yaml.safe_load(f)
-
-            # Ingest
-            ingested, failed = self.process_obs_config(
-                obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
-                r2d2_datastore, store_as_symlink)
-
-            total_ingested += len(ingested)
-            total_failed += len(failed)
+        # Ingest
+        ingested, failed = self.process_obs_config(
+            obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
+            r2d2_datastore, store_as_symlink)
 
         # Summary
         self.logger.info("INGESTION SUMMARY")
         if dry_run:
-            self.logger.info(f"Would ingest: {total_ingested} files")
-            self.logger.info(f"Would fail: {total_failed} files")
+            self.logger.info(f"Would ingest: {obs_name}")
+            self.logger.info(f"Would fail: {obs_name}")
         else:
-            self.logger.info(f"Successfully ingested: {total_ingested} files")
-            self.logger.info(f"Failed: {total_failed} files")
+            self.logger.info(f"Successfully ingested: {obs_name}")
+            self.logger.abort(f"Failed: {obs_name}")
 
     def process_obs_config(
         self,

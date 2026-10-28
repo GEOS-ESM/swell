@@ -53,8 +53,9 @@ class ConvertObsToIoda(taskBase):
     Args:
         config: Inherited from ``taskBase``.  Relevant keys:
 
-            - ``obs_to_download``: list of obs names — reuses the same list
-              set for ``DownloadObs`` so no extra config key is needed.
+            - ``obs_name``: Set by cylc using the `-a` cli flag, based on ``obs_to_download`` in
+              the experiment configuration, a list of obs names matching YAML files
+              under download_observations/.
             - ``converter_path``: path to directory containing ioda-converter
               scripts. Falls back to ``<experiment>/jedi_bundle/build/bin`` if
               not set.
@@ -64,12 +65,12 @@ class ConvertObsToIoda(taskBase):
     Example:
         In a Cylc suite::
 
-            swell task ConvertObsToIoda experiment.yaml -d 2024-01-01T00:00:00Z -m geos_cf
-    """
+            swell task ConvertObsToIoda experiment.yaml -d 2024-01-01T00:00:00Z -m geos_cf -a tempo_no2_tropo
+    """  # noqa
 
     def execute(self) -> None:
 
-        obs_to_convert = self.config.obs_to_download([])
+        obs_name = self.get_parameter()
         dry_run = self.config.dry_run(True)
 
         if dry_run:
@@ -96,33 +97,32 @@ class ConvertObsToIoda(taskBase):
                 window_length, dto=True).strftime(window_format),
         }
 
-        for obs_name in obs_to_convert:
-            self.logger.info(f'Converting: {obs_name}')
+        self.logger.info(f'Converting: {obs_name}')
 
-            config_path = os.path.join(
-                self.experiment_path(),
-                'configuration', 'jedi', 'interfaces',
-                self.get_model(),
-                'convert_observations',
-                f'{obs_name}.yaml')
+        config_path = os.path.join(
+            self.experiment_path(),
+            'configuration', 'jedi', 'interfaces',
+            self.get_model(),
+            'convert_observations',
+            f'{obs_name}.yaml')
 
-            if not os.path.exists(config_path):
-                self.logger.error(
-                    f'Converter config not found for {obs_name} at {config_path}')
+        if not os.path.exists(config_path):
+            self.logger.error(
+                f'Converter config not found for {obs_name} at {config_path}')
 
-            with open(config_path, 'r') as fh:
-                conv_config = yaml.safe_load(fh)
+        with open(config_path, 'r') as fh:
+            conv_config = yaml.safe_load(fh)
 
-            # The download config (with the experiment overrides applied) tells which
-            # files were downloaded and provides {key} placeholders for extra_flags.
-            dl_config = self._load_download_config(obs_name, download_obs_config_overrides)
-            placeholders = {f'{{{key}}}': str(value) for key, value in dl_config.items()
-                            if isinstance(value, (str, int, float))}
-            placeholders.update(window_placeholders)
+        # The download config (with the experiment overrides applied) tells which
+        # files were downloaded and provides {key} placeholders for extra_flags.
+        dl_config = self._load_download_config(obs_name, download_obs_config_overrides)
+        placeholders = {f'{{{key}}}': str(value) for key, value in dl_config.items()
+                        if isinstance(value, (str, int, float))}
+        placeholders.update(window_placeholders)
 
-            self._run_converter(
-                obs_name, conv_config, dl_config, converter_bin, cycle_time_dto,
-                placeholders, dry_run)
+        self._run_converter(
+            obs_name, conv_config, dl_config, converter_bin, cycle_time_dto,
+            placeholders, dry_run)
 
     # ------------------------------------------------------------------
     # Private helpers
