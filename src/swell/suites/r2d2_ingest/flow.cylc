@@ -117,7 +117,7 @@
         inherit = ConvertObsToIoda-{{model_component}}
     {% endif %}
     {% endfor %}
-    {% for observation in models[model_components]['obs_to_ingest'] %}
+    {% for observation in models[model_component]['obs_to_ingest'] %}
     [[IngestObs-{{observation}}-{{model_component}}]]
         script = "swell task IngestObs $config -d $datetime -m {{model_component}} -a {{observation}}"
         execution time limit = PT10M
