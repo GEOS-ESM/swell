@@ -217,8 +217,8 @@ class QuestionDefaults():
         default_value: bool = True
         question_name: str = "run_eva"
         ask_question: bool = True
-        prompt: str = ("Run Eva tasks to generate outputs for increments, observations, and JEDI log"
-                       "output (where applicable).")
+        prompt: str = ("Run Eva tasks to generate outputs for increments, observations, and "
+                       "JEDI log output (where applicable).")
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

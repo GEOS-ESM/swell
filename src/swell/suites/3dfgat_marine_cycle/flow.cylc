@@ -86,6 +86,7 @@
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
 
             # Run analysis diagnostics
             RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
