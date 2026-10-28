@@ -43,13 +43,17 @@
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
                 {% if download_convert_pipeline %}
-                DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}}
-                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{model_component}}
-                ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
+                {% for observation in models[model_component]['obs_to_download'] %}
+                DownloadObs-{{observation}}-{{model_component}} => ConvertObsToIoda-{{observation}}-{{model_component}}
+                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{observation}}-{{model_component}}
+                ConvertObsToIoda-{{observation}}-{{model_component}} => IngestObs-{{observation}}-{{model_component}}
+                {% endfor %}
                 {% elif ingest_background_pipeline %}
                 SaveBackground-{{model_component}}
                 {% else %}
-                IngestObs-{{model_component}}
+                {% for observation in models[model_component]['obs_to_ingest'] %}
+                IngestObs-{{observation}}-{{model_component}}
+                {% endfor %}
                 {% endif %}
                 {% endfor %}
             """
@@ -86,7 +90,6 @@
     {% endif %}
 
     {% for model_component in model_components %}
-
     {% if download_convert_pipeline %}
     [[DownloadObs-{{model_component}}]]
         script = "swell task DownloadObs $config -d $datetime -m {{model_component}}"
@@ -100,6 +103,26 @@
     [[IngestObs-{{model_component}}]]
         script = "swell task IngestObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT10M
+
+    {% for observation in models[model_component]['obs_to_download'] %}
+    {% if download_convert_pipeline %}
+    [[DownloadObs-{{observation}}-{{model_component}}]]
+        script = "swell task DownloadObs $config -d $datetime -m {{model_component}} -a {{observation}}"
+        execution time limit = PT30M
+        inherit = DownloadObs-{{model_component}}
+
+    [[ConvertObsToIoda-{{observation}}-{{model_component}}]]
+        script = "swell task ConvertObsToIoda $config -d $datetime -m {{model_component}} -a {{observation}}"
+        execution time limit = PT15M
+        inherit = ConvertObsToIoda-{{model_component}}
+    {% endif %}
+    {% endfor %}
+    {% for observation in models[model_component]['obs_to_ingest'] %}
+    [[IngestObs-{{observation}}-{{model_component}}]]
+        script = "swell task IngestObs $config -d $datetime -m {{model_component}} -a {{observation}}"
+        execution time limit = PT10M
+        inherit = IngestObs-{{model_component}}
+    {% endfor %}
 
     {% if ingest_background_pipeline %}
     [[SaveBackground-{{model_component}}]]

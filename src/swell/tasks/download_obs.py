@@ -78,8 +78,9 @@ class DownloadObs(taskBase):
     Args:
         config: Inherited from ``taskBase``.  Relevant keys:
 
-            - ``obs_to_download``: list of obs names whose YAML files are
-              present under ``download_observations/``.
+            - ``obs_name``: Set by cylc using the `-a` cli flag, based on ``obs_to_download`` in
+              the experiment configuration, a list of obs names matching YAML files
+              under download_observations/.
             - ``window_length``: ISO-8601 duration (e.g. ``"PT6H"``).
             - ``dry_run``: if ``True``, skip actual downloads.
             - ``download_obs_config_overrides``: per-obs overrides of the YAML keys.
@@ -87,12 +88,12 @@ class DownloadObs(taskBase):
     Example:
         In a Cylc suite::
 
-            swell task DownloadObs experiment.yaml -d 2024-01-01T00:00:00Z -m geos_cf
-    """
+            swell task DownloadObs experiment.yaml -d 2024-01-01T00:00:00Z -m geos_cf -a tempo_no2_tropo
+    """  # noqa
 
     def execute(self) -> None:
 
-        obs_to_download = self.config.obs_to_download([])
+        obs_name = self.get_parameter()
         window_length = self.config.window_length()
         dry_run = self.config.dry_run(True)
         download_obs_config_overrides = self.config.download_obs_config_overrides({})
@@ -103,49 +104,38 @@ class DownloadObs(taskBase):
         window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
         window_end_dto = self.da_window_params.window_end_iso(window_length, dto=True)
 
-        total_downloaded = 0
-        total_failed = 0
+        self.logger.info(f'Preparing to download: {obs_name}')
 
-        for obs_name in obs_to_download:
-            self.logger.info(f'Preparing to download: {obs_name}')
+        config_path = os.path.join(
+            self.experiment_path(),
+            'configuration', 'jedi', 'interfaces',
+            self.get_model(),
+            'download_observations',
+            f'{obs_name}.yaml')
 
-            config_path = os.path.join(
-                self.experiment_path(),
-                'configuration', 'jedi', 'interfaces',
-                self.get_model(),
-                'download_observations',
-                f'{obs_name}.yaml')
+        if not os.path.exists(config_path):
+            self.logger.abort(f'Config file not found for {obs_name} at {config_path}')
 
-            if not os.path.exists(config_path):
-                self.logger.error(f'Config file not found for {obs_name} at {config_path}')
-                total_failed += 1
-                continue
+        with open(config_path, 'r') as fh:
+            obs_config = yaml.safe_load(fh)
 
-            with open(config_path, 'r') as fh:
-                obs_config = yaml.safe_load(fh)
+        # Apply any per-obs overrides from the experiment config.
+        # This allows, e.g., switching s3_source from NRTI to OFFL, or
+        # retrieval_method to 'local', via the experiment override YAML
+        # without editing source files.
+        if obs_name in download_obs_config_overrides:
+            obs_config.update(download_obs_config_overrides[obs_name])
+            self.logger.info(
+                f'  Applied download_obs_config_overrides for {obs_name}: '
+                f'{download_obs_config_overrides[obs_name]}')
 
-            # Apply any per-obs overrides from the experiment config.
-            # This allows, e.g., switching s3_source from NRTI to OFFL, or
-            # retrieval_method to 'local', via the experiment override YAML
-            # without editing source files.
-            if obs_name in download_obs_config_overrides:
-                obs_config.update(download_obs_config_overrides[obs_name])
-                self.logger.info(
-                    f'  Applied download_obs_config_overrides for {obs_name}: '
-                    f'{download_obs_config_overrides[obs_name]}')
+        downloaded, failed = self._download_obs(
+            obs_config, obs_name,
+            window_begin_dto, window_end_dto,
+            dry_run)
 
-            downloaded, failed = self._download_obs(
-                obs_config, obs_name,
-                window_begin_dto, window_end_dto,
-                dry_run)
-
-            total_downloaded += downloaded
-            total_failed += failed
-
-        self.logger.info('DOWNLOAD SUMMARY')
-        verb = 'Would download' if dry_run else 'Downloaded'
-        self.logger.info(f'{verb}: {total_downloaded} files')
-        self.logger.info(f'Failed: {total_failed} files')
+        if failed:
+            self.logger.abort('Failed to download')
 
     # ------------------------------------------------------------------
     # Private helpers
