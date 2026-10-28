@@ -135,11 +135,13 @@ class IngestObs(taskBase):
         # Summary
         self.logger.info("INGESTION SUMMARY")
         if dry_run:
+            if failed:
+                self.logger.abort(f"Would fail: {obs_name}")
             self.logger.info(f"Would ingest: {obs_name}")
-            self.logger.info(f"Would fail: {obs_name}")
         else:
+            if failed:
+                self.logger.abort(f"Failed: {obs_name}")
             self.logger.info(f"Successfully ingested: {obs_name}")
-            self.logger.abort(f"Failed: {obs_name}")
 
     def process_obs_config(
         self,
