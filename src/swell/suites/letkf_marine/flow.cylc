@@ -75,9 +75,10 @@
                {% endif %}
             {% endif %}
 
-
+            {% if run_eva %}
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
             # Clean up large files
             EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}

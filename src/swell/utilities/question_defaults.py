@@ -213,6 +213,17 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class run_eva(SuiteQuestion):
+        default_value: bool = True
+        question_name: str = "run_eva"
+        ask_question: bool = True
+        prompt: str = ("Run Eva tasks to generate outputs for increments, observations, and "
+                       "JEDI log output (where applicable).")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class saber_central_block(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "saber_central_block"

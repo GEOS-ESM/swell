@@ -77,20 +77,21 @@
             # Save restart files to R2D2
             RunForecast-{{model_component}} => SaveRestartCf-{{model_component}}
 
+            {% if run_eva %}
             # EvaObservations
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
             # EvaJediLog
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
 
             # EvaIncrement
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
+            {% endif %}
 
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & 
             SaveObsDiags-{{model_component}} & SaveForecastCf-{{model_component}} & SaveRestartCf-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
