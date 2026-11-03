@@ -42,6 +42,9 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution(72),
             qd.saber_central_block('bump_nicas'),
             qd.saber_outer_block('stddev_bkg_scaled'),
+            qd.bump_nicas_data_directory('defer_to_model'),
+            qd.bump_nicas_files_prefix('defer_to_model'),
+            qd.bump_nicas_group_name('defer_to_model'),
             qd.analysis_variables([
                 "volume_mixing_ratio_of_o3",
                 "volume_mixing_ratio_of_no2",
