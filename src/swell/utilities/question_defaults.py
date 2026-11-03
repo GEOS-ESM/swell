@@ -178,7 +178,8 @@ class QuestionDefaults():
         ask_question: bool = False
         prompt: str = (
             "Server/profile name in ~/.swell/r2d2_credentials.yaml "
-            "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
+            "(e.g. 'gmao_server'). If empty, Swell uses R2D2_SERVER or the first "
+            "named profile; legacy root-level credentials are also supported."
         )
         widget_type: WType = WType.STRING
 
@@ -190,11 +191,10 @@ class QuestionDefaults():
         question_name: str = "r2d2_datastore"
         ask_question: bool = False
         prompt: str = (
-            "Datastore name passed to R2D2 fetch and store operations "
-            "(e.g. a Discover directory store or an S3 bucket store). "
-            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
-            "Leave empty to let R2D2 pick the highest-priority writable datastore "
-            "for your compute host."
+            "Optional advanced datastore override for R2D2 fetch and store operations. "
+            "Normally leave empty so R2D2 applies the selected server's data-hub and "
+            "compute-host priority configuration. Run scripts/discover_r2d2_datastores.py "
+            "to inspect available datastores."
         )
         widget_type: WType = WType.STRING
 

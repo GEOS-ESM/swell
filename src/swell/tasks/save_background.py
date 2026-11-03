@@ -50,8 +50,9 @@ class SaveBackground(taskBase):
         e.g. ``2025-10-02T09:00:00Z``.
         """
 
-        # Load R2D2 credentials
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         dry_run = self.config.dry_run(True)
         if dry_run:
