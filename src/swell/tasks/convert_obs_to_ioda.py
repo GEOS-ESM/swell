@@ -212,10 +212,13 @@ class ConvertObsToIoda(taskBase):
         # Append any additional flags defined in the converter config. Values may
         # contain placeholders (see the class docstring).
         for flag, value in conv_config.get('extra_flags', {}).items():
-            value = str(value)
-            for placeholder, replacement in placeholders.items():
-                value = value.replace(placeholder, replacement)
-            cmd += [flag, value]
+            cmd.append(flag)
+            # A YAML null value denotes a value-less command-line switch.
+            if value is not None:
+                value = str(value)
+                for placeholder, replacement in placeholders.items():
+                    value = value.replace(placeholder, replacement)
+                cmd.append(value)
 
         self.logger.info(f'  Command: {" ".join(cmd)}')
 
