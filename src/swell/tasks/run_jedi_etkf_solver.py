@@ -10,10 +10,10 @@
 
 import os
 from ruamel.yaml import YAML
+import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_key
 
 # --------------------------------------------------------------------------------------------------
@@ -51,18 +51,20 @@ class RunJediEtkfSolver(taskBase):
         window_begin = self.da_window_params.window_begin(window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
+        ensemble_num_members = self.config.ensemble_num_members()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
+        self.jedi_rendering.add_key('suite_name', self.suite_name())
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
+        self.jedi_rendering.add_key('ensemble_num_members', ensemble_num_members)
 
         # Geometry
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
@@ -206,20 +208,39 @@ class RunJediEtkfSolver(taskBase):
         with open(jedi_config_file, 'w') as f:
             yaml.dump(jedi_config_dict, f)
 
+        # create subdir
+        for imem in range(1, ensemble_num_members + 1):
+            mem_dir = f'analysis/mem{imem:003d}/'
+            xdir = os.path.join(self.cycle_dir(), mem_dir)
+            os.makedirs(xdir, exist_ok=True)
+        dir_list = ["analysis/mean", "analysis/variance"]
+        for j in dir_list:
+            xdir = os.path.join(self.cycle_dir(), j)
+            os.makedirs(xdir, exist_ok=True)
+
         model_component_meta = self.jedi_rendering.render_interface_meta()
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
         np = eval(str(model_component_meta['total_processors']))
         perhost = self.config.perhost(None)
+
+        # explicit command
+        #
+        mpi_command = "mpirun"
+        if not (perhost is None or perhost == "None"):
+            mpi_command += f" -perhost {perhost}"
+        mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+
+        cmd = f"cd {self.cycle_dir()} \n"
+        cmd += mpi_command
+
         if not generate_yaml_and_exit:
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file, perhost=perhost)
+            # TODO: memory issue with IO write (ana+inc)
+            # run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+            #               jedi_config_file, output_log_file, perhost=perhost)
+            subprocess.run(cmd, shell=True, check=True)
         else:
-            mpi_command = "mpirun"
-            if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
