@@ -352,6 +352,21 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class additional_forecast_collections(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "additional_forecast_collections"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "
+                       "be written and stored, in addition to the required bkg collection?")
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class background_frequency(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_frequency"

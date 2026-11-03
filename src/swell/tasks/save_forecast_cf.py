@@ -42,8 +42,10 @@ class SaveForecastCf(taskBase):
         window_length = self.config.window_length()
         forecast_length = self.config.forecast_length()
         forecast_output_frequency = self.config.forecast_output_frequency()
+        additional_forecast_collections = self.config.additional_forecast_collections()
         expid = self.config.r2d2_experiment_id()
-        fc_store_list = r2d2(self.jedi_rendering.__template_dict__)['store']['fc']
+        fc_store_list = r2d2(self.jedi_rendering.__template_dict__,
+                             additional_forecast_collections)['store']['fc']
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')

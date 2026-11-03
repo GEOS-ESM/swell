@@ -15,7 +15,8 @@ import isodate
 import xarray as xr
 import yaml
 
-from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_history
+from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import (
+    FORECAST_COLLECTIONS, forecast_history)
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
 
@@ -52,6 +53,7 @@ class PrepForecastCf(taskBase):
         self.forecast_length = self.config.forecast_length()
         self.forecast_output_frequency = self.config.forecast_output_frequency()
         self.resolution = self.config.horizontal_resolution()
+        self.additional_forecast_collections = self.config.additional_forecast_collections()
         self.an_vars_long = self.config.analysis_variables()
 
         self.geos_cf_rc_dir = self.config.geos_cf_rc_dir()
@@ -265,18 +267,26 @@ class PrepForecastCf(taskBase):
         history_src = os.path.join(namelists_dir, 'HISTORY.rc')
         history_dst = os.path.join(scratch_dir, 'HISTORY.rc')
         shutil.copy(history_src, history_dst)
-        history = forecast_history()
+        history = forecast_history(self.additional_forecast_collections)
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_EXPID<<<',
                             history['expid'])
+
+        # Every collection name is substituted in the attribute blocks below, but only the enabled
+        # ones are listed under COLLECTIONS: so that GEOS only writes those out.
         collection_placeholders = {
             'bkg': '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
             'chm': '>>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<',
             'met': '>>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<',
         }
         for file_type, placeholder in collection_placeholders.items():
-            self.replace_string(history_dst, placeholder, history['collections'][file_type])
+            self.replace_string(history_dst, placeholder, FORECAST_COLLECTIONS[file_type])
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
                             history['template'])
+
+        collections_list = '\n             '.join(f"'{name}'"
+                                                  for name in history['collections'].values())
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_COLLECTIONS_LIST<<<',
+                            collections_list)
 
         freq_dur = isodate.parse_duration(self.forecast_output_frequency)
         freq_total_secs = int(freq_dur.total_seconds())
