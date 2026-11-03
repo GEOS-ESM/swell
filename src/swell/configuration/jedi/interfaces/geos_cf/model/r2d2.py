@@ -24,7 +24,7 @@ FORECAST_TEMPLATE = '%y4%m2%d2_%h2%n2z.nc4'
 RESOLUTION_GRIDS = {
     'c90':  {'cube_tag': 'C90x90x6',   'grid_label': 'PC360x181-DC',   'im': 360,  'jm': 181},
     'c180': {'cube_tag': 'C180x180x6', 'grid_label': 'PC720x361-DC',   'im': 720,  'jm': 361},
-    'c360': {'cube_tag': 'C360x360x6', 'grid_label': 'PC1440x721-DC', 'im': 1440, 'jm': 721},
+    'c360': {'cube_tag': 'C360x360x6', 'grid_label': 'PC1440x721-DC',  'im': 1440, 'jm': 721},
 }
 
 # 'bkg' is the native-grid collection used to make backgrounds and is always written; 'chm'/'met'
