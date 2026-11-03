@@ -498,6 +498,54 @@ class bufr_obs_classes(TaskQuestion):
 
 
 @dataclass
+class bump_nicas_data_directory(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "bump_nicas_data_directory"
+    ask_question: bool = False
+    models: list[str] = mutable_field([
+        "geos_cf",
+    ])
+    prompt: str = ("Directory containing the BUMP/NICAS localization files for the "
+                   "bump_nicas saber central block. 'defer_to_model' uses the cycle "
+                   "directory.")
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class bump_nicas_files_prefix(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "bump_nicas_files_prefix"
+    ask_question: bool = False
+    models: list[str] = mutable_field([
+        "geos_cf",
+    ])
+    prompt: str = ("Filename prefix of the BUMP/NICAS localization files for the "
+                   "bump_nicas saber central block. 'defer_to_model' uses 'geos_cf'.")
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class bump_nicas_group_name(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "bump_nicas_group_name"
+    ask_question: bool = False
+    models: list[str] = mutable_field([
+        "geos_cf",
+    ])
+    prompt: str = ("NetCDF group name (NICAS localization group, e.g. "
+                   "'fixedlevel_H_500_300_V_00_03') used as the field alias for every "
+                   "analysis variable in the bump_nicas saber central block. "
+                   "'defer_to_model' uses 'fixedlevel_H_500_300_V_00_03'.")
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class bundles(TaskQuestion):
     default_value: list[str] = mutable_field([
         "fv3-jedi",
