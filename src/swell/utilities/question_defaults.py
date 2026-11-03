@@ -361,7 +361,8 @@ class QuestionDefaults():
             "geos_cf"
         ])
         prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "
-                       "be written and stored, in addition to the required bkg collection?")
+                       "be written and stored, in addition to the required bkg collection? "
+                       "These follow the same horizontal_resolution as the forecast.")
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
