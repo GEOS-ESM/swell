@@ -51,6 +51,12 @@ class RunJediVariationalExecutable(taskBase):
         stddev_scale_factor = self.config.get_key_for_model('stddev_scale_factor',
                                                             self.get_model(),
                                                             '0.25')
+        bump_nicas_data_directory = self.config.get_key_for_model(
+            'bump_nicas_data_directory', self.get_model(), 'defer_to_model')
+        bump_nicas_files_prefix = self.config.get_key_for_model(
+            'bump_nicas_files_prefix', self.get_model(), 'defer_to_model')
+        bump_nicas_group_name = self.config.get_key_for_model(
+            'bump_nicas_group_name', self.get_model(), 'defer_to_model')
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -75,6 +81,9 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block(None))
         self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block(None))
         self.jedi_rendering.add_key('stddev_scale_factor', stddev_scale_factor)
+        self.jedi_rendering.add_key('bump_nicas_data_directory', bump_nicas_data_directory)
+        self.jedi_rendering.add_key('bump_nicas_files_prefix', bump_nicas_files_prefix)
+        self.jedi_rendering.add_key('bump_nicas_group_name', bump_nicas_group_name)
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))

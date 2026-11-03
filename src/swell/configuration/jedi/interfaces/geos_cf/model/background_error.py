@@ -21,20 +21,36 @@ def _build_identity_central_block(template_dict: Mapping) -> Mapping:
 
 
 def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
-    """BUMP/NICAS covariance central block"""
+    """BUMP/NICAS covariance central block.
+
+    'data directory', 'files prefix' and the NICAS group name ('in file' alias) default to the
+    operational BUMP/NICAS files, but can each be overridden independently (e.g. to test NICAS
+    files computed with a different localization setup) via the bump_nicas_data_directory,
+    bump_nicas_files_prefix and bump_nicas_group_name questions.
+    """
+    def _override(key: str, default: str) -> str:
+        value = template_dict.get(key)
+        return value if value and value != 'defer_to_model' else default
+
+    data_directory = _override('bump_nicas_data_directory', f"{template_dict['cycle_dir']}/")
+    if not data_directory.endswith('/'):
+        data_directory += '/'
+    files_prefix = _override('bump_nicas_files_prefix', 'geos_cf')
+    group_name = _override('bump_nicas_group_name', 'fixedlevel_H_500_300_V_00_03')
+
     field_aliases = []
     for var in template_dict.get('analysis_variables', []):
         field_aliases.append({
             'in code': var,
-            'in file': 'fixedlevel_H_500_300_V_00_03'
+            'in file': group_name
         })
 
     return {
         'saber block name': 'BUMP_NICAS',
         'read': {
             'io': {
-                'data directory': f"{template_dict['cycle_dir']}/",
-                'files prefix': 'geos_cf',
+                'data directory': data_directory,
+                'files prefix': files_prefix,
                 'alias': field_aliases
             },
             'drivers': {
