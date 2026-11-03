@@ -249,8 +249,7 @@ class QuestionDefaults():
             "geos_cf",
         ])
         prompt: str = ("Per-variable scale factors applied to the background stddev in the "
-                       "stddev_bkg_scaled saber outer block. Keys are analysis variable names; "
-                       "values are scale factors.")
+                       "stddev_bkg_scaled saber outer block.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
