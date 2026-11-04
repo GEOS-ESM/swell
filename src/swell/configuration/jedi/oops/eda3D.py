@@ -53,21 +53,14 @@ class eda3D(OopsConfig):
                     },
                     'online diagnostics': self.interface_model('eda_varincrement1')
                 }],
-            },
-            'final': {
-                'diagnostics': {
-                    'departures': 'oman'
-                },
-                'prints': {
-                    'frequency': 'PT3H'
+                'output': {
+                    'analysis': self.interface_model('eda_analysis')
                 }
             },
-            'output': self.interface_model('eda_analysis')
         }
 
         # TODO: Implement this more cleanly in the OOPS schema
         if self.jedi_interface == 'geos_cf':
-            oops['final']['increment'] = {'geometry': self.interface_model('geometry'),
-                                          'output': self.interface_model('increment_cs')}
+            oops['variational']['output']['increment'] = self.interface_model('increment_cs')
 
         return oops
