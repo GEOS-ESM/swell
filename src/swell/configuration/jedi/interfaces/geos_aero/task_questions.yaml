@@ -33,6 +33,10 @@ npx_proc:
 npy_proc:
   default_value: 4
 
+number_of_iterations:
+  default_value:
+  - 5
+
 observations:
   default_value:
   - mod04_l2a_land

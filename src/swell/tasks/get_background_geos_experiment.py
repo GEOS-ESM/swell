@@ -77,7 +77,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # -------------------------------------
         # geos_x_background_directory is expected to point to the base
         # directory containing the rs/Yyyyy/Mmm hierarchy for this
-        # experiment and resolution (e.g. .../Restarts/JEDI/541x/x0054/rs).
+        # experiment and resolution (e.g. .../Restarts/JEDI/544/{background_experiment}/rs).
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
 
         bkgr_tar = os.path.join(geos_x_background_directory,

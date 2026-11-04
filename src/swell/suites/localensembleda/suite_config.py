@@ -36,7 +36,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.horizontal_resolution('91'),
             qd.background_experiment('x0050'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x/91/x0050/rs'),
+                                           'rtodling/archive/Restarts/JEDI/541x'),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
                                          'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
@@ -78,7 +78,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.horizontal_resolution('91'),
             qd.background_experiment('x0050'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x/91/x0050/rs'),
+                                           'rtodling/archive/Restarts/JEDI/541x'),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
                                          'rtodling/archive/541/Milan'),
             qd.npx_proc(4),

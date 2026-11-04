@@ -11,9 +11,9 @@
 field_io_names = {
     'air_pressure_thickness': 'DELP',
     'moist_air_density': 'AIRDENS',
-    'volume_extinction_in_air_due_to_aerosol_particles_lambda1' : 'TOTEXTCOEF470',
-    'volume_extinction_in_air_due_to_aerosol_particles_lambda2' : 'TOTEXTCOEF550',
-    'volume_extinction_in_air_due_to_aerosol_particles_lambda3' : 'TOTEXTCOEF870'
+    'volume_extinction_in_air_due_to_aerosol_particles_lambda1': 'TOTEXTCOEF470',
+    'volume_extinction_in_air_due_to_aerosol_particles_lambda2': 'TOTEXTCOEF550',
+    'volume_extinction_in_air_due_to_aerosol_particles_lambda3': 'TOTEXTCOEF870'
 }
 
 # --------------------------------------------------------------------------------------------------
