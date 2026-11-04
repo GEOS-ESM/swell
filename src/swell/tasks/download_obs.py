@@ -7,22 +7,33 @@
 """
 Task for downloading raw observation files from remote servers.
 
-Two retrieval methods are supported, selected by ``retrieval_method`` in
-the per-obs download YAML:
+Downloads native observation files (e.g. HDF5, NetCDF) from either HTTPS
+servers such as NASA GES DISC, from public AWS S3 buckets, or from
+authenticated HTTPS endpoints for NASA ASDC datasets.
 
 ``https`` (default)
     Scrapes an HTML directory listing and streams files via HTTPS.
     Authentication uses ``~/.netrc``.
+
+``s3_public``
+    Downloads from a publicly readable S3 bucket using anonymous boto3
+    access (e.g. ``s3://meeo-s5p``).  Requires ``boto3``.
 
 ``cmr``
     Queries the NASA CMR API for granule URLs, then downloads via
     authenticated HTTPS (Earthdata ``~/.netrc``).  Use this for NASA ASDC
     datasets such as TEMPO NO2 whose S3 bucket is restricted to AWS
     ``us-west-2``.
+
+``local``
+    Links granule files that already exist on a local filesystem (e.g. on
+    NCCS Discover) into the download directory instead of downloading them.
+    Selected per observation with ``download_obs_config_overrides``.
 """
 
 import base64
 import datetime
+import glob
 import netrc
 import os
 import re
@@ -31,6 +42,7 @@ import isodate
 import requests
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities import s3 as swell_s3
 
 
 class DownloadObs(taskBase):
@@ -52,6 +64,12 @@ class DownloadObs(taskBase):
         Queries the NASA CMR API for granule download URLs and fetches
         each file via authenticated HTTPS (Earthdata ``~/.netrc``).
 
+    ``local``
+        Uses a locally archived copy instead of a remote server.  It is not
+        the default of any obs YAML; select it with
+        ``download_obs_config_overrides`` (``retrieval_method: local`` and
+        ``local_file_template: ...``).
+
     Raw obs files are placed in ``<cycle_dir>/download/<obs_name>/``.
 
     The task can run in dry-run mode (``dry_run: true``) where it only logs
@@ -64,6 +82,7 @@ class DownloadObs(taskBase):
               present under ``download_observations/``.
             - ``window_length``: ISO-8601 duration (e.g. ``"PT6H"``).
             - ``dry_run``: if ``True``, skip actual downloads.
+            - ``download_obs_config_overrides``: per-obs overrides of the YAML keys.
 
     Example:
         In a Cylc suite::
@@ -76,6 +95,7 @@ class DownloadObs(taskBase):
         obs_to_download = self.config.obs_to_download([])
         window_length = self.config.window_length()
         dry_run = self.config.dry_run(True)
+        download_obs_config_overrides = self.config.download_obs_config_overrides({})
 
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be downloaded')
@@ -103,6 +123,16 @@ class DownloadObs(taskBase):
 
             with open(config_path, 'r') as fh:
                 obs_config = yaml.safe_load(fh)
+
+            # Apply any per-obs overrides from the experiment config.
+            # This allows, e.g., switching s3_source from NRTI to OFFL, or
+            # retrieval_method to 'local', via the experiment override YAML
+            # without editing source files.
+            if obs_name in download_obs_config_overrides:
+                obs_config.update(download_obs_config_overrides[obs_name])
+                self.logger.info(
+                    f'  Applied download_obs_config_overrides for {obs_name}: '
+                    f'{download_obs_config_overrides[obs_name]}')
 
             downloaded, failed = self._download_obs(
                 obs_config, obs_name,
@@ -136,8 +166,16 @@ class DownloadObs(taskBase):
         """
         retrieval_method = obs_config.get('retrieval_method', 'https')
 
+        if retrieval_method == 's3_public':
+            return self._download_obs_s3_public(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
         if retrieval_method == 'cmr':
             return self._download_obs_cmr(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
+        if retrieval_method == 'local':
+            return self._download_obs_local(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
         # ------------------------------------------------------------------
@@ -175,14 +213,22 @@ class DownloadObs(taskBase):
         downloaded = 0
         failed = 0
 
+        # Patterns without an hour placeholder (e.g. one file per day) resolve to
+        # the same listing and glob for every hour slot; handle each only once.
+        seen_slots = set()
+        listing_cache = {}
+
         for slot_date, slot_hour in hour_slots:
             remote_path = self._resolve_path(remote_path_template, slot_date)
             file_glob = self._resolve_filename(filename_pattern, slot_date, slot_hour)
 
-            file_regex = re.compile(
-                '^' + re.escape(file_glob).replace(r'\*', '.*') + '$')
+            file_regex = swell_s3.glob_to_regex(file_glob)
 
             listing_url = remote_host.rstrip('/') + '/' + remote_path.lstrip('/')
+
+            if (listing_url, file_glob) in seen_slots:
+                continue
+            seen_slots.add((listing_url, file_glob))
 
             if dry_run:
                 self.logger.info(
@@ -190,13 +236,16 @@ class DownloadObs(taskBase):
                 continue
 
             try:
-                names = self._list_remote_dir(session, listing_url)
+                if listing_url not in listing_cache:
+                    listing_cache[listing_url] = self._list_remote_dir(session, listing_url)
+                names = listing_cache[listing_url]
             except requests.RequestException as exc:
                 self.logger.error(f'Failed to list {listing_url}: {exc}')
                 failed += 1
                 continue
 
-            matches = [n for n in names if file_regex.match(n)]
+            matches = [n for n in names if file_regex.match(n)
+                       and self._granule_in_window(n, obs_config, search_start, search_end)]
             self.logger.info(
                 f'  Hour {slot_hour:02d}z on {slot_date.strftime("%Y-%m-%d")}: '
                 f'{len(matches)} file(s) found')
@@ -216,6 +265,155 @@ class DownloadObs(taskBase):
                     downloaded += 1
                 except requests.RequestException as exc:
                     self.logger.error(f'  Failed to download {filename}: {exc}')
+                    failed += 1
+
+        return downloaded, failed
+
+    def _download_obs_s3_public(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Download files for one observation type from a publicly readable
+        S3 bucket using anonymous (unsigned) boto3 access.
+
+        The ``obs_config`` dict must contain:
+
+        - ``s3_source``: S3 URI template with ``YYYY``, ``MM``, ``DD``
+          placeholders, e.g.
+          ``s3://meeo-s5p/NRTI/L2__NO2___/YYYY/MM/DD``.
+
+        Optional keys:
+
+        - ``max_orbit_duration``: ISO-8601 duration; extends the search
+          window backwards (default ``PT0H``).
+
+        Returns ``(n_downloaded, n_failed)``.
+        """
+        try:
+            from botocore.exceptions import BotoCoreError, ClientError
+        except ImportError:
+            self.logger.abort(
+                "boto3 is required for 's3_public' retrieval but is not installed. "
+                'Install it with: pip install boto3')
+
+        s3_source_template = obs_config['s3_source']
+        filename_pattern = obs_config.get('filename_pattern', '')
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+
+        search_start = window_begin_dto - max_orbit_dur
+        search_end = window_end_dto
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        if not dry_run:
+            os.makedirs(dest_dir, exist_ok=True)
+
+        without_scheme = s3_source_template[len('s3://'):]
+        bucket, _, prefix_template = without_scheme.partition('/')
+
+        if dry_run:
+            for day_date in self._day_slots(search_start, search_end):
+                prefix = self._resolve_path(prefix_template, day_date)
+                pattern_info = (f' matching {self._resolve_path(filename_pattern, day_date)}'
+                                if filename_pattern else '')
+                self.logger.info(
+                    f'  [DRY RUN] Would list s3://{bucket}/{prefix}{pattern_info}')
+            return 0, 0
+
+        s3_client = swell_s3.anonymous_s3_client()
+
+        downloaded = 0
+        failed = 0
+
+        for day_date in self._day_slots(search_start, search_end):
+            prefix = self._resolve_path(prefix_template, day_date)
+            self.logger.info(f'  Listing s3://{bucket}/{prefix}')
+
+            try:
+                paginator = s3_client.get_paginator('list_objects_v2')
+                pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
+                keys = [
+                    obj['Key']
+                    for page in pages
+                    for obj in page.get('Contents', [])
+                ]
+            except (BotoCoreError, ClientError) as exc:
+                self.logger.error(
+                    f'  Failed to list s3://{bucket}/{prefix}: {exc}')
+                failed += 1
+                continue
+
+            if not keys:
+                self.logger.info(
+                    f'  No objects found under s3://{bucket}/{prefix}')
+                continue
+
+            # download only files that are in the window
+            if filename_pattern:
+                valid_hours = [h for d, h in self._hour_slots(search_start, search_end)
+                               if d == day_date]
+                hours_window = [
+                    swell_s3.glob_to_regex(
+                        self._resolve_filename(filename_pattern, day_date, h))
+                    for h in valid_hours
+                ]
+                keys = [k for k in keys
+                        if any(r.match(os.path.basename(k)) for r in hours_window)]
+
+            utc = datetime.timezone.utc
+            s_start = (search_start.replace(tzinfo=utc)
+                       if search_start.tzinfo is None else search_start)
+            s_end = (search_end.replace(tzinfo=utc)
+                     if search_end.tzinfo is None else search_end)
+            timestamp_rx = re.compile(r'\d{8}T\d{6}')
+            filtered = []
+            any_timestamp_found = False
+            for k in keys:
+                basename = os.path.basename(k)
+                matches = timestamp_rx.findall(basename)
+                if not matches:
+                    filtered.append(k)
+                    continue
+                any_timestamp_found = True
+                granule_start_str = matches[0]
+                try:
+                    gran_start = datetime.datetime.strptime(
+                        granule_start_str, '%Y%m%dT%H%M%S'
+                    ).replace(tzinfo=utc)
+                except ValueError:
+                    filtered.append(k)
+                    continue
+                if s_start <= gran_start <= s_end:
+                    filtered.append(k)
+            if any_timestamp_found:
+                keys = filtered
+            elif not filename_pattern:
+                self.logger.warning(
+                    f'  {day_date}: no YYYYMMDDTHHmmss timestamp found in filenames ')
+
+            self.logger.info(
+                f'  {day_date}: {len(keys)} object(s) found')
+
+            for key in keys:
+                filename = os.path.basename(key)
+                dest_path = os.path.join(dest_dir, filename)
+
+                if os.path.exists(dest_path):
+                    self.logger.info(f'  Already exists, skipping: {filename}')
+                    downloaded += 1
+                    continue
+
+                try:
+                    s3_client.download_file(bucket, key, dest_path)
+                    self.logger.info(f'  Downloaded: {filename}')
+                    downloaded += 1
+                except (BotoCoreError, ClientError) as exc:
+                    self.logger.error(
+                        f'  Failed to download {filename}: {exc}')
                     failed += 1
 
         return downloaded, failed
@@ -343,6 +541,111 @@ class DownloadObs(taskBase):
 
         return downloaded, failed
 
+    def _download_obs_local(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Link granules that already exist on a local filesystem into the
+        download directory (the files are used as is, nothing is extracted).
+
+        The ``obs_config`` dict must contain:
+
+        - ``local_file_template``: ``strftime`` template (``%Y``, ``%m``,
+          ``%d``, ``%j``) of the granule path(s) for one day; ``*`` wildcards
+          are allowed.  The template is resolved for every day touched by the
+          search window.
+
+        Optional keys:
+
+        - ``granule_start_regex`` / ``granule_start_format``: extract the start
+          time of a granule from its file name and keep it only if it lies in
+          the search window (see ``_granule_in_window``).
+        - ``max_orbit_duration``: ISO-8601 duration; extends the search window
+          backwards (default ``PT0H``).
+
+        Returns ``(n_linked, n_failed)``.
+        """
+        file_template = obs_config['local_file_template']
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+
+        search_start = window_begin_dto - max_orbit_dur
+        search_end = window_end_dto
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        if not dry_run:
+            os.makedirs(dest_dir, exist_ok=True)
+
+        linked = 0
+        failed = 0
+
+        for day_date in self._day_slots(search_start, search_end):
+            file_pattern = day_date.strftime(file_template)
+            files = [f for f in sorted(glob.glob(file_pattern))
+                     if self._granule_in_window(
+                         os.path.basename(f), obs_config, search_start, search_end)]
+
+            if dry_run:
+                self.logger.info(
+                    f'  [DRY RUN] Would link {len(files)} local file(s) '
+                    f'matching {file_pattern}')
+                continue
+
+            if not files:
+                self.logger.error(f'  No local file found matching {file_pattern}')
+                failed += 1
+                continue
+
+            for source in files:
+                dest_path = os.path.join(dest_dir, os.path.basename(source))
+                if not os.path.lexists(dest_path):
+                    os.symlink(source, dest_path)
+                linked += 1
+
+            self.logger.info(f'  {day_date}: {len(files)} local file(s) linked')
+
+        return linked, failed
+
+    def _granule_in_window(
+        self,
+        filename: str,
+        obs_config: dict,
+        search_start: datetime.datetime,
+        search_end: datetime.datetime,
+    ) -> bool:
+        """Return False if the start time encoded in ``filename`` is outside
+        ``[search_start, search_end]``.
+
+        The start time is taken from the first match of the
+        ``granule_start_regex`` key of ``obs_config`` and parsed with the
+        ``granule_start_format`` key (``strptime`` format, UTC).  If either key
+        is missing, or the file name does not carry a parsable time, the file
+        is kept.
+        """
+        regex = obs_config.get('granule_start_regex')
+        fmt = obs_config.get('granule_start_format')
+        if not regex or not fmt:
+            return True
+
+        found = re.search(regex, filename)
+        if not found:
+            return True
+        try:
+            granule_start = datetime.datetime.strptime(found.group(0), fmt)
+        except ValueError:
+            return True
+
+        def naive_utc(dto: datetime.datetime) -> datetime.datetime:
+            if dto.tzinfo is None:
+                return dto
+            return dto.astimezone(datetime.timezone.utc).replace(tzinfo=None)
+
+        return naive_utc(search_start) <= granule_start <= naive_utc(search_end)
+
     def _create_earthdata_session(self) -> requests.Session:
         """Return an authenticated ``requests.Session`` for NASA Earthdata
         protected HTTPS endpoints (e.g. ``data.asdc.earthdata.nasa.gov``).
@@ -413,6 +716,20 @@ class DownloadObs(taskBase):
     # ------------------------------------------------------------------
     # Slot/date helpers
     # ------------------------------------------------------------------
+
+    def _day_slots(
+        self,
+        search_start: datetime.datetime,
+        search_end: datetime.datetime,
+    ) -> list[datetime.date]:
+        """Return a list of unique date objects from search_start to search_end."""
+        days = []
+        current = search_start.date()
+        end_date = search_end.date()
+        while current <= end_date:
+            days.append(current)
+            current += datetime.timedelta(days=1)
+        return days
 
     def _hour_slots(
         self,

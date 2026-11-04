@@ -37,7 +37,7 @@ class SuiteConfig(QuestionContainer, Enum):
              qd.horizontal_resolution("181"),
              qd.background_experiment("x0054"),
              qd.geos_x_background_directory(
-                 "/discover/nobackup/projects/gmao/dadev/rtodling/archive/544/x0054/rs"
+                 "/discover/nobackup/projects/gmao/dadev/rtodling/archive/544"
              ),
              # Explicitly set obs location for geos_aero so GetObsNotInR2d2 uses
              # the aerosol MODIS AOD directory instead of platform defaults.

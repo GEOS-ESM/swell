@@ -1,0 +1,22 @@
+# Aura MLS Ozone (O3) NRT — IODA converter configuration
+# Converter: mls_o3_nc2ioda.py (ioda-converters, compo; must be available either
+#            in `converter_path`, set in suite_config.py, or in jedi_bundle/build/bin/)
+#
+# Invocation (one call per cycle, all chunks passed together):
+#   python3 <jedi_bundle>/build/bin/mls_o3_nc2ioda.py
+#       -i <chunk1.he5> <chunk2.he5> ...
+#       -o <cycle_dir>/ioda/mls_o3_nrt/mls_o3_nrt_YYYYMMDDHH.nc4
+#       --mls-version nrt
+#       --window-begin <DA window begin> --window-end <DA window end>
+
+converter_script: mls_o3_nc2ioda.py
+
+# Output filename template (must be the same as
+# source in ingest_observations/mls_o3_nrt.yaml)
+output_filename_template: "mls_o3_nrt_%Y%m%d%H.nc4"
+
+# {window_begin} and {window_end} are replaced by the DA window bounds
+extra_flags:
+  --mls-version: nrt
+  --window-begin: "{window_begin}"
+  --window-end: "{window_end}"

@@ -153,6 +153,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CleanEda = QuestionList(
+        list_name="CleanEda",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     CloneGeos = QuestionList(
         list_name="CloneGeos",
         questions=[
@@ -200,6 +210,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="ConvertObsToIoda",
         questions=[
             qd.converter_path(),
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
@@ -211,6 +222,7 @@ class TaskQuestions(QuestionContainer, Enum):
     DownloadObs = QuestionList(
         list_name="DownloadObs",
         questions=[
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
@@ -361,7 +373,8 @@ class TaskQuestions(QuestionContainer, Enum):
     GetBufr = QuestionList(
         list_name="GetBufr",
         questions=[
-            qd.bufr_obs_classes()
+            qd.bufr_obs_classes(),
+            qd.obs_rc_path()
         ]
     )
 
@@ -380,7 +393,10 @@ class TaskQuestions(QuestionContainer, Enum):
     GetEnsemble = QuestionList(
         list_name="GetEnsemble",
         questions=[
-            qd.path_to_ensemble()
+            qd.path_to_ensemble(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.background_experiment(),
         ]
     )
 
@@ -391,6 +407,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.background_experiment(),
             qd.background_time_offset(),
+            qd.ebkg_time_offset(),
             qd.geos_x_ensemble_directory()
         ]
     )
@@ -455,7 +472,9 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.cache_fetch(),
             qd.cycling_varbc(),
+            qd.fetch_obs_from_public_s3(),
             qd.obs_experiment(),
+            qd.observation_providers(),
             qd.observing_system_records_path(),
             qd.window_length(),
         ]
@@ -500,7 +519,9 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.dry_run(),
             qd.obs_to_ingest(),
+            qd.observation_providers(),
             qd.window_length(),
+            qd.store_as_symlink(),
         ]
     )
 
@@ -604,12 +625,12 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_length(),
             qd.forecast_output_frequency(),
             qd.geos_cf_install_dir(),
-            qd.geos_cf_run_dir(),
-            qd.geosfp_exp(),
-            qd.geosfp_path(),
+            qd.geos_cf_rc_dir(),
             qd.horizontal_resolution(),
             qd.iau(),
             qd.inc_template(),
+            qd.met_replay_exp(),
+            qd.met_replay_root(),
             qd.window_length(),
             qd.rst_experiment()
         ]
@@ -670,11 +691,28 @@ class TaskQuestions(QuestionContainer, Enum):
             window_questions,
             qd.analysis_variables(),
             qd.ensemble_num_members(),
+            qd.ensmeanvariance_spec(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.observations(),
             qd.observing_system_records_path(),
             qd.comparison_log_type('ensmeanvariance'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediDiffstates = QuestionList(
+        list_name="RunJediDiffstates",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.diffstates_spec(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.comparison_log_type('diffstates'),
             qd.mock_experiment()
         ]
     )
@@ -722,6 +760,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
+            qd.marine_models(),
             qd.save_geovals(),
             qd.total_processors(),
             qd.comparison_log_type('ensemblehofx'),
@@ -737,15 +776,13 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
+            qd.analysis_variables(),
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.ensemble_num_members(),
             qd.ensmean_only(),
             qd.ensmeanvariance_only(),
             qd.generate_yaml_and_exit(),
-            qd.horizontal_localization_lengthscale(),
-            qd.horizontal_localization_max_nobs(),
-            qd.horizontal_localization_method(),
             qd.jedi_forecast_model(),
             qd.local_ensemble_inflation_mult(),
             qd.local_ensemble_inflation_rtpp(),
@@ -754,17 +791,25 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_ensemble_increments(),
             qd.local_ensemble_save_posterior_mean(),
             qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
             qd.local_ensemble_solver(),
             qd.local_ensemble_use_linear_observer(),
             qd.skip_ensemble_hofx(),
+            qd.skip_hofx_output(),
             qd.total_processors(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
             qd.vertical_localization_apply_log_transform(),
             qd.vertical_localization_function(),
             qd.vertical_localization_ioda_vertical_coord(),
             qd.vertical_localization_ioda_vertical_coord_group(),
             qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
             qd.vertical_localization_method(),
             qd.perhost(),
+            qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
             qd.mock_experiment()
         ]
@@ -785,6 +830,106 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.total_processors(),
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEtkfObserver = QuestionList(
+        list_name="RunJediEtkfObserver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
+            qd.vertical_localization_method(),
+            qd.npx_per_observer(),
+            qd.npy_per_observer(),
+            qd.perhost(),
+            qd.change_vbc_to_sbc(),
+            qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEtkfSolver = QuestionList(
+        list_name="RunJediEtkfSolver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
+            qd.vertical_localization_method(),
+            qd.perhost(),
+            qd.change_vbc_to_sbc(),
+            qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediPostprocSoca2ciceExecutable = QuestionList(
+        list_name="RunJediPostprocSoca2ciceExecutable",
+        questions=[
+            qd.analysis_variables(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.comparison_log_type('postproc_soca2cice'),
             qd.mock_experiment()
         ]
     )
@@ -817,12 +962,62 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunCompressForecast = QuestionList(
+        list_name="RunCompressForecast",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEdaExecutable = QuestionList(
+        list_name="RunJediEdaExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+            qd.obs_pert_amplitude(),
+            qd.obs_thinning_rej_fraction(),
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveForecast = QuestionList(
+        list_name="SaveForecast",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            ]
+        )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveForecastCf = QuestionList(
+        list_name="SaveForecastCf",
+        questions=[
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.horizontal_resolution(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveObsDiags = QuestionList(
         list_name="SaveObsDiags",
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.marine_models()
+            qd.marine_models(),
         ]
     )
 
@@ -863,13 +1058,14 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    SaveForecastCf = QuestionList(
-        list_name="SaveForecastCf",
+    SaveBackground = QuestionList(
+        list_name="SaveBackground",
         questions=[
-            qd.forecast_length(),
-            qd.forecast_output_frequency(),
+            qd.dry_run(),
+            qd.background_source_path(),
+            qd.background_experiment(),
             qd.horizontal_resolution(),
-            qd.window_length(),
+            qd.store_as_symlink(),
         ]
     )
 

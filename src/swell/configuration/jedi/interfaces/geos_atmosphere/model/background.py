@@ -24,7 +24,7 @@ state_variables = [
     'rain_water',
     'snow_water',
     'mole_fraction_of_ozone_in_air',
-    'geopotential_height_times_gravity_at_surface',
+    'geopotential_at_surface',
     'initial_mass_fraction_of_large_scale_cloud_condensate',
     'initial_mass_fraction_of_convective_cloud_condensate',
     'convective_cloud_area_fraction',

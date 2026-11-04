@@ -21,7 +21,7 @@ def background(template_dict: Mapping) -> Mapping:
         'provider': 'geos',
         'max allowable geometry difference': 1e-3,
         'datapath': template_dict['cycle_dir'],
-        'filename': 'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
+        'filename': 'extbkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
         'state variables': state_variables,
         'field io names': field_io_names,
     }

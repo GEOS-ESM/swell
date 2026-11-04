@@ -64,6 +64,12 @@ class Config():
         self.__final_cycle_point__ = experiment_dict.get('final_cycle_point')
         self.__suite_to_run__ = experiment_dict.get('suite_to_run')
 
+        # Create getter methods for suite-level variables so they can be used without
+        # adding them to task_questions
+        for suite_var in ['experiment_root', 'experiment_id', 'platform',
+                          'start_cycle_point', 'final_cycle_point', 'suite_to_run']:
+            setattr(self, suite_var, self.get(suite_var))
+
         # If experiment_dict contains models key add the model components to the object
         if 'models' in experiment_dict.keys():
             self.__model_components__ = list(experiment_dict['models'].keys())

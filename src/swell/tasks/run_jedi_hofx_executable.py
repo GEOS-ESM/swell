@@ -41,6 +41,7 @@ class RunJediHofxExecutable(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         save_geovals = self.config.save_geovals(False)
+        marine_models = self.config.marine_models(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -77,6 +78,7 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         self.jedi_rendering.add_key('npx', self.config.npx(None))
         self.jedi_rendering.add_key('npy', self.config.npy(None))
+        self.jedi_rendering.add_key('marine_models', marine_models)
 
         # Observations
         # ------------
@@ -95,6 +97,13 @@ class RunJediHofxExecutable(taskBase):
         # -----
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
+
+        # Use GEOS utility to generate states for marine model
+        # -----------------------------------
+        if marine_models is not None:
+            states = self.geos.states_generator(self.config.background_frequency(), window_length,
+                                                window_begin_iso, self.get_model(), marine_models)
+            self.jedi_rendering.add_dynamic_key('states', states)
 
         # Get the JEDI interface metadata
         # -------------------------------

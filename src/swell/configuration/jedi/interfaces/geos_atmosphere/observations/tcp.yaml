@@ -1,0 +1,120 @@
+obs space:
+  name: TC vital storm center pressure
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/tcp.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.tcp.{{window_begin}}.nc4'
+  simulated variables: [stationPressure]
+
+obs operator:
+
+  # Surface pressure is handled using the correction scheme
+  name: SfcCorrected
+  variables:
+  - name: stationPressure
+  correction scheme to use: GSL
+  geovar_geomz: geopotential_height
+  geovar_sfc_geomz: height_above_mean_sea_level_at_surface
+  station_altitude: height
+
+obs prior filters:
+
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
+- filter: Variable Transforms
+  Transform: AdjustedHeightCoordinate
+  SkipWhenNoObs: False
+
+# limit to obs with pressures in valid range
+- filter: Domain Check
+  where:
+  - variable:
+      name: MetaData/pressure
+    minvalue: 85000
+    maxvalue: 102500
+
+obs post filters:
+
+#ps       180    1    1     3.0      0      0      0   4.0   3.0   1.0   4.0  0.000300     0    0.     0.      0    0.     0.
+#tcp      112    0    1     3.0      0      0      0  75.0   5.0   1.0  75.0  0.000000     0    0.     0.      0    0.     0.
+
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorSfcPressure
+      options:
+        geovar_geomz: geopotential_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
+        station_altitude: height
+# assign TempObsErrorData/stationPressure <--- ObsErrorData before changing its Min and Max
+- filter: Variable Assignment
+  assignments:
+  - name: TempObsErrorData/stationPressure
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsErrorData/stationPressure
+  defer to post: true
+# set ObsErrorData 100 Pa if it < 100 Pa.
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: assign error
+    error parameter: 100
+  where:
+  - variable:
+      name: TempObsErrorData/stationPressure
+    maxvalue: 100
+  - variable:
+      name: TempObsErrorData/stationPressure
+    value: is_valid
+  defer to post: true
+# set ObsErrorData 500 Pa if it > 500 Pa.
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: assign error
+    error parameter: 500
+  where:
+  - variable:
+      name: TempObsErrorData/stationPressure
+    minvalue: 500
+  - variable:
+      name: TempObsErrorData/stationPressure
+    value: is_valid
+  defer to post: true
+
+#  Background  check
+- filter: Background Check
+  filter variables:
+  - name: stationPressure
+  threshold: 75.0
+  action:
+    name: reject
+  defer to post: true
+
+# Re-assign error ObsErrorData/stationPressure <--- TempObsErrorData/stationPressure
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: assign error
+    error function: TempObsErrorData/stationPressure
+  where:
+  - variable:
+      name: TempObsErrorData/stationPressure
+    value: is_valid
+  defer to post: true
+
+

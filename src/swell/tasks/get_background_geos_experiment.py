@@ -79,7 +79,10 @@ class GetBackgroundGeosExperiment(taskBase):
         # directory containing the rs/Yyyyy/Mmm hierarchy for this
         # experiment and resolution (e.g. .../Restarts/JEDI/541x/x0054/rs).
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
+
         bkgr_tar = os.path.join(geos_x_background_directory,
+                                background_experiment,
+                                'rs',
                                 bkgr_exp_start_dto.strftime('Y%Y'),
                                 bkgr_exp_start_dto.strftime('M%m'),
                                 bkgr_tar_file)
@@ -109,12 +112,16 @@ class GetBackgroundGeosExperiment(taskBase):
                     # Strip the filename to get the date information
                     # -----------------------------------------------------
                     member_date_str = member.name.split('.')[2]
+                    member_type_str = member.name.split('.')[1]
                     member_date_dto = dt.strptime(member_date_str, '%Y%m%d_%H00z')
 
                     # Create the JEDI bkgr filename
                     # -----------------------------
                     jedi_date = member_date_dto.strftime(datetime_formats["directory_format"])
-                    bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
+                    if member_type_str == "bkg_clcv_rst":
+                        bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
+                    if member_type_str == "extbkg_clcv_rst":
+                        bkg_filename_jedi = f'extbkg.{jedi_date}.nc4'
 
                     # Rename the files
                     # ----------------

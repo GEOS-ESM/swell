@@ -65,6 +65,10 @@ class JediConfigRendering():
         self.__template_dict__['experiment_id'] = experiment_id
         self.__template_dict__['experiment_root'] = experiment_root
 
+        # Predefine eda variables to dictionary
+        self.__template_dict__['ensemble_imember'] = None
+        self.__template_dict__['ensemble_ichunk'] = None
+
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
             'analysis_variables',
@@ -81,8 +85,14 @@ class JediConfigRendering():
             'ensemble_hofx_packets',
             'ensemble_hofx_strategy',
             'ensemble_num_members',
+            'ensemble_imember',
             'ensmean_only',
             'ensmeanvariance_only',
+            'ensmeanvariance_spec_item',
+            'ensmeanvariance_spec_gridtype',
+            'diffstates_spec',
+            'diffstates_spec_gridtype',
+            'diffstates_spec_statetype',
             'experiment_id',
             'experiment_root',
             'final_cycle_point',
@@ -92,9 +102,6 @@ class JediConfigRendering():
             'gsibec_nlons',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
-            'horizontal_localization_lengthscale',
-            'horizontal_localization_max_nobs',
-            'horizontal_localization_method',
             'horizontal_resolution',
             'local_background_time',
             'local_background_time_iso',
@@ -105,6 +112,7 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_ensemble_increments',
             'local_ensemble_save_posterior_mean',
             'local_ensemble_save_posterior_mean_increment',
+            'local_ensemble_do_posterior_observer',
             'local_ensemble_solver',
             'local_ensemble_use_linear_observer',
             'marine_models',
@@ -120,15 +128,23 @@ class JediConfigRendering():
             'perhost',
             'saber_central_block',
             'saber_outer_block',
+            'stddev_scale_factor',
             'skip_ensemble_hofx',
             'swell_static_files',
             'start_cycle_point',
+            'suite_to_run',
             'total_processors',
+            'horizontal_localization_lengthscale',
+            'horizontal_localization_max_nobs',
+            'horizontal_localization_method',
+            'horizontal_resolution',
             'vertical_localization_apply_log_transform',
             'vertical_localization_function',
             'vertical_localization_ioda_vertical_coord',
             'vertical_localization_ioda_vertical_coord_group',
             'vertical_localization_lengthscale',
+            'vertical_localization_unit',
+            'vertical_localization_frac_retained_variance',
             'vertical_localization_method',
             'vertical_resolution',
             'window_begin',
@@ -136,6 +152,7 @@ class JediConfigRendering():
             'window_end_iso',
             'window_length',
             'forecast_length',
+            'suite_name',
         ]
 
         # List of all potential valid dynamic keys that can be used in templates

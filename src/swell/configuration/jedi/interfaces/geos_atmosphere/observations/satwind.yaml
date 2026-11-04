@@ -247,6 +247,90 @@ obs post filters:
   filter variables:
   - name: windEastward
   - name: windNorthward
+  reference: GeoVaLs/tropopause_pressure
+  value: MetaData/pressure
+  minvalue: -5000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 240-260
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 95000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 240-260
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  minvalue: 70000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 242,243
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 39900.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 246,247,250,254
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  minvalue: 24900.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 257,259
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 60000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 258,259
+  action:
+    name: reject      
+      
+- filter: Difference Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
   reference: GeoVaLs/air_pressure_at_surface
   value: MetaData/pressure
   maxvalue: -11000

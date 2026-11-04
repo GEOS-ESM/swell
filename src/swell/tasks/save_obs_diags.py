@@ -53,6 +53,9 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -82,14 +85,14 @@ class SaveObsDiags(taskBase):
 
             # Store to R2D2
             # ---------------
-
+            failed_to_store = []
             try:
                 store_kwargs = dict(
                     item='feedback',
                     experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
-                    window_length='PT6H',
+                    window_length=window_length,
                     window_start=window_begin,
                     source_file=obs_path_file,
                     member=-9999,
@@ -98,8 +101,13 @@ class SaveObsDiags(taskBase):
                     store_kwargs['data_store'] = r2d2_datastore
                 r2d2.store(**store_kwargs)
                 self.logger.info(f'Successfully stored feedback file for {observation}')
-
             except Exception as e:
                 self.logger.info(f'Failed to store feedback file for {observation}: {str(e)}')
                 # Don't abort - continue with other observations
+                failed_to_store.append(observation)
                 continue
+
+        # If all do not succeed - cause failure
+        # -------------------------------------
+        if len(failed_to_store):
+            self.logger.abort('Storing to R2D2 failed for the following obs: {failed_to_store}')

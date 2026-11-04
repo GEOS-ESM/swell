@@ -24,19 +24,20 @@ class PrepCoupledGeosRunDir(taskBase):
     def execute(self) -> None:
 
         """
-        Copies GEOS HOMDIR files to the cycle forecast directory to prepare before executing
-        gcm_run.j.
+        Copies GEOS HOMDIR files to the GEOSgcm forecast directory and prepares it before executing
+        `gcm_run.j`.
         Modifies certain resource files using python's re package according to cycle_date such as:
         CAP.rc, AGCM.rc, input.nml, and gcm_run.j.
 
         As the name suggests, this task is geared towards coupled GEOSgcm simulations but
         the only difference between this and dataOcean ones should be in the get_static() method.
 
-        xx) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
-        xx) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
-        xx) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with
+        01) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
+        02) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
+        03) Modifies ice_in and diag_table files to match background_frequency
+        xx) (Not active) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with
             experiment.yaml value if the override switch is on
-        xx) Modifies CAP.rc according to cycle_date and forecast_duration
+        04) Modifies CAP.rc according to cycle_date and forecast_duration
         """
 
         # These links were created in get_*_geos_restart task. This step will copy experiment
@@ -66,14 +67,20 @@ class PrepCoupledGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
+        # Modify ice_in and diag_table to allow different DA windows without changing the GEOSgcm
+        # experiment directory. If background frequency is not available, use default PT3H
+        # --------------------------------
+        bkgr_freq = self.config.get_key_for_model('background_frequency', 'geos_marine', 'PT3H')
+        self.geos.process_icein(bkgr_freq)
+        self.geos.process_diag_table(bkgr_freq)
+
         # IAU augment for MOM6
         # --------------------
-        if 'geos_marine' == self.get_model():
-            self.mom6_iau()
+        self.mom6_iau()
 
         # Modify input.nml if not cold start (default)
         # --------------------------------------------
-        self.geos.process_nml()
+        self.geos.process_inputnml()
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
@@ -124,7 +131,7 @@ class PrepCoupledGeosRunDir(taskBase):
         #         else:
         #             outfile.write(line)
 
-        # TODO: Still need to rewrite CAP.rc here for now to make sure END_TIME is long enough
+        # Still need to rewrite CAP.rc here for now to ensure END_TIME is long enough
         self.cap_dict = self.rewrite_cap(self.cap_dict, self.forecast_dir('CAP.rc'))
 
         self.agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
@@ -141,6 +148,51 @@ class PrepCoupledGeosRunDir(taskBase):
         # ----------------------------------------------
         with open(self.forecast_dir('cap_restart'), 'w') as file:
             file.write(self.fc_dto.strftime("%Y%m%d %H%M%S"))
+
+        # Parse flow.cylc for the number of nodes set by RunGeos
+        # ------------------------------------------------------
+        cylc_file = os.path.join(self.experiment_path(), self.experiment_id()+'-suite',
+                                 'flow.cylc')
+        with open(cylc_file, 'r') as f:
+            content = f.read()
+
+        cylc_regex_pattern = r'\[\[\s*RunGeos\s*\]\][\s\S]*\[\[\[\s*directives\s*\]\]\][\s\S]*--.*'
+        node_regex_pattern = r'--nodes\s*=\s*\d*'
+        cylc_nodes = None
+        try:
+            gcm_run_section = re.search(cylc_regex_pattern, content).group()
+            node_line = re.search(node_regex_pattern, gcm_run_section).group()
+            cylc_nodes = int(node_line.split('=')[1].strip())
+        except TypeError:
+            self.logger.warning('Could not ascertain the number of nodes assigned to `RunGeos`.'
+                                ' Please check that the proper number of nodes are requested '
+                                'in `flow.cylc`, otherwise RunGeos may fail without indication.')
+
+        with open(self.forecast_dir('gcm_run.j'), 'r') as f:
+            content = f.read()
+
+        # Parse gcm_run.j for the required number of nodes
+        # ------------------------------------------------
+        gcm_nodes_required = None
+        try:
+            gcm_node_line = re.search(node_regex_pattern, content).group()
+            gcm_nodes_required = int(gcm_node_line.split('=')[1].strip())
+        except TypeError:
+            self.logger.warning('Could not ascertain the number of nodes required by `gcm_run.j`.'
+                                ' Please check that the proper number of nodes are requested '
+                                'in `flow.cylc`, otherwise RunGeos may fail without indication.')
+
+        # Check the number of nodes set by flow.cylc exceeds the number required in gcm_run.j
+        # -----------------------------------------------------------------------------------
+        if cylc_nodes and gcm_nodes_required:
+            if cylc_nodes < gcm_nodes_required:
+                self.logger.abort('Insufficient amount of nodes were requested in slurmfile '
+                                  f'for RunGeos. Needed: ({gcm_nodes_required}), Requested: '
+                                  f'({cylc_nodes}). Please see the link for correction: '
+                                  'https://geos-esm.github.io/swell/#/configuration_reference/'
+                                  'slurm_configuration?id=slurm-configuration')
+            else:
+                self.logger.info('Proper amount of nodes set in flow.cylc')
 
     # ----------------------------------------------------------------------------------------------
 

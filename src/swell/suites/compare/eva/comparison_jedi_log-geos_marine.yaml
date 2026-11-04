@@ -1,14 +1,14 @@
 datasets:
 
 - type: JediLog
-  collection_name: jedi_log_test_1
-  jedi_log_to_parse: '{{cycle_dir_1}}/jedi_{{log_type}}_log.log'
+  collection_name: jedi_log_test_exp
+  jedi_log_to_parse: '{{cycle_dir_exp}}/jedi_{{log_type}}_log.log'
   data_to_parse:
     convergence: true
 
 - type: JediLog
-  collection_name: jedi_log_test_2
-  jedi_log_to_parse: '{{cycle_dir_2}}/jedi_{{log_type}}_log.log'
+  collection_name: jedi_log_test_ctl
+  jedi_log_to_parse: '{{cycle_dir_ctl}}/jedi_{{log_type}}_log.log'
   data_to_parse:
     convergence: true
 
@@ -27,29 +27,29 @@ graphics:
         layers:
         - type: LinePlot
           x:
-            variable: jedi_log_test_1::convergence::total_iteration
+            variable: jedi_log_test_exp::convergence::total_iteration
           y:
-            variable: jedi_log_test_1::convergence::residual_norm_normalized
+            variable: jedi_log_test_exp::convergence::residual_norm_normalized
           color: 'red'
-          label: '{{experiment_tag_1}} Normalized residual norm'
+          label: '{{experiment_tag_exp}} Normalized residual norm'
         - type: LinePlot
           x:
-            variable: jedi_log_test_2::convergence::total_iteration
+            variable: jedi_log_test_ctl::convergence::total_iteration
           y:
-            variable: jedi_log_test_2::convergence::residual_norm_normalized
+            variable: jedi_log_test_ctl::convergence::residual_norm_normalized
           color: 'blue'
-          label: '{{experiment_tag_2}} Normalized residual norm'
+          label: '{{experiment_tag_ctl}} Normalized residual norm'
         - type: LinePlot
           x:
-            variable: jedi_log_test_1::convergence::total_iteration
+            variable: jedi_log_test_exp::convergence::total_iteration
           y:
-            variable: jedi_log_test_1::convergence::norm_reduction_normalized
+            variable: jedi_log_test_exp::convergence::norm_reduction_normalized
           color: 'yellow'
-          label: '{{experiment_tag_1}} Normalized norm reduction'
+          label: '{{experiment_tag_exp}} Normalized norm reduction'
         - type: LinePlot
           x:
-            variable: jedi_log_test_2::convergence::total_iteration
+            variable: jedi_log_test_ctl::convergence::total_iteration
           y:
-            variable: jedi_log_test_2::convergence::norm_reduction_normalized
+            variable: jedi_log_test_ctl::convergence::norm_reduction_normalized
           color: 'green'
-          label: '{{experiment_tag_2}} Normalized norm reduction'
+          label: '{{experiment_tag_ctl}} Normalized norm reduction'

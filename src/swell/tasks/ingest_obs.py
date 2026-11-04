@@ -83,6 +83,11 @@ class IngestObs(taskBase):
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
 
+        # Per-observation provider overrides from the experiment configuration.
+        # Values here take precedence over the defaults in
+        # observation_ioda_names.yaml.
+        self.observation_providers = self.config.observation_providers(default={})
+
         # Get window parameters
         window_length = self.config.window_length()
 
@@ -98,6 +103,8 @@ class IngestObs(taskBase):
         if dry_run:
             self.logger.info(
                 "DRY RUN MODE - No files will be ingested to R2D2")
+
+        store_as_symlink = self.config.store_as_symlink(False)
 
         total_ingested = 0
         total_failed = 0
@@ -130,7 +137,7 @@ class IngestObs(taskBase):
             # Ingest
             ingested, failed = self.process_obs_config(
                 obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
-                r2d2_datastore)
+                r2d2_datastore, store_as_symlink)
 
             total_ingested += len(ingested)
             total_failed += len(failed)
@@ -153,13 +160,15 @@ class IngestObs(taskBase):
         window_length: str,
         dry_run: bool,
         r2d2_datastore: str | None = None,
+        store_as_symlink: bool = False,
     ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single observation configuration file."""
         ingested = []
         failed = []
 
         provider = get_provider_for_observation(
-            obs_name, self.ioda_names_list, self.logger)
+            obs_name, self.ioda_names_list, self.logger,
+            provider_overrides=self.observation_providers)
 
         acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 
@@ -215,10 +224,11 @@ class IngestObs(taskBase):
                     provider=provider,
                     observation_type=obs_name,
                     file_extension=os.path.splitext(
-                        target_file)[1][1:],  # 'nc' from '.nc'
+                        target_file)[1][1:],  # e.g. '.nc4'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file
+                    source_file=target_file,
+                    store_as_symlink=store_as_symlink,
                 )
                 if r2d2_datastore:
                     store_kwargs['data_store'] = r2d2_datastore

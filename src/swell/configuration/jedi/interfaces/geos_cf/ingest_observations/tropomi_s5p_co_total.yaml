@@ -1,0 +1,5 @@
+# TROPOMI S5P CO Total Column L2 — R2D2 ingestion configuration
+# Source: output of ConvertObsToIoda, relative to the cycle work directory.
+
+acquisition_method: local
+source: ioda/tropomi_s5p_co_total/tropomi_s5p_co_total_%Y%m%d%H.nc4 # in CYCLE_DIR

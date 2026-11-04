@@ -41,7 +41,7 @@ graphics:
           x:
             variable: JediLogTest::convergence::total_iteration
           y:
-            variable: JediLogTest::convergence::norm_reduction
+            variable: JediLogTest::convergence::norm_reduction_log
           color: 'black'
 
       - add_xlabel: 'Total inner iteration number'
