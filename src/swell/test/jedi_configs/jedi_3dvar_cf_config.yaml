@@ -307,17 +307,17 @@ variational:
           datapath: ./
           filename: experiment_id.increment-iter1.
           field io names: *id001
-  output:
-    analysis:
-      filetype: cube sphere history
-      provider: geos
-      datapath: cycle_dir
-      filename: experiment_id.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
-      first: PT0H
-      frequency: PT1H
-      field io names: *id001
-    increment:
-      filetype: cube sphere history
-      datapath: cycle_dir
-      filename: experiment_id.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
-      field io names: *id001
+output:
+  analysis:
+    filetype: cube sphere history
+    provider: geos
+    datapath: cycle_dir
+    filename: experiment_id.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
+    first: PT0H
+    frequency: PT1H
+    field io names: *id001
+  increment:
+    filetype: cube sphere history
+    datapath: cycle_dir
+    filename: experiment_id.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
+    field io names: *id001

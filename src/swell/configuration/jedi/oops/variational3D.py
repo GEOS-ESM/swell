@@ -45,15 +45,15 @@ class variational3D(OopsConfig):
                     },
                     'online diagnostics': self.interface_model('varincrement1')
                 }],
-                'output': {
-                    'analysis': self.interface_model('analysis')
-                }
+            },
+            'output': {
+                'analysis': self.interface_model('analysis')
             },
         }
 
         # TODO: Implement this more cleanly in the OOPS schema
         if self.jedi_interface == 'geos_cf':
-            oops['variational']['output']['increment'] = self.interface_model('increment_cs')
+            oops['output']['increment'] = self.interface_model('increment_cs')
 
         return oops
 

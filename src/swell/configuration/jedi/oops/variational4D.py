@@ -52,9 +52,9 @@ class variational4D(OopsConfig):
                     'diagnostics': {'departures': 'ombg'},
                     'online diagnostics': self.interface_model('varincrement1')
                 }],
-                'output': {
-                    'analysis': self.interface_model('analysis')
-                }
+            },
+            'output': {
+                'analysis': self.interface_model('analysis')
             },
         }
 
