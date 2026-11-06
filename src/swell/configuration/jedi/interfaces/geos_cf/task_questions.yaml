@@ -6,6 +6,14 @@ analysis_variables:
   - volume_mixing_ratio_of_o3
   - volume_mixing_ratio_of_co
 
+additional_forecast_collections:
+  default_value:
+  - chm
+  - met
+  options:
+  - chm
+  - met
+
 background_experiment:
   default_value: swell_test
   options:
@@ -34,6 +42,9 @@ horizontal_resolution:
   default_value: 'c90'
   options:
   - 'c90'
+  # 'c180' HPC tuning (NX/NY decomposition, IOSERVER_NODES, BCRSLV tile directory) is a
+  # placeholder pending verification -- see RESOLUTION_TUNING in prep_forecast_cf.py.
+  - 'c180'
   - 'c360'
 
 jedi_forecast_model:

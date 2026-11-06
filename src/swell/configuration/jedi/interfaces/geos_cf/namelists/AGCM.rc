@@ -2,23 +2,23 @@
 # Atmospheric Model Configuration Parameters
 # ------------------------------------------
 
-           NX: 12
-           NY: 72
+           NX: >>>SWELL_GEOSCF_NX<<<
+           NY: >>>SWELL_GEOSCF_NY<<<
 
-IOSERVER_NODES: 0
-NUM_BACKEND_PES: 8
+IOSERVER_NODES: >>>SWELL_GEOSCF_IOSERVER_NODES<<<
+NUM_BACKEND_PES: >>>SWELL_GEOSCF_NUM_BACKEND_PES<<<
 
 
-      AGCM_IM: 90
-      AGCM_JM: 540
+      AGCM_IM: >>>SWELL_GEOSCF_AGCM_IM<<<
+      AGCM_JM: >>>SWELL_GEOSCF_AGCM_JM<<<
       AGCM_LM: 72
-AGCM_GRIDNAME: PE90x540-CF
+AGCM_GRIDNAME: PE>>>SWELL_GEOSCF_AGCM_IM<<<x>>>SWELL_GEOSCF_AGCM_JM<<<-CF
 
       AGCM.GRID_TYPE: Cubed-Sphere
-      AGCM.GRIDNAME: PE90x540-CF
+      AGCM.GRIDNAME: PE>>>SWELL_GEOSCF_AGCM_IM<<<x>>>SWELL_GEOSCF_AGCM_JM<<<-CF
        AGCM.NF: 6
       AGCM.LM: 72
-      AGCM.IM_WORLD: 90
+      AGCM.IM_WORLD: >>>SWELL_GEOSCF_AGCM_IM<<<
 
 DYCORE: FV3
 
@@ -124,7 +124,7 @@ BKG_FREQUENCY: 0
 
 # Resolution of state passed to atmos analysis
 # --------------------------------------------
-ANA_GRIDNAME: PC90x540-DC
+ANA_GRIDNAME: PC>>>SWELL_GEOSCF_AGCM_IM<<<x>>>SWELL_GEOSCF_AGCM_JM<<<-DC
 ANA_LM: 72
 
 # Restart Record Parameters
@@ -750,7 +750,7 @@ USE_SKIN_LAYER: 1
 # -------------------------------------------------------------------------------------
 SOLAR_CONSTANT: -1
 CO2:            -1
-
+>>>SWELL_GEOSCF_SOLAR_LB_MAX_PASSES_LINE<<<
 
 # Flags for SATSIM Output
 # -----------------------
