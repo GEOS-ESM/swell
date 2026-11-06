@@ -1,0 +1,9 @@
+# WOD XBT (Expendable Bathythermograph) temperature profiles from the public NOAA reanalysis bucket (NNJA).
+
+s3_bucket: noaa-reanalyses-pds
+
+s3_key_template: observations/reanalysis/insitu/wod/xbt/YYYY/MM/iodav3/wod_xbt_t.YYYYMMDD.THHz_iodav3.nc
+
+# These files sit on the 6-hourly synoptic grid, not Swell's default T03/T09/T15/T21.
+obs_timesteps: ['T00', 'T06', 'T12', 'T18']
+obs_window_length: PT6H
