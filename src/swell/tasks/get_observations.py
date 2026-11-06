@@ -24,6 +24,11 @@ from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
+# Harcoded tolerance limits for duplicate check in read_and_combine
+_DEDUP_TOL_LATLON  = 1e-4   # degrees (~11 m)
+_DEDUP_TOL_TIME_S  = 1     # seconds
+_DEDUP_TOL_DEPTH_M = 0.01    # meters (insitu only)
+
 # ----------------------------------------------------------------------------------------------
 
 
@@ -659,18 +664,88 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def _compute_dedup_indices(self, input_datasets: list) -> np.ndarray:
+        """Return sorted indices selecting the first occurrence of each unique observation.
+
+        Identity key: (lat, lon, dateTime) always; depth added when present in MetaData.
+        Tolerances are applied by rounding before hashing so comparison is O(N log N).
+        """
+        lats, lons, times, depths = [], [], [], []
+        has_depth = any(
+            'depth' in ds['MetaData'].variables
+            for ds in input_datasets if 'MetaData' in ds.groups
+        )
+
+        for ds in input_datasets:
+            meta = ds['MetaData']
+            n = ds.dimensions['Location'].size
+            lats.append(np.ma.filled(meta['latitude'][:], np.nan))
+            lons.append(np.ma.filled(meta['longitude'][:], np.nan))
+            times.append(np.ma.filled(meta['dateTime'][:], 0))
+            if has_depth:
+                if 'depth' in meta.variables:
+                    depths.append(np.ma.filled(meta['depth'][:], np.nan))
+                else:
+                    depths.append(np.zeros(n, dtype=np.float32))
+
+        lat_all  = np.concatenate(lats)
+        lon_all  = np.concatenate(lons)
+        time_all = np.concatenate(times)
+
+        # Guard: never let masked/NaN coords collapse onto the same int64 sentinel.
+        invalid = np.isnan(lat_all) | np.isnan(lon_all)
+
+        lat_key  = np.round(lat_all / _DEDUP_TOL_LATLON).astype(np.int64)
+        lon_key  = np.round(lon_all / _DEDUP_TOL_LATLON).astype(np.int64)
+        time_key = (time_all // _DEDUP_TOL_TIME_S).astype(np.int64)
+
+        if invalid.any():
+            self.logger.info(
+                f"Deduplication: {invalid.sum()} locations have missing lat/lon; "
+                "forcing unique keys so they are never merged."
+            )
+            bad_idx = np.flatnonzero(invalid)
+            lat_key[bad_idx] = -(np.arange(bad_idx.size) + 1)  # distinct negative sentinels
+
+        cols = [lat_key, lon_key, time_key]
+        if has_depth:
+            depth_all = np.concatenate(depths)
+            depth_key = np.round(np.nan_to_num(depth_all, nan=0.0) / _DEDUP_TOL_DEPTH_M).astype(np.int64)
+            cols.append(depth_key)
+
+        keys = np.stack(cols, axis=1)
+        row_view = np.ascontiguousarray(keys).view(
+            np.dtype((np.void, keys.dtype.itemsize * keys.shape[1]))
+        ).ravel()
+
+        _, unique_idx = np.unique(row_view, return_index=True)
+        unique_idx.sort()   # preserve chronological / file order
+        return unique_idx
+
+    # ----------------------------------------------------------------------------------------------
+
     def read_and_combine(self, input_filenames: list, output_filename: str) -> None:
         '''
         Combines multiple IODA v3 netcdf input files into a single output.
-        Combining multiple files require final (total) location dimension size to be
-        calculated in advance.
 
-        Basically, this function creates an output file that duplicates the first
-        input file's attributes and then fills with appended data from the input files.
+        The total Location dimension size is computed up front by summing across all
+        valid (non-empty) input files. All other dimensions (e.g. Channel) are taken
+        from the reference file unchanged.
 
-        Channel dimension shows up as a second dimension and sometimes as a single
-        dimension. Both cases require special handling and introduces additional
-        exceptions to the code. Final channel dimension size remains the same.
+        All input files are opened once and kept open for the duration of the combine
+        to avoid the overhead of repeated per-variable file opens.
+
+        Compression settings (zlib, complevel, shuffle) are copied from each source
+        variable so the output file size remains comparable to the inputs rather than
+        expanding to the uncompressed data size.
+
+        Variable names are collected across all input files, not just the first. When
+        a file lacks a variable present in other files (e.g. salinity absent from
+        temperature-only insitu files), a fully-masked array sized to that file's
+        Location dimension is substituted so the concatenation shape stays consistent.
+
+        Channel-dimensioned variables are identical across files and are written once
+        from the first file that contains them.
         '''
 
         # Create a new file for writing, remove the file if it already exists
@@ -682,13 +757,13 @@ class GetObservations(taskBase):
         # Reduce the list of input files to only those that exist
         # -------------------------------------------------------------
         existing_files = [f for f in input_filenames if os.path.exists(f)]
-        input_filenames = existing_files
 
         # Remove empty files from input_filenames
         # -------------------------------------------------------------
         valid_files = []
+        empty_template = None
 
-        for fname in input_filenames:
+        for fname in existing_files:
             try:
                 with nc.Dataset(fname, 'r') as ds:
                     if 'Location' in ds.dimensions and ds.dimensions['Location'].size > 0:
@@ -698,92 +773,131 @@ class GetObservations(taskBase):
             except OSError:
                 continue
 
-        input_filenames = valid_files
+        if not valid_files:
+            shutil.copyfile(empty_template, output_filename)
+            return
 
-        if input_filenames:
-            # Loop through the input files and get the total dimension size for each dimension
-            # Location requires special handling to get the cumulative sum of the dimension size
-            # ---------------------------------------------------------------------------------
-            out_dim_size = {'Location': 0}
-            for input_filename in input_filenames:
-                with nc.Dataset(input_filename, 'r') as ds:
-                    for dim_name, dim in ds.dimensions.items():
-                        if dim_name == 'Location':
-                            out_dim_size[dim_name] += dim.size
-                        else:
-                            out_dim_size[dim_name] = dim.size
+        # Calculate total Location dimension and other dimensions across all files
+        # -------------------------------------------------------------------------
+        out_dim_size = {'Location': 0}
+        for fname in valid_files:
+            with nc.Dataset(fname, 'r') as ds:
+                for dim_name, dim in ds.dimensions.items():
+                    if dim_name == 'Location':
+                        out_dim_size[dim_name] += dim.size
+                    else:
+                        out_dim_size[dim_name] = dim.size
+
+        self.logger.info(f"Combining {len(valid_files)} files into {output_filename}")
+
+        # Open all input datasets once to avoid repeated per-variable file opens
+        # -----------------------------------------------------------------------
+        input_datasets = [nc.Dataset(f, 'r') for f in valid_files]
+        try:
+            # Compute deduplication mask once across all files (MetaData coords only)
+            unique_idx = self._compute_dedup_indices(input_datasets)
+            n_total = out_dim_size['Location']
+            n_unique = len(unique_idx)
+            if n_unique < n_total:
+                self.logger.info(
+                    f"Deduplication: {n_total} -> {n_unique} locations "
+                    f"({n_total - n_unique} duplicates removed)"
+                )
+            out_dim_size['Location'] = n_unique
 
             with nc.Dataset(output_filename, 'w') as out_ds:
-                # Open the input NetCDF files for reading
-                # ---------------------------------------
-                self.logger.info(f"Combining files {input_filenames} ")
 
-                # Create an output file template based on the first input file
-                # ------------------------------------------------------------
-                with nc.Dataset(input_filenames[0], 'r') as ds:
-                    # Access groups and create dimensions
-                    # -----------------------------------
-                    input_groups = ds.groups.keys()
+                ref_ds = input_datasets[0]
 
-                    for dim_name, dim in ds.dimensions.items():
-                        out_ds.createDimension(dim_name, out_dim_size[dim_name])
+                # Create dimensions from the reference file
+                for dim_name in ref_ds.dimensions:
+                    out_ds.createDimension(dim_name, out_dim_size[dim_name])
 
-                    # Loop through groups and process variables
-                    # -----------------------------------------
-                    for group_name in input_groups:
-                        group = ds[group_name]
+                # Collect all group names across all files
+                all_group_names = set()
+                for ds in input_datasets:
+                    all_group_names.update(ds.groups.keys())
 
-                        # Create the groups in output file
-                        # --------------------------------
-                        out_group = out_ds.createGroup(group_name)
+                for group_name in all_group_names:
+                    out_group = out_ds.createGroup(group_name)
 
-                        # Access variables within a group
-                        # -------------------------------
-                        variables_in_group = group.variables.keys()
+                    # Collect all variable names across all files for this group
+                    all_var_names = []
+                    seen = set()
+                    for ds in input_datasets:
+                        if group_name in ds.groups:
+                            for v in ds[group_name].variables:
+                                if v not in seen:
+                                    all_var_names.append(v)
+                                    seen.add(v)
 
-                        # Loop over variables from input files, combine, and write to the new file
-                        # ------------------------------------------------------------------------
-                        for var_name in variables_in_group:
-                            list_data = []
+                    for var_name in all_var_names:
 
-                            # Get the dimensions of the variable
-                            # ----------------------------------
-                            var_dims = group[var_name].dimensions
+                        # Find the first file that has this variable to use as reference
+                        ref_var = None
+                        for ds in input_datasets:
+                            if group_name in ds.groups and var_name in ds[group_name].variables:
+                                ref_var = ds[group_name][var_name]
+                                break
+                        if ref_var is None:
+                            continue
 
-                            # Loop over all the files and combine the variable data into a list
-                            # Channel dimensions remain the same, so we can break the loop
-                            # ----------------------------------------------------------------
-                            for input_file in input_filenames:
-                                list_data.append(self.get_data(input_file, group_name, var_name))
-                                # Only break if the first dimension is Channel
-                                if var_dims[0] == 'Channel':
-                                    break
+                        var_dims = ref_var.dimensions
+                        is_channel_var = var_dims and var_dims[0] == 'Channel'
 
-                            # Concatenate the masked arrays along the first dimension
-                            # --------------------------------------------------------
-                            variable_data = np.ma.concatenate(list_data, axis=0)
+                        # Carry over compression settings from the source variable
+                        filters = ref_var.filters()
+                        zlib = filters.get('zlib', False)
+                        complevel = filters.get('complevel', 4)
+                        shuffle = filters.get('shuffle', True)
 
-                            # Fill value needs to be assigned while creating variables
-                            # --------------------------------------------------------
-                            subset_var = out_group.createVariable(
-                                var_name,
-                                variable_data.dtype,
-                                var_dims,
-                                fill_value=group[var_name].getncattr('_FillValue')
+                        list_data = []
+                        for i, ds in enumerate(input_datasets):
+                            has_var = (group_name in ds.groups and
+                                       var_name in ds[group_name].variables)
+                            if is_channel_var:
+                                # Channel data is identical across files; read once
+                                if has_var:
+                                    list_data.append(ds[group_name][var_name][:])
+                                break
+                            else:
+                                if has_var:
+                                    list_data.append(ds[group_name][var_name][:])
+                                else:
+                                    # Fill missing variable with masked values
+                                    loc_size = ds.dimensions['Location'].size
+                                    shape = (loc_size,) + ref_var.shape[1:]
+                                    list_data.append(
+                                        np.ma.masked_all(shape, dtype=ref_var.dtype)
+                                    )
+
+                        if not list_data:
+                            continue
+
+                        variable_data = np.ma.concatenate(list_data, axis=0)
+                        if not is_channel_var:
+                            variable_data = variable_data[unique_idx]
+
+                        # Preserve fill value when present
+                        create_kwargs = {}
+                        if '_FillValue' in ref_var.ncattrs():
+                            create_kwargs['fill_value'] = ref_var.getncattr('_FillValue')
+                        if zlib:
+                            create_kwargs.update(
+                                {'zlib': True, 'complevel': complevel, 'shuffle': shuffle}
                             )
-                            for attr_name in group[var_name].ncattrs():
-                                if attr_name == '_FillValue':
-                                    continue
-                                subset_var.setncattr(
-                                    attr_name, group[var_name].getncattr(attr_name)
-                                )
 
-                            # Write subset data to the new file
-                            # --------------------------------
-                            subset_var[:] = variable_data
+                        subset_var = out_group.createVariable(
+                            var_name, variable_data.dtype, var_dims, **create_kwargs
+                        )
+                        for attr_name in ref_var.ncattrs():
+                            if attr_name == '_FillValue':
+                                continue
+                            subset_var.setncattr(attr_name, ref_var.getncattr(attr_name))
 
-        else:
+                        subset_var[:] = variable_data
 
-            # If all the files are empty copy of them as the output file
-            shutil.copyfile(empty_template, output_filename)
+        finally:
+            for ds in input_datasets:
+                ds.close()
 # ----------------------------------------------------------------------------------------------
