@@ -25,8 +25,8 @@ from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
 # Harcoded tolerance limits for duplicate check in read_and_combine
-_DEDUP_TOL_LATLON  = 1e-4   # degrees (~11 m)
-_DEDUP_TOL_TIME_S  = 1     # seconds
+_DEDUP_TOL_LATLON = 1e-4   # degrees (~11 m)
+_DEDUP_TOL_TIME_S = 1     # seconds
 _DEDUP_TOL_DEPTH_M = 0.01    # meters (insitu only)
 
 # ----------------------------------------------------------------------------------------------
@@ -688,15 +688,15 @@ class GetObservations(taskBase):
                 else:
                     depths.append(np.zeros(n, dtype=np.float32))
 
-        lat_all  = np.concatenate(lats)
-        lon_all  = np.concatenate(lons)
+        lat_all = np.concatenate(lats)
+        lon_all = np.concatenate(lons)
         time_all = np.concatenate(times)
 
         # Guard: never let masked/NaN coords collapse onto the same int64 sentinel.
         invalid = np.isnan(lat_all) | np.isnan(lon_all)
 
-        lat_key  = np.round(lat_all / _DEDUP_TOL_LATLON).astype(np.int64)
-        lon_key  = np.round(lon_all / _DEDUP_TOL_LATLON).astype(np.int64)
+        lat_key = np.round(lat_all / _DEDUP_TOL_LATLON).astype(np.int64)
+        lon_key = np.round(lon_all / _DEDUP_TOL_LATLON).astype(np.int64)
         time_key = (time_all // _DEDUP_TOL_TIME_S).astype(np.int64)
 
         if invalid.any():
@@ -710,7 +710,8 @@ class GetObservations(taskBase):
         cols = [lat_key, lon_key, time_key]
         if has_depth:
             depth_all = np.concatenate(depths)
-            depth_key = np.round(np.nan_to_num(depth_all, nan=0.0) / _DEDUP_TOL_DEPTH_M).astype(np.int64)
+            depth_filled = np.nan_to_num(depth_all, nan=0.0)
+            depth_key = np.round(depth_filled / _DEDUP_TOL_DEPTH_M).astype(np.int64)
             cols.append(depth_key)
 
         keys = np.stack(cols, axis=1)
