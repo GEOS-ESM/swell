@@ -99,9 +99,10 @@
                {% endif %}
             {% endif %}
 
-
+            {% if run_eva %}
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
             # EvaObservations
             # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -111,7 +112,7 @@
 
             # Clean up large files
             # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
-            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            #EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}

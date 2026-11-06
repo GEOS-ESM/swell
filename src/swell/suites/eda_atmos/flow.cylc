@@ -94,8 +94,10 @@
             # CleanupEda directory
             SP2-{{model_component}} => CleanEdaFiles-{{model_component}}
 
+            {% if run_eva %}
             # EvaIncrement
             SP2-{{model_component}} => EvaIncrement-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}

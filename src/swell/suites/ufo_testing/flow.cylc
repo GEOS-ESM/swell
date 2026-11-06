@@ -69,11 +69,10 @@
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable
 
+            {% if run_eva %}
             # EvaObservations
-            RunJediUfoTestsExecutable => EvaObservations
-
-            # Clean up large files
-            EvaObservations => CleanCycle
+            RunJediUfoTestsExecutable => EvaObservations => CleanCycle
+            {% endif %}
 
         """
         {% endfor %}
