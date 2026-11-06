@@ -162,7 +162,7 @@ obs post filters:
       channels: *airs_aqua_channels
       options:
         channels: *airs_aqua_channels
-        sensor: *Sensor_ID
+        sensor: infrared
 #  Transmittance Top Check
 - filter: BlackList
   filter variables:

@@ -34,8 +34,8 @@ def comparison_tags(pathspecs: list | dict,
 
     if isinstance(pathspecs, list):
         pathspecs_out = {}
-        pathspecs_out['CTL'] = pathspecs[0]
-        pathspecs_out['EXP'] = pathspecs[1]
+        pathspecs_out['EXP'] = pathspecs[0]
+        pathspecs_out['CTL'] = pathspecs[1]
     else:
         pathspecs_out = pathspecs
 
