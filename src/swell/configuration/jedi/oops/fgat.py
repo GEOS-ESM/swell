@@ -45,13 +45,11 @@ class fgat(OopsConfig):
                      'ninner': self.template_dict['number_of_iterations'],
                      'diagnostics': {'departures': 'ombg'},
                      'online diagnostics': self.interface_model('varincrement1')}
-                ]
+                ],
             },
-            'final': {
-                'diagnostics': {'departures': 'oman'},
-                'prints': {'frequency': 'PT3H'},
+            'output': {
+                'analysis': self.interface_model('analysis')
             },
-            'output': self.interface_model('analysis')
         }
 
         return oops
