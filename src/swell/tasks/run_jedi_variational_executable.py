@@ -48,9 +48,8 @@ class RunJediVariationalExecutable(taskBase):
         npy_proc = self.config.npy_proc(None)
         npx = self.config.npx(None)
         npy = self.config.npy(None)
-        stddev_scale_factor = self.config.get_key_for_model('stddev_scale_factor',
-                                                            self.get_model(),
-                                                            '0.25')
+        stddev_scale_factors = self.config.get_key_for_model('stddev_scale_factors',
+                                                             self.get_model(), {})
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -74,7 +73,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
         self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block(None))
         self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block(None))
-        self.jedi_rendering.add_key('stddev_scale_factor', stddev_scale_factor)
+        self.jedi_rendering.add_key('stddev_scale_factors', stddev_scale_factors)
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
