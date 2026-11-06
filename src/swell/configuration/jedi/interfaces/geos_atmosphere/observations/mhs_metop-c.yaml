@@ -222,7 +222,7 @@ obs filters:
       name: ObsFunction/ObsErrorFactorTopoRad
       channels: *mhs_metop-c_available_channels
       options:
-        sensor: *Sensor_ID
+        sensor: microwave
         channels: *mhs_metop-c_available_channels
 #Transmittnace Top Check
 - filter: BlackList
@@ -266,7 +266,7 @@ obs filters:
         channels: *mhs_metop-c_available_channels
         options:
           channels: *mhs_metop-c_available_channels
-          sensor: *Sensor_ID
+          sensor: microwave
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *mhs_metop-c_available_channels
@@ -320,7 +320,7 @@ obs filters:
         channels: *mhs_metop-c_available_channels
         options:
           channels: *mhs_metop-c_available_channels
-          sensor: *Sensor_ID
+          sensor: microwave
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
         channels: *mhs_metop-c_available_channels
