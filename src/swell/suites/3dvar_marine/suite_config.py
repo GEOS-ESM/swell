@@ -69,7 +69,21 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_marine=[
             qd.observations([
                 "insitu_salt_profile_wod_ctd",
+                "insitu_salt_profile_wod_drb",
+                "insitu_salt_profile_wod_gld",
+                "insitu_salt_profile_wod_mrb",
+                "insitu_salt_profile_wod_osd",
+                "insitu_salt_profile_wod_pfl",
+                "insitu_salt_profile_wod_uor",
                 "insitu_temp_profile_wod_ctd",
+                "insitu_temp_profile_wod_drb",
+                "insitu_temp_profile_wod_gld",
+                "insitu_temp_profile_wod_mbt",
+                "insitu_temp_profile_wod_mrb",
+                "insitu_temp_profile_wod_osd",
+                "insitu_temp_profile_wod_pfl",
+                "insitu_temp_profile_wod_uor",
+                "insitu_temp_profile_wod_xbt",
             ]),
         ],
     )

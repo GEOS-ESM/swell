@@ -252,6 +252,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class stddev_scale_factors(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "stddev_scale_factors"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "geos_cf",
+        ])
+        prompt: str = ("Per-variable scale factors applied to the background stddev in the "
+                       "stddev_bkg_scaled saber outer block.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class skip_ensemble_hofx(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "skip_ensemble_hofx"

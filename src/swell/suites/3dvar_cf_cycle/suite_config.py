@@ -42,6 +42,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution(72),
             qd.saber_central_block('bump_nicas'),
             qd.saber_outer_block('stddev_bkg_scaled'),
+            qd.stddev_scale_factors({
+                "volume_mixing_ratio_of_o3": 0.25,
+                "volume_mixing_ratio_of_no2": 0.25,
+                "volume_mixing_ratio_of_co": 0.25,
+                }),
             qd.analysis_variables([
                 "volume_mixing_ratio_of_o3",
                 "volume_mixing_ratio_of_no2",
