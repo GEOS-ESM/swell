@@ -178,7 +178,8 @@ class QuestionDefaults():
         ask_question: bool = False
         prompt: str = (
             "Server/profile name in ~/.swell/r2d2_credentials.yaml "
-            "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
+            "(e.g. 'gmao_server'). If empty, Swell uses R2D2_SERVER or the first "
+            "named profile; legacy root-level credentials are also supported."
         )
         widget_type: WType = WType.STRING
 
@@ -190,11 +191,10 @@ class QuestionDefaults():
         question_name: str = "r2d2_datastore"
         ask_question: bool = False
         prompt: str = (
-            "Datastore name passed to R2D2 fetch and store operations "
-            "(e.g. a Discover directory store or an S3 bucket store). "
-            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
-            "Leave empty to let R2D2 pick the highest-priority writable datastore "
-            "for your compute host."
+            "Optional advanced datastore override for R2D2 fetch and store operations. "
+            "Normally leave empty so R2D2 applies the selected server's data-hub and "
+            "compute-host priority configuration. Run scripts/discover_r2d2_datastores.py "
+            "to inspect available datastores."
         )
         widget_type: WType = WType.STRING
 
@@ -236,6 +236,20 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which saber outer blocks do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class stddev_scale_factors(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "stddev_scale_factors"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "geos_cf",
+        ])
+        prompt: str = ("Per-variable scale factors applied to the background stddev in the "
+                       "stddev_bkg_scaled saber outer block.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -835,40 +849,43 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geos_cf_run_dir(TaskQuestion):
+    class geos_cf_rc_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "geos_cf_run_dir"
+        question_name: str = "geos_cf_rc_dir"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the GEOS-CF model run directory?"
+        prompt: str = "What is the path to the GEOS-CF RC directory?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geosfp_exp(TaskQuestion):
-        default_value: str = "f5295_fp"
-        question_name: str = "geosfp_exp"
+    class met_replay_exp(TaskQuestion):
+        default_value: str = "d5294_geosit_jan18"
+        question_name: str = "met_replay_exp"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the GEOS FP experiment ID used for IAU analysis files?"
+        prompt: str = ("What is the meteorology replay experiment ID (e.g. a GEOS FP "
+                       "experiment such as f5295_fp, or a GEOS-IT experiment such as "
+                       "d5294_geosit_jan18)?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geosfp_path(TaskQuestion):
+    class met_replay_root(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "geosfp_path"
+        question_name: str = "met_replay_root"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the GEOS FP archive?"
+        prompt: str = ("What is the root directory containing the meteorology replay "
+                       "experiment (parent of <met_replay_exp>/run/.../archive)?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1294,6 +1311,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class local_ensemble_do_posterior_observer(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "local_ensemble_do_posterior_observer"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Do posterior observer (OMA) for Local Ensemble DA?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class local_ensemble_solver(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_solver"
@@ -1317,6 +1351,38 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Use linear observer in local ensemble solver?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class change_vbc_to_sbc(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "change_vbc_to_sbc"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Shall variational bc be changed to static bc in local ensemble DA yaml?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class skip_hofx_output(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "skip_hofx_output"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Shall netCDF files from HofX output be skipped for OMB and OMA?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -1430,6 +1496,34 @@ class QuestionDefaults():
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the y-direction on each cube face?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class npx_per_observer(TaskQuestion):
+        default_value: int = 1
+        question_name: str = "npx_per_observer"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("What is the number of parallelization in the x-direction "
+                       "you want to apply for each observer on each cube face?")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class npy_per_observer(TaskQuestion):
+        default_value: int = 1
+        question_name: str = "npy_per_observer"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("What is the number of parallelization in the y-direction "
+                       "you want to apply for each observer on each cube face?")
         widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
@@ -1724,6 +1818,44 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class horizontal_localization_lengthscale(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_lengthscale"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "What is the length scale for horizontal covariance localization?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class horizontal_localization_max_nobs(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_max_nobs"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("What is the maximum number of observations to consider"
+                       " for horizontal covariance localization?")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class horizontal_localization_method(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_method"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which localization scheme should be applied in the horizontal?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class vertical_localization_apply_log_transform(TaskQuestion):
         default_value: bool = True
         question_name: str = "vertical_localization_apply_log_transform"
@@ -1789,7 +1921,35 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
-        widget_type: WType = WType.INTEGER
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class vertical_localization_frac_retained_variance(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_frac_retained_variance"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "What is the fraction of vertical retained variance for GETKF?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class vertical_localization_unit(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_unit"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "What is the vertical localization unit for GETKF?"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1799,7 +1959,7 @@ class QuestionDefaults():
         question_name: str = "vertical_localization_method"
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = ("What localization scheme should be applied in "
                        "constructing a vertical localization?")

@@ -1,0 +1,40 @@
+obs space:
+  name: mls_o3_nrt
+  io pool:
+    max pool size: 1
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/mls_o3_nrt.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      allow overwrite: true
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.mls_o3_nrt.{{window_begin}}.nc4'
+  simulated variables: [ozoneProfile]
+
+obs filters:
+- filter: Bounds Check
+  filter variables:
+  - name: ozoneProfile
+  test variables:
+  - name: MetaData/referenceLevel
+  minvalue: 8
+  maxvalue: 43
+  flag all filter variables if any test variable is out of bounds: true
+- filter: Bounds Check
+  filter variables:
+  - name: ozoneProfile
+  test variables:
+  - name: MetaData/precision
+  minvalue: 0.0
+
+obs operator:
+  name: VertInterp
+  variable maps:
+  - name: ozoneProfile
+    alias: volume_mixing_ratio_of_o3
+  vertical coordinate: air_pressure
+  observation vertical coordinate: pressure
+  observation vertical coordinate group: MetaData
+  interpolation method: log-linear

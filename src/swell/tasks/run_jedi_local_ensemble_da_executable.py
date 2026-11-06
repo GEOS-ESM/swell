@@ -13,8 +13,8 @@ from importlib import resources
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_key
+from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,7 +40,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         ensmean_only = self.config.ensmean_only()
         ensmeanvariance_only = self.config.ensmeanvariance_only()
+        change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
         perhost = self.config.perhost(None)
+        skip_hofx_output = self.config.skip_hofx_output()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -83,14 +85,29 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Ensemble hofx components
         self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.ensemble_hofx_strategy())
         self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.ensemble_hofx_packets())
+        self.jedi_rendering.add_key('local_ensemble_do_posterior_observer',
+                                    self.config.local_ensemble_do_posterior_observer())
 
         # Ensemble Localizations
+        self.jedi_rendering.add_key('horizontal_localization_method',
+                                    self.config.horizontal_localization_method())
+        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
+                                    self.config.horizontal_localization_lengthscale())
+        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
+                                    self.config.horizontal_localization_max_nobs())
+
         # ------------------------------
         if self.get_model() == 'geos_atmosphere':
             self.jedi_rendering.add_key('vertical_localization_method',
                                         self.config.vertical_localization_method())
+            self.jedi_rendering.add_key('vertical_localization_function',
+                                        self.config.vertical_localization_function())
+            self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
+                                        self.config.vertical_localization_frac_retained_variance())
             self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
                                         self.config.vertical_localization_apply_log_transform())
+            self.jedi_rendering.add_key('vertical_localization_unit',
+                                        self.config.vertical_localization_unit())
             self.jedi_rendering.add_key('vertical_localization_lengthscale',
                                         self.config.vertical_localization_lengthscale())
             self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
@@ -98,8 +115,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             self.jedi_rendering.add_key(
                 'vertical_localization_ioda_vertical_coord_group',
                 self.config.vertical_localization_ioda_vertical_coord_group())
-            self.jedi_rendering.add_key('vertical_localization_function',
-                                        self.config.vertical_localization_function())
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
@@ -191,19 +206,19 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 observer['obs space'].update(
                     {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
-        # bypass the writing of HofXs
-        # ---------------------------
-        bypass_HofXs = False
-        if bypass_HofXs:
+        # bypass the writing HofX output netCDF files
+        # -------------------------------------------
+        if skip_hofx_output:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
 
         # TODO: Temporary handling, change variational bc to static bc
         # -------------------------------------------------------------------
-        for observer in jedi_config_dict['observations']['observers']:
-            if 'obs bias' in observer:
-                observer['obs bias'] = replace_key(observer['obs bias'],
-                                                   "variational bc", "static bc")
+        if change_vbc_to_sbc:
+            for observer in jedi_config_dict['observations']['observers']:
+                if 'obs bias' in observer:
+                    observer['obs bias'] = replace_key(observer['obs bias'],
+                                                       "variational bc", "static bc")
 
         # Write the expanded dictionary to YAML file (in rt mode)
         # ------------------------------------------

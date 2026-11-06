@@ -33,10 +33,6 @@ _R2D2_MODULE_CONFIG = {
         'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
         'module_name': 'r2d2-client/112025',
     },
-    'nccs_discover_cascade': {
-        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
-        'module_name': 'r2d2-client/112025',
-    },
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -112,10 +108,6 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
             'host': 'discover-gmao',
             'compiler': 'intel'
         },
-        'nccs_discover_cascade': {
-            'host': 'discover-gmao',
-            'compiler': 'intel'
-        },
         'generic': {
             'host': None,
             'compiler': None
@@ -152,7 +144,8 @@ def load_r2d2_credentials(
         r2d2_server: Server/profile name in the credentials YAML
             (e.g. 'gmao', 'jcsda'). Selects which named credential block to load.
             If not set, uses ``R2D2_SERVER`` env var if available.
-            If neither is set, uses the root of the YAML file.
+            If neither is set, selects the first named profile. Legacy files with
+            credentials at the YAML root continue to use the root mapping.
     """
     yaml_path = os.path.expanduser(yaml_path)
 

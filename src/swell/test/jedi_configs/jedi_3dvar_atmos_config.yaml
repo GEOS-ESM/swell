@@ -352,7 +352,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: abi_g16
+              sensor: infrared
       - filter: Perform Action
         filter variables:
         - name: brightnessTemperature
@@ -739,7 +739,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: abi_g18
+              sensor: infrared
       - filter: Perform Action
         filter variables:
         - name: brightnessTemperature
@@ -2145,7 +2145,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: airs_aqua
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -3288,7 +3288,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_aqua
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3355,7 +3355,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_aqua
+                sensor: microwave
             error parameter vector: *id006
             obserr_bound_max:
             - 4.5
@@ -3543,7 +3543,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_metop-b
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3610,7 +3610,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_metop-b
+                sensor: microwave
             error parameter vector: *id007
             obserr_bound_max:
             - 4.5
@@ -3798,7 +3798,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_metop-c
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3865,7 +3865,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_metop-c
+                sensor: microwave
             error parameter vector: *id008
             obserr_bound_max:
             - 4.5
@@ -4053,7 +4053,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n15
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4120,7 +4120,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n15
+                sensor: microwave
             error parameter vector: *id009
             obserr_bound_max:
             - 4.5
@@ -4308,7 +4308,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n18
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4375,7 +4375,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n18
+                sensor: microwave
             error parameter vector: *id010
             obserr_bound_max:
             - 4.5
@@ -4563,7 +4563,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n19
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4630,7 +4630,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n19
+                sensor: microwave
             error parameter vector: *id011
             obserr_bound_max:
             - 4.5
@@ -4825,7 +4825,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_n20
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4892,7 +4892,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_n20
+                sensor: microwave
             error parameter vector: *id012
             obserr_bound_max:
             - 4.5
@@ -5094,7 +5094,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_n21
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -5161,7 +5161,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_n21
+                sensor: microwave
             error parameter vector: *id013
             obserr_bound_max:
             - 4.5
@@ -5363,7 +5363,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_npp
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -5430,7 +5430,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_npp
+                sensor: microwave
             error parameter vector: *id014
             obserr_bound_max:
             - 4.5
@@ -5622,7 +5622,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_metop-b
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -5891,7 +5891,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_metop-c
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -6160,7 +6160,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_n18
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -6429,7 +6429,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_n19
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -7131,7 +7131,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_n20
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -8689,7 +8689,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_n21
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -10247,7 +10247,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_npp
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -12684,7 +12684,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: iasi_metop-b
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -14798,7 +14798,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: iasi_metop-c
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -16429,7 +16429,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_metop-b
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -16475,7 +16475,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-b
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16555,7 +16555,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-b
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16876,7 +16876,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_metop-c
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -16922,7 +16922,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-c
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -17002,7 +17002,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-c
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -17323,7 +17323,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_n19
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -17369,7 +17369,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_n19
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -17449,7 +17449,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_n19
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
