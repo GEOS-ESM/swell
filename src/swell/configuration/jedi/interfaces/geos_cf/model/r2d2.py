@@ -12,20 +12,37 @@ from collections.abc import Mapping
 
 
 FORECAST_EXPID = 'CF2'
-FORECAST_COLLECTION = 'geoscf_jedi'
-FORECAST_TEMPLATE = '%y4%m2%d2T%h2%n200Z.nc4'
+FORECAST_TEMPLATE = '%y4%m2%d2_%h2%n2z.nc4'
+
+# HISTORY.rc collections that can be written by the forecast, keyed by the R2D2 file_type they are
+# stored under. 'bkg' is the collection used to make backgrounds and is always written; the others
+# are optional lat-lon diagnostics, enabled via the additional_forecast_collections question.
+FORECAST_COLLECTIONS = {
+    'bkg': 'jdi_inst_1hr_glo_C90x90x6_v72',
+    'chm': 'chm_inst_1hr_glo_L360x181_v72',
+    'met': 'met_inst_1hr_glo_L360x181_v72',
+}
 
 
-def forecast_history() -> Mapping:
+def forecast_collections(additional_collections: list = None) -> Mapping:
+    """Collections to write: 'bkg' always, plus any listed in additional_collections."""
+
+    additional_collections = additional_collections or []
+
+    return {file_type: name for file_type, name in FORECAST_COLLECTIONS.items()
+            if file_type == 'bkg' or file_type in additional_collections}
+
+
+def forecast_history(additional_collections: list = None) -> Mapping:
 
     return {
         'expid': FORECAST_EXPID,
-        'collection': FORECAST_COLLECTION,
+        'collections': forecast_collections(additional_collections),
         'template': FORECAST_TEMPLATE,
     }
 
 
-def forecast_filename(file_time) -> str:
+def forecast_filename(file_time, file_type: str = 'bkg') -> str:
 
     filename = FORECAST_TEMPLATE
     replacements = {
@@ -40,10 +57,10 @@ def forecast_filename(file_time) -> str:
     for token, value in replacements.items():
         filename = filename.replace(token, value)
 
-    return f'{FORECAST_EXPID}.{FORECAST_COLLECTION}.{filename}'
+    return f'{FORECAST_EXPID}.{FORECAST_COLLECTIONS[file_type]}.{filename}'
 
 
-def r2d2(template_dict: Mapping) -> Mapping:
+def r2d2(template_dict: Mapping, additional_collections: list = None) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']
 
@@ -62,13 +79,12 @@ def r2d2(template_dict: Mapping) -> Mapping:
         },
         'store': {
             'fc': [
-                {'file_type': 'bkg',
-                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4',
+                {'file_type': file_type,
+                 'filename': f'{cycle_dir}/{file_type}.%Y%m%dT%H%M%SZ.nc4',
                  'r2d2_model': 'geos_cf'}
+                for file_type in forecast_collections(additional_collections)
             ]
         }
     }
 
     return r2d2
-
-# --------------------------------------------------------------------------------------------------
