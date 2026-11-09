@@ -22322,16 +22322,12 @@ variational:
             geopotential_at_surface: phis
             skin_temperature_at_surface: ts
             air_pressure_at_surface: ps
-final:
-  diagnostics:
-    departures: oman
-  prints:
-    frequency: PT3H
 output:
-  filetype: cube sphere history
-  provider: geos
-  datapath: cycle_dir
-  filename: experiment_id.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
-  first: PT0H
-  frequency: PT1H
-  field io names: *id001
+  analysis:
+    filetype: cube sphere history
+    provider: geos
+    datapath: cycle_dir
+    filename: experiment_id.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
+    first: PT0H
+    frequency: PT1H
+    field io names: *id001
