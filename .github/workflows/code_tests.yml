@@ -19,9 +19,9 @@ jobs:
 
     # Setup Python
     - name: Set up Python 3.11
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v7
       with:
-        python-version: 3.11.7
+        python-version: 3.11
 
     # Upgrade pip
     - name: Upgrade pip
@@ -29,7 +29,7 @@ jobs:
 
     # Clone the swell code
     - name: Clone swell repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
       with:
         lfs: true
 
