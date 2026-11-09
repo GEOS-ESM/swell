@@ -64,7 +64,7 @@
 
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}} => CleanCycle-{{model_component}}?
 
             {% if run_eva %}
             # EvaObservations
@@ -81,10 +81,8 @@
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
             SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
-            {% endif %}
-
-            # Clean up large files
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
+            {% endif %}
 
         {% endif %}
         {% endfor %}
