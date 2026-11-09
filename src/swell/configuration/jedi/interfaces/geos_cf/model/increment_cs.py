@@ -18,14 +18,10 @@ def increment_cs(template_dict: Mapping) -> Mapping:
     cycle_dir = template_dict['cycle_dir']
 
     output = {
-        'state component': {
-            'states': [{
-                'filetype': 'cube sphere history',
-                'datapath': f'{cycle_dir}',
-                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-                'field io names': field_io_names,
-            }]
-        }
+        'filetype': 'cube sphere history',
+        'datapath': f'{cycle_dir}',
+        'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'field io names': field_io_names,
     }
 
     return output
