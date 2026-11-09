@@ -84,6 +84,7 @@ observations:
   - tempo_no2_total
   - tropomi_s5p_co_total
   - omps_o3_nm_total
+  - ozonesonde
 
 obs_experiment:
   default_value: None

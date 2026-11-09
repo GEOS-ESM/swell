@@ -13,7 +13,9 @@ authenticated HTTPS endpoints for NASA ASDC datasets.
 
 ``https`` (default)
     Scrapes an HTML directory listing and streams files via HTTPS.
-    Authentication uses ``~/.netrc``.
+    Authentication uses ``~/.netrc``.  With ``index_url`` set, the file URLs
+    are instead taken from an OGC API - Features index queried for the
+    window (e.g. the WOUDC ``data_records`` collection).
 
 ``s3_public``
     Downloads from a publicly readable S3 bucket using anonymous boto3
@@ -37,9 +39,11 @@ import glob
 import netrc
 import os
 import re
+import time
 import yaml
 import isodate
 import requests
+from urllib.parse import urlparse
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities import s3 as swell_s3
@@ -58,7 +62,9 @@ class DownloadObs(taskBase):
         Scrapes an HTML directory listing from ``remote_host`` +
         ``remote_path_template``, matches filenames against
         ``filename_pattern``, and streams files via HTTPS.
-        Authentication uses ``~/.netrc``.
+        Authentication uses ``~/.netrc``.  If ``index_url`` is set, the
+        files to download are listed by an OGC API - Features items
+        endpoint instead (see ``_download_obs_https_index``).
 
     ``cmr``
         Queries the NASA CMR API for granule download URLs and fetches
@@ -179,6 +185,13 @@ class DownloadObs(taskBase):
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
         # ------------------------------------------------------------------
+        # HTTPS with the file URLs taken from an OGC API - Features index
+        # ------------------------------------------------------------------
+        if obs_config.get('index_url'):
+            return self._download_obs_https_index(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
+        # ------------------------------------------------------------------
         # Default: HTTPS directory listing
         # ------------------------------------------------------------------
         remote_host = obs_config['remote_host']
@@ -266,6 +279,139 @@ class DownloadObs(taskBase):
                 except requests.RequestException as exc:
                     self.logger.error(f'  Failed to download {filename}: {exc}')
                     failed += 1
+
+        return downloaded, failed
+
+    def _download_obs_https_index(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Download files listed by an OGC API - Features index via HTTPS.
+
+        Used by the ``https`` method when ``index_url`` is set, for archives
+        whose directory layout cannot be listed per window (e.g. WOUDC, where
+        files are stored per station and year and file names follow no
+        common pattern).  The index is queried once per call with an OGC
+        ``datetime`` interval covering the search window and its pages are
+        followed through their ``next`` links.
+
+        The ``obs_config`` dict must contain:
+
+        - ``index_url``: OGC API - Features ``items`` endpoint, e.g.
+          ``https://api.woudc.org/collections/data_records/items``.
+
+        Optional keys:
+
+        - ``index_params``: extra query parameters (e.g.
+          ``{content_category: OzoneSonde}``).
+        - ``index_url_property``: feature property holding the file URL
+          (default ``url``).
+        - ``index_filename_parts``: number of trailing URL path components
+          joined with ``_`` to name the local file, so that files with the
+          same name in different remote directories do not collide
+          (default 1, the file name only).
+        - ``index_page_size``: features requested per page (default 1000).
+        - ``index_time_padding``: ISO-8601 duration added on both sides of
+          the search window, for indexes whose times may be shifted from the
+          true observation time (default ``PT0H``).  The converter is then
+          expected to select the observations of the window exactly.
+        - ``max_orbit_duration``: ISO-8601 duration; extends the search
+          window backwards (default ``PT0H``).
+        - ``index_retries``: attempts per index page before giving up
+          (default 3, with a growing pause between attempts).
+
+        An index query that still fails after the retries aborts the task
+        (so that the cycle can be retried); an empty index result is not an
+        error.
+
+        Returns ``(n_downloaded, n_failed)``.
+        """
+        index_url = obs_config['index_url']
+        url_property = obs_config.get('index_url_property', 'url')
+        filename_parts = int(obs_config.get('index_filename_parts', 1))
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+        padding = isodate.parse_duration(
+            obs_config.get('index_time_padding', 'PT0H'))
+
+        search_start = window_begin_dto - max_orbit_dur - padding
+        search_end = window_end_dto + padding
+        temporal = (f'{search_start.strftime("%Y-%m-%dT%H:%M:%SZ")}/'
+                    f'{search_end.strftime("%Y-%m-%dT%H:%M:%SZ")}')
+
+        params = dict(obs_config.get('index_params', {}))
+        params.update({'f': 'json',
+                       'datetime': temporal,
+                       'limit': int(obs_config.get('index_page_size', 1000))})
+
+        if dry_run:
+            self.logger.info(f'  [DRY RUN] Would query {index_url} with {params}')
+            return 0, 0
+
+        self.logger.info(f'  Querying {index_url} with {params}')
+        session = requests.Session()
+
+        retries = int(obs_config.get('index_retries', 3))
+
+        file_urls = []
+        next_url, next_params = index_url, params
+        while next_url:
+            for attempt in range(1, retries + 1):
+                try:
+                    response = session.get(next_url, params=next_params, timeout=(30, 120))
+                    response.raise_for_status()
+                    page = response.json()
+                    break
+                except (requests.RequestException, ValueError) as exc:
+                    if attempt == retries:
+                        self.logger.abort(f'Index query failed for {obs_name} after '
+                                          f'{retries} attempt(s): {exc}')
+                    self.logger.info(f'  Index query attempt {attempt} failed ({exc}), retrying')
+                    time.sleep(30 * attempt)
+            features = page.get('features', [])
+            if not features:
+                break
+            for feature in features:
+                url = feature.get('properties', {}).get(url_property)
+                if url and url not in file_urls:
+                    file_urls.append(url)
+            # The 'next' link carries the full query (including the offset).
+            next_url = next((link.get('href') for link in page.get('links', [])
+                             if link.get('rel') == 'next'), None)
+            next_params = None
+
+        self.logger.info(f'  Index returned {len(file_urls)} file(s) for {temporal}')
+        if not file_urls:
+            self.logger.info('  No files found for this window - nothing to download')
+            return 0, 0
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        os.makedirs(dest_dir, exist_ok=True)
+
+        downloaded = 0
+        failed = 0
+
+        for file_url in file_urls:
+            path_parts = urlparse(file_url).path.strip('/').split('/')
+            filename = '_'.join(path_parts[-filename_parts:])
+            dest_path = os.path.join(dest_dir, filename)
+
+            if os.path.exists(dest_path):
+                self.logger.info(f'  Already exists, skipping: {filename}')
+                downloaded += 1
+                continue
+
+            try:
+                self._download_file(session, file_url, dest_path)
+                self.logger.info(f'  Downloaded: {filename}')
+                downloaded += 1
+            except requests.RequestException as exc:
+                self.logger.error(f'  Failed to download {filename}: {exc}')
+                failed += 1
 
         return downloaded, failed
 

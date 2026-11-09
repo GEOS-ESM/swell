@@ -1,0 +1,28 @@
+# WOUDC ozonesondes — IODA converter configuration
+# Converter: woudc_ozonesonde2ioda.py (ioda-converters, compo; must be available either
+#            in `converter_path`, set in suite_config.py, or in jedi_bundle/build/bin/)
+#
+# Invocation (one call per cycle, all downloaded files passed together):
+#   python3 <jedi_bundle>/build/bin/woudc_ozonesonde2ioda.py
+#       -i <file1.csv> <file2.csv> ...
+#       -o <cycle_dir>/ioda/ozonesonde/ozonesonde_YYYYMMDDHH.nc4
+#       --window-begin <DA window begin> --window-end <DA window end>
+#
+# Profiles launched in (window begin, window end] are kept, with all their
+# levels. If no profile is in the window the converter exits cleanly without
+# writing a file, and IngestObs logs that there is nothing to ingest.
+
+converter_script: woudc_ozonesonde2ioda.py
+
+# Output filename template (must be the same as
+# source in ingest_observations/ozonesonde.yaml)
+output_filename_template: "ozonesonde_%Y%m%d%H.nc4"
+
+# {window_begin} and {window_end} are replaced by the DA window bounds.
+# Other converter options (defaults in brackets): --top-pressure [5 hPa],
+# --rel-error-lower [0.05], --rel-error-upper [0.10],
+# --error-pressure-threshold [10 hPa], --error-floor [2 ppbv],
+# --layer-average (off) with --layer-edges.
+extra_flags:
+  --window-begin: "{window_begin}"
+  --window-end: "{window_end}"

@@ -1,0 +1,6 @@
+# WOUDC ozonesondes — R2D2 ingestion configuration (provider: woudc)
+# Source: output of ConvertObsToIoda, relative to the cycle work directory.
+# Windows without any sonde have no file: IngestObs logs it and continues.
+
+acquisition_method: local
+source: ioda/ozonesonde/ozonesonde_%Y%m%d%H.nc4 # in CYCLE_DIR

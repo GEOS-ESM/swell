@@ -60,10 +60,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_length("PT6H"),
             qd.obs_to_download(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                                 'tropomi_s5p_co_total', 'tempo_no2_tropo',
-                                'mls_o3_res']),
+                                'mls_o3_res', 'ozonesonde']),
             qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                               'tropomi_s5p_co_total', 'tempo_no2_tropo',
-                              'mls_o3_res']),
+                              'mls_o3_res', 'ozonesonde']),
             qd.dry_run(True),
             qd.store_as_symlink(False),
         ]

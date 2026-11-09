@@ -1,0 +1,43 @@
+# WOUDC ozonesondes (extended CSV, form 1 and 2), all sonde types (ECC, Brewer-Mast...).
+# For evaluation (HofX) only: these data must never be assimilated.
+# Source: WOUDC archive (WAF), https://woudc.org/archive/Archive-NewFormat/OzoneSonde_1.0_{1,2}/
+#         (no authentication required)
+#
+# The WAF is organised as <platform><id>/<instrument>/<year>/<file> and file names
+# vary by contributor, so the files of a window are not found by listing it.
+# Instead, the WOUDC OGC API index of submitted files (data_records collection)
+# is queried once per cycle for the files launched around the window
+# (`datetime` filter on timestamp_utc, see index_time_padding below), and each
+# file is then downloaded from the WAF over HTTPS. The converter keeps the
+# profiles launched in the window and removes duplicates.
+#
+# Latency: stations submit days to months after launch, so most recent windows
+# have no profile (this is not an error: nothing is downloaded, converted or
+# ingested). Late files are picked up when a window is processed again, since
+# the index is always queried by launch time.
+
+retrieval_method: https
+index_url: https://api.woudc.org/collections/data_records/items
+index_params:
+  content_category: OzoneSonde
+  properties: url
+index_url_property: url
+
+# Local file name = <platform>_<instrument>_<year>_<file name>, e.g.
+# stn076_ecc_2025_YR250101.CSV (file names are not unique across stations)
+index_filename_parts: 4
+
+# All downloaded files are passed to the converter
+filename_pattern: '*'
+
+# The index `timestamp_utc` is wrong for files with a non-zero UTCOffset: it is
+# computed as local time + UTCOffset, while WOUDC defines UTC = local time -
+# UTCOffset (Contributor Guide 3.2.1.6), e.g. a Tsukuba launch at 14:30 local
+# (+09:00:00), i.e. 05:30Z, is indexed at 23:30Z. The error is 2 x UTCOffset,
+# between -24 h and +28 h, so the index query is padded by 30 h on both sides
+# of the window; the converter selects the launches of the window exactly from
+# the #TIMESTAMP table of each file.
+index_time_padding: PT30H
+
+# Extends the index query before window_begin (in addition to the padding).
+max_orbit_duration: PT0H
