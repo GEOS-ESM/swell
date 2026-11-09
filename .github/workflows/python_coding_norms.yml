@@ -22,18 +22,14 @@ jobs:
       with:
         python-version: 3.11
 
-    # Update conda
-    - name: Update conda
-      run: conda update -n base -c defaults conda
-
     # Install pycodestyle
     - name: Install pycodestyle
-      run: conda install -c conda-forge pycodestyle
+      run: pip install pycodestyle
 
     # Clone the swell code
     - name: Clone swell repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
 
     # Run python codestyle
     - name: Run python codestyle
-      run: $CONDA/bin/python3 pycodestyle_run.py
+      run: python pycodestyle_run.py
