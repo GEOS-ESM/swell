@@ -1,0 +1,116 @@
+#  Project Description:
+#
+#  I want to have a mixed YAML and human language 
+#  to specify a high level activity
+#  Low level activities were prepare
+#
+
+Active ingredients:
+  components:
+    geos models:
+      atmos:
+      land:
+      ocean:
+    DA:
+      JEDI:
+        status: on
+        end time:
+        interval:         
+      GSI:
+        status: off
+      Aerosol:
+        status: on
+        start time:
+        end time:
+        interval:
+      GAAS:
+        status: on      
+      
+Coupling method:
+   IAU filter:
+      method pool:
+      - 4d-envar         
+   Coupling:
+     !include how-to-couple
+
+
+DA observations:
+  retrieval method:
+    atmos:
+      get obs: local
+      dir: 
+    cf:
+      get obs: r2d2
+    ocean:
+      get obs: r2d2
+  preparation method:
+    atmos:
+      GSI: on
+      buffer2ioda: off
+
+Boundary Conditions:
+  !include bcs.qc
+
+
+Geom Resolution Setup:
+  atmos:   C12
+  ocean:   same as ATMOS
+  land:    NLv3
+
+
+
+How to run:
+  on the fly:
+    status: on
+    Procedure:
+      !include  fly_procedure
+    DA:
+      - status: on
+      - start:
+      - interval:
+    IAU:
+      - status: off    
+    FC:
+      - status: on    
+      - start:
+      - interval:
+    POST PROCESS:
+      1. observer (OMF)
+         !include: 
+      2. MAPL HISTORY:
+         !include: history.rcx
+         
+
+
+  offline:
+    FSOI:
+      date: 20260826 2100
+    
+
+Prepare low level configs:
+  prep exp config and copy to here:
+    1.a swell create 3dvar
+    2.a swell create getkf
+    3. swell create cf
+  merge sequence:
+  
+
+Merge the workflow:
+  
+
+Postprocess:
+
+
+
+FVICS:
+  dir:
+  regrid:
+    -new reoslution: C12
+
+
+EXTDATA:
+  !include
+
+
+LIBRARY to use:
+  
