@@ -17,6 +17,8 @@
 # the index is always queried by launch time.
 
 retrieval_method: https
+# OGC Features is the default index format; it is explicit for clarity.
+index_response_format: ogc_features
 index_url: https://api.woudc.org/collections/data_records/items
 index_params:
   content_category: OzoneSonde

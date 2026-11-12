@@ -13,9 +13,9 @@ authenticated HTTPS endpoints for NASA ASDC datasets.
 
 ``https`` (default)
     Scrapes an HTML directory listing and streams files via HTTPS.
-    Authentication uses ``~/.netrc``.  With ``index_url`` set, the file URLs
-    are instead taken from an OGC API - Features index queried for the
-    window (e.g. the WOUDC ``data_records`` collection).
+    Authentication uses ``~/.netrc``. With ``index_url`` set, file URLs are
+    resolved from a supported remote JSON index queried for the window (for
+    example, WOUDC OGC Features and Pandora-style JSON-list indexes).
 
 ``s3_public``
     Downloads from a publicly readable S3 bucket using anonymous boto3
@@ -62,9 +62,9 @@ class DownloadObs(taskBase):
         Scrapes an HTML directory listing from ``remote_host`` +
         ``remote_path_template``, matches filenames against
         ``filename_pattern``, and streams files via HTTPS.
-        Authentication uses ``~/.netrc``.  If ``index_url`` is set, the
-        files to download are listed by an OGC API - Features items
-        endpoint instead (see ``_download_obs_https_index``).
+        Authentication uses ``~/.netrc``. If ``index_url`` is set, the files
+        to download are resolved through a supported remote JSON index (see
+        ``_download_obs_https_index``).
 
     ``cmr``
         Queries the NASA CMR API for granule download URLs and fetches
@@ -185,7 +185,7 @@ class DownloadObs(taskBase):
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
         # ------------------------------------------------------------------
-        # HTTPS with the file URLs taken from an OGC API - Features index
+        # HTTPS with file URLs resolved through a remote index
         # ------------------------------------------------------------------
         if obs_config.get('index_url'):
             return self._download_obs_https_index(
@@ -290,63 +290,53 @@ class DownloadObs(taskBase):
         window_end_dto: datetime.datetime,
         dry_run: bool,
     ) -> tuple[int, int]:
-        """Download files listed by an OGC API - Features index via HTTPS.
+        """Download files selected from a remote JSON index over HTTPS.
 
-        Used by the ``https`` method when ``index_url`` is set, for archives
-        whose directory layout cannot be listed per window (e.g. WOUDC, where
-        files are stored per station and year and file names follow no
-        common pattern).  The index is queried once per call with an OGC
-        ``datetime`` interval covering the search window and its pages are
-        followed through their ``next`` links.
+        ``index_response_format`` selects a supported record layout:
 
-        The ``obs_config`` dict must contain:
+        - ``ogc_features`` (default) expects an OGC API Features response.
+          File URLs are read from a feature property and pages are followed
+          through their ``next`` links.
+        - ``json_list`` expects a JSON list of records.  Download URLs are
+          rendered from ``index_download_url_template`` using each record's
+          top-level fields. Pagination is not supported for this format.
 
-        - ``index_url``: OGC API - Features ``items`` endpoint, e.g.
-          ``https://api.woudc.org/collections/data_records/items``.
+        ``index_url`` is required. All formats may set ``index_params``,
+        ``index_time_padding``, ``max_orbit_duration``, and ``index_retries``.
+        URL and parameter values may use ``{window_begin}``, ``{window_end}``,
+        ``{window_begin_date}``, and ``{window_end_date}`` placeholders.
+        The first pair render ISO-8601 UTC timestamps; the latter render dates.
 
-        Optional keys:
-
-        - ``index_params``: extra query parameters (e.g.
-          ``{content_category: OzoneSonde}``).
-        - ``index_url_property``: feature property holding the file URL
-          (default ``url``).
-        - ``index_filename_parts``: number of trailing URL path components
-          joined with ``_`` to name the local file, so that files with the
-          same name in different remote directories do not collide
-          (default 1, the file name only).
-        - ``index_page_size``: features requested per page (default 1000).
-        - ``index_time_padding``: ISO-8601 duration added on both sides of
-          the search window, for indexes whose times may be shifted from the
-          true observation time (default ``PT0H``).  The converter is then
-          expected to select the observations of the window exactly.
-        - ``max_orbit_duration``: ISO-8601 duration; extends the search
-          window backwards (default ``PT0H``).
-        - ``index_retries``: attempts per index page before giving up
-          (default 3, with a growing pause between attempts).
-
-        An index query that still fails after the retries aborts the task
-        (so that the cycle can be retried); an empty index result is not an
-        error.
-
-        Returns ``(n_downloaded, n_failed)``.
+        The legacy ``ogc_features`` format also adds OGC ``f=json``,
+        ``datetime``, and ``limit`` query parameters unless explicitly set.
+        ``json_list`` requires ``index_download_url_template`` and defaults
+        ``index_filename_property`` to ``filename``.
         """
-        index_url = obs_config['index_url']
-        url_property = obs_config.get('index_url_property', 'url')
-        filename_parts = int(obs_config.get('index_filename_parts', 1))
+        index_format = obs_config.get('index_response_format', 'ogc_features')
+        if index_format not in ('ogc_features', 'json_list'):
+            self.logger.abort(
+                f"Unsupported index_response_format '{index_format}' for {obs_name}")
+
         max_orbit_dur = isodate.parse_duration(
             obs_config.get('max_orbit_duration', 'PT0H'))
         padding = isodate.parse_duration(
             obs_config.get('index_time_padding', 'PT0H'))
-
         search_start = window_begin_dto - max_orbit_dur - padding
         search_end = window_end_dto + padding
-        temporal = (f'{search_start.strftime("%Y-%m-%dT%H:%M:%SZ")}/'
-                    f'{search_end.strftime("%Y-%m-%dT%H:%M:%SZ")}')
-
-        params = dict(obs_config.get('index_params', {}))
-        params.update({'f': 'json',
-                       'datetime': temporal,
-                       'limit': int(obs_config.get('index_page_size', 1000))})
+        placeholders = {
+            'window_begin': search_start.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'window_end': search_end.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'window_begin_date': search_start.strftime('%Y-%m-%d'),
+            'window_end_date': search_end.strftime('%Y-%m-%d'),
+        }
+        temporal = f"{placeholders['window_begin']}/{placeholders['window_end']}"
+        index_url = self._format_index_template(obs_config['index_url'], placeholders, obs_name)
+        params = self._format_index_params(
+            obs_config.get('index_params', {}), placeholders, obs_name)
+        if index_format == 'ogc_features':
+            params.setdefault('f', 'json')
+            params.setdefault('datetime', temporal)
+            params.setdefault('limit', int(obs_config.get('index_page_size', 1000)))
 
         if dry_run:
             self.logger.info(f'  [DRY RUN] Would query {index_url} with {params}')
@@ -354,57 +344,43 @@ class DownloadObs(taskBase):
 
         self.logger.info(f'  Querying {index_url} with {params}')
         session = requests.Session()
-
         retries = int(obs_config.get('index_retries', 3))
-
-        file_urls = []
+        indexed_files = []
+        seen_urls = set()
         next_url, next_params = index_url, params
         while next_url:
-            for attempt in range(1, retries + 1):
-                try:
-                    response = session.get(next_url, params=next_params, timeout=(30, 120))
-                    response.raise_for_status()
-                    page = response.json()
-                    break
-                except (requests.RequestException, ValueError) as exc:
-                    if attempt == retries:
-                        self.logger.abort(f'Index query failed for {obs_name} after '
-                                          f'{retries} attempt(s): {exc}')
-                    self.logger.info(f'  Index query attempt {attempt} failed ({exc}), retrying')
-                    time.sleep(30 * attempt)
-            features = page.get('features', [])
-            if not features:
-                break
-            for feature in features:
-                url = feature.get('properties', {}).get(url_property)
-                if url and url not in file_urls:
-                    file_urls.append(url)
-            # The 'next' link carries the full query (including the offset).
-            next_url = next((link.get('href') for link in page.get('links', [])
-                             if link.get('rel') == 'next'), None)
-            next_params = None
+            page = self._query_index_page(
+                session, next_url, next_params, retries, obs_name)
+            records = self._extract_index_records(page, index_format, obs_name)
+            for record in records:
+                file_url, filename = self._index_record_file(
+                    record, index_format, obs_config, obs_name)
+                if file_url and file_url not in seen_urls:
+                    indexed_files.append((file_url, filename))
+                    seen_urls.add(file_url)
 
-        self.logger.info(f'  Index returned {len(file_urls)} file(s) for {temporal}')
-        if not file_urls:
+            if index_format == 'ogc_features':
+                next_url = next((link.get('href') for link in page.get('links', [])
+                                 if link.get('rel') == 'next'), None)
+                next_params = None
+            else:
+                next_url = None
+
+        self.logger.info(f'  Index returned {len(indexed_files)} file(s) for {temporal}')
+        if not indexed_files:
             self.logger.info('  No files found for this window - nothing to download')
             return 0, 0
 
         dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
         os.makedirs(dest_dir, exist_ok=True)
-
         downloaded = 0
         failed = 0
-
-        for file_url in file_urls:
-            path_parts = urlparse(file_url).path.strip('/').split('/')
-            filename = '_'.join(path_parts[-filename_parts:])
+        for file_url, filename in indexed_files:
             dest_path = os.path.join(dest_dir, filename)
-
             if os.path.exists(dest_path):
                 self.logger.info(f'  Already exists, skipping: {filename}')
                 downloaded += 1
                 continue
-
             try:
                 self._download_file(session, file_url, dest_path)
                 self.logger.info(f'  Downloaded: {filename}')
@@ -412,8 +388,86 @@ class DownloadObs(taskBase):
             except requests.RequestException as exc:
                 self.logger.error(f'  Failed to download {filename}: {exc}')
                 failed += 1
-
         return downloaded, failed
+
+    def _format_index_template(self, template: str, placeholders: dict, obs_name: str) -> str:
+        """Render supported DA-window placeholders in an index URL or value."""
+        try:
+            return template.format(**placeholders)
+        except KeyError as exc:
+            self.logger.abort(
+                f'Unknown index placeholder {exc} in configuration for {obs_name}')
+
+    def _format_index_params(self, params: dict, placeholders: dict, obs_name: str) -> dict:
+        """Render supported DA-window placeholders in index query parameters."""
+        return {
+            key: (self._format_index_template(value, placeholders, obs_name)
+                  if isinstance(value, str) else value)
+            for key, value in params.items()
+        }
+
+    def _query_index_page(
+        self,
+        session: requests.Session,
+        url: str,
+        params: dict | None,
+        retries: int,
+        obs_name: str,
+    ) -> object:
+        """Request and decode one index page, retrying transient failures."""
+        for attempt in range(1, retries + 1):
+            try:
+                response = session.get(url, params=params, timeout=(30, 120))
+                response.raise_for_status()
+                return response.json()
+            except (requests.RequestException, ValueError) as exc:
+                if attempt == retries:
+                    self.logger.abort(f'Index query failed for {obs_name} after '
+                                      f'{retries} attempt(s): {exc}')
+                self.logger.info(f'  Index query attempt {attempt} failed ({exc}), retrying')
+                time.sleep(30 * attempt)
+
+    def _extract_index_records(self, page: object, index_format: str, obs_name: str) -> list[dict]:
+        """Extract index records from one supported response format."""
+        if index_format == 'ogc_features':
+            if not isinstance(page, dict):
+                self.logger.abort(f'OGC index response for {obs_name} is not an object')
+            records = page.get('features', [])
+        else:
+            records = page
+        if not isinstance(records, list):
+            self.logger.abort(f'Index response records for {obs_name} are not a list')
+        if not all(isinstance(record, dict) for record in records):
+            self.logger.abort(f'Index response records for {obs_name} are not objects')
+        return records
+
+    def _index_record_file(
+        self, record: dict, index_format: str, obs_config: dict, obs_name: str
+    ) -> tuple[str | None, str | None]:
+        """Resolve one record into its remote URL and local filename."""
+        if index_format == 'ogc_features':
+            url_property = obs_config.get('index_url_property', 'url')
+            file_url = record.get('properties', {}).get(url_property)
+            filename_parts = int(obs_config.get('index_filename_parts', 1))
+            path_parts = urlparse(file_url).path.strip('/').split('/') if file_url else []
+            filename = '_'.join(path_parts[-filename_parts:])
+        else:
+            filename_property = obs_config.get('index_filename_property', 'filename')
+            filename = record.get(filename_property)
+            template = obs_config.get('index_download_url_template')
+            if not template:
+                self.logger.abort(
+                    f"Missing 'index_download_url_template' for {obs_name} json_list index")
+            try:
+                file_url = template.format(**record)
+            except KeyError as exc:
+                self.logger.abort(
+                    f'Unknown download URL placeholder {exc} for {obs_name}')
+        if not file_url or not filename:
+            self.logger.warning(
+                f'  Skipping index record without a file URL or filename for {obs_name}')
+            return None, None
+        return file_url, filename
 
     def _download_obs_s3_public(
         self,

@@ -1,9 +1,12 @@
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 
+import datetime
+import tempfile
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
+from swell.tasks.download_obs import DownloadObs
 from swell.utilities.observations import get_provider_for_observation
 
 
@@ -64,3 +67,92 @@ class ObservationProviderTest(unittest.TestCase):
             )
 
         self.logger.abort.assert_called_once()
+
+
+class IndexedDownloadTest(unittest.TestCase):
+
+    def setUp(self):
+        self.download_obs = DownloadObs.__new__(DownloadObs)
+        self.download_obs.logger = Mock()
+        self.window_begin = datetime.datetime(2025, 1, 1, 0, 0)
+        self.window_end = datetime.datetime(2025, 1, 2, 0, 0)
+
+    def _json_response(self, payload):
+        response = Mock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = payload
+        return response
+
+    def test_ogc_features_index_preserves_existing_url_handling(self):
+        config = {
+            'index_url': 'https://index.example/items',
+            'index_params': {'content_category': 'OzoneSonde'},
+            'index_url_property': 'url',
+            'index_filename_parts': 2,
+        }
+        first_page = {
+            'features': [{'properties': {'url': 'https://files.example/site/a.csv'}}],
+            'links': [{'rel': 'next', 'href': 'https://index.example/items?offset=1'}],
+        }
+        second_page = {
+            'features': [{'properties': {'url': 'https://files.example/site/b.csv'}}],
+            'links': [],
+        }
+
+        with tempfile.TemporaryDirectory() as cycle_dir, \
+             patch.object(self.download_obs, 'cycle_dir', return_value=cycle_dir), \
+             patch('swell.tasks.download_obs.requests.Session') as session_factory, \
+             patch.object(self.download_obs, '_download_file') as download_file:
+            session = session_factory.return_value
+            session.get.side_effect = [
+                self._json_response(first_page), self._json_response(second_page),
+            ]
+            downloaded, failed = self.download_obs._download_obs_https_index(
+                config, 'ozonesonde', self.window_begin, self.window_end, False)
+
+        self.assertEqual((downloaded, failed), (2, 0))
+        self.assertEqual(
+            [call.args[1] for call in download_file.call_args_list],
+            ['https://files.example/site/a.csv', 'https://files.example/site/b.csv'],
+        )
+        self.assertEqual(
+            [call.args[2].rsplit('/', 1)[-1] for call in download_file.call_args_list],
+            ['site_a.csv', 'site_b.csv'],
+        )
+        first_params = session.get.call_args_list[0].kwargs['params']
+        self.assertEqual(first_params['content_category'], 'OzoneSonde')
+        self.assertIn('datetime', first_params)
+        self.assertEqual(session.get.call_args_list[1].kwargs['params'], None)
+
+    def test_json_list_index_renders_query_and_download_urls(self):
+        config = {
+            'index_response_format': 'json_list',
+            'index_url': 'https://index.example/files/{window_begin_date}',
+            'index_params': {'start': '{window_begin_date}', 'end': '{window_end_date}'},
+            'index_filename_property': 'filename',
+            'index_download_url_template': 'https://files.example/download/{filename}',
+        }
+        page = [{'filename': 'Pandora1_L2.txt'}, {'filename': 'Pandora2_L2.txt'}]
+
+        with tempfile.TemporaryDirectory() as cycle_dir, \
+             patch.object(self.download_obs, 'cycle_dir', return_value=cycle_dir), \
+             patch('swell.tasks.download_obs.requests.Session') as session_factory, \
+             patch.object(self.download_obs, '_download_file') as download_file:
+            session = session_factory.return_value
+            session.get.return_value = self._json_response(page)
+            downloaded, failed = self.download_obs._download_obs_https_index(
+                config, 'pandora_no2', self.window_begin, self.window_end, False)
+
+        self.assertEqual((downloaded, failed), (2, 0))
+        self.assertEqual(
+            [call.args[1] for call in download_file.call_args_list],
+            ['https://files.example/download/Pandora1_L2.txt',
+             'https://files.example/download/Pandora2_L2.txt'],
+        )
+        self.assertEqual(
+            [call.args[2].rsplit('/', 1)[-1] for call in download_file.call_args_list],
+            ['Pandora1_L2.txt', 'Pandora2_L2.txt'],
+        )
+        self.assertEqual(session.get.call_args.kwargs['params'], {
+            'start': '2025-01-01', 'end': '2025-01-02',
+        })

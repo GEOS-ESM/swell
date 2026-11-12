@@ -19,7 +19,7 @@ from swell.test.code_tests.question_dictionary_comparison_test import QuestionDi
 from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
 from swell.test.code_tests.suite_creation_test import SuiteCreationTest
 from swell.test.code_tests.jedi_config_test import JEDIConfigTest
-from swell.test.code_tests.observations_test import ObservationProviderTest
+from swell.test.code_tests.observations_test import IndexedDownloadTest, ObservationProviderTest
 
 
 # --------------------------------------------------------------------------------------------------
@@ -61,8 +61,9 @@ def code_tests() -> None:
     # Load JEDI config test
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(JEDIConfigTest))
 
-    # Load observation provider tests
+    # Load observation provider and indexed-download tests
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(ObservationProviderTest))
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(IndexedDownloadTest))
 
     # Create a test runner
     test_runner = unittest.TextTestRunner()
