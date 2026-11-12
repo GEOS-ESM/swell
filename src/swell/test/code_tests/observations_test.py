@@ -6,6 +6,8 @@ import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
+import requests
+
 from swell.tasks.download_obs import DownloadObs
 from swell.utilities.observations import get_provider_for_observation
 
@@ -124,35 +126,48 @@ class IndexedDownloadTest(unittest.TestCase):
         self.assertIn('datetime', first_params)
         self.assertEqual(session.get.call_args_list[1].kwargs['params'], None)
 
-    def test_json_list_index_renders_query_and_download_urls(self):
-        config = {
-            'index_response_format': 'json_list',
-            'index_url': 'https://index.example/files/{window_begin_date}',
-            'index_params': {'start': '{window_begin_date}', 'end': '{window_end_date}'},
-            'index_filename_property': 'filename',
-            'index_download_url_template': 'https://files.example/download/{filename}',
-        }
-        page = [{'filename': 'Pandora1_L2.txt'}, {'filename': 'Pandora2_L2.txt'}]
-
+    def _run(self, config, pages):
+        """Run the indexed download with mocked HTTP; return (result, session, download_file)."""
         with tempfile.TemporaryDirectory() as cycle_dir, \
              patch.object(self.download_obs, 'cycle_dir', return_value=cycle_dir), \
              patch('swell.tasks.download_obs.requests.Session') as session_factory, \
+             patch('swell.tasks.download_obs.time.sleep'), \
              patch.object(self.download_obs, '_download_file') as download_file:
             session = session_factory.return_value
-            session.get.return_value = self._json_response(page)
-            downloaded, failed = self.download_obs._download_obs_https_index(
-                config, 'pandora_no2', self.window_begin, self.window_end, False)
+            session.get.side_effect = pages
+            result = self.download_obs._download_obs_https_index(
+                config, 'ozonesonde', self.window_begin, self.window_end, False)
+        return result, session, download_file
 
-        self.assertEqual((downloaded, failed), (2, 0))
-        self.assertEqual(
-            [call.args[1] for call in download_file.call_args_list],
-            ['https://files.example/download/Pandora1_L2.txt',
-             'https://files.example/download/Pandora2_L2.txt'],
-        )
-        self.assertEqual(
-            [call.args[2].rsplit('/', 1)[-1] for call in download_file.call_args_list],
-            ['Pandora1_L2.txt', 'Pandora2_L2.txt'],
-        )
-        self.assertEqual(session.get.call_args.kwargs['params'], {
-            'start': '2025-01-01', 'end': '2025-01-02',
-        })
+    def _feature(self, url):
+        return {'properties': {'url': url}}
+
+    def test_empty_page_stops_even_with_next_link(self):
+        first = {'features': [self._feature('https://files.example/a.csv')],
+                 'links': [{'rel': 'next', 'href': 'https://index.example/items?offset=1'}]}
+        empty = {'features': [],
+                 'links': [{'rel': 'next', 'href': 'https://index.example/items?offset=2'}]}
+        result, session, _ = self._run(
+            {'index_url': 'https://index.example/items'},
+            [self._json_response(first), self._json_response(empty)])
+        self.assertEqual(result, (1, 0))
+        self.assertEqual(session.get.call_count, 2)
+
+    def test_empty_index_is_not_an_error(self):
+        result, _, download_file = self._run(
+            {'index_url': 'https://index.example/items'},
+            [self._json_response({'features': [], 'links': []})])
+        self.assertEqual(result, (0, 0))
+        download_file.assert_not_called()
+        self.download_obs.logger.abort.assert_not_called()
+
+    def test_failed_query_is_retried_then_aborts(self):
+        self.download_obs.logger.abort.side_effect = RuntimeError
+        error = requests.ConnectionError('down')
+        with self.assertRaises(RuntimeError):
+            self._run({'index_url': 'https://index.example/items', 'index_retries': 2},
+                      [error, error])
+        self.download_obs.logger.abort.assert_called_once()
+        retry_logs = [c.args[0] for c in self.download_obs.logger.info.call_args_list
+                      if 'attempt 1 failed' in c.args[0]]
+        self.assertEqual(len(retry_logs), 1)

@@ -47,3 +47,19 @@ class SuiteConfig(QuestionContainer, Enum):
              hofx_cf
         ]
     )
+
+    # HofX of WOUDC ozonesondes (evaluation only: `monitoring only: true` in
+    # observations/ozonesonde.yaml). The sondes must first be ingested into R2D2
+    # with the ingest_obs_cf suite for the same cycles; most windows have no
+    # sonde, which GetObservations and the HofX handle as empty obs.
+    hofx_cf_ozonesonde = QuestionList(
+        list_name="hofx_cf_ozonesonde",
+        questions=[
+            hofx_cf,
+            qd.start_cycle_point("2025-03-01T12:00:00Z"),
+            qd.final_cycle_point("2025-03-01T12:00:00Z"),
+        ],
+        geos_cf=[
+            qd.observations(['ozonesonde']),
+        ]
+    )

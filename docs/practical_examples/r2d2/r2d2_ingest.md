@@ -104,7 +104,8 @@ Same as the direct-copy pipeline, add an entry to `observation_ioda_names.yaml`.
 Create `src/swell/configuration/jedi/interfaces/<model>/download_observations/my_obs.yaml`.
 
 The `retrieval_method` key selects how files are discovered and downloaded.
-Three remote methods are supported:
+Three remote methods are supported (`https` has two modes: directory listing,
+or a remote index with `index_url`):
 
 ---
 
@@ -134,6 +135,71 @@ Supported placeholders in `remote_path_template` and `filename_pattern`:
 - With `auth_type` set to `earthdata_token`, authentication uses `~/.netrc` and no tokens are stored in the config.
 - Follow the instructions on the NASA Earthdata website [here](https://urs.earthdata.nasa.gov/documentation/for_users/data_access/create_net_rc_file) to create
 - an account and set up the authentication.
+
+##### `https` with a remote index (`index_url`)
+
+Some archives can't be listed per window. For example, the
+[WOUDC](https://woudc.org) archive is organised as
+`<station>/<instrument>/<year>/<file>`, with file names that differ between
+contributors. Setting `index_url` makes the `https` method get the file URLs
+from an [OGC API - Features](https://ogcapi.ogc.org/features/) index queried
+for the window, then download each file over HTTPS. The index is queried once
+per cycle, and its pages are followed through their `next` links. The
+`ozonesonde` observation uses this mode:
+
+```yaml
+retrieval_method: https
+index_response_format: ogc_features   # optional, the default (and only supported format)
+index_url: https://api.woudc.org/collections/data_records/items
+index_params:
+  content_category: OzoneSonde
+  properties: url
+index_url_property: url
+index_filename_parts: 4               # stn076_ecc_2025_YR250101.CSV
+filename_pattern: '*'                 # files passed to the converter
+index_time_padding: PT30H
+max_orbit_duration: PT0H
+```
+
+| Key | Required | Description |
+|-----|----------|-------------|
+| `index_url` | Yes | OGC API - Features `items` endpoint |
+| `index_response_format` | No | Index layout; only `ogc_features` (default) is supported |
+| `index_params` | No | Extra query parameters. `f=json`, `datetime` (the search interval) and `limit` are added unless set here |
+| `index_url_property` | No | Feature property holding the file URL. Default `url` |
+| `index_filename_parts` | No | Number of trailing URL path components joined with `_` to name the local file, so that files with the same name in different remote directories do not collide. Default `1` (file name only) |
+| `index_page_size` | No | Features requested per page. Default `1000` |
+| `index_time_padding` | No | ISO-8601 duration added on **both** sides of the search interval, for indexes whose times may differ from the true observation time. Default `PT0H` |
+| `max_orbit_duration` | No | ISO-8601 duration; extends the search interval backwards. Default `PT0H` |
+| `index_retries` | No | Attempts per index page before the task aborts (at least 1). Default `3`, with a growing pause between attempts |
+| `filename_pattern` | No | Glob used by `ConvertObsToIoda` to pick the downloaded files (use `'*'` for this mode) |
+
+`index_url` and string `index_params` values may use the placeholders
+`{search_begin}` and `{search_end}` (ISO-8601 UTC), and `{search_begin_date}` and
+`{search_end_date}` (`YYYY-MM-DD`). These are the bounds of the **search
+interval**, not of the DA window: the window is extended backwards by
+`max_orbit_duration` and on both sides by `index_time_padding`.
+
+Behaviour:
+
+- An empty index result is not an error. The cycle downloads nothing,
+  `ConvertObsToIoda` skips the observation, and `IngestObs` logs that there is no
+  file. This is the normal case for sparse data such as ozonesondes.
+- An index query that still fails after `index_retries` attempts aborts the task,
+  so Cylc can retry the cycle instead of silently missing data.
+- A failed file download is logged and counted as failed. The other files are
+  still downloaded.
+- Records without a URL, or whose file name would be unsafe (empty, `.`, `..`,
+  or containing a path separator), are skipped with a warning. A URL listed more
+  than once is downloaded once.
+- No credentials are needed for public indexes such as WOUDC.
+
+> **WOUDC note:** the WOUDC index's `timestamp_utc` is wrong for stations whose
+> `UTCOffset` is not zero: it is computed as local time + offset. The WOUDC
+> Contributor Guide (3.2.1.6) defines UTC = local time − offset. The error is
+> 2 × offset (−24 h to +28 h), so `ozonesonde.yaml` pads the query by `PT30H` on
+> both sides. The converter then keeps exactly the profiles launched in the window,
+> using the launch time read from each file.
 
 ---
 
@@ -415,7 +481,9 @@ swell launch <experiment_path>
 
 Downloads raw granules from remote servers, converts them to IODA format, and
 ingests the result into R2D2. Uses the `DownloadObs → ConvertObsToIoda → IngestObs`
-pipeline. Requires Earthdata credentials in `~/.netrc`.
+pipeline. The NASA sources (`cmr` and GES DISC `https`) require Earthdata
+credentials in `~/.netrc`. TROPOMI (public S3) and the WOUDC ozonesondes need no
+credentials.
 
 Ingestable observation configurations for `geos_cf`:
 
@@ -427,6 +495,7 @@ Ingestable observation configurations for `geos_cf`:
 | `tropomi_s5p_co_total` | `s3_public` | Public S3 (`s3://meeo-s5p/.../L2__CO____/...`) |
 | `mls_o3_res` | `cmr` | NASA CMR |
 | `mls_o3_nrt` | `cmr` (default) or `local` (override) | NASA CMR / local Discover archive |
+| `ozonesonde` | `https` with `index_url` | WOUDC API index (`data_records`) + WOUDC archive (WAF) |
 
 The default `ingest_obs_cf` suite currently includes:
 
@@ -435,16 +504,22 @@ The default `ingest_obs_cf` suite currently includes:
 - `tropomi_s5p_co_total`
 - `tempo_no2_tropo`
 - `mls_o3_res`
+- `ozonesonde`
+
+`ozonesonde` profiles (WOUDC, converted with `woudc_ozonesonde2ioda.py`) are for
+evaluation only: they are never assimilated. Stations submit files days to months
+after launch, so most recent windows have no profile. That is normal and doesn't
+fail the cycle. Running a window again later picks up the late files.
 
 Suite configuration:
 ```python
 qd.download_convert_pipeline(True)
 qd.obs_to_download(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                     'tropomi_s5p_co_total', 'tempo_no2_tropo',
-                    'mls_o3_res'])
+                    'mls_o3_res', 'ozonesonde'])
 qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
                   'tropomi_s5p_co_total', 'tempo_no2_tropo',
-                  'mls_o3_res'])
+                  'mls_o3_res', 'ozonesonde'])
 qd.converter_path('/path/to/jedi-bundle/build/bin/')
 qd.window_length("PT6H")
 qd.dry_run(False)
