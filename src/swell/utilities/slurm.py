@@ -50,7 +50,8 @@ def prepare_scheduling_dict(
         'RunJediLocalEnsembleDaExecutable': {"all": {"nodes": 2, "ntasks-per-node": 120}},
         "RunJediEtkfObserver": {"all": {"nodes": 2}},
         "RunJediEtkfSolver": {"all": {"nodes": 2, "ntasks-per-node": 120}},
-        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}}
+        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}},
+        "RunForecast": {"all": {"ntasks-per-node": 108}},
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
@@ -83,6 +84,7 @@ def prepare_scheduling_dict(
         'EvaTimeseries',
         'GenerateBClimatology',
         'RunCompressForecast',
+        'RunForecast',
         'RunGeos',
         'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',

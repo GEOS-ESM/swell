@@ -3,12 +3,13 @@
 #######################################################################
 #                     Batch Parameters for Run Job
 #######################################################################
-#SBATCH --time=00:40:00
+#SBATCH --time=>>>SWELL_SBATCH_TIME<<<
 #SBATCH --nodes=>>>SWELL_SBATCH_NODES<<< --ntasks-per-node=108
-#SBATCH --job-name=CFv2rc1t13
+#SBATCH --job-name=>>>SWELL_SBATCH_JOBNAME<<<
 #SBATCH --output=CFv2_gcm_%j
-#SBATCH --constraint=mil
-#SBATCH --account=s2127
+#SBATCH --constraint=>>>SWELL_SBATCH_CONSTRAINT<<<
+#SBATCH --account=>>>SWELL_SBATCH_ACCOUNT<<<
+#SBATCH --qos=>>>SWELL_SBATCH_QOS<<<
 
 
 #######################################################################

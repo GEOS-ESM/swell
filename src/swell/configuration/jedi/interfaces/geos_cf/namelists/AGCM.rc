@@ -5,8 +5,8 @@
            NX: >>>SWELL_GEOSCF_NX<<<
            NY: >>>SWELL_GEOSCF_NY<<<
 
-IOSERVER_NODES: >>>SWELL_GEOSCF_IOSERVER_NODES<<<
-NUM_BACKEND_PES: >>>SWELL_GEOSCF_NUM_BACKEND_PES<<<
+IOSERVER_NODES: 0
+NUM_BACKEND_PES: 2
 
 
       AGCM_IM: >>>SWELL_GEOSCF_AGCM_IM<<<
@@ -750,7 +750,7 @@ USE_SKIN_LAYER: 1
 # -------------------------------------------------------------------------------------
 SOLAR_CONSTANT: -1
 CO2:            -1
->>>SWELL_GEOSCF_SOLAR_LB_MAX_PASSES_LINE<<<
+SOLAR_LB_MAX_PASSES: 10
 
 # Flags for SATSIM Output
 # -----------------------

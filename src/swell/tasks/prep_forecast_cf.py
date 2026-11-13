@@ -9,13 +9,14 @@
 
 import math
 import os
+import re
 import shutil
 
 import isodate
 import xarray as xr
 import yaml
 
-from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import (
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import (
     forecast_collections, forecast_history)
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
@@ -23,33 +24,33 @@ from swell.utilities.shell_commands import run_subprocess
 # --------------------------------------------------------------------------------------------------
 
 # HPC/model-tuning parameters for AGCM.rc and gcm_run_geoscf.j that do not follow a simple formula
-# from the cube-sphere resolution (PE layout, I/O server sizing, SLURM node count, boundary
-# condition tile directory). These must be validated on the target HPC system before use; AGCM_IM
-# (cube-face edge length) and AGCM_JM (= 6 * AGCM_IM) are derived directly from the resolution
-# string and are not included here.
+# from the cube-sphere resolution (PE layout, SLURM node count, boundary condition tile
+# directory). AGCM_IM (cube-face edge length) and AGCM_JM (= 6 * AGCM_IM) are derived directly
+# from the resolution string and are not included here. The I/O server is disabled by default
+# (IOSERVER_NODES: 0, NUM_BACKEND_PES: 2, hardcoded directly in AGCM.rc) and is not tuned here.
 #
-# NOTE: the 'c180' entry below is a placeholder pending verification (NX/NY layout not yet
-# confirmed to divide the grid correctly; IOSERVER_NODES/NUM_BACKEND_PES are interpolated guesses;
-# BCRSLV assumes a 'CF0180x6C_DE2880xPE1440' boundary condition tile directory exists on disk).
-# Do not run c180 forecasts until these are confirmed.
+# NX/NY/sbatch_nodes/sbatch_time below are validated against real 12h (two 6h segment) background
+# runs on discover (Milan nodes, 108 tasks/node): NX*NY PEs always divides evenly into
+# sbatch_nodes*108 with no wasted fraction, which is the densest clean packing achievable for each
+# resolution. sbatch_time includes ~20-25% margin over the observed wall time of that validated
+# run. This is the single source of truth for the GEOS-CF forecast resource requirements: it is
+# used to render AGCM.rc/gcm_run_geoscf.j and to check that the nodes requested for the
+# RunForecast task in flow.cylc (set through the SLURM configuration) are sufficient.
 RESOLUTION_TUNING = {
     'c90': {
-        'nx': 12, 'ny': 72,
-        'ioserver_nodes': 0, 'num_backend_pes': 8,
-        'sbatch_nodes': 8, 'bcrslv': 'CF0090x6C_DE2880xPE1440',
-        'solar_lb_max_passes': None,
+        'nx': 9, 'ny': 36,
+        'sbatch_nodes': 3, 'sbatch_time': '01:30:00',
+        'bcrslv': 'CF0090x6C_DE2880xPE1440',
     },
     'c180': {
-        'nx': 36, 'ny': 180,
-        'ioserver_nodes': 2, 'num_backend_pes': 16,
-        'sbatch_nodes': 16, 'bcrslv': 'CF0180x6C_DE2880xPE1440',
-        'solar_lb_max_passes': None,
+        'nx': 18, 'ny': 72,
+        'sbatch_nodes': 12, 'sbatch_time': '01:40:00',
+        'bcrslv': 'CF0180x6C_DE2880xPE1440',
     },
     'c360': {
-        'nx': 60, 'ny': 120,
-        'ioserver_nodes': 4, 'num_backend_pes': 24,
-        'sbatch_nodes': 32, 'bcrslv': 'CF0360x6C_DE2880xPE1440',
-        'solar_lb_max_passes': 10,
+        'nx': 36, 'ny': 144,
+        'sbatch_nodes': 48, 'sbatch_time': '02:15:00',
+        'bcrslv': 'CF0360x6C_DE2880xPE1440',
     },
 }
 
@@ -91,6 +92,9 @@ class PrepForecastCf(taskBase):
 
         self.geos_cf_rc_dir = self.config.geos_cf_rc_dir()
         self.geos_cf_install_dir = self.config.geos_cf_install_dir()
+        self.geos_cf_sbatch_constraint = self.config.geos_cf_sbatch_constraint()
+        self.geos_cf_sbatch_account = self.config.geos_cf_sbatch_account()
+        self.geos_cf_sbatch_qos = self.config.geos_cf_sbatch_qos()
 
         self.namelists_dir = os.path.join(self.experiment_config_path(),
                                           'jedi', 'interfaces', 'geos_cf', 'namelists')
@@ -144,6 +148,43 @@ class PrepForecastCf(taskBase):
         # ---------------------------------------------------
         self.logger.info('Copying and updating GEOS-CF namelist/RC files')
         self.prepare_namelists()
+
+        # Section 5: Check the nodes requested for RunForecast are sufficient
+        # --------------------------------------------------------------------
+        self.check_runforecast_nodes()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def check_runforecast_nodes(self) -> None:
+        """Abort if the nodes requested for RunForecast in flow.cylc are fewer than the nodes
+        required by the selected resolution (RESOLUTION_TUNING['sbatch_nodes'])."""
+
+        required_nodes = RESOLUTION_TUNING[self.resolution]['sbatch_nodes']
+        model = self.get_model()
+
+        cylc_file = os.path.join(self.experiment_path(), self.experiment_id() + '-suite',
+                                 'flow.cylc')
+        with open(cylc_file, 'r') as f:
+            content = f.read()
+
+        # Isolate the RunForecast section (up to the next [[task]] header) and read its nodes
+        section = re.search(rf'\[\[\s*RunForecast-{model}\s*\]\]([\s\S]*?)(?=\n\s*\[\[[^\[]|\Z)',
+                            content)
+        node_match = re.search(r'--nodes\s*=\s*(\d+)', section.group(1)) if section else None
+        if node_match is None:
+            self.logger.warning(f'Could not ascertain the number of nodes assigned to '
+                                f'`RunForecast-{model}` in flow.cylc. Please check that at least '
+                                f'{required_nodes} nodes are requested.')
+            return
+
+        cylc_nodes = int(node_match.group(1))
+        if cylc_nodes < required_nodes:
+            self.logger.abort(f'Insufficient number of nodes requested for RunForecast at '
+                              f'resolution {self.resolution}. Needed: ({required_nodes}), '
+                              f'Requested: ({cylc_nodes}). Please set `nodes` for RunForecast in '
+                              'the slurm file: https://geos-esm.github.io/swell/#/'
+                              'configuration_reference/slurm_configuration?id=slurm-configuration')
+        self.logger.info(f'RunForecast requests {cylc_nodes} nodes (required: {required_nodes})')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -305,17 +346,8 @@ class PrepForecastCf(taskBase):
 
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NX<<<', str(tuning['nx']))
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NY<<<', str(tuning['ny']))
-        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_IOSERVER_NODES<<<',
-                            str(tuning['ioserver_nodes']))
-        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NUM_BACKEND_PES<<<',
-                            str(tuning['num_backend_pes']))
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_IM<<<', str(agcm_im))
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_JM<<<', str(agcm_jm))
-        solar_lb_max_passes = tuning['solar_lb_max_passes']
-        solar_lb_line = (f'SOLAR_LB_MAX_PASSES: {solar_lb_max_passes}'
-                         if solar_lb_max_passes is not None else '')
-        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_SOLAR_LB_MAX_PASSES_LINE<<<',
-                            solar_lb_line)
 
         # Update HISTORY.rc placeholders
         # ------------------------------
@@ -391,6 +423,12 @@ class PrepForecastCf(taskBase):
         self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', str(tuning['sbatch_nodes']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_TIME<<<', tuning['sbatch_time'])
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_JOBNAME<<<', f'gcm_cf_{resolution}')
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_CONSTRAINT<<<',
+                            self.geos_cf_sbatch_constraint)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_ACCOUNT<<<', self.geos_cf_sbatch_account)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_QOS<<<', self.geos_cf_sbatch_qos)
         self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', tuning['bcrslv'])
         os.chmod(gcm_run_dst, 0o755)
 

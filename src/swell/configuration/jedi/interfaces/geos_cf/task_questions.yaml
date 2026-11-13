@@ -42,8 +42,6 @@ horizontal_resolution:
   default_value: 'c90'
   options:
   - 'c90'
-  # 'c180' HPC tuning (NX/NY decomposition, IOSERVER_NODES, BCRSLV tile directory) is a
-  # placeholder pending verification -- see RESOLUTION_TUNING in prep_forecast_cf.py.
   - 'c180'
   - 'c360'
 

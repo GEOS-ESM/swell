@@ -13,7 +13,8 @@ import os
 from r2d2 import store
 
 
-from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_filename, r2d2
+from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import r2d2
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import forecast_filename
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 

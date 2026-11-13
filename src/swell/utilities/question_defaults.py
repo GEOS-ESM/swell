@@ -878,6 +878,45 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class geos_cf_sbatch_constraint(TaskQuestion):
+        default_value: str = "mil"
+        question_name: str = "geos_cf_sbatch_constraint"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--constraint' should the GEOS-CF forecast job request?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_sbatch_account(TaskQuestion):
+        default_value: str = "s1866"
+        question_name: str = "geos_cf_sbatch_account"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--account' should the GEOS-CF forecast job charge to?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_sbatch_qos(TaskQuestion):
+        default_value: str = "allnccs"
+        question_name: str = "geos_cf_sbatch_qos"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--qos' should the GEOS-CF forecast job request?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class met_replay_exp(TaskQuestion):
         default_value: str = "d5294_geosit_jan18"
         question_name: str = "met_replay_exp"
