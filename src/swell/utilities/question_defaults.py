@@ -361,7 +361,8 @@ class QuestionDefaults():
             "geos_cf"
         ])
         prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "
-                       "be written and stored, in addition to the required bkg collection?")
+                       "be written and stored, in addition to the required bkg collection? "
+                       "These follow the same horizontal_resolution as the forecast.")
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
@@ -872,6 +873,45 @@ class QuestionDefaults():
             "geos_cf"
         ])
         prompt: str = "What is the path to the GEOS-CF RC directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_sbatch_constraint(TaskQuestion):
+        default_value: str = "mil"
+        question_name: str = "geos_cf_sbatch_constraint"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--constraint' should the GEOS-CF forecast job request?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_sbatch_account(TaskQuestion):
+        default_value: str = "s1866"
+        question_name: str = "geos_cf_sbatch_account"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--account' should the GEOS-CF forecast job charge to?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_sbatch_qos(TaskQuestion):
+        default_value: str = "allnccs"
+        question_name: str = "geos_cf_sbatch_qos"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What SLURM '--qos' should the GEOS-CF forecast job request?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

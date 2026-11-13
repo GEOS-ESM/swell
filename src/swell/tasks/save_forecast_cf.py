@@ -13,7 +13,8 @@ import os
 from r2d2 import store
 
 
-from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_filename, r2d2
+from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import r2d2
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import forecast_filename
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -42,9 +43,10 @@ class SaveForecastCf(taskBase):
         window_length = self.config.window_length()
         forecast_length = self.config.forecast_length()
         forecast_output_frequency = self.config.forecast_output_frequency()
+        resolution = self.config.horizontal_resolution()
         additional_forecast_collections = self.config.additional_forecast_collections()
         expid = self.config.r2d2_experiment_id()
-        fc_store_list = r2d2(self.jedi_rendering.__template_dict__,
+        fc_store_list = r2d2(self.jedi_rendering.__template_dict__, resolution,
                              additional_forecast_collections)['store']['fc']
 
         cycle_dir = self.cycle_dir()
@@ -67,7 +69,8 @@ class SaveForecastCf(taskBase):
             file_time = forecast_start + step_dur
 
             for fc_store in fc_store_list:
-                fname = forecast_filename(file_time, fc_store['file_type'])
+                fname = forecast_filename(file_time, resolution, additional_forecast_collections,
+                                          fc_store['file_type'])
                 source_file = os.path.join(scratch_dir, fname)
                 if not os.path.isfile(source_file):
                     self.logger.abort(f'Expected forecast file not found: {source_file}')
@@ -79,7 +82,7 @@ class SaveForecastCf(taskBase):
                     item='forecast',
                     step=step,
                     experiment=expid,
-                    resolution=self.config.horizontal_resolution(),
+                    resolution=resolution,
                     date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
                     source_file=source_file,
                     file_extension='nc',

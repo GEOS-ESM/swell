@@ -8,61 +8,15 @@
 
 from collections.abc import Mapping
 
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import forecast_collections
+
 # --------------------------------------------------------------------------------------------------
 
 
-FORECAST_EXPID = 'CF2'
-FORECAST_TEMPLATE = '%y4%m2%d2_%h2%n2z.nc4'
-
-# HISTORY.rc collections that can be written by the forecast, keyed by the R2D2 file_type they are
-# stored under. 'bkg' is the collection used to make backgrounds and is always written; the others
-# are optional lat-lon diagnostics, enabled via the additional_forecast_collections question.
-FORECAST_COLLECTIONS = {
-    'bkg': 'jdi_inst_1hr_glo_C90x90x6_v72',
-    'chm': 'chm_inst_1hr_glo_L360x181_v72',
-    'met': 'met_inst_1hr_glo_L360x181_v72',
-}
-
-
-def forecast_collections(additional_collections: list = None) -> Mapping:
-    """Collections to write: 'bkg' always, plus any listed in additional_collections."""
-
-    additional_collections = additional_collections or []
-
-    return {file_type: name for file_type, name in FORECAST_COLLECTIONS.items()
-            if file_type == 'bkg' or file_type in additional_collections}
-
-
-def forecast_history(additional_collections: list = None) -> Mapping:
-
-    return {
-        'expid': FORECAST_EXPID,
-        'collections': forecast_collections(additional_collections),
-        'template': FORECAST_TEMPLATE,
-    }
-
-
-def forecast_filename(file_time, file_type: str = 'bkg') -> str:
-
-    filename = FORECAST_TEMPLATE
-    replacements = {
-        '%y4': file_time.strftime('%Y'),
-        '%m2': file_time.strftime('%m'),
-        '%d2': file_time.strftime('%d'),
-        '%h2': file_time.strftime('%H'),
-        '%n2': file_time.strftime('%M'),
-        '%s2': file_time.strftime('%S'),
-    }
-
-    for token, value in replacements.items():
-        filename = filename.replace(token, value)
-
-    return f'{FORECAST_EXPID}.{FORECAST_COLLECTIONS[file_type]}.{filename}'
-
-
-def r2d2(template_dict: Mapping, additional_collections: list = None) -> Mapping:
+def r2d2(template_dict: Mapping, resolution: str, additional_collections: list = None) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']
+    file_types = list(forecast_collections(resolution, additional_collections))
 
     r2d2 = {
         'fetch': {
@@ -82,9 +36,11 @@ def r2d2(template_dict: Mapping, additional_collections: list = None) -> Mapping
                 {'file_type': file_type,
                  'filename': f'{cycle_dir}/{file_type}.%Y%m%dT%H%M%SZ.nc4',
                  'r2d2_model': 'geos_cf'}
-                for file_type in forecast_collections(additional_collections)
+                for file_type in file_types
             ]
         }
     }
 
     return r2d2
+
+# --------------------------------------------------------------------------------------------------

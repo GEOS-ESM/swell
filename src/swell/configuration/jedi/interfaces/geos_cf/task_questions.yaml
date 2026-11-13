@@ -42,6 +42,7 @@ horizontal_resolution:
   default_value: 'c90'
   options:
   - 'c90'
+  - 'c180'
   - 'c360'
 
 jedi_forecast_model:
