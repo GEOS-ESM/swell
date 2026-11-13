@@ -1079,78 +1079,6 @@ class geos_x_ensemble_directory(TaskQuestion):
 
 
 @dataclass
-class horizontal_localization_lengthscale(TaskQuestion):
-    default_value: str = "defer_to_model"
-    question_name: str = "horizontal_localization_lengthscale"
-    models: list = mutable_field([
-        "all_models"
-    ])
-    prompt: str = "What is the length scale for horizontal covariance localization?"
-    widget_type: WType = WType.FLOAT
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class horizontal_localization_max_nobs(TaskQuestion):
-    default_value: str = "defer_to_model"
-    question_name: str = "horizontal_localization_max_nobs"
-    models: list = mutable_field([
-        "all_models"
-    ])
-    prompt: str = ("What is the maximum number of observations to consider"
-                    " for horizontal covariance localization?")
-    widget_type: WType = WType.INTEGER
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class horizontal_localization_method(TaskQuestion):
-    default_value: str = "defer_to_model"
-    question_name: str = "horizontal_localization_method"
-    options: str = "defer_to_model"
-    models: list = mutable_field([
-        "all_models"
-    ])
-    prompt: str = "Which localization scheme should be applied in the horizontal?"
-    widget_type: WType = WType.STRING_DROP_LIST
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class met_replay_exp(TaskQuestion):
-    default_value: str = "d5294_geosit_jan18"
-    question_name: str = "met_replay_exp"
-    ask_question: bool = True
-    models: list = mutable_field([
-        "geos_cf"
-    ])
-    prompt: str = ("What is the meteorology replay experiment ID (e.g. a GEOS FP "
-                    "experiment such as f5295_fp, or a GEOS-IT experiment such as "
-                    "d5294_geosit_jan18)?")
-    widget_type: WType = WType.STRING
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class met_replay_root(TaskQuestion):
-    default_value: str = "defer_to_platform"
-    question_name: str = "met_replay_root"
-    ask_question: bool = True
-    models: list = mutable_field([
-        "geos_cf"
-    ])
-    prompt: str = ("What is the root directory containing the meteorology replay "
-                    "experiment (parent of <met_replay_exp>/run/.../archive)?")
-    widget_type: WType = WType.STRING
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
 class geovals_experiment(TaskQuestion):
     default_value: str = "defer_to_model"
     question_name: str = "geovals_experiment"
@@ -1235,6 +1163,46 @@ class gsibec_nlons(TaskQuestion):
     ])
     prompt: str = "How many number of longitudes in GSIBEC grid?"
     widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+@dataclass
+class horizontal_localization_lengthscale(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "horizontal_localization_lengthscale"
+    models: list = mutable_field([
+        "all_models"
+    ])
+    prompt: str = "What is the length scale for horizontal covariance localization?"
+    widget_type: WType = WType.FLOAT
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class horizontal_localization_max_nobs(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "horizontal_localization_max_nobs"
+    models: list = mutable_field([
+        "all_models"
+    ])
+    prompt: str = ("What is the maximum number of observations to consider"
+                    " for horizontal covariance localization?")
+    widget_type: WType = WType.INTEGER
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class horizontal_localization_method(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "horizontal_localization_method"
+    options: str = "defer_to_model"
+    models: list = mutable_field([
+        "all_models"
+    ])
+    prompt: str = "Which localization scheme should be applied in the horizontal?"
+    widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
 
@@ -1506,6 +1474,36 @@ class local_ensemble_use_linear_observer(TaskQuestion):
     ])
     prompt: str = "Use linear observer in local ensemble solver?"
     widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+@dataclass
+class met_replay_exp(TaskQuestion):
+    default_value: str = "d5294_geosit_jan18"
+    question_name: str = "met_replay_exp"
+    ask_question: bool = True
+    models: list = mutable_field([
+        "geos_cf"
+    ])
+    prompt: str = ("What is the meteorology replay experiment ID (e.g. a GEOS FP "
+                    "experiment such as f5295_fp, or a GEOS-IT experiment such as "
+                    "d5294_geosit_jan18)?")
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class met_replay_root(TaskQuestion):
+    default_value: str = "defer_to_platform"
+    question_name: str = "met_replay_root"
+    ask_question: bool = True
+    models: list = mutable_field([
+        "geos_cf"
+    ])
+    prompt: str = ("What is the root directory containing the meteorology replay "
+                    "experiment (parent of <met_replay_exp>/run/.../archive)?")
+    widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
 
@@ -2098,20 +2096,6 @@ class vertical_localization_apply_log_transform(TaskQuestion):
 
 
 @dataclass
-class vertical_localization_function(TaskQuestion):
-    default_value: str = "defer_to_model"
-    question_name: str = "vertical_localization_function"
-    options: str = "defer_to_model"
-    models: list[str] = mutable_field([
-        "geos_atmosphere"
-    ])
-    prompt: str = "Which localization scheme should be applied in the vertical?"
-    widget_type: WType = WType.STRING_DROP_LIST
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
 class vertical_localization_frac_retained_variance(TaskQuestion):
     default_value: str = "defer_to_model"
     question_name: str = "vertical_localization_frac_retained_variance"
@@ -2124,6 +2108,20 @@ class vertical_localization_frac_retained_variance(TaskQuestion):
     widget_type: WType = WType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
+
+@dataclass
+class vertical_localization_function(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "vertical_localization_function"
+    options: str = "defer_to_model"
+    models: list[str] = mutable_field([
+        "geos_atmosphere"
+    ])
+    prompt: str = "Which localization scheme should be applied in the vertical?"
+    widget_type: WType = WType.STRING_DROP_LIST
+
+# --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class vertical_localization_ioda_vertical_coord(TaskQuestion):
