@@ -33,7 +33,7 @@ class Setup(TaskSetup):
             qd.clean_patterns()
         ]
 
-clean_cycle_skipped = 'CleanCycleSKIPPED'
+clean_cycle_skipped = 'CleanCycleSkipped'
 
 @task_attributes.register(clean_cycle_skipped)
 class CleanCycleSkipped(TaskSetup):

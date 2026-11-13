@@ -33,7 +33,7 @@ suite_configs.register(suite_name, 'r2d2_ingest', r2d2_ingest)
 ingest_obs_marine = QuestionList(
     questions=[
         r2d2_ingest,
-        sq.marine,
+        marine,
         qd.start_cycle_point("2023-07-01T00:00:00Z"),
         qd.final_cycle_point("2023-07-02T12:00:00Z"),
         qd.model_components(['geos_marine']),

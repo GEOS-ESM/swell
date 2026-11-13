@@ -33,7 +33,7 @@ class Setup(TaskSetup):
             qd.background_experiment(),
             qd.background_time_offset(),
             qd.geos_x_ensemble_directory(),
-            qd.ekbg_time_offset()
+            qd.ebkg_time_offset()
         ]
 
 # --------------------------------------------------------------------------------------------------

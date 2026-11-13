@@ -7,9 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import importlib
+
 import swell.tasks
 from swell.tasks.base.task_setup import TaskSetup
 from swell.utilities.plugins import discover_plugins
+from swell.utilities.suite_utils import get_model_components
 
 # --------------------------------------------------------------------------------------------------
 
@@ -81,5 +84,11 @@ class TaskAttributes():
 task_attributes = TaskAttributes()
 
 discover_plugins(swell.tasks)
+
+for model in get_model_components():
+    try:
+        discover_plugins(importlib.import_module(f"swell.tasks.{model}"))
+    except ModuleNotFoundError:
+        pass
 
 # --------------------------------------------------------------------------------------------------

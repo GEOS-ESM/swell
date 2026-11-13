@@ -640,7 +640,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_external_s3_config(self, observation: str) -> Union[dict, None]:
+    def get_external_s3_config(self, observation: str) -> dict | None:
         """Return the public-S3 fetch config for an observation, or None.
 
         Looks for ``fetch_observations_s3/<observation>.yaml`` in the experiment's

@@ -12,7 +12,6 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
-from swell.tasks.base.task_setup import TaskSetup
 
 # --------------------------------------------------------------------------------------------------
 
@@ -155,9 +154,6 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
         return workflow_str
 
     def set_tasks(self) -> None:
-
-        clean_cycle_skipped = TaskSetup(model=model)
-
         self.tasks.append(ta.root())
         self.tasks.append(ta.CloneJedi())
         self.tasks.append(ta.BuildJediByLinking())

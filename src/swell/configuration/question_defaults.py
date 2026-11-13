@@ -379,7 +379,7 @@ class additional_forecast_collections(TaskQuestion):
     question_name: str = "additional_forecast_collections"
     ask_question: bool = True
     options: str = "defer_to_model"
-    models: List[str] = mutable_field([
+    models: list = mutable_field([
         "geos_cf"
     ])
     prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "

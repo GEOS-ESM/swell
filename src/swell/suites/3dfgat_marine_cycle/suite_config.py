@@ -157,7 +157,6 @@ suite_configs.register(suite_name, '3dfgat_marine_cycle_tier2', _3dfgat_marine_c
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_marine_cycle_5day = QuestionList(
-    list_name="3dfgat_marine_cycle_5day",
     questions=[
         _3dfgat_marine_cycle_tier2,
         qd.start_cycle_point("2023-01-08T12:00:00Z"),

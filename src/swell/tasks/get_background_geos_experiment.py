@@ -34,7 +34,7 @@ class Setup(TaskSetup):
         self.questions = [
             qd.background_experiment(),
             qd.background_time_offset(),
-            qd.ekbg_time_offset(),
+            qd.ebkg_time_offset(),
             qd.geos_x_background_directory()
         ]
 

@@ -38,7 +38,7 @@ class Setup(TaskSetup):
             qd.converter_path(),
             qd.dry_run(),
             qd.obs_to_download(),
-            qd.donwload_obs_config_overrides(),
+            qd.download_obs_config_overrides(),
         ]
 
 # --------------------------------------------------------------------------------------------------

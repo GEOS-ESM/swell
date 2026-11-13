@@ -38,8 +38,8 @@ class taskBase(ABC):
         config_input: str,
         datetime_input: str | None,
         model: str,
-        ensemblePacket: Optional[str],
-        additional_parameter: Optional[str],
+        ensemblePacket: str | None,
+        additional_parameter: str | None,
         imember: int | None,
         task_name: str
     ) -> None:

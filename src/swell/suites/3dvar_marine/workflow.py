@@ -91,13 +91,13 @@ template_str = '''
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
             SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}}? =>
+            EvaObservations-{{model_component}} =>
             CleanCycle-{{model_component}}?
-            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -122,20 +122,22 @@ class Workflow_3dvar_marine(CylcWorkflow):
     def get_workflow_string(self):
         workflow_str = self.default_header()
 
+        workflow_str += template_str
+
+        for task in self.tasks:
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
+
         self.experiment_dict['stall_timeout'] = """\
         {% if environ.get('SWELL_CYLC_TIMEOUT') %}
         [[events]]
         stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
         {% endif %}"""
 
-        workflow_str += template_string_jinja2(logger=self.logger,
-                                               templated_string=template_str,
+        workflow_str = template_string_jinja2(logger=self.logger,
+                                               templated_string=workflow_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-
-        for task in self.tasks:
-            workflow_str += task.runtime_string(self.experiment_dict,
-                                                self.slurm_external)
 
         return workflow_str
 

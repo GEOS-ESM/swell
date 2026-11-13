@@ -15,7 +15,7 @@ from swell.suites.base.suite_questions import marine
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = '3dvar_marine_tier1'
+suite_name = '3dvar_marine'
 
 _3dvar_marine_tier1 = QuestionList(
     questions=[

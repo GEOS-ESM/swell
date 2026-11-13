@@ -10,8 +10,6 @@
 from datetime import datetime as dt
 import isodate
 import os
-from netCDF4 import Dataset
-import numpy as np
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
