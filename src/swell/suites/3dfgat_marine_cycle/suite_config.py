@@ -102,7 +102,7 @@ _3dfgat_marine_cycle_tier2 = QuestionList(
         qd.final_cycle_point("2023-07-03T12:00:00Z"),
         qd.forecast_duration("P2D"),
         qd.geos_homdir("/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/"
-                        "dataatm_025")
+                       "dataatm_025")
     ],
     geos_marine=[
         qd.cycle_times([
@@ -163,7 +163,7 @@ _3dfgat_marine_cycle_5day = QuestionList(
         qd.final_cycle_point("2023-02-27T12:00:00Z"),
         qd.forecast_duration("P10D"),
         qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/"
-                        "GEOS_v12_rc20/dataatm_025deg_om4_swell"),
+                       "GEOS_v12_rc20/dataatm_025deg_om4_swell"),
     ],
     geos_marine=[
         qd.cycle_times(["P5D"]),

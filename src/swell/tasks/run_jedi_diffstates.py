@@ -21,6 +21,7 @@ import swell.configuration.question_defaults as qd
 
 task_name = 'RunJediDiffstates'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_defaults(self):
@@ -46,6 +47,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class RunJediDiffstates(taskBase):
 

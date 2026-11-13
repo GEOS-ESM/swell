@@ -22,6 +22,7 @@ import swell.configuration.question_defaults as qd
 
 task_name = 'SaveForecast'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_defaults(self):
@@ -35,6 +36,7 @@ class Setup(TaskSetup):
             qd.background_frequency(),
             qd.horizontal_resolution(),
         ]
+
 
 # --------------------------------------------------------------------------------------------------
 

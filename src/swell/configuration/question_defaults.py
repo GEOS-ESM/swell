@@ -320,6 +320,7 @@ class start_cycle_point(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class stddev_scale_factors(SuiteQuestion):
     default_value: str = "defer_to_model"
@@ -329,10 +330,11 @@ class stddev_scale_factors(SuiteQuestion):
         "geos_cf",
     ])
     prompt: str = ("Per-variable scale factors applied to the background stddev in the "
-                    "stddev_bkg_scaled saber outer block.")
+                   "stddev_bkg_scaled saber outer block.")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class suite_to_run(SuiteQuestion):
@@ -342,6 +344,7 @@ class suite_to_run(SuiteQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class use_cycle_dir(SuiteQuestion):
@@ -373,6 +376,7 @@ class window_type(SuiteQuestion):
 # Task question defaults go here
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class additional_forecast_collections(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -383,10 +387,11 @@ class additional_forecast_collections(TaskQuestion):
         "geos_cf"
     ])
     prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "
-                    "be written and stored, in addition to the required bkg collection?")
+                   "be written and stored, in addition to the required bkg collection?")
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class analysis_variables(TaskQuestion):
@@ -459,7 +464,7 @@ class background_source_path(TaskQuestion):
                    "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
                    "20251002_0900z.")
     widget_type: WType = WType.STRING
-    
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -532,6 +537,7 @@ class cache_fetch(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class change_vbc_to_sbc(TaskQuestion):
     default_value: bool = False
@@ -547,6 +553,7 @@ class change_vbc_to_sbc(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class check_for_obs(TaskQuestion):
@@ -620,6 +627,7 @@ class crtm_coeff_dir(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class diffstates_spec(TaskQuestion):
     default_value: dict = mutable_field({})
@@ -633,6 +641,7 @@ class diffstates_spec(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class download_obs_config_overrides(TaskQuestion):
     default_value: dict = mutable_field({})
@@ -642,11 +651,12 @@ class download_obs_config_overrides(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("Per-observation config overrides applied on top of the "
-                    "download_observations/<obs>.yaml file. Keys are obs names; "
-                    "values are dicts of fields to override (e.g. s3_source).")
+                   "download_observations/<obs>.yaml file. Keys are obs names; "
+                   "values are dicts of fields to override (e.g. s3_source).")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class dry_run(TaskQuestion):
@@ -661,6 +671,7 @@ class dry_run(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ebkg_time_offset(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -669,10 +680,11 @@ class ebkg_time_offset(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("How long before the middle of the analysis window did"
-                    " the ensemble background providing forecast begin?")
+                   " the ensemble background providing forecast begin?")
     widget_type: WType = WType.ISO_DURATION
-    
+
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class ensemble_hofx_packets(TaskQuestion):
@@ -751,6 +763,7 @@ class ensmeanvariance_only(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ensmeanvariance_spec(TaskQuestion):
     default_value: list = mutable_field([{}])
@@ -763,6 +776,7 @@ class ensmeanvariance_spec(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class existing_geos_gcm_build_path(TaskQuestion):
@@ -948,6 +962,7 @@ class geos_cf_install_dir(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_cf_rc_dir(TaskQuestion):
@@ -1166,6 +1181,7 @@ class gsibec_nlons(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class horizontal_localization_lengthscale(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1187,7 +1203,7 @@ class horizontal_localization_max_nobs(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("What is the maximum number of observations to consider"
-                    " for horizontal covariance localization?")
+                   " for horizontal covariance localization?")
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
@@ -1320,7 +1336,7 @@ class jedi_forecast_model(TaskQuestion):
 # --------------------------------------------------------------------------------------------------
 
 
-@dataclass         
+@dataclass
 class local_ensemble_do_posterior_observer(TaskQuestion):
     default_value: bool = True
     question_name: str = "local_ensemble_do_posterior_observer"
@@ -1477,6 +1493,7 @@ class local_ensemble_use_linear_observer(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class met_replay_exp(TaskQuestion):
     default_value: str = "d5294_geosit_jan18"
@@ -1486,8 +1503,8 @@ class met_replay_exp(TaskQuestion):
         "geos_cf"
     ])
     prompt: str = ("What is the meteorology replay experiment ID (e.g. a GEOS FP "
-                    "experiment such as f5295_fp, or a GEOS-IT experiment such as "
-                    "d5294_geosit_jan18)?")
+                   "experiment such as f5295_fp, or a GEOS-IT experiment such as "
+                   "d5294_geosit_jan18)?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1502,7 +1519,7 @@ class met_replay_root(TaskQuestion):
         "geos_cf"
     ])
     prompt: str = ("What is the root directory containing the meteorology replay "
-                    "experiment (parent of <met_replay_exp>/run/.../archive)?")
+                   "experiment (parent of <met_replay_exp>/run/.../archive)?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1594,7 +1611,7 @@ class npx_per_observer(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("What is the number of parallelization in the x-direction "
-                    "you want to apply for each observer on each cube face?")
+                   "you want to apply for each observer on each cube face?")
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
@@ -1628,6 +1645,7 @@ class npy(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class npy_per_observer(TaskQuestion):
     default_value: int = 1
@@ -1637,10 +1655,11 @@ class npy_per_observer(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("What is the number of parallelization in the y-direction "
-                    "you want to apply for each observer on each cube face?")
+                   "you want to apply for each observer on each cube face?")
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class npy_proc(TaskQuestion):
@@ -1685,6 +1704,7 @@ class obs_experiment(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class obs_pert_amplitude(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1698,6 +1718,7 @@ class obs_pert_amplitude(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class obs_rc_path(TaskQuestion):
     default_value: str = 'GEOS_mksi/ObsClass/obsys-nccs.rc'
@@ -1707,6 +1728,7 @@ class obs_rc_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class obs_thinning_rej_fraction(TaskQuestion):
@@ -1749,6 +1771,7 @@ class obs_to_ingest(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class observation_providers(TaskQuestion):
     default_value: dict = mutable_field({})
@@ -1761,6 +1784,7 @@ class observation_providers(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class observations(TaskQuestion):
@@ -2024,7 +2048,7 @@ class store_as_symlink(TaskQuestion):
     ])
     prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
     widget_type: WType = WType.BOOLEAN
-    
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -2108,6 +2132,7 @@ class vertical_localization_frac_retained_variance(TaskQuestion):
     widget_type: WType = WType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class vertical_localization_function(TaskQuestion):

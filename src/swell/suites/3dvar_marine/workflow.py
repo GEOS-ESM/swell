@@ -135,9 +135,9 @@ class Workflow_3dvar_marine(CylcWorkflow):
         {% endif %}"""
 
         workflow_str = template_string_jinja2(logger=self.logger,
-                                               templated_string=workflow_str,
-                                               dictionary_of_templates=self.experiment_dict,
-                                               allow_unresolved=True)
+                                              templated_string=workflow_str,
+                                              dictionary_of_templates=self.experiment_dict,
+                                              allow_unresolved=True)
 
         return workflow_str
 

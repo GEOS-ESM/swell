@@ -23,6 +23,7 @@ import swell.configuration.question_defaults as qd
 
 task_name = 'RunJediEdaExecutable'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_defaults(self):

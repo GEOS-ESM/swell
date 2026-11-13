@@ -33,14 +33,16 @@ class Setup(TaskSetup):
             qd.clean_patterns()
         ]
 
+
 clean_cycle_skipped = 'CleanCycleSkipped'
+
 
 @task_attributes.register(clean_cycle_skipped)
 class CleanCycleSkipped(TaskSetup):
     def set_defaults(self):
         self.base_name = 'CleanCycle-SKIPPED'
         self.script = """touch {{experiment_root}}/{{experiment_id}}/run/${datetime:0:-1}00Z/{{model_component}}/__CLEAN_SKIPPED__
-cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip"""
+cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip"""  # noqa
         self.is_cycling = True
         self.model_dep = True
 

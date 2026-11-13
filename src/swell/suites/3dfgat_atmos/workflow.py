@@ -130,6 +130,7 @@ template_str = '''
 
 # --------------------------------------------------------------------------------------------------
 
+
 @workflows.register('3dfgat_atmos')
 class Workflow_3dfgat_atmos(CylcWorkflow):
 

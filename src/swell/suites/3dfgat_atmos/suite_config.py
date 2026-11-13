@@ -36,7 +36,7 @@ _3dfgat_atmos_tier1 = QuestionList(
         qd.horizontal_resolution("91"),
         qd.background_experiment("x0054"),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/"
-                                        "archive/Restarts/5_44/c90"),
+                                       "archive/Restarts/5_44/c90"),
         qd.window_type("4D"),
         qd.observations([
             "abi_g16",

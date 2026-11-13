@@ -130,7 +130,8 @@ class Workflow_hofx_cf(CylcWorkflow):
                 model = task.model
                 for observation in self.experiment_dict['models'][task.model]['observations']:
                     task.scheduling_name = f'GetObservations-{observation}-{model}'
-                    task.script = f'swell task GetObservations $config -d $datetime -m {model} -a {observation}'
+                    task.script = ('swell task GetObservations $config -d $datetime '
+                                   f'-m {model} -a {observation}')
                     workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
             else:
                 workflow_str += task.runtime_string(self.experiment_dict,

@@ -31,7 +31,7 @@ hofx_tier1 = QuestionList(
     geos_atmosphere=[
         qd.horizontal_resolution("91"),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/"
-                                        "archive/Restarts/5_44/c90"),
+                                       "archive/Restarts/5_44/c90"),
         qd.npx_proc(2),
         qd.npy_proc(2),
         qd.observations([

@@ -70,6 +70,7 @@ template_str = '''
 
 # --------------------------------------------------------------------------------------------------
 
+
 class Pass(TaskSetup):
     def set_defaults(self):
         self.base_name = "Pass"
@@ -78,9 +79,10 @@ class Pass(TaskSetup):
         self.script = """cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
 cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip
 cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonObservations-{{model_component}} --out skip
-cylc set $CYLC_WORKFLOW_ID//$datetime/PublishComparisons --out skip"""
+cylc set $CYLC_WORKFLOW_ID//$datetime/PublishComparisons --out skip"""  # noqa
 
 # --------------------------------------------------------------------------------------------------
+
 
 @workflows.register('compare')
 class Workflow_compare(CylcWorkflow):

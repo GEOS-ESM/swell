@@ -19,7 +19,9 @@ import swell.configuration.question_defaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+
 task_name = 'RunJediPostprocSoca2ciceExecutable'
+
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
@@ -43,6 +45,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class RunJediPostprocSoca2ciceExecutable(taskBase):
 

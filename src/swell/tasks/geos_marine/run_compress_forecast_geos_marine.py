@@ -22,6 +22,7 @@ import swell.configuration.question_defaults as qd
 
 task_name = 'RunCompressForecast'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_defaults(self):
@@ -39,6 +40,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 """Create compressed marine forecast archives for GEOS marine components."""
 

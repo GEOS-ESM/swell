@@ -32,9 +32,9 @@ eda_atmos_tier1 = QuestionList(
         ]),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev"
-                                        "rtodling/archive/Restarts/JEDI/541x"),
+                                       "rtodling/archive/Restarts/JEDI/541x"),
         qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
-                                        "rtodling/archive/541/Milan"),
+                                     "rtodling/archive/541/Milan"),
         qd.npx_proc(4),
         qd.npy_proc(5),
         qd.window_length("PT6H"),
@@ -114,9 +114,9 @@ eda_atmos_tier2 = QuestionList(
         ]),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev"
-                                        "rtodling/archive/Restarts/JEDI/541x"),
+                                       "rtodling/archive/Restarts/JEDI/541x"),
         qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
-                                        "rtodling/archive/541/Milan"),
+                                     "rtodling/archive/541/Milan"),
         qd.npx_proc(4),
         qd.npy_proc(5),
         qd.window_length("PT6H"),
