@@ -33,7 +33,7 @@ suite_configs.register(suite_name, 'r2d2_ingest', r2d2_ingest)
 ingest_obs_marine = QuestionList(
     questions=[
         r2d2_ingest,
-        marine,
+        sq.marine,
         qd.start_cycle_point("2023-07-01T00:00:00Z"),
         qd.final_cycle_point("2023-07-02T12:00:00Z"),
         qd.model_components(['geos_marine']),
@@ -43,10 +43,10 @@ ingest_obs_marine = QuestionList(
         qd.window_length("PT6H"),
         qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
         qd.obs_to_ingest(['adt_cryosat2n',
-                          'adt_sentinel6a',
-                          'adt_swot_nadir',
-                          'sss_smos',
-                          ]),
+                            'adt_sentinel6a',
+                            'adt_swot_nadir',
+                            'sss_smos',
+                            ]),
         qd.dry_run(True),
         qd.store_as_symlink(False),
     ]
@@ -68,13 +68,13 @@ ingest_obs_cf = QuestionList(
     ],
     geos_cf=[
         qd.window_length("PT6H"),
-        qd.obs_to_download(['tempo_no2_tropo']),
-        qd.obs_to_ingest(['tempo_no2_tropo']),
-        qd.converter_path(
-            "/discover/nobackup/projects/jcsda/s2127/maryamao/"
-            "jedi-bundle/build-intel-1.9/bin/"
-        ),
-        qd.dry_run(False),
+        qd.obs_to_download(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
+                            'tropomi_s5p_co_total', 'tempo_no2_tropo',
+                            'mls_o3_res']),
+        qd.obs_to_ingest(['omps_o3_nm_total', 'tropomi_s5p_no2_tropo',
+                            'tropomi_s5p_co_total', 'tempo_no2_tropo',
+                            'mls_o3_res']),
+        qd.dry_run(True),
         qd.store_as_symlink(False),
     ]
 )
@@ -96,8 +96,8 @@ ingest_background_cf = QuestionList(
     geos_cf=[
         qd.dry_run(True),
         qd.background_source_path(),
-        qd.background_experiment(),
-        qd.horizontal_resolution(),
+        qd.background_experiment('geos_cf_oper'),
+        qd.horizontal_resolution('c360'),
         qd.store_as_symlink(True),
     ]
 )

@@ -107,28 +107,26 @@ template_str = '''
             # Prepare analysis for next forecast
             RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
-            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            PrepareAnalysis-{{model_component}} => RunJediPostprocSoca2ciceExecutable-{{model_component}}
+            RunJediPostprocSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediPostprocSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}?
             {% else %}
             PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
             {% endif %}
 
             # Move restart to next cycle and then erase current forecast folder
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}?
 
             {% if not skip_r2d2 %}
-            # Save analysis output
-            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            # Compress forecast on compute node, then store in R2D2 on login node
+            LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            CleanCycle-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
-
-            # Save model output
-            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}}?
         {% endfor %}
         """
         {% endfor %}
@@ -193,9 +191,12 @@ class Workflow_3dfgat_marine_cycle(CylcWorkflow):
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
             if 'cice6' in self.experiment_dict['models'][model]['marine_models']:
-                self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+                self.tasks.append(ta.RunJediPostprocSoca2ciceExecutable(model=model))
+            self.tasks.append(ta.RunCompressForecast(model=model))
             self.tasks.append(ta.SaveRestart(model=model))
+            self.tasks.append(ta.SaveForecast(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
 

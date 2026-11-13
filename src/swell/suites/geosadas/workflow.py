@@ -60,7 +60,7 @@ template_str = '''
             GetGeosAdasBackground
 
             # Run Jedi variational executable
-            GenerateObservingSystemRecords => RunJediVariationalExecutable
+            GenerateObservingSystemRecords => RenderJediObservations
             BuildJediByLinking[^]  => RunJediVariationalExecutable
             StageJedi[^] => RunJediVariationalExecutable
             GsiBcToIoda => RunJediVariationalExecutable

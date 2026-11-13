@@ -13,6 +13,8 @@ from collections.abc import Mapping
 
 def ensemble_block(template_dict: Mapping) -> Mapping:
 
+    fn_input = template_dict['ensmeanvariance_spec_item'].get('fn_input')
+
     ensemble_block = {
         'members from template': {
             'template': {
@@ -22,7 +24,7 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                 'compute edge pressure from surface pressure': True,
                 'max allowable geometry difference': 1e-3,
                 'datapath': template_dict['cycle_dir'],
-                'filename': 'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+                'filename': fn_input,
                 'state variables': [
                     'eastward_wind',
                     'northward_wind',
@@ -35,7 +37,7 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                     'rain_water',
                     'snow_water',
                     'mole_fraction_of_ozone_in_air',
-                    'geopotential_height_times_gravity_at_surface',
+                    'geopotential_at_surface',
                     'fraction_of_ocean',
                     'fraction_of_lake',
                     'fraction_of_ice',
@@ -60,7 +62,7 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                     'rain_water': 'qr',
                     'snow_water': 'qs',
                     'mole_fraction_of_ozone_in_air': 'o3ppmv',
-                    'geopotential_height_times_gravity_at_surface': 'phis',
+                    'geopotential_height_at_surface': 'phis',
                     'fraction_of_ocean': 'frocean',
                     'fraction_of_lake': 'frlake',
                     'fraction_of_ice': 'frseaice',

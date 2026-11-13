@@ -80,19 +80,20 @@ template_str = '''
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             {% if not skip_r2d2 %}
             # Save observations
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
-            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -154,5 +155,6 @@ class Workflow_hofx(CylcWorkflow):
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

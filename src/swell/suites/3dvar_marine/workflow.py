@@ -89,14 +89,15 @@ template_str = '''
 
             {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-            SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
+            SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}}? =>
+            CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -158,5 +159,6 @@ class Workflow_3dvar_marine(CylcWorkflow):
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

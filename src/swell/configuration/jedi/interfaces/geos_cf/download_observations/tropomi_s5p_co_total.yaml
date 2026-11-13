@@ -1,0 +1,16 @@
+# TROPOMI S5P CO Total Column L2 — download configuration
+# Instrument: TROPOMI on Sentinel-5P
+# Product:    NRTI L2__CO____ (Near Real-Time total column CO)
+# Source:     MEEO S3 public bucket (no credentials required)
+#
+# Files are named:
+#   S5P_NRTI_L2__CO_____YYYYMMDDTHHmmss_*.nc
+
+retrieval_method: s3_public
+s3_source: 's3://meeo-s5p/NRTI/L2__CO____/YYYY/MM/DD'
+
+# Maximum duration of a single TROPOMI orbit granule. Used to extend the
+# file search window backwards so that orbits starting before window_begin
+# but containing data within the DA window are not missed.
+# TROPOMI orbits are approximately 101 minutes; PT2H provides a safe margin.
+max_orbit_duration: PT2H

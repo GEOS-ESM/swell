@@ -72,11 +72,11 @@ template_str = '''
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
             {% endif %}
 
             # Perform staging that is cycle dependent
@@ -87,9 +87,9 @@ template_str = '''
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}}? => RenderJediObservations-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -102,13 +102,14 @@ template_str = '''
 
 	    {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
             EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -175,5 +176,6 @@ class Workflow_3dvar_atmos(CylcWorkflow):
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

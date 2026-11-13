@@ -74,8 +74,8 @@ template_str = '''
             GsiNcdiagToIoda => RenderJediObservations
 
             # Run Jedi hofx executable
+            GenerateObservingSystemRecords => RenderJediObservations
             RenderJediObservations => RunJediUfoTestsExecutable
-            GenerateObservingSystemRecords => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable

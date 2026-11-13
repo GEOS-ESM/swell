@@ -68,7 +68,10 @@ template_str = '''
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% for observation in models[model_component]['observations'] %}
+            GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
+
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Prepare forecast task, Update RC files, and create scratch directory
@@ -132,6 +135,7 @@ class RunForecast(TaskSetup):
         self.slurm = {'ntasks-per-node': 108, 'nodes': 8, 'job-name': 'CFv2rc1t13',
                       'output': '/dev/null', 'time': '00:40:00'}
 
+# --------------------------------------------------------------------------------------------------
 
 @workflows.register('3dvar_cf_cycle')
 class Workflow_3dvar_cf_cycle(CylcWorkflow):
@@ -151,8 +155,15 @@ class Workflow_3dvar_cf_cycle(CylcWorkflow):
                                                allow_unresolved=True)
 
         for task in self.tasks:
-            workflow_str += task.runtime_string(self.experiment_dict,
-                                                self.slurm_external)
+            if task.base_name == 'GetObservations':
+                model = task.model
+                for observation in self.experiment_dict['models'][task.model]['observations']:
+                    task.scheduling_name = f'GetObservations-{observation}-{model}'
+                    task.script = f'swell task GetObservations $config -d $datetime -m {model} -a {observation}'
+                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
+            else:
+                workflow_str += task.runtime_string(self.experiment_dict,
+                                                    self.slurm_external)
 
         workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict, True)
 
@@ -181,5 +192,6 @@ class Workflow_3dvar_cf_cycle(CylcWorkflow):
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

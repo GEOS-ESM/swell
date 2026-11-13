@@ -29,7 +29,8 @@ class Setup(TaskSetup):
         self.questions = [
             qd.existing_geos_gcm_source_path(),
             qd.geos_build_method(),
-            qd.geos_gcm_tag()
+            qd.geos_gcm_tag(),
+            qd.download_obs_config_overrides(),
         ]
 
 # --------------------------------------------------------------------------------------------------

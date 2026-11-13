@@ -22,7 +22,8 @@ all_suites = QuestionList(
         qd.experiment_root(),
         qd.pause_on_tasks(),
         qd.task_email_parameters(),
-        qd.email_address()
+        qd.email_address(),
+        qd.suite_to_run(),
     ]
 )
 

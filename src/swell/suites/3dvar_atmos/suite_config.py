@@ -20,12 +20,11 @@ suite_name = '3dvar_atmos'
 _3dvar_atmos_tier1 = QuestionList(
     questions=[
         common,
-        qd.start_cycle_point("2023-10-10T00:00:00Z"),
-        qd.final_cycle_point("2023-10-10T06:00:00Z"),
+        qd.start_cycle_point("2025-12-30T00:00:00Z"),
+        qd.final_cycle_point("2025-12-30T06:00:00Z"),
         qd.runahead_limit("P2"),
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_atmosphere']),
-        qd.cycling_varbc(),
     ],
     geos_atmosphere=[
         qd.cycle_times([
@@ -34,8 +33,9 @@ _3dvar_atmos_tier1 = QuestionList(
             "T12",
             "T18"
         ]),
+        qd.background_experiment("x0054"),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
-                                       "dadev/rtodling/archive/Restarts/JEDI/541x"),
+                                        "dadev/rtodling/archive/Restarts/5_44/c90"),
         qd.window_length("PT6H"),
         qd.window_type("3D"),
         qd.horizontal_resolution("91"),
@@ -43,6 +43,8 @@ _3dvar_atmos_tier1 = QuestionList(
         qd.gsibec_nlons("144"),
         qd.vertical_resolution("72"),
         qd.observations([
+            "abi_g16",
+            "abi_g18",
             "aircraft_temperature",
             "aircraft_wind",
             "airs_aqua",
@@ -54,11 +56,14 @@ _3dvar_atmos_tier1 = QuestionList(
             "amsua_n18",
             "amsua_n19",
             "atms_n20",
+            "atms_n21",
             "atms_npp",
             "avhrr3_metop-b",
+            "avhrr3_metop-c",
             "avhrr3_n18",
             "avhrr3_n19",
             "cris-fsr_n20",
+            "cris-fsr_n21",
             "cris-fsr_npp",
             "gmi_gpm",
             "gps",
@@ -68,7 +73,9 @@ _3dvar_atmos_tier1 = QuestionList(
             "mhs_metop-c",
             "mhs_n19",
             "mls55_aura",
-            "omi_aura",
+            "omieff_aura",
+            "ompslpnc_n21",
+            "ompslpnc_npp",
             "ompsnm_npp",
             "pibal",
             "satwind",
@@ -76,7 +83,8 @@ _3dvar_atmos_tier1 = QuestionList(
             "sfcship",
             "sfc",
             "sondes",
-            "ssmis_f17"
+            "ssmis_f17",
+            # "tcp"
         ]),
         qd.clean_patterns(['*.txt', '*.csv']),
     ]

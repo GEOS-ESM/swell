@@ -17,13 +17,15 @@ obs filters:
 - filter: RejectList
   where:
     - variable:
-        name: MetaData/cloud_fraction
+        name: MetaData/cloudAmount
+        #name: MetaData/cloud_fraction
       minvalue: 0.15 # reject var with cf>0.001
 
 - filter: RejectList
   where:
     - variable:
-        name: MetaData/solar_zenith_angle
+        name: MetaData/solarZenithAngle
+        #name: MetaData/solar_zenith_angle
       minvalue: 70
 
 obs operator:

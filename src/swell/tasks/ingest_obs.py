@@ -37,6 +37,8 @@ class Setup(TaskSetup):
             qd.dry_run(),
             qd.obs_to_ingest(),
             qd.window_length(),
+            qd.store_as_symlink(),
+            qd.observation_providers(),
             # qd.window_offset(),
         ]
 
@@ -102,6 +104,11 @@ class IngestObs(taskBase):
 
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
+
+        # Per-observation provider overrides from the experiment configuration.
+        # Values here take precedence over the defaults in
+        # observation_ioda_names.yaml.
+        self.observation_providers = self.config.observation_providers(default={})
 
         # Get window parameters
         window_length = self.config.window_length()
@@ -186,7 +193,8 @@ class IngestObs(taskBase):
         failed = []
 
         provider = get_provider_for_observation(
-            obs_name, self.ioda_names_list, self.logger)
+            obs_name, self.ioda_names_list, self.logger,
+            provider_overrides=self.observation_providers)
 
         acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 
@@ -242,7 +250,7 @@ class IngestObs(taskBase):
                     provider=provider,
                     observation_type=obs_name,
                     file_extension=os.path.splitext(
-                        target_file)[1][1:],  # 'nc' from '.nc'
+                        target_file)[1][1:],  # e.g. '.nc4'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file,

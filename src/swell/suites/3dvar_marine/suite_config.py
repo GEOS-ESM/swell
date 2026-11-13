@@ -15,17 +15,15 @@ from swell.suites.base.suite_questions import marine
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = '3dvar_marine'
+suite_name = '3dvar_marine_tier1'
 
-_3dvar_tier1 = QuestionList(
+_3dvar_marine_tier1 = QuestionList(
     questions=[
         marine,
-        qd.cycling_varbc(),
-        qd.start_cycle_point("2021-07-01T12:00:00Z"),
-        qd.final_cycle_point("2021-07-01T12:00:00Z"),
+        qd.start_cycle_point("2023-07-01T12:00:00Z"),
+        qd.final_cycle_point("2023-07-01T12:00:00Z"),
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_marine']),
-        qd.parser_options(),
     ],
     geos_marine=[
         qd.cycle_times(['T12']),
@@ -34,7 +32,6 @@ _3dvar_tier1 = QuestionList(
         qd.horizontal_resolution("72x36"),
         qd.vertical_resolution("50"),
         qd.total_processors(6),
-        qd.obs_experiment("s2s_v1"),
         qd.observations([
             "adt_cryosat2n",
             "adt_jason3",
@@ -51,20 +48,100 @@ _3dvar_tier1 = QuestionList(
             "temp_profile_xbt"
         ]),
         qd.background_time_offset("PT18H"),
+        qd.background_experiment("swell_test"),
         qd.clean_patterns(['*.nc4', '*.txt']),
     ]
 )
 
-suite_configs.register(suite_name, '3dvar_marine_tier1', _3dvar_tier1)
+suite_configs.register(suite_name, '3dvar_marine_tier1', _3dvar_marine_tier1)
 
 # --------------------------------------------------------------------------------------------------
 
-_3dvar = QuestionList(
+_3dvar_marine = QuestionList(
     questions=[
-        _3dvar_tier1
+        _3dvar_marine_tier1
     ]
 )
 
-suite_configs.register(suite_name, '3dvar_marine', _3dvar)
+suite_configs.register(suite_name, '3dvar_marine', _3dvar_marine)
+
+# --------------------------------------------------------------------------------------------------
+
+_3dvar_marine_nnja = QuestionList(
+    questions=[
+        _3dvar_marine,
+        qd.fetch_obs_from_public_s3(True),
+    ],
+    geos_marine=[
+        qd.observations([
+            "insitu_salt_profile_wod_ctd",
+            "insitu_salt_profile_wod_drb",
+            "insitu_salt_profile_wod_gld",
+            "insitu_salt_profile_wod_mrb",
+            "insitu_salt_profile_wod_osd",
+            "insitu_salt_profile_wod_pfl",
+            "insitu_salt_profile_wod_uor",
+            "insitu_temp_profile_wod_ctd",
+            "insitu_temp_profile_wod_drb",
+            "insitu_temp_profile_wod_gld",
+            "insitu_temp_profile_wod_mbt",
+            "insitu_temp_profile_wod_mrb",
+            "insitu_temp_profile_wod_osd",
+            "insitu_temp_profile_wod_pfl",
+            "insitu_temp_profile_wod_uor",
+            "insitu_temp_profile_wod_xbt",
+        ]),
+    ],
+)
+
+suite_configs.register(suite_name, '3dvar_marine_nnja', _3dvar_marine_nnja)
+
+# --------------------------------------------------------------------------------------------------
+
+_3dvar_marine_tier2 = QuestionList(
+    questions=[
+        _3dvar_marine,
+        qd.start_cycle_point("2023-01-02T12:00:00Z"),
+        qd.final_cycle_point("2023-01-03T12:00:00Z"),
+    ],
+    geos_marine=[
+        qd.cycle_times(['T12']),
+        qd.marine_models(['mom6', 'cice6']),
+        qd.analysis_variables([
+            "sea_water_salinity",
+            "sea_water_potential_temperature",
+            "sea_surface_height_above_geoid",
+            "sea_water_cell_thickness",
+            "sea_ice_area_fraction",
+            "sea_ice_thickness",
+            "sea_ice_snow_thickness"
+        ]),
+        qd.window_length("P1D"),
+        qd.horizontal_resolution("1440x1080"),
+        qd.vertical_resolution("75"),
+        qd.total_processors(720),
+    ]
+)
+
+suite_configs.register(suite_name, '3dvar_marine_tier2', _3dvar_marine_tier2)
+
+# --------------------------------------------------------------------------------------------------
+
+_3dvar_marine_5day = QuestionList(
+    questions=[
+        _3dvar_marine,
+        qd.start_cycle_point("2023-01-07T12:00:00Z"),
+        qd.final_cycle_point("2023-01-17T12:00:00Z"),
+        qd.forecast_duration("P10D"),
+    ],
+    geos_marine=[
+        qd.cycle_times(['T120']),
+        qd.window_length("P5D"),
+        qd.background_frequency("PT12H"),
+        qd.background_time_offset("P7DT12H"),
+    ]
+)
+
+suite_configs.register(suite_name, '3dvar_marine_5day', _3dvar_marine_5day)
 
 # --------------------------------------------------------------------------------------------------

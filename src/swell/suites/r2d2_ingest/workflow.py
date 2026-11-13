@@ -56,6 +56,10 @@ template_str = '''
                 {% else %}
                 IngestObs-{{model_component}}
                 {% endif %}
+                {% if not ingest_background_pipeline and
+                      not models[model_component]["store_as_symlink"] %}
+                IngestObs-{{model_component}} => CleanCycle-{{model_component}}
+                {% endif %}
                 {% endfor %}
             """
         {% endfor %}
@@ -103,5 +107,6 @@ class Workflow_r2d2_ingest(CylcWorkflow):
             self.tasks.append(ta.ConvertObsToIoda(model=model))
             self.tasks.append(ta.IngestObs(model=model))
             self.tasks.append(ta.SaveBackground(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

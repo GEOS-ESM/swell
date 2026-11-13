@@ -10,9 +10,9 @@
 #============================================================================
 simulation:
   name: fullchem
-  chem_inputs_dir: /discover/nobackup/cakelle2/data/CHEM_INPUTS/
+  chem_inputs_dir: /discover/nobackup/projects/gmao/share/dasilva/fvInput/ExtData/chemistry/GEOSCHEMchem/v0.0.0/CHEM_INPUTS/
   species_database_file: ./species_database.yml
-  debug_printout: true
+  debug_printout: false
 
 #============================================================================
 # Settings for GEOS-Chem operations
@@ -56,8 +56,7 @@ operations:
      use_non_local_pbl: false
 
   photolysis:
-    #input_dir: /discover/nobackup/ewlundgr/data/ExtData/FAST_JX/v2021-10/
-    input_dir: /discover/nobackup/projects/gmao/share/dasilva/fvInput/ExtData/chemistry/GEOSCHEMchem/v0.0.0/CHEM_INPUTS/FAST_JX/v2021-10/
+    input_dir: /discover/nobackup/projects/gmao/share/dasilva/fvInput/ExtData/chemistry/GEOSCHEMchem/v0.0.0/CHEM_INPUTS/FAST_JX/v2023-10/
     overhead_O3:
       use_online_O3_from_model: true
       use_column_O3_from_met: true
@@ -89,13 +88,6 @@ operations:
       - AONITA
       - AROMP4
       - AROMP5
-      #- ASOA1
-      #- ASOA2
-      #- ASOA3
-      #- ASOAN
-      - ASOG1
-      - ASOG2
-      - ASOG3
       - ATOOH
       - BALD
       - BCPI
@@ -307,14 +299,6 @@ operations:
       - SOAP
       - SOAS
       - TOLU
-      #- TSOA0
-      #- TSOA1
-      #- TSOA2
-      #- TSOA3
-      #- TSOG0
-      #- TSOG1
-      #- TSOG2
-      #- TSOG3
       - XYLE
 
   wet_deposition:

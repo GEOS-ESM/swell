@@ -13,6 +13,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
+from swell.tasks.base.task_setup import TaskSetup
 
 # --------------------------------------------------------------------------------------------------
 
@@ -45,10 +46,11 @@ template_str = '''
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}? => Pass
+            JediLogComparison-{{model_component}}:fail? => comparison_fail?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
         {% endif %}
         {% endfor %}
         """
@@ -68,6 +70,17 @@ template_str = '''
 
 # --------------------------------------------------------------------------------------------------
 
+class Pass(TaskSetup):
+    def set_defaults(self):
+        self.base_name = "Pass"
+        self.scheduling_name = "Pass"
+        self.model_dep = True
+        self.script = """cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
+cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip
+cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonObservations-{{model_component}} --out skip
+cylc set $CYLC_WORKFLOW_ID//$datetime/PublishComparisons --out skip"""
+
+# --------------------------------------------------------------------------------------------------
 
 @workflows.register('compare')
 class Workflow_compare(CylcWorkflow):
@@ -112,6 +125,7 @@ class Workflow_compare(CylcWorkflow):
             self.tasks.append(ta.EvaComparisonJediLog(model=model))
             self.tasks.append(ta.JediLogComparison(model=model))
             self.tasks.append(ta.PublishComparisons(model=model))
+            self.tasks.append(Pass(model=model))
 
             for i, path in enumerate(paths):
                 log_parser = ta.JediOopsLogParser(model=model)

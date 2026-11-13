@@ -10,7 +10,7 @@
 
 from swell.utilities.swell_questions import QuestionList
 import swell.configuration.question_defaults as qd
-from swell.suites.base.suite_questions import marine
+from swell.suites.base.suite_questions import common
 from swell.suites.base.suite_attributes import suite_configs
 
 
@@ -20,16 +20,18 @@ suite_name = 'hofx'
 
 hofx_tier1 = QuestionList(
     questions=[
-        marine,
-        qd.window_type('4D'),
+        common,
+        qd.start_cycle_point("2025-12-30T00:00:00Z"),
+        qd.final_cycle_point("2025-12-30T06:00:00Z"),
+        qd.window_type("4D"),
         qd.jedi_build_method("use_existing"),
         qd.save_geovals(True),
         qd.model_components(['geos_atmosphere']),
     ],
     geos_atmosphere=[
         qd.horizontal_resolution("91"),
-        qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
-                                       "rtodling/archive/Restarts/JEDI/541x"),
+        qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/"
+                                        "archive/Restarts/5_44/c90"),
         qd.npx_proc(2),
         qd.npy_proc(2),
         qd.observations([
@@ -66,7 +68,8 @@ hofx_tier1 = QuestionList(
             "sfcship",
             "sfc",
             "sondes",
-            "ssmis_f17"
+            "ssmis_f17",
+            # "tcp"
         ]),
         qd.clean_patterns([]),
     ]

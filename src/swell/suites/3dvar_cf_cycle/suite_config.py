@@ -20,8 +20,8 @@ suite_name = '3dvar_cf_cycle'
 _3dvar_cf_cycle_tier1 = QuestionList(
     questions=[
         common,
-        qd.start_cycle_point("2023-08-10T00:00:00Z"),
-        qd.final_cycle_point("2023-08-10T06:00:00Z"),
+        qd.start_cycle_point("2025-04-02T06:00:00Z"),
+        qd.final_cycle_point("2025-04-02T12:00:00Z"),
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_cf']),
         qd.check_for_obs(False)
@@ -37,60 +37,76 @@ _3dvar_cf_cycle_tier1 = QuestionList(
         qd.vertical_resolution(72),
         qd.saber_central_block('bump_nicas'),
         qd.saber_outer_block('stddev_bkg_scaled'),
-        qd.analysis_variables(["volume_mixing_ratio_of_no2"]),
+        qd.stddev_scale_factors({
+            "volume_mixing_ratio_of_o3": 0.25,
+            "volume_mixing_ratio_of_no2": 0.25,
+            "volume_mixing_ratio_of_co": 0.25,
+            }),
+        qd.analysis_variables([
+            "volume_mixing_ratio_of_o3",
+            "volume_mixing_ratio_of_no2",
+            "volume_mixing_ratio_of_co",
+            ]),
         qd.background_experiment("swell_test"),
         qd.rst_experiment("swell_test"),
         qd.rst_file_types(['achem_internal',
-                           'aiau_import',
-                           'cabc_internal',
-                           'cabr_internal',
-                           'caoc_internal',
-                           'catch_internal',
-                           'du_internal',
-                           'fvcore_internal',
-                           'geoschemchem_import',
-                           'geoschemchem_internal',
-                           'gocart_import',
-                           'gocart_internal',
-                           'gwd_import',
-                           'hemco_import',
-                           'hemco_internal',
-                           'irrad_internal',
-                           'lake_internal',
-                           'landice_internal',
-                           'moist_import',
-                           'moist_internal',
-                           'ni_internal',
-                           'openwater_internal',
-                           'pchem_internal',
-                           'saltwater_import',
-                           'seaicethermo_internal',
-                           'solar_internal',
-                           'ss_internal',
-                           'su_internal',
-                           'surf_import',
-                           'tr_import',
-                           'tr_internal',
-                           'turb_import',
-                           'turb_internal']),
+                            'aiau_import',
+                            'cabc_internal',
+                            'cabr_internal',
+                            'caoc_internal',
+                            'catch_internal',
+                            'du_internal',
+                            'fvcore_internal',
+                            'geoschemchem_import',
+                            'geoschemchem_internal',
+                            'gocart_import',
+                            'gocart_internal',
+                            'gwd_import',
+                            'hemco_import',
+                            'hemco_internal',
+                            'irrad_internal',
+                            'lake_internal',
+                            'landice_internal',
+                            'moist_import',
+                            'moist_internal',
+                            'ni_internal',
+                            'openwater_internal',
+                            'pchem_internal',
+                            'saltwater_import',
+                            'seaicethermo_internal',
+                            'solar_internal',
+                            'ss_internal',
+                            'su_internal',
+                            'surf_import',
+                            'turb_import',
+                            'turb_internal']),
         qd.observations([
-            "tempo_no2_tropo",
+            "omps_o3_nm_total",
             "tropomi_s5p_no2_tropo",
+            "tropomi_s5p_co_total",
         ]),
-        # forecast settings
-        # mom6_iau is available. I don't know if we want run 3dvar without iau
         qd.iau(True),
         qd.forecast_length('PT12H'),
         qd.forecast_output_frequency('PT3H'),
         qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
         qd.inc_template(
-            '/discover/nobackup/mabdiosk/rundir/handle_inc/'
-            'GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
-        ),
-        qd.geos_cf_install_dir('/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install'),
-        qd.geos_cf_run_dir('/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab'),
-        qd.swell_static_files('/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles'),
-        qd.geosfp_path('/discover/nobackup/projects/gmao/geos_cf_dev/jbarre')
+            '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+            'handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
+            ),
+        qd.geos_cf_install_dir(
+            '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+            'GEOSgcm_21042026/install-SLES15'
+            ),
+        qd.geos_cf_rc_dir(
+            '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+            'RC_CFv2/RC'
+            ),
+        qd.swell_static_files(
+            '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
+            'SwellStaticFiles'
+            ),
+        qd.met_replay_exp('d5294_geosit_jan18'),
+        qd.met_replay_root('/home/dao_ops')
     ]
 )
 

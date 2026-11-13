@@ -7,7 +7,10 @@ cycling_varbc:
   options: [true, false]
 
 ensemble_hofx_strategy:
-  default_value: 'serial'
+  default_value: parallel
+  options:
+  - serial
+  - parallel
 
 ensemble_hofx_packets:
   default_value: 1

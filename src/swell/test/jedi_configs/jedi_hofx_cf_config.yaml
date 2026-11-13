@@ -60,12 +60,12 @@ observations:
     - filter: RejectList
       where:
       - variable:
-          name: MetaData/cloud_fraction
+          name: MetaData/cloudAmount
         minvalue: 0.15
     - filter: RejectList
       where:
       - variable:
-          name: MetaData/solar_zenith_angle
+          name: MetaData/solarZenithAngle
         minvalue: 70
     obs operator:
       name: ColumnRetrieval
@@ -92,6 +92,10 @@ observations:
       observed variables:
       - nitrogendioxideColumn
     obs filters:
+    - filter: Bounds Check
+      filter variables:
+      - name: nitrogendioxideColumn
+      minvalue: 0
     - filter: Domain Check
       filter variables:
       - name: nitrogendioxideColumn
@@ -100,6 +104,15 @@ observations:
           name: MetaData/latitude
         minvalue: -65
         maxvalue: 65
+    - filter: Bounds Check
+      filter variables:
+      - name: nitrogendioxideColumn
+      test variables:
+      - name: RetrievalAncillaryData/averagingKernel
+        layers: 1-34
+      minvalue: -1.0
+      maxvalue: 2.0
+      flag all filter variables if any test variable is out of bounds: true
     obs operator:
       name: ColumnRetrieval
       nlayers_retrieval: 34

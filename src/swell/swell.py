@@ -239,7 +239,7 @@ def launch(
     log_path: str,
     send_messages: bool,
     pause_workflow: bool,
-    cylc_timeout: bool
+    cylc_timeout: str | None
 
 ) -> None:
     """
@@ -269,13 +269,15 @@ def launch(
 @click.option('-a', '--additional-parameter', 'additional_parameter',
               default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+@click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
     datetime: str | None,
     model: str | None,
     additional_parameter: str | None,
-    ensemblePacket: str | None
+    ensemblePacket: str | None,
+    imember: int | None
 ) -> None:
     """
     Run a workflow task
@@ -288,7 +290,7 @@ def task(
 
     """
     task_wrapper(task, config, datetime, model, additional_parameter,
-                 ensemblePacket)
+                 ensemblePacket, imember)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -334,11 +336,13 @@ def test(test: str) -> None:
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
-                                            "localensembleda", "3dvar_cycle")))
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos", "3dvar_cycle",
+                                            "localensembleda", "localensembleda_2steps",
+                                            "eda_atmos")))
 def t1test(
-    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: str = "nccs_discover_sles15"
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "3dvar_cycle",
+                   "localensembleda", "localensembleda_2steps", "eda_atmos"],
+    platform: str | None = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.

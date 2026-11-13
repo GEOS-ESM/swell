@@ -48,6 +48,7 @@ class Setup(TaskSetup):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
+            qd.observing_system_records_path(),
             qd.total_processors(),
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),
@@ -62,6 +63,11 @@ class RunJediObsfiltersExecutable(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self, ensemble_members: list | None = None) -> None:
+
+        # skip this task if the model is not geos_atmosphere
+        if self.get_model() != 'geos_atmosphere':
+            self.logger.info('Skip RunJediObsfiltersExecutable task for non-geos_atmosphere model')
+            return
 
         # Jedi application name
         # ---------------------
@@ -148,7 +154,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning', window_type,
                                                                 jedi_forecast_model)
 
-        # Include filter_thinning into {observations: obs sapce: obs filters:}
+        # Include filter_thinning into {observations: obs space: obs filters:}
         # -------------------------------------------------------------------
         new_dict = {'observations': []}
         for observer in jedi_config_dict['observations']['observers']:

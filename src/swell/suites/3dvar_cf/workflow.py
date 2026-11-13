@@ -67,8 +67,10 @@ template_str = '''
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
+            {% for observation in models[model_component]['observations'] %}
+            GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
 
-            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -82,13 +84,14 @@ template_str = '''
 
             {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-            SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
+            SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -125,8 +128,15 @@ class Workflow_3dvar_cf(CylcWorkflow):
                                                allow_unresolved=True)
 
         for task in self.tasks:
-            workflow_str += task.runtime_string(self.experiment_dict,
-                                                self.slurm_external)
+            if task.base_name == 'GetObservations':
+                model = task.model
+                for observation in self.experiment_dict['models'][task.model]['observations']:
+                    task.scheduling_name = f'GetObservations-{observation}-{model}'
+                    task.script = f'swell task GetObservations $config -d $datetime -m {model} -a {observation}'
+                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
+            else:
+                workflow_str += task.runtime_string(self.experiment_dict,
+                                                    self.slurm_external)
 
         return workflow_str
 
@@ -148,5 +158,6 @@ class Workflow_3dvar_cf(CylcWorkflow):
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

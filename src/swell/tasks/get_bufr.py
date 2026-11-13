@@ -30,7 +30,8 @@ class Setup(TaskSetup):
         self.is_cycling = True
         self.model_dep = True
         self.questions = [
-            qd.bufr_obs_classes()
+            qd.bufr_obs_classes(),
+            qd.obs_rc_path()
         ]
 
 # --------------------------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ class GetBufr(taskBase):
 
         perl_executable_path = os.path.join(self.experiment_path(), 'GMAO_perllib')
         geos_mksi_obsysrc_path = os.path.join(self.experiment_path(),
-                                              'GEOS_mksi/ObsClass/obsys-nccs.rc')
+                                              self.config.obs_rc_path())
 
         # Environment variables for acquire_obsys
         env_dict = os.environ

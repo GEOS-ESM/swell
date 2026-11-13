@@ -63,26 +63,38 @@ template_str = '''
             # Task triggers for: {{model_component}}
             # ------------------
 
-            # Perform staging that is cycle dependent
-            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}} => sync_point
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
+            # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
+
+            RunJediLocalEnsembleDaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% else %}
+
+            # Cycling VarBC is inactive, static bias files will be used
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            {% endif %}
 
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            
-            RenderJediObservations-{{model_component}} => sync_point
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
 
-            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
+            BuildJediByLinking[^]? | BuildJedi[^]  => SP1-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}} => SP1-{{model_component}}
+            GetEnsembleGeosExperiment-{{model_component}} => SP1-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => SP1-{{model_component}}
+            SP1-{{model_component}} => GenerateObservingSystemRecords-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
-            GetEnsembleGeosExperiment-{{model_component}} => sync_point
-
-            sync_point => RunJediObsfiltersExecutable-{{model_component}}
-            {% if models[model_component]['skip_ensemble_hofx'] %}
-               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            {% if skip_ensemble_hofx %}
+               RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
-                   sync_point => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                   SP1-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
                {% elif ensemble_hofx_strategy == 'parallel' %}
@@ -93,7 +105,7 @@ template_str = '''
                       # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
                       # RunEnsembleHofxCombiner-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
-                      sync_point => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                      SP1-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                       RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                    {% endfor %}
                {% endif %}
@@ -122,7 +134,12 @@ template_str = '''
 
     # Task defaults
     # -------------
+    {% for model_component in model_components %}
+    # SP: Sync Point
+    [[SP1-{{model_component}}]]
+        script = true
 
+    {% endfor %}
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
@@ -189,5 +206,6 @@ class Workflow_localensembleda(CylcWorkflow):
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

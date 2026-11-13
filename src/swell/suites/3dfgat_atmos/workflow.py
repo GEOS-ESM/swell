@@ -12,6 +12,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
+from swell.tasks.base.task_setup import TaskSetup
 
 # --------------------------------------------------------------------------------------------------
 
@@ -72,11 +73,11 @@ template_str = '''
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
-            GetObservations-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
             {% endif %}
 
             # Perform staging that is cycle dependent
@@ -86,13 +87,9 @@ template_str = '''
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} =>
-            RunJediVariationalExecutable-{{model_component}}
-
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
 
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
@@ -108,14 +105,15 @@ template_str = '''
 
             {% if not skip_r2d2 %}            
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-            SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
+            SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
             EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -132,7 +130,6 @@ template_str = '''
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
-
 
 @workflows.register('3dfgat_atmos')
 class Workflow_3dfgat_atmos(CylcWorkflow):
@@ -159,6 +156,8 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
 
     def set_tasks(self) -> None:
 
+        clean_cycle_skipped = TaskSetup(model=model)
+
         self.tasks.append(ta.root())
         self.tasks.append(ta.CloneJedi())
         self.tasks.append(ta.BuildJediByLinking())
@@ -182,5 +181,6 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.CleanCycleSkipped(model=model))
 
 # --------------------------------------------------------------------------------------------------

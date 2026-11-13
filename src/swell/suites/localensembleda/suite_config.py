@@ -20,7 +20,6 @@ suite_name = 'localensembleda'
 localensembleda_tier1 = QuestionList(
     questions=[
         marine,
-        qd.cycling_varbc(),
         qd.ensemble_hofx_packets(),
         qd.ensemble_hofx_strategy(),
         qd.skip_ensemble_hofx(),
@@ -32,26 +31,28 @@ localensembleda_tier1 = QuestionList(
         qd.horizontal_resolution('91'),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                       'rtodling/archive/Restarts/JEDI/541x'),
+                                        'rtodling/archive/Restarts/JEDI/541x'),
         qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                     'rtodling/archive/541/Milan'),
-        qd.npx_proc(3),
-        qd.npy_proc(3),
+                                        'rtodling/archive/541/Milan'),
+        qd.npx_proc(4),
+        qd.npy_proc(4),
+        qd.perhost(48),
         qd.cycle_times(['T00']),
-        qd.background_time_offset("PT3H"),
         qd.ensemble_num_members(3),
         qd.skip_ensemble_hofx(True),
         qd.local_ensemble_solver("Deterministic GETKF"),
-        qd.local_ensemble_use_linear_observer(False),
+        qd.local_ensemble_use_linear_observer(True),
         qd.ensmean_only(False),
         qd.local_ensemble_save_posterior_mean(True),
         qd.local_ensemble_save_posterior_mean_increment(True),
         qd.local_ensemble_save_posterior_ensemble(False),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
-        qd.obs_thinning_rej_fraction(0.75),
+        qd.local_ensemble_do_posterior_observer(False),
+        qd.obs_thinning_rej_fraction(0.98),
         qd.observations([
             "atms_n20",
         ]),
+        qd.window_length("PT6H"),
         qd.window_type("3D"),
         qd.clean_patterns(['*.txt'])
     ]
@@ -75,14 +76,13 @@ localensembleda_tier2 = QuestionList(
         qd.horizontal_resolution('91'),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                       'rtodling/archive/Restarts/JEDI/541x'),
+                                        'rtodling/archive/Restarts/JEDI/541x'),
         qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                     'rtodling/archive/541/Milan'),
+                                        'rtodling/archive/541/Milan'),
         qd.npx_proc(4),
         qd.npy_proc(4),
-        # qd.perhost(32),
+        qd.perhost(48),
         qd.cycle_times(['T00']),
-        qd.background_time_offset("PT3H"),
         qd.ensemble_num_members(16),
         qd.skip_ensemble_hofx(True),
         qd.local_ensemble_solver("Deterministic GETKF"),
@@ -92,40 +92,53 @@ localensembleda_tier2 = QuestionList(
         qd.local_ensemble_save_posterior_mean_increment(True),
         qd.local_ensemble_save_posterior_ensemble(False),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
+        qd.local_ensemble_do_posterior_observer(False),
         qd.obs_thinning_rej_fraction(0.75),
         qd.observations([
             "aircraft_temperature",
             "aircraft_wind",
-            "sondes",
-            "gps",
+            "amsr2_gcom-w1",
             "amsua_aqua",
+            "amsua_metop-b",
+            "amsua_metop-c",
             "amsua_n15",
             "amsua_n18",
             "amsua_n19",
-            "amsr2_gcom-w1",
             "atms_n20",
             "atms_npp",
             "avhrr3_metop-b",
             "avhrr3_n18",
             "avhrr3_n19",
-            "scatwind",
-            "sfcship",
-            "sfc",
-            "mhs_metop-b",
-            "mhs_metop-c",
-            "mhs_n19",
-            "mls55_aura",
-            "omi_aura",
-            "ompsnm_npp",
-            "pibal",
-            "ssmis_f17",
-            "amsua_metop-b",
-            "amsua_metop-c"
         ]),
+        qd.window_length("PT6H"),
         qd.window_type("3D"),
         qd.clean_patterns(['*.txt'])
     ]
 )
+
+# wait for oops 3342 to activate all non-IR-obs
+#                "airs_aqua",
+#                "cris-fsr_n20",
+#                "cris-fsr_npp",
+#                "gmi_gpm",
+#                "gps",
+#                "iasi_metop-b",
+#                "iasi_metop-c",
+#                "mhs_metop-b",
+#                "mhs_metop-c",
+#                "mhs_n19",
+#                "mls55_aura",
+#                "omi_aura",
+#                "ompsnm_npp",
+#                "pibal",
+#                "satwind",
+#                "scatwind",
+#                "sfcship",
+#                "sfc",
+#                "sondes",
+#                "ssmis_f17"
+
+# --------------------------------------------------------------------------------------------------
 
 suite_configs.register(suite_name, 'localensembleda_tier2', localensembleda_tier2)
 
