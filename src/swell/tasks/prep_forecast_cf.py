@@ -16,9 +16,42 @@ import xarray as xr
 import yaml
 
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import (
-    FORECAST_COLLECTIONS, forecast_history)
+    forecast_collections, forecast_history)
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
+
+# --------------------------------------------------------------------------------------------------
+
+# HPC/model-tuning parameters for AGCM.rc and gcm_run_geoscf.j that do not follow a simple formula
+# from the cube-sphere resolution (PE layout, I/O server sizing, SLURM node count, boundary
+# condition tile directory). These must be validated on the target HPC system before use; AGCM_IM
+# (cube-face edge length) and AGCM_JM (= 6 * AGCM_IM) are derived directly from the resolution
+# string and are not included here.
+#
+# NOTE: the 'c180' entry below is a placeholder pending verification (NX/NY layout not yet
+# confirmed to divide the grid correctly; IOSERVER_NODES/NUM_BACKEND_PES are interpolated guesses;
+# BCRSLV assumes a 'CF0180x6C_DE2880xPE1440' boundary condition tile directory exists on disk).
+# Do not run c180 forecasts until these are confirmed.
+RESOLUTION_TUNING = {
+    'c90': {
+        'nx': 12, 'ny': 72,
+        'ioserver_nodes': 0, 'num_backend_pes': 8,
+        'sbatch_nodes': 8, 'bcrslv': 'CF0090x6C_DE2880xPE1440',
+        'solar_lb_max_passes': None,
+    },
+    'c180': {
+        'nx': 36, 'ny': 180,
+        'ioserver_nodes': 2, 'num_backend_pes': 16,
+        'sbatch_nodes': 16, 'bcrslv': 'CF0180x6C_DE2880xPE1440',
+        'solar_lb_max_passes': None,
+    },
+    'c360': {
+        'nx': 60, 'ny': 120,
+        'ioserver_nodes': 4, 'num_backend_pes': 24,
+        'sbatch_nodes': 32, 'bcrslv': 'CF0360x6C_DE2880xPE1440',
+        'solar_lb_max_passes': 10,
+    },
+}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -244,7 +277,7 @@ class PrepForecastCf(taskBase):
             if os.path.exists(src):
                 shutil.copy(src, scratch_dir)
 
-        shutil.copy(os.path.join(namelists_dir, f'AGCM_{resolution}.rc'),
+        shutil.copy(os.path.join(namelists_dir, 'AGCM.rc'),
                     os.path.join(scratch_dir, 'AGCM.rc'))
 
         # Update AGCM.rc placeholders
@@ -262,31 +295,63 @@ class PrepForecastCf(taskBase):
         self.replace_string(agcm_rc, '>>>SWELL_FC6H_DATE<<<', f'{weYYYY}{weMM}{weDD}')
         self.replace_string(agcm_rc, '>>>SWELL_FC6H_H<<<', f'{weHH}0000')
 
+        # AGCM_IM/AGCM_JM follow the cube-sphere resolution directly (e.g. 'c90' -> 90, JM = 6*IM);
+        # the rest of the HPC/model-tuning parameters come from RESOLUTION_TUNING.
+        if resolution not in RESOLUTION_TUNING:
+            raise ValueError(f'Unsupported horizontal resolution: {resolution}')
+        tuning = RESOLUTION_TUNING[resolution]
+        agcm_im = int(resolution.lstrip('c'))
+        agcm_jm = agcm_im * 6
+
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NX<<<', str(tuning['nx']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NY<<<', str(tuning['ny']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_IOSERVER_NODES<<<',
+                            str(tuning['ioserver_nodes']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NUM_BACKEND_PES<<<',
+                            str(tuning['num_backend_pes']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_IM<<<', str(agcm_im))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_JM<<<', str(agcm_jm))
+        solar_lb_max_passes = tuning['solar_lb_max_passes']
+        solar_lb_line = (f'SOLAR_LB_MAX_PASSES: {solar_lb_max_passes}'
+                         if solar_lb_max_passes is not None else '')
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_SOLAR_LB_MAX_PASSES_LINE<<<',
+                            solar_lb_line)
+
         # Update HISTORY.rc placeholders
         # ------------------------------
         history_src = os.path.join(namelists_dir, 'HISTORY.rc')
         history_dst = os.path.join(scratch_dir, 'HISTORY.rc')
         shutil.copy(history_src, history_dst)
-        history = forecast_history(self.additional_forecast_collections)
+
+        # Collection names are always computed for bkg/chm/met (so every attribute block in the
+        # file is fully substituted), but only the enabled ones are actually listed under
+        # COLLECTIONS: so GEOS only writes those out. The chm/met lat-lon output grid always
+        # follows the forecast's cube-sphere horizontal_resolution.
+        all_file_types = ['bkg', 'chm', 'met']
+        history = forecast_history(resolution, self.additional_forecast_collections)
+        all_names = forecast_collections(resolution, all_file_types)
+
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_EXPID<<<',
                             history['expid'])
-
-        # Every collection name is substituted in the attribute blocks below, but only the enabled
-        # ones are listed under COLLECTIONS: so that GEOS only writes those out.
         collection_placeholders = {
             'bkg': '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
             'chm': '>>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<',
             'met': '>>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<',
         }
         for file_type, placeholder in collection_placeholders.items():
-            self.replace_string(history_dst, placeholder, FORECAST_COLLECTIONS[file_type])
+            self.replace_string(history_dst, placeholder, all_names[file_type])
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
                             history['template'])
 
-        collections_list = '\n             '.join(f"'{name}'"
-                                                  for name in history['collections'].values())
+        enabled_names = [all_names[file_type] for file_type in history['collections']]
+        collections_list = '\n             '.join(f"'{name}'" for name in enabled_names)
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_COLLECTIONS_LIST<<<',
                             collections_list)
+
+        grid = history['grid']
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_GRID_LABEL<<<', grid['grid_label'])
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_IM_WORLD<<<', str(grid['im']))
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_JM_WORLD<<<', str(grid['jm']))
 
         freq_dur = isodate.parse_duration(self.forecast_output_frequency)
         freq_total_secs = int(freq_dur.total_seconds())
@@ -320,24 +385,13 @@ class PrepForecastCf(taskBase):
 
         # Copy and configure gcm_run.j
         # -----------------------------
-        if resolution == 'c90':
-            sbatch_nodes = '8'
-            bcrslv = 'CF0090x6C_DE2880xPE1440'
-        elif resolution == 'c360':
-            sbatch_nodes = '32'
-            bcrslv = 'CF0360x6C_DE2880xPE1440'
-        else:
-            raise ValueError(
-                f'Unsupported horizontal resolution for gcm_run_geoscf.j: {resolution}'
-            )
-
         gcm_run_src = os.path.join(namelists_dir, 'gcm_run_geoscf.j')
         gcm_run_dst = os.path.join(scratch_dir, 'gcm_run_geoscf.j')
         shutil.copy(gcm_run_src, gcm_run_dst)
         self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
-        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', sbatch_nodes)
-        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', bcrslv)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', str(tuning['sbatch_nodes']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', tuning['bcrslv'])
         os.chmod(gcm_run_dst, 0o755)
 
         # Update CAP.rc with forecast length
@@ -348,7 +402,7 @@ class PrepForecastCf(taskBase):
         fc_mm = (sub_day_secs % 3600) // 60
         fc_ss = sub_day_secs % 60
         fc_len_geoscf = f'{fc_days} {fc_hh:02d}{fc_mm:02d}{fc_ss:02d}'
-        cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
+        cap_src = os.path.join(namelists_dir, 'CAP.rc')
         cap_dst = os.path.join(scratch_dir, 'CAP.rc')
         shutil.copy(cap_src, cap_dst)
         self.replace_string(cap_dst, '>>>SWELL_FC_LENGTH<<<', fc_len_geoscf)
