@@ -25,7 +25,7 @@ def comp_mean_output(template_dict: Mapping) -> Mapping:
             'filetype': 'cube sphere history',
             'provider': 'geos',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_mean}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            'filename': f'{prefix_output_mean}.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
             'first':    'PT0H',
             'frequency': 'PT1H',
             'field io names': []
@@ -35,7 +35,7 @@ def comp_mean_output(template_dict: Mapping) -> Mapping:
             'filetype': 'auxgrid',
             'gridtype': 'latlon',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_mean}.ll.',
+            'filename': f'{prefix_output_mean}.eta.',
             'field io names': []
         }
 

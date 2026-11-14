@@ -62,7 +62,7 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                     'rain_water': 'qr',
                     'snow_water': 'qs',
                     'mole_fraction_of_ozone_in_air': 'o3ppmv',
-                    'geopotential_height_at_surface': 'phis',
+                    'geopotential_at_surface': 'phis',
                     'fraction_of_ocean': 'frocean',
                     'fraction_of_lake': 'frlake',
                     'fraction_of_ice': 'frseaice',
