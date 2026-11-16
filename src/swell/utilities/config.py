@@ -173,7 +173,7 @@ class Config():
                 self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
                                       f'this variable was not created. Ensure that the variable ' +
                                       f'is in the experiment configuration and specified in ' +
-                                      f'the question list for the task (task_questions.py).')
+                                      f'the question list for the task (TaskSetup class)')
             else:
                 return default
         return variable_not_found
