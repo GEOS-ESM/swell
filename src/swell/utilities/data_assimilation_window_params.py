@@ -107,7 +107,8 @@ class DataAssimilationWindowParams():
         Returns
         -------
         Tuple[str, datetime.datetime]
-            A tuple containing the analysis time formatted as a string and the corresponding datetime object.
+            A tuple containing the analysis time formatted as a string and the corresponding
+            datetime object.
         """
 
         analysis_time_dto = self.__get_analysis_time__()
@@ -121,7 +122,8 @@ class DataAssimilationWindowParams():
         Returns
         -------
         Tuple[str, datetime.datetime]
-            A tuple containing the analysis time formatted as an ISO string and the corresponding datetime object.
+            A tuple containing the analysis time formatted as an ISO string and the corresponding
+            datetime object.
         """
 
         analysis_time_dto = self.__get_analysis_time__()
