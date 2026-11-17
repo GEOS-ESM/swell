@@ -118,21 +118,21 @@ class SaveAnalysis(taskBase):
             R2D2 file_type label (e.g. 'MOM.res', 'cice.res', 'bkg').
         """
 
-        file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
+        file_extension = source_file.split('.')[-1] if '.' in source_file else 'nc'
 
         self.logger.info(f'Storing {os.path.basename(source_file)} '
                          f'at {ana_dto.strftime(datetime_formats["iso_format"])}')
 
-        # store(
-        #     item='analysis',
-        #     model=model_name,
-        #     experiment=self.background_experiment,
-        #     resolution=self.horizontal_resolution,
-        #     date=ana_dto.strftime('%Y-%m-%d %H:%M:%S'),
-        #     source_file=source_file,
-        #     file_type=file_type,
-        #     file_extension=file_extension,
-        # )
+        store(
+            item='analysis',
+            model=model_name,
+            experiment=self.background_experiment,
+            resolution=self.horizontal_resolution,
+            date=ana_dto.strftime('%Y-%m-%d %H:%M:%S'),
+            source_file=source_file,
+            file_type=file_type,
+            file_extension=file_extension,
+        )
 
     # ----------------------------------------------------------------------------------------------
 

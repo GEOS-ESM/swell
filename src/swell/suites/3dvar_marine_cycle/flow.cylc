@@ -107,6 +107,7 @@
             {% if not skip_r2d2 %}
             # Compress forecast on compute node, then store in R2D2 on login node; (state space) forecast, analysis, and (obs space) observation outputs.
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
