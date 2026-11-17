@@ -9,7 +9,6 @@
 
 
 from datetime import datetime as dt
-import isodate
 import os
 from r2d2 import store
 
