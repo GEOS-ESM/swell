@@ -9,7 +9,6 @@
 
 
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
@@ -120,6 +119,8 @@ class SaveForecast(taskBase):
             f'Storing {os.path.basename(archive_path)} ({file_type}) '
             f'step=PT00 '
             f'at {self.local_background_time_dto.strftime(datetime_formats["iso_format"])}')
+
+        from r2d2 import store
 
         store(
             item='forecast',
