@@ -33,7 +33,8 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
 
-        # Compute data assimilation window parameters, some methods return dto, which may not be needed here
+        # Compute data assimilation window parameters, some methods return dto,
+        # which may not be needed here
         # -----------------------------------------------------------------------------
         analysis_time, _ = self.da_window_params.analysis_time()
         analysis_time_iso, _ = self.da_window_params.analysis_time_iso()

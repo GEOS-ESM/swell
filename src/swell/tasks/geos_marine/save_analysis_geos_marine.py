@@ -31,11 +31,12 @@ class SaveAnalysis(taskBase):
             Analysis files are handled differently then forecast files in R2D2, as they are stored
             at their exact valid time (the analysis time).
 
-            Additionally, for 4D/FGAT windows, all analyses within the window are stored, each at its own valid time,
-            rather than just the window-begin forecast as in the SaveForecast task.
+            Additionally, for 4D/FGAT windows, all analyses within the window are stored, each at
+            its own valid time, rather than just the window-begin forecast as in the SaveForecast
+            task.
 
-            The marine FGAT only calculates one analysis and increment file per model (i.e., mom6 and cice6), 
-            valid at the local background time.
+            The marine FGAT only calculates one analysis and increment file per model (i.e., mom6
+            and cice6), valid at the local background time.
 
            Parameters
            ----------
@@ -56,7 +57,8 @@ class SaveAnalysis(taskBase):
         # ---------------------
         load_r2d2_credentials(self.logger, self.platform())
 
-        self.local_background_time, self.local_background_time_dto = self.da_window_params.local_background_time(
+        (self.local_background_time,
+         self.local_background_time_dto) = self.da_window_params.local_background_time(
             self.window_length,
             self.window_type,
             dto=True)
@@ -83,13 +85,7 @@ class SaveAnalysis(taskBase):
         # ----------------------------------------------------------
         model_component = self.get_model()
 
-        if model_component == 'geos_atmosphere':
-            if is_4d:
-                self.store_atmosphere_4d()
-            else:
-                self.store_atmosphere_3d()
-
-        elif model_component == 'geos_marine':
+        if model_component == 'geos_marine':
             marine_model_configs = [('mom6', 'ocn_filename', 'ocn.an')]
             if 'cice6' in self.marine_models:
                 marine_model_configs.append(('cice6', 'ice_filename', 'ice.an'))
@@ -161,25 +157,5 @@ class SaveAnalysis(taskBase):
             file_type = an['file_type']
             source_file = ana_dto.strftime(an['filename'])
             self._store_analysis(model_name, ana_dto, source_file, file_type)
-
-    # ----------------------------------------------------------------------------------------------
-    # Atmosphere store methods (not implemeted yet, will need to resolve datetime-templated filenames for each analysis within the window)
-    # ----------------------------------------------------------------------------------------------
-
-    def store_atmosphere_3d(self) -> None:
-        """Store a single atmospheric analysis at the middle of a 3D window."""
-
-        self.logger.abort('Storing the window-begin atmospheric analysis is not ready yet.')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def store_atmosphere_4d(self) -> None:
-        """Store atmospheric analyses across a 4D (or FGAT) window.
-
-        Uses states_generator to enumerate valid analysis datetimes and stores
-        each file, keyed by its exact valid time.
-        """
-
-        self.logger.abort('Storing the window-begin atmospheric analysis is not ready yet.')
 
 # --------------------------------------------------------------------------------------------------

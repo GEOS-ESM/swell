@@ -1012,7 +1012,6 @@ class TaskQuestions(QuestionContainer, Enum):
             ]
         )
 
-
     # --------------------------------------------------------------------------------------------------
 
     SaveForecastCf = QuestionList(
