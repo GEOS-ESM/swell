@@ -32,6 +32,18 @@ class Setup(TaskSetup):
         self.model_dep = True
         self.slurm = {'ntasks-per-node': 126}
         self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
             qd.analysis_variables(),
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),

@@ -27,7 +27,7 @@ class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
         self.script = ("swell task RunJediObsfiltersExecutable $config"
-                       " -d $datetime -m geos_atmosphere")
+                       " -d $datetime -m {model}")
         self.is_cycling = True
         self.model_dep = True
         self.task_time_limit = True

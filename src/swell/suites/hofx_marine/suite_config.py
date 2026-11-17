@@ -9,7 +9,7 @@
 
 
 from swell.utilities.swell_questions import QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
+import swell.configuration.question_defaults as qd
 from swell.suites.base.suite_questions import common
 from swell.suites.base.suite_attributes import suite_configs
 

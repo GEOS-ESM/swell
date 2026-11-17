@@ -64,6 +64,7 @@ class TaskSetup(ABC):
     mail_events: list
     questions: list
     additional_sections: list
+    additional_values: dict
 
     def __init__(self, model: str | None = None,
                  platform: str | None = None,
@@ -78,7 +79,8 @@ class TaskSetup(ABC):
                  slurm: Literal['BLANKSPEC'] | dict | None = blank_spec,
                  mail_events: list | None = None,
                  questions: list | None = None,
-                 additional_sections: list | None = None
+                 additional_sections: list | None = None,
+                 additional_values: dict | None = None
                  ) -> None:
 
         # Set the base defaults needed by the class
@@ -102,6 +104,7 @@ class TaskSetup(ABC):
 
         self.questions = []
         self.additional_sections = []
+        self.additional_values = {}
 
         self.logger = get_logger('TaskSetup')
 
@@ -144,6 +147,9 @@ class TaskSetup(ABC):
 
         if additional_sections is not None:
             self.additional_sections = additional_sections
+
+        if additional_values is not None:
+            self.additional_values = additional_values
 
         self.post_init()
 
@@ -380,6 +386,11 @@ class TaskSetup(ABC):
         # Set the retry if this task needs it
         if self.retry:
             runtime_dict['execution retry delays'] = self.retry
+
+        # Add any additional values
+        if self.additional_values is not None:
+            for key, value in self.additional_values.items():
+                runtime_dict[key] = value
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
 

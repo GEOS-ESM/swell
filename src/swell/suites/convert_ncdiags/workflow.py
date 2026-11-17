@@ -52,19 +52,23 @@ template_str = '''
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
 
             # Convert bias correction to ioda
-            GetGsiBc
-            GetGsiBc => GsiBcToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+            GetGsiBc-{{model_component}}
+            GetGsiBc-{{model_component}} => GsiBcToIoda-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda-{{model_component}}
 
             # Convert ncdiags to ioda
-            GetGsiNcdiag
-            GetGsiNcdiag => GsiNcdiagToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+            GetGsiNcdiag-{{model_component}}
+            GetGsiNcdiag-{{model_component}} => GsiNcdiagToIoda-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda-{{model_component}}
 
             # Clean up
-            GsiNcdiagToIoda => CleanCycle
+            GsiNcdiagToIoda-{{model_component}} => CleanCycle-{{model_component}}
+        {% endif %}
+        {% endfor %}
         """
         {% endfor %}
 
@@ -109,10 +113,11 @@ class Workflow_convert_ncdiags(CylcWorkflow):
         self.tasks.append(ta.CloneJedi())
         self.tasks.append(ta.BuildJediByLinking())
         self.tasks.append(ta.BuildJedi())
-        self.tasks.append(ta.GetGsiBc())
-        self.tasks.append(ta.GsiBcToIoda())
-        self.tasks.append(ta.GetGsiNcdiag())
-        self.tasks.append(ta.GsiNcdiagToIoda())
-        self.tasks.append(ta.CleanCycle())
+        for model in self.experiment_dict['model_components']:
+            self.tasks.append(ta.GetGsiBc(model=model))
+            self.tasks.append(ta.GsiBcToIoda(model=model))
+            self.tasks.append(ta.GetGsiNcdiag(model=model))
+            self.tasks.append(ta.GsiNcdiagToIoda(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

@@ -146,12 +146,6 @@ class Workflow_eda_atmos(CylcWorkflow):
     def get_workflow_string(self):
         workflow_str = self.default_header()
 
-        self.experiment_dict['stall_timeout'] = """\
-        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
-        [[events]]
-        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
-        {% endif %}"""
-
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
@@ -160,6 +154,28 @@ class Workflow_eda_atmos(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+
+        for model in self.experiment_dict['model_components']:
+            for mem in range(1, self.experiment_dict['models'][model]['ensemble_num_members'] + 1):
+                eda_task = ta.RunJediEdaExecutable(
+                        scheduling_name=f'RunJediEdaExecutable_mem{mem}-{model}',
+                        script=(f'swell task RunJediEdaExecutable -m {model}'
+                                f' -d $datetime $config -imem {mem}'), model=model,
+                        additional_values={'inherit': f'RunJediEdaExecutable-{model}'})
+
+                workflow_str += eda_task.runtime_string(self.experiment_dict,
+                                                        self.slurm_external)
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
+        workflow_str = template_string_jinja2(logger=self.logger,
+                                              templated_string=workflow_str,
+                                              dictionary_of_templates=self.experiment_dict,
+                                              allow_unresolved=True)
 
         return workflow_str
 
@@ -182,6 +198,7 @@ class Workflow_eda_atmos(CylcWorkflow):
             self.tasks.append(ta.RunJediEdaExecutable(model=model))
             self.tasks.append(ta.RunJediObsfiltersExecutable(model=model))
             self.tasks.append(ta.RunJediEnsembleMeanVariance(model=model))
+            self.tasks.append(ta.RunJediEdaExecutable(model=model))
             self.tasks.append(ta.RunJediDiffstates(model=model))
             self.tasks.append(ta.CleanEda(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))

@@ -56,6 +56,8 @@ task_name = 'DownloadObs'
 class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
         self.questions = [
             qd.dry_run(),
             qd.obs_to_download(),

@@ -93,12 +93,15 @@ class Config():
             model_config = {}
 
         if 'models' in experiment_dict.keys():
+            all_model_configs = experiment_dict['models']
+        else:
+            all_model_configs = {}
 
-            # Add a dictionary tracking all model-dependent values
-            setattr(self, f'__all_model_configs__', experiment_dict['models'])
+        # Add a dictionary tracking all model-dependent values
+        setattr(self, f'__all_model_configs__', all_model_configs)
 
-            # Add a method to access the model-dependent dictionary
-            setattr(self, f'all_model_configs', self.get('all_model_configs'))
+        # Add a method to access the model-dependent dictionary
+        setattr(self, f'all_model_configs', self.get('all_model_configs'))
 
         # Remove the model specific part from the full config
         if 'models' in experiment_dict.keys():

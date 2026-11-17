@@ -25,6 +25,8 @@ task_name = 'GetEnsemble'
 class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
         self.questions = [
             qd.path_to_ensemble(),
             qd.horizontal_resolution(),

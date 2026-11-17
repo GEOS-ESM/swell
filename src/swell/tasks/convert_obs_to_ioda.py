@@ -34,11 +34,14 @@ task_name = 'ConvertObsToIoda'
 class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
         self.questions = [
             qd.converter_path(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.download_obs_config_overrides(),
+            qd.window_length()
         ]
 
 # --------------------------------------------------------------------------------------------------

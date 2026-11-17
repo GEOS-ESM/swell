@@ -9,7 +9,7 @@
 
 
 from swell.utilities.swell_questions import QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
+import swell.configuration.question_defaults as qd
 from swell.suites.base.suite_questions import marine
 from swell.suites.base.suite_attributes import suite_configs
 
@@ -56,6 +56,6 @@ letkf_marine = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, 'hofx_marine', letkf_marine)
+suite_configs.register(suite_name, 'letkf_marine', letkf_marine)
 
 # --------------------------------------------------------------------------------------------------

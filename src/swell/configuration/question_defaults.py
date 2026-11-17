@@ -708,7 +708,7 @@ class ensemble_hofx_strategy(TaskQuestion):
     ask_question: bool = True
     options: str = "defer_to_model"
     models: list[str] = mutable_field([
-        "geos_atmosphere"
+        "all_models"
     ])
     prompt: str = "Enter hofx strategy."
     widget_type: WType = WType.STRING_DROP_LIST

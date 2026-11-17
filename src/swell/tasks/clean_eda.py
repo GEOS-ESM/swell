@@ -24,6 +24,8 @@ task_name = 'CleanEda'
 class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
         self.questions = [
             qd.background_time_offset(),
             qd.crtm_coeff_dir(),

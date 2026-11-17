@@ -145,6 +145,9 @@ class DataAssimilationWindowParams():
 
         local_background_time = self.__get_local_background_time__(window_type, window_length)
 
+        if dto:
+            return self.local_background_time_dto(window_length, window_type)
+
         return local_background_time.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------

@@ -114,28 +114,32 @@ class Workflow_hofx_cf(CylcWorkflow):
     def get_workflow_string(self):
         workflow_str = self.default_header()
 
-        self.experiment_dict['stall_timeout'] = """\
-        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
-        [[events]]
-        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
-        {% endif %}"""
-
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
         for task in self.tasks:
-            if task.base_name == 'GetObservations':
-                model = task.model
-                for observation in self.experiment_dict['models'][task.model]['observations']:
-                    task.scheduling_name = f'GetObservations-{observation}-{model}'
-                    task.script = ('swell task GetObservations $config -d $datetime '
-                                   f'-m {model} -a {observation}')
-                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
-            else:
-                workflow_str += task.runtime_string(self.experiment_dict,
-                                                    self.slurm_external)
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
+
+        model = task.model
+        for observation in self.experiment_dict['models'][task.model]['observations']:
+            task.scheduling_name = f'GetObservations-{observation}-{model}'
+            task.script = ('swell task GetObservations $config -d $datetime '
+                           f'-m {model} -a {observation}')
+            workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
+        workflow_str = template_string_jinja2(logger=self.logger,
+                                              templated_string=workflow_str,
+                                              dictionary_of_templates=self.experiment_dict,
+                                              allow_unresolved=True)
 
         return workflow_str
 

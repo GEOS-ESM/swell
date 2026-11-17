@@ -118,12 +118,6 @@ class Workflow_hofx(CylcWorkflow):
     def get_workflow_string(self):
         workflow_str = self.default_header()
 
-        self.experiment_dict['stall_timeout'] = """\
-        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
-        [[events]]
-        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
-        {% endif %}"""
-
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
@@ -132,6 +126,17 @@ class Workflow_hofx(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
+        workflow_str = template_string_jinja2(logger=self.logger,
+                                              templated_string=workflow_str,
+                                              dictionary_of_templates=self.experiment_dict,
+                                              allow_unresolved=True)
 
         return workflow_str
 

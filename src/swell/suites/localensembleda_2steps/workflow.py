@@ -26,7 +26,7 @@ template_str = '''
     UTC mode = True
     allow implicit tasks = False
 
-{{scheduling['stall_timeout']}}
+{{stall_timeout}}
 
 # --------------------------------------------------------------------------------------------------
 
