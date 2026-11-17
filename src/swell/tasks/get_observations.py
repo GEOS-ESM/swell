@@ -29,6 +29,9 @@ _DEDUP_TOL_LATLON = 1e-4   # degrees (~11 m)
 _DEDUP_TOL_TIME_S = 1     # seconds
 _DEDUP_TOL_DEPTH_M = 0.01    # meters (insitu only)
 
+# Sentinel base for locations with missing lat/lon so they are never merged with anything
+_DEDUP_BAD_KEY_BASE = -(2 ** 62)
+
 # ----------------------------------------------------------------------------------------------
 
 
@@ -664,64 +667,92 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def _compute_dedup_indices(self, input_datasets: list) -> np.ndarray:
-        """Return sorted indices selecting the first occurrence of each unique observation.
+    def _compute_dedup_masks(self, input_datasets: list) -> list:
+        """Return one boolean keep-mask per input dataset (first occurrence wins).
 
         Identity key: (lat, lon, dateTime) always; depth added when present in MetaData.
-        Tolerances are applied by rounding before hashing so comparison is O(N log N).
+        Tolerances are applied by rounding before comparing.
+
+        The datasets are processed one at a time. Memory is bounded by the keys of the
+        unique observations seen so far plus the keys of the current file, rather than
+        the keys of every observation in every file. Observations are kept in file order,
+        so the result is equivalent to keeping the first occurrence across the
+        concatenated files.
         """
-        lats, lons, times, depths = [], [], [], []
         has_depth = any(
             'depth' in ds['MetaData'].variables
             for ds in input_datasets if 'MetaData' in ds.groups
         )
+        ncols = 4 if has_depth else 3
+
+        seen = np.empty((0, ncols), dtype=np.int64)
+        masks = []
+        n_bad_total = 0
 
         for ds in input_datasets:
             meta = ds['MetaData']
             n = ds.dimensions['Location'].size
-            lats.append(np.ma.filled(meta['latitude'][:], np.nan))
-            lons.append(np.ma.filled(meta['longitude'][:], np.nan))
-            times.append(np.ma.filled(meta['dateTime'][:], 0))
+
+            lat = np.ma.filled(meta['latitude'][:].astype(np.float64), np.nan)
+            lon = np.ma.filled(meta['longitude'][:].astype(np.float64), np.nan)
+            tim = np.ma.filled(meta['dateTime'][:], 0)
+
+            # Never let masked/NaN coords collapse onto the same int64 sentinel
+            invalid = np.isnan(lat) | np.isnan(lon)
+
+            lat_key = np.round(np.nan_to_num(lat) / _DEDUP_TOL_LATLON).astype(np.int64)
+            lon_key = np.round(np.nan_to_num(lon) / _DEDUP_TOL_LATLON).astype(np.int64)
+            time_key = (tim // _DEDUP_TOL_TIME_S).astype(np.int64)
+            del lat, lon, tim
+
+            if invalid.any():
+                n_bad = int(invalid.sum())
+                self.logger.info(
+                    f"Deduplication: {n_bad} locations have missing lat/lon; "
+                    "forcing unique keys so they are never merged."
+                )
+                # distinct, very negative sentinels that cannot collide with real keys
+                lat_key[invalid] = _DEDUP_BAD_KEY_BASE - (n_bad_total + np.arange(n_bad))
+                n_bad_total += n_bad
+
+            cols = [lat_key, lon_key, time_key]
+
             if has_depth:
                 if 'depth' in meta.variables:
-                    depths.append(np.ma.filled(meta['depth'][:], np.nan))
+                    depth = np.ma.filled(meta['depth'][:].astype(np.float64), np.nan)
                 else:
-                    depths.append(np.zeros(n, dtype=np.float32))
+                    depth = np.zeros(n, dtype=np.float64)
+                depth_key = np.round(
+                    np.nan_to_num(depth, nan=0.0) / _DEDUP_TOL_DEPTH_M
+                ).astype(np.int64)
+                cols.append(depth_key)
+                del depth
 
-        lat_all = np.concatenate(lats)
-        lon_all = np.concatenate(lons)
-        time_all = np.concatenate(times)
+            keys = np.stack(cols, axis=1)
+            del cols, lat_key, lon_key, time_key
 
-        # Guard: never let masked/NaN coords collapse onto the same int64 sentinel.
-        invalid = np.isnan(lat_all) | np.isnan(lon_all)
+            # Rows 0..n_seen-1 are the already-kept observations, the rest are this file.
+            # np.lexsort is stable, so among equal keys the lowest original index
+            # (i.e. an already-seen row, then the earliest row in this file) comes first.
+            n_seen = seen.shape[0]
+            all_keys = np.concatenate([seen, keys], axis=0)
+            order = np.lexsort(all_keys.T)
+            sorted_keys = all_keys[order]
 
-        lat_key = np.round(lat_all / _DEDUP_TOL_LATLON).astype(np.int64)
-        lon_key = np.round(lon_all / _DEDUP_TOL_LATLON).astype(np.int64)
-        time_key = (time_all // _DEDUP_TOL_TIME_S).astype(np.int64)
+            is_first = np.ones(order.size, dtype=bool)
+            is_first[1:] = np.any(sorted_keys[1:] != sorted_keys[:-1], axis=1)
 
-        if invalid.any():
-            self.logger.info(
-                f"Deduplication: {invalid.sum()} locations have missing lat/lon; "
-                "forcing unique keys so they are never merged."
-            )
-            bad_idx = np.flatnonzero(invalid)
-            lat_key[bad_idx] = -(np.arange(bad_idx.size) + 1)  # distinct negative sentinels
+            # Keep first-of-group rows that belong to the current file
+            keep_sorted = is_first & (order >= n_seen)
 
-        cols = [lat_key, lon_key, time_key]
-        if has_depth:
-            depth_all = np.concatenate(depths)
-            depth_filled = np.nan_to_num(depth_all, nan=0.0)
-            depth_key = np.round(depth_filled / _DEDUP_TOL_DEPTH_M).astype(np.int64)
-            cols.append(depth_key)
+            mask = np.zeros(n, dtype=bool)
+            mask[order[keep_sorted] - n_seen] = True
+            masks.append(mask)
 
-        keys = np.stack(cols, axis=1)
-        row_view = np.ascontiguousarray(keys).view(
-            np.dtype((np.void, keys.dtype.itemsize * keys.shape[1]))
-        ).ravel()
+            seen = np.concatenate([seen, keys[mask]], axis=0)
+            del all_keys, order, sorted_keys, is_first, keep_sorted, keys
 
-        _, unique_idx = np.unique(row_view, return_index=True)
-        unique_idx.sort()   # preserve chronological / file order
-        return unique_idx
+        return masks
 
     # ----------------------------------------------------------------------------------------------
 
@@ -730,11 +761,18 @@ class GetObservations(taskBase):
         Combines multiple IODA v3 netcdf input files into a single output.
 
         The total Location dimension size is computed up front by summing across all
-        valid (non-empty) input files. All other dimensions (e.g. Channel) are taken
-        from the reference file unchanged.
+        valid (non-empty) input files, then reduced by the number of duplicate
+        observations. All other dimensions (e.g. Channel) are taken from the reference
+        file unchanged.
 
         All input files are opened once and kept open for the duration of the combine
         to avoid the overhead of repeated per-variable file opens.
+
+        Memory use is kept low so the task can run on a shared login node:
+          * duplicates are identified file by file (see _compute_dedup_masks), and
+          * each output variable is assembled one at a time into a preallocated array
+            of the final (deduplicated) size by copying each file's kept rows into it.
+        No array holding every observation of every input file is ever built.
 
         Compression settings (zlib, complevel, shuffle) are copied from each source
         variable so the output file size remains comparable to the inputs rather than
@@ -742,8 +780,8 @@ class GetObservations(taskBase):
 
         Variable names are collected across all input files, not just the first. When
         a file lacks a variable present in other files (e.g. salinity absent from
-        temperature-only insitu files), a fully-masked array sized to that file's
-        Location dimension is substituted so the concatenation shape stays consistent.
+        temperature-only insitu files), masked values (empty strings for string
+        variables) are used for that file's rows so the output shape stays consistent.
 
         Channel-dimensioned variables are identical across files and are written once
         from the first file that contains them.
@@ -771,10 +809,15 @@ class GetObservations(taskBase):
                         valid_files.append(fname)
                     else:
                         empty_template = fname
-            except OSError:
+            except OSError as e:
+                self.logger.info(f"WARNING: could not open {fname} ({e}); skipping it.")
                 continue
 
         if not valid_files:
+            if empty_template is None:
+                raise RuntimeError(
+                    f"read_and_combine: none of the input files could be read: "
+                    f"{input_filenames}")
             shutil.copyfile(empty_template, output_filename)
             return
 
@@ -795,10 +838,10 @@ class GetObservations(taskBase):
         # -----------------------------------------------------------------------
         input_datasets = [nc.Dataset(f, 'r') for f in valid_files]
         try:
-            # Compute deduplication mask once across all files (MetaData coords only)
-            unique_idx = self._compute_dedup_indices(input_datasets)
+            # Compute per-file deduplication masks (MetaData coords only, streamed)
+            masks = self._compute_dedup_masks(input_datasets)
             n_total = out_dim_size['Location']
-            n_unique = len(unique_idx)
+            n_unique = int(sum(int(m.sum()) for m in masks))
             if n_unique < n_total:
                 self.logger.info(
                     f"Deduplication: {n_total} -> {n_unique} locations "
@@ -819,7 +862,7 @@ class GetObservations(taskBase):
                 for ds in input_datasets:
                     all_group_names.update(ds.groups.keys())
 
-                for group_name in all_group_names:
+                for group_name in sorted(all_group_names):
                     out_group = out_ds.createGroup(group_name)
 
                     # Collect all variable names across all files for this group
@@ -852,33 +895,6 @@ class GetObservations(taskBase):
                         complevel = filters.get('complevel', 4)
                         shuffle = filters.get('shuffle', True)
 
-                        list_data = []
-                        for i, ds in enumerate(input_datasets):
-                            has_var = (group_name in ds.groups and
-                                       var_name in ds[group_name].variables)
-                            if is_channel_var:
-                                # Channel data is identical across files; read once
-                                if has_var:
-                                    list_data.append(ds[group_name][var_name][:])
-                                break
-                            else:
-                                if has_var:
-                                    list_data.append(ds[group_name][var_name][:])
-                                else:
-                                    # Fill missing variable with masked values
-                                    loc_size = ds.dimensions['Location'].size
-                                    shape = (loc_size,) + ref_var.shape[1:]
-                                    list_data.append(
-                                        np.ma.masked_all(shape, dtype=ref_var.dtype)
-                                    )
-
-                        if not list_data:
-                            continue
-
-                        variable_data = np.ma.concatenate(list_data, axis=0)
-                        if not is_channel_var:
-                            variable_data = variable_data[unique_idx]
-
                         # Preserve fill value when present
                         create_kwargs = {}
                         if '_FillValue' in ref_var.ncattrs():
@@ -888,15 +904,40 @@ class GetObservations(taskBase):
                                 {'zlib': True, 'complevel': complevel, 'shuffle': shuffle}
                             )
 
-                        subset_var = out_group.createVariable(
-                            var_name, variable_data.dtype, var_dims, **create_kwargs
+                        out_var = out_group.createVariable(
+                            var_name, ref_var.dtype, var_dims, **create_kwargs
                         )
                         for attr_name in ref_var.ncattrs():
                             if attr_name == '_FillValue':
                                 continue
-                            subset_var.setncattr(attr_name, ref_var.getncattr(attr_name))
+                            out_var.setncattr(attr_name, ref_var.getncattr(attr_name))
 
-                        subset_var[:] = variable_data
+                        # Channel data is identical across files; write once
+                        if is_channel_var:
+                            out_var[:] = ref_var[:]
+                            continue
+
+                        # Preallocate the final-size array for this one variable
+                        out_shape = (n_unique,) + tuple(ref_var.shape[1:])
+                        if ref_var.dtype is str:
+                            # variable-length strings: use an object array so nothing is truncated
+                            out_data = np.full(out_shape, '', dtype=object)
+                        else:
+                            out_data = np.ma.masked_all(out_shape, dtype=ref_var.dtype)
+
+                        # Copy each file's kept rows into place, one file at a time
+                        offset = 0
+                        for ds, mask in zip(input_datasets, masks):
+                            k = int(mask.sum())
+                            if k == 0:
+                                continue
+                            if group_name in ds.groups and var_name in ds[group_name].variables:
+                                out_data[offset:offset + k] = ds[group_name][var_name][:][mask]
+                            # else: leave masked (or empty string) for this file's rows
+                            offset += k
+
+                        out_var[:] = out_data
+                        del out_data
 
         finally:
             for ds in input_datasets:
