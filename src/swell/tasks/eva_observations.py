@@ -32,6 +32,31 @@ def run_eva(eva_dict: dict) -> eva:
 # --------------------------------------------------------------------------------------------------
 
 
+# Some IODA MetaData variables (e.g. qualityFlags) carry a 'coordinates' attribute pointing at
+# longitude/latitude. By default xarray uses that to promote longitude/latitude into
+# coordinates when eva opens the MetaData group, so they are no longer plain data variables.
+# Eva's IodaObsSpace only renames data variables (to 'MetaData::longitude'), so this later
+# causes a KeyError. Patch eva to open datasets with decode_coords=False to prevent it.
+def _patch_eva_ioda_obs_space_decode_coords() -> None:
+    try:
+        from eva.data import ioda_obs_space
+        from xarray import open_dataset as xr_open_dataset
+    except ImportError:
+        return
+
+    def open_dataset_no_coord_promotion(*args, **kwargs):
+        kwargs.setdefault('decode_coords', False)
+        return xr_open_dataset(*args, **kwargs)
+
+    ioda_obs_space.open_dataset = open_dataset_no_coord_promotion
+
+
+_patch_eva_ioda_obs_space_decode_coords()
+
+
+# --------------------------------------------------------------------------------------------------
+
+
 class EvaObservations(taskBase):
 
     def execute(self) -> None:

@@ -45,27 +45,27 @@ class EvaComparisonJediLog(taskBase):
 
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
-        experiment_tag_2 = list(experiment_tag_paths.keys())[1]
+        experiment_tag_exp = list(experiment_tag_paths.keys())[0]
+        experiment_tag_ctl = list(experiment_tag_paths.keys())[1]
 
-        experiment_path_1 = list(experiment_tag_paths.values())[0]
-        experiment_path_2 = list(experiment_tag_paths.values())[1]
+        experiment_path_exp = list(experiment_tag_paths.values())[0]
+        experiment_path_ctl = list(experiment_tag_paths.values())[1]
 
         yaml = YAML(typ='safe')
-        with open(experiment_path_1, 'r') as f:
-            experiment_dict_1 = yaml.load(f)
+        with open(experiment_path_ctl, 'r') as f:
+            experiment_dict_ctl = yaml.load(f)
 
-        experiment_id_1 = experiment_dict_1['experiment_id']
+        experiment_id_ctl = experiment_dict_ctl['experiment_id']
 
-        with open(experiment_path_2, 'r') as f:
-            experiment_dict_2 = yaml.load(f)
+        with open(experiment_path_exp, 'r') as f:
+            experiment_dict_exp = yaml.load(f)
 
-        experiment_id_2 = experiment_dict_2['experiment_id']
+        experiment_id_exp = experiment_dict_exp['experiment_id']
 
-        cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
-        cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+        cycle_dir_ctl = os.path.join(os.path.dirname(experiment_path_ctl), '..', 'run',
+                                     self.__datetime__.string_directory(), self.get_model())
+        cycle_dir_exp = os.path.join(os.path.dirname(experiment_path_exp), '..', 'run',
+                                     self.__datetime__.string_directory(), self.get_model())
 
         # Info to task log
         info_string = 'Running Eva to plot from the jedi_log file'
@@ -76,14 +76,14 @@ class EvaComparisonJediLog(taskBase):
         # Create dictionary used to override the eva config
         eva_override = {}
         eva_override['cycle_dir'] = self.cycle_dir()
-        eva_override['cycle_dir_1'] = cycle_dir_1
-        eva_override['cycle_dir_2'] = cycle_dir_2
+        eva_override['cycle_dir_ctl'] = cycle_dir_ctl
+        eva_override['cycle_dir_exp'] = cycle_dir_exp
 
-        eva_override['experiment_id_1'] = experiment_id_1
-        eva_override['experiment_id_2'] = experiment_id_2
+        eva_override['experiment_id_ctl'] = experiment_id_ctl
+        eva_override['experiment_id_exp'] = experiment_id_exp
 
-        eva_override['experiment_tag_1'] = experiment_tag_1
-        eva_override['experiment_tag_2'] = experiment_tag_2
+        eva_override['experiment_tag_ctl'] = experiment_tag_ctl
+        eva_override['experiment_tag_exp'] = experiment_tag_exp
 
         eva_override['log_type'] = log_type
 

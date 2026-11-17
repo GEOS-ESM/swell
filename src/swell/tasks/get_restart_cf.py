@@ -25,9 +25,9 @@ class GetRestartCf(taskBase):
 
         """
 
-        # Load R2D2 credentials
-        # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         rst_file_types = self.config.rst_file_types()
 

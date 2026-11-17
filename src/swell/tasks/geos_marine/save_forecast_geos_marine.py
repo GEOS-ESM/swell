@@ -63,7 +63,9 @@ class SaveForecast(taskBase):
         self.window_length = self.config.window_length()
         self.horizontal_resolution = self.config.horizontal_resolution()
 
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         self.local_background_time, self.local_background_time_dto = \
             self.da_window_params.local_background_time(self.window_length, window_type, dto=True)

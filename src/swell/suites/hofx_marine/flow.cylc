@@ -70,11 +70,12 @@
 
             {% if not skip_r2d2 %}
             # Save observations
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
-            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}
@@ -145,9 +146,17 @@
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        execution retry delays = '2 * PT30S'
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-SKIPPED-{{model_component}}]]
+        script = """
+            touch {{experiment_root}}/{{experiment_id}}/run/${datetime:0:-1}00Z/{{model_component}}/__CLEAN_SKIPPED__
+            cylc set $CYLC_WORKFLOW_ID//$datetime/CleanCycle-{{model_component}} --out skip
+        """
+
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

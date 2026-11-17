@@ -1,9 +1,9 @@
 datasets:
 
-- name: experiment_1
+- name: experiment_exp
   type: IodaObsSpace
   filenames:
-    - {{obs_path_file_1}}
+    - {{obs_path_file_exp}}
   groups:
     - name: ObsValue
       variables: &variables {{simulated_variables}}
@@ -15,10 +15,10 @@ datasets:
     - name: EffectiveQC0
     - name: EffectiveQC1
 
-- name: experiment_2
+- name: experiment_ctl
   type: IodaObsSpace
   filenames:
-    - {{obs_path_file_2}}
+    - {{obs_path_file_ctl}}
   groups:
     - name: ObsValue
       variables: *variables
@@ -34,105 +34,105 @@ transforms:
 
 # Generate Increment for JEDI 1
 - transform: arithmetic
-  new name: experiment_1::increment::${variable}
-  equals: experiment_1::ombg::${variable}-experiment_1::oman::${variable}
+  new name: experiment_exp::increment::${variable}
+  equals: experiment_exp::ombg::${variable}-experiment_exp::oman::${variable}
   for:
     variable: *variables
 
 # Generate Increment for JEDI 2
 - transform: arithmetic
-  new name: experiment_2::increment::${variable}
-  equals: experiment_2::ombg::${variable}-experiment_2::oman::${variable}
+  new name: experiment_ctl::increment::${variable}
+  equals: experiment_ctl::ombg::${variable}-experiment_ctl::oman::${variable}
   for:
     variable: *variables
 
 # Generate hofx0 that passed QC for JEDI 1
 - transform: accept where
-  new name: experiment_1::hofx0PassedQc::${variable}
-  starting field: experiment_1::hofx0::${variable}
+  new name: experiment_exp::hofx0PassedQc::${variable}
+  starting field: experiment_exp::hofx0::${variable}
   where:
-    - experiment_1::EffectiveQC0::${variable} == 0
+    - experiment_exp::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate hofx0 that passed QC for JEDI 2
 - transform: accept where
-  new name: experiment_2::hofx0PassedQc::${variable}
-  starting field: experiment_2::hofx0::${variable}
+  new name: experiment_ctl::hofx0PassedQc::${variable}
+  starting field: experiment_ctl::hofx0::${variable}
   where:
-    - experiment_2::EffectiveQC0::${variable} == 0
+    - experiment_ctl::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate hofx1 that passed QC for JEDI 1
 - transform: accept where
-  new name: experiment_1::hofx1PassedQc::${variable}
-  starting field: experiment_1::hofx1::${variable}
+  new name: experiment_exp::hofx1PassedQc::${variable}
+  starting field: experiment_exp::hofx1::${variable}
   where:
-    - experiment_1::EffectiveQC1::${variable} == 0
+    - experiment_exp::EffectiveQC1::${variable} == 0
   for:
     variable: *variables
 
 # Generate hofx1 that passed QC for JEDI 2
 - transform: accept where
-  new name: experiment_2::hofx1PassedQc::${variable}
-  starting field: experiment_2::hofx1::${variable}
+  new name: experiment_ctl::hofx1PassedQc::${variable}
+  starting field: experiment_ctl::hofx1::${variable}
   where:
-    - experiment_2::EffectiveQC1::${variable} == 0
+    - experiment_ctl::EffectiveQC1::${variable} == 0
   for:
     variable: *variables
 
 # Generate ombg that passed QC for JEDI 1
 - transform: accept where
-  new name: experiment_1::ombgPassedQc::${variable}
-  starting field: experiment_1::ombg::${variable}
+  new name: experiment_exp::ombgPassedQc::${variable}
+  starting field: experiment_exp::ombg::${variable}
   where:
-    - experiment_1::EffectiveQC0::${variable} == 0
+    - experiment_exp::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate ombg that passed QC for JEDI 2
 - transform: accept where
-  new name: experiment_2::ombgPassedQc::${variable}
-  starting field: experiment_2::ombg::${variable}
+  new name: experiment_ctl::ombgPassedQc::${variable}
+  starting field: experiment_ctl::ombg::${variable}
   where:
-    - experiment_2::EffectiveQC0::${variable} == 0
+    - experiment_ctl::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate oman that passed QC for JEDI 1
 - transform: accept where
-  new name: experiment_1::omanPassedQc::${variable}
-  starting field: experiment_1::oman::${variable}
+  new name: experiment_exp::omanPassedQc::${variable}
+  starting field: experiment_exp::oman::${variable}
   where:
-    - experiment_1::EffectiveQC1::${variable} == 0
+    - experiment_exp::EffectiveQC1::${variable} == 0
   for:
     variable: *variables
 
 # Generate oman that passed QC for JEDI 2
 - transform: accept where
-  new name: experiment_2::omanPassedQc::${variable}
-  starting field: experiment_2::oman::${variable}
+  new name: experiment_ctl::omanPassedQc::${variable}
+  starting field: experiment_ctl::oman::${variable}
   where:
-    - experiment_2::EffectiveQC1::${variable} == 0
+    - experiment_ctl::EffectiveQC1::${variable} == 0
   for:
     variable: *variables
 
 # Generate obs that passed QC for JEDI 1
 - transform: accept where
-  new name: experiment_1::ObsValuePassedQc::${variable}
-  starting field: experiment_1::ObsValue::${variable}
+  new name: experiment_exp::ObsValuePassedQc::${variable}
+  starting field: experiment_exp::ObsValue::${variable}
   where:
-    - experiment_1::EffectiveQC0::${variable} == 0
+    - experiment_exp::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate obs that passed QC for JEDI 2
 - transform: accept where
-  new name: experiment_2::ObsValuePassedQc::${variable}
-  starting field: experiment_2::ObsValue::${variable}
+  new name: experiment_ctl::ObsValuePassedQc::${variable}
+  starting field: experiment_ctl::ObsValue::${variable}
   where:
-    - experiment_2::EffectiveQC0::${variable} == 0
+    - experiment_ctl::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
@@ -155,51 +155,51 @@ graphics:
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_grid:
         add_legend:
           loc: 'upper left'
         layers:
         - type: Scatter
           x:
-            variable: experiment_1::ObsValue::${variable}
+            variable: experiment_exp::ObsValue::${variable}
           y:
-            variable: experiment_1::hofx0PassedQc::${variable}
+            variable: experiment_exp::hofx0PassedQc::${variable}
           markersize: 5
           color: 'black'
           label: 'JEDI h(x)_0 versus obs (passed QC in JEDI)'
         - type: Scatter
           x:
-            variable: experiment_1::ObsValue::${variable}
+            variable: experiment_exp::ObsValue::${variable}
           y:
-            variable: experiment_1::hofx1PassedQc::${variable}
+            variable: experiment_exp::hofx1PassedQc::${variable}
           markersize: 5
           color: 'red'
-          label: 'JEDI h(x)_1 versus obs (passed QC in JEDI)'
+          label: 'JEDI h(x)_exp versus obs (passed QC in JEDI)'
 
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_grid:
         add_legend:
           loc: 'upper left'
         layers:
         - type: Scatter
           x:
-            variable: experiment_2::ObsValue::${variable}
+            variable: experiment_ctl::ObsValue::${variable}
           y:
-            variable: experiment_2::hofx0PassedQc::${variable}
+            variable: experiment_ctl::hofx0PassedQc::${variable}
           markersize: 5
           color: 'black'
           label: 'JEDI h(x)_0 versus obs (passed QC in JEDI)'
         - type: Scatter
           x:
-            variable: experiment_2::ObsValue::${variable}
+            variable: experiment_ctl::ObsValue::${variable}
           y:
-            variable: experiment_2::hofx1PassedQc::${variable}
+            variable: experiment_ctl::hofx1PassedQc::${variable}
           markersize: 5
           color: 'red'
-          label: 'JEDI h(x)_1 versus obs (passed QC in JEDI)'
+          label: 'JEDI h(x)_exp versus obs (passed QC in JEDI)'
 
   # Histogram plots
   # ---------------
@@ -209,7 +209,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: histogram_bins
-        data variable: experiment_1::omanPassedQc::${variable}
+        data variable: experiment_exp::omanPassedQc::${variable}
         number of bins rule: 'rice'
     figure:
       layout: [2,1]
@@ -219,20 +219,20 @@ graphics:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
         statistics:
           fields:
-            - field_name: experiment_1::ombgPassedQc::${variable}
+            - field_name: experiment_exp::ombgPassedQc::${variable}
               xloc: 0.5
               yloc: -0.10
               kwargs:
                 color: 'black'
                 fontsize: 8
                 fontfamily: monospace
-            - field_name: experiment_1::omanPassedQc::${variable}
+            - field_name: experiment_exp::omanPassedQc::${variable}
               xloc: 0.5
               yloc: -0.13
               kwargs:
@@ -248,7 +248,7 @@ graphics:
         layers:
         - type: Histogram
           data:
-            variable: experiment_1::ombgPassedQc::${variable}
+            variable: experiment_exp::ombgPassedQc::${variable}
           color: 'red'
           label: 'observations minus background '
           bins: ${dynamic_bins}
@@ -256,7 +256,7 @@ graphics:
           density: true
         - type: Histogram
           data:
-            variable: experiment_1::omanPassedQc::${variable}
+            variable: experiment_exp::omanPassedQc::${variable}
           color: 'blue'
           label: 'observations minus analysis'
           bins: ${dynamic_bins}
@@ -265,20 +265,20 @@ graphics:
 
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
         statistics:
           fields:
-            - field_name: experiment_2::ombgPassedQc::${variable}
+            - field_name: experiment_ctl::ombgPassedQc::${variable}
               xloc: 0.5
               yloc: -0.10
               kwargs:
                 color: 'black'
                 fontsize: 8
                 fontfamily: monospace
-            - field_name: experiment_2::omanPassedQc::${variable}
+            - field_name: experiment_ctl::omanPassedQc::${variable}
               xloc: 0.5
               yloc: -0.13
               kwargs:
@@ -294,7 +294,7 @@ graphics:
         layers:
         - type: Histogram
           data:
-            variable: experiment_2::ombgPassedQc::${variable}
+            variable: experiment_ctl::ombgPassedQc::${variable}
           color: 'red'
           label: 'observations minus background '
           bins: ${dynamic_bins}
@@ -302,7 +302,7 @@ graphics:
           density: true
         - type: Histogram
           data:
-            variable: experiment_2::omanPassedQc::${variable}
+            variable: experiment_ctl::omanPassedQc::${variable}
           color: 'blue'
           label: 'observations minus analysis'
           bins: ${dynamic_bins}
@@ -316,7 +316,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment_1::ombgPassedQc::${variable}
+        data variable: experiment_exp::ombgPassedQc::${variable}
     figure:
       figure size: [40,10]
       layout: [4,1]
@@ -330,15 +330,15 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_1::MetaData::longitude
+            variable: experiment_exp::MetaData::longitude
           latitude:
-            variable: experiment_1::MetaData::latitude
+            variable: experiment_exp::MetaData::latitude
           data:
-            variable: experiment_1::ombgPassedQc::${variable}
+            variable: experiment_exp::ombgPassedQc::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
@@ -353,15 +353,15 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_1::MetaData::longitude
+            variable: experiment_exp::MetaData::longitude
           latitude:
-            variable: experiment_1::MetaData::latitude
+            variable: experiment_exp::MetaData::latitude
           data:
-            variable: experiment_1::omanPassedQc::${variable}
+            variable: experiment_exp::omanPassedQc::${variable}
           markersize: 2
           label: OmBg
           colorbar: true
@@ -376,15 +376,15 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_2::MetaData::longitude
+            variable: experiment_ctl::MetaData::longitude
           latitude:
-            variable: experiment_2::MetaData::latitude
+            variable: experiment_ctl::MetaData::latitude
           data:
-            variable: experiment_2::ombgPassedQc::${variable}
+            variable: experiment_ctl::ombgPassedQc::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
@@ -399,15 +399,15 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_2::MetaData::longitude
+            variable: experiment_ctl::MetaData::longitude
           latitude:
-            variable: experiment_2::MetaData::latitude
+            variable: experiment_ctl::MetaData::latitude
           data:
-            variable: experiment_2::omanPassedQc::${variable}
+            variable: experiment_ctl::omanPassedQc::${variable}
           markersize: 2
           label: OmBg
           colorbar: true
@@ -419,7 +419,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment_1::EffectiveQC1::${variable}
+        data variable: experiment_exp::EffectiveQC1::${variable}
     figure:
       figure size: [40,10]
       layout: [2,1]
@@ -433,15 +433,15 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_1::MetaData::longitude
+            variable: experiment_exp::MetaData::longitude
           latitude:
-            variable: experiment_1::MetaData::latitude
+            variable: experiment_exp::MetaData::latitude
           data:
-            variable: experiment_1::EffectiveQC1::${variable}
+            variable: experiment_exp::EffectiveQC1::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
@@ -456,15 +456,15 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_2::MetaData::longitude
+            variable: experiment_ctl::MetaData::longitude
           latitude:
-            variable: experiment_2::MetaData::latitude
+            variable: experiment_ctl::MetaData::latitude
           data:
-            variable: experiment_2::EffectiveQC1::${variable}
+            variable: experiment_ctl::EffectiveQC1::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
@@ -476,7 +476,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment_1::increment::${variable}
+        data variable: experiment_exp::increment::${variable}
     figure:
       figure size: [40,10]
       layout: [2,1]
@@ -490,15 +490,15 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_1::MetaData::longitude
+            variable: experiment_exp::MetaData::longitude
           latitude:
-            variable: experiment_1::MetaData::latitude
+            variable: experiment_exp::MetaData::latitude
           data:
-            variable: experiment_1::increment::${variable}
+            variable: experiment_exp::increment::${variable}
           markersize: 2
           label: OmAn
           colorbar: true
@@ -513,15 +513,15 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapScatter
           longitude:
-            variable: experiment_2::MetaData::longitude
+            variable: experiment_ctl::MetaData::longitude
           latitude:
-            variable: experiment_2::MetaData::latitude
+            variable: experiment_ctl::MetaData::latitude
           data:
-            variable: experiment_2::increment::${variable}
+            variable: experiment_ctl::increment::${variable}
           markersize: 2
           label: OmAn
           colorbar: true

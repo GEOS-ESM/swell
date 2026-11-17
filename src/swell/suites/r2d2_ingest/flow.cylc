@@ -51,6 +51,10 @@
                 {% else %}
                 IngestObs-{{model_component}}
                 {% endif %}
+                {% if not ingest_background_pipeline and
+                      not models[model_component]["store_as_symlink"] %}
+                IngestObs-{{model_component}} => CleanCycle-{{model_component}}
+                {% endif %}
                 {% endfor %}
             """
         {% endfor %}
@@ -100,6 +104,13 @@
     [[IngestObs-{{model_component}}]]
         script = "swell task IngestObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT10M
+
+    {% if not ingest_background_pipeline and
+          not models[model_component]["store_as_symlink"] %}
+    [[CleanCycle-{{model_component}}]]
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+        execution time limit = PT10M
+    {% endif %}
 
     {% if ingest_background_pipeline %}
     [[SaveBackground-{{model_component}}]]

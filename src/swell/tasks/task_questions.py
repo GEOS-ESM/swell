@@ -210,6 +210,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="ConvertObsToIoda",
         questions=[
             qd.converter_path(),
+            qd.download_obs_config_overrides(),
             qd.dry_run(),
             qd.obs_to_download(),
             qd.window_length(),
@@ -621,16 +622,17 @@ class TaskQuestions(QuestionContainer, Enum):
     PrepForecastCf = QuestionList(
         list_name="PrepForecastCf",
         questions=[
+            qd.additional_forecast_collections(),
             qd.analysis_variables(),
             qd.forecast_length(),
             qd.forecast_output_frequency(),
             qd.geos_cf_install_dir(),
-            qd.geos_cf_run_dir(),
-            qd.geosfp_exp(),
-            qd.geosfp_path(),
+            qd.geos_cf_rc_dir(),
             qd.horizontal_resolution(),
             qd.iau(),
             qd.inc_template(),
+            qd.met_replay_exp(),
+            qd.met_replay_root(),
             qd.window_length(),
             qd.rst_experiment()
         ]
@@ -803,17 +805,25 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_ensemble_increments(),
             qd.local_ensemble_save_posterior_mean(),
             qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
             qd.local_ensemble_solver(),
             qd.local_ensemble_use_linear_observer(),
             qd.skip_ensemble_hofx(),
+            qd.skip_hofx_output(),
             qd.total_processors(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
             qd.vertical_localization_apply_log_transform(),
             qd.vertical_localization_function(),
             qd.vertical_localization_ioda_vertical_coord(),
             qd.vertical_localization_ioda_vertical_coord_group(),
             qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
             qd.vertical_localization_method(),
             qd.perhost(),
+            qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
             qd.mock_experiment()
         ]
@@ -835,6 +845,88 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),
             qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEtkfObserver = QuestionList(
+        list_name="RunJediEtkfObserver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
+            qd.vertical_localization_method(),
+            qd.npx_per_observer(),
+            qd.npy_per_observer(),
+            qd.perhost(),
+            qd.change_vbc_to_sbc(),
+            qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEtkfSolver = QuestionList(
+        list_name="RunJediEtkfSolver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_do_posterior_observer(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_unit(),
+            qd.vertical_localization_frac_retained_variance(),
+            qd.vertical_localization_method(),
+            qd.perhost(),
+            qd.change_vbc_to_sbc(),
+            qd.comparison_log_type('localensembleda'),
         ]
     )
 
@@ -926,6 +1018,7 @@ class TaskQuestions(QuestionContainer, Enum):
     SaveForecastCf = QuestionList(
         list_name="SaveForecastCf",
         questions=[
+            qd.additional_forecast_collections(),
             qd.forecast_length(),
             qd.forecast_output_frequency(),
             qd.horizontal_resolution(),
