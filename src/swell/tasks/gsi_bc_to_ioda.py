@@ -32,6 +32,10 @@ class Setup(TaskSetup):
         self.is_cycling = True
         self.model_dep = True
         self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
             qd.path_to_gsi_bc_coefficients(),
             qd.window_length()
         ]
