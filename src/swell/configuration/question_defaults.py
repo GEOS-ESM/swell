@@ -185,7 +185,7 @@ class model_components(SuiteQuestion):
     question_name: str = "model_components"
     ask_question: bool = True
     options: str = "defer_to_code"
-    prompt: str = "Enter the model components for this model."
+    prompt: str = "Enter the GEOS model components interfaced by this experiment."
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
