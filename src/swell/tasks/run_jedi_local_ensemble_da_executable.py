@@ -70,6 +70,7 @@ class Setup(TaskSetup):
             qd.ensemble_num_members(),
             qd.ensmean_only(),
             qd.ensmeanvariance_only(),
+            qd.ensmeanvariance_spec(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.local_ensemble_inflation_mult(),
