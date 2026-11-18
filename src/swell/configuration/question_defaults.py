@@ -525,6 +525,7 @@ class bundles(TaskQuestion):
 # --------------------------------------------------------------------------------------------------
 
 
+@dataclass
 class cache_fetch(TaskQuestion):
     default_value: bool = True
     question_name: str = "cache_fetch"

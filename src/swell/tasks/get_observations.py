@@ -46,6 +46,7 @@ class Setup(TaskSetup):
             qd.observation_providers(),
             qd.observing_system_records_path(),
             qd.window_length(),
+            qd.cache_fetch()
         ]
 
 # --------------------------------------------------------------------------------------------------
