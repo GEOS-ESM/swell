@@ -622,6 +622,7 @@ class TaskQuestions(QuestionContainer, Enum):
     PrepForecastCf = QuestionList(
         list_name="PrepForecastCf",
         questions=[
+            qd.additional_forecast_collections(),
             qd.analysis_variables(),
             qd.forecast_length(),
             qd.forecast_output_frequency(),
@@ -1004,6 +1005,7 @@ class TaskQuestions(QuestionContainer, Enum):
     SaveForecastCf = QuestionList(
         list_name="SaveForecastCf",
         questions=[
+            qd.additional_forecast_collections(),
             qd.forecast_length(),
             qd.forecast_output_frequency(),
             qd.horizontal_resolution(),

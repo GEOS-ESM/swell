@@ -330,6 +330,7 @@ final:
         - filetype: cube sphere history
           datapath: cycle_dir
           filename: experiment_id.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
+          field io names: *id001
 output:
   filetype: cube sphere history
   provider: geos
