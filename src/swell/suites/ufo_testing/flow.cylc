@@ -69,6 +69,8 @@
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable
 
+            RunJediUfoTestsExecutable => CleanCycle
+
             {% if run_eva %}
             # EvaObservations
             RunJediUfoTestsExecutable => EvaObservations => CleanCycle

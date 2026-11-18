@@ -81,10 +81,11 @@
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
             SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
-            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}

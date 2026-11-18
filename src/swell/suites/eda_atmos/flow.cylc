@@ -96,7 +96,7 @@
 
             {% if run_eva %}
             # EvaIncrement
-            SP2-{{model_component}} => EvaIncrement-{{model_component}}
+            SP2-{{model_component}} => EvaIncrement-{{model_component}} => CleanEdaFiles-{{model_component}}
             {% endif %}
 
         {% endif %}
