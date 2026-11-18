@@ -70,7 +70,7 @@ template_str = '''
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
             # Get observations
-            {% if cycling_varbc %}
+            {% if models[model_component]['cycling_varbc'] %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
             RunJediEdaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}

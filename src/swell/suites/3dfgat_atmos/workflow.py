@@ -69,7 +69,7 @@ template_str = '''
             GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
             # Get observations
-            {% if cycling_varbc %}
+            {% if models[model_component]['cycling_varbc'] %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
             RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?

@@ -70,16 +70,16 @@ template_str = '''
 
             StageJedi-{{model_component}}[^] & StageJediCycle-{{model_component}} & RenderJediObservations-{{model_component}} & GetEnsemble-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
-            {% if skip_ensemble_hofx %}
+            {% if models[model_component]['skip_ensemble_hofx'] %}
                RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
-               {% if ensemble_hofx_strategy == 'serial' %}
+               {% if models[model_component]['ensemble_hofx_strategy'] == 'serial' %}
                    RunJediObsfiltersExecutable-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
-               {% elif ensemble_hofx_strategy == 'parallel' %}
-                   {% for packet in range(ensemble_hofx_packets) %}
+               {% elif models[model_component]['ensemble_hofx_strategy'] == 'parallel' %}
+                   {% for packet in range(models[model_component]['ensemble_hofx_packets']) %}
                       RunJediObsfiltersExecutable-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                       RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                    {% endfor %}

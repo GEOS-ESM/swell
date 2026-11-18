@@ -67,7 +67,7 @@ template_str = '''
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
             # Get observations
-            {% if cycling_varbc %}
+            {% if models[model_component]['cycling_varbc'] %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
             RunJediLocalEnsembleDaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
@@ -89,16 +89,16 @@ template_str = '''
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
-            {% if skip_ensemble_hofx %}
+            {% if models[model_component]['skip_ensemble_hofx'] %}
                RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
-               {% if ensemble_hofx_strategy == 'serial' %}
+               {% if models[model_component]['ensemble_hofx_strategy'] == 'serial' %}
                    SP1-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
-               {% elif ensemble_hofx_strategy == 'parallel' %}
-                   {% for packet in range(ensemble_hofx_packets) %}
+               {% elif models[model_component]['ensemble_hofx_strategy'] == 'parallel' %}
+                   {% for packet in range(models[model_component]['ensemble_hofx_packets']) %}
                       # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
 
                       # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
