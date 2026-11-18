@@ -322,15 +322,6 @@ class PrepareExperimentConfigAndSuite:
                         'default_value'] == 'defer_to_code':
                     question['default_value'] = f'swell-{self.suite}'
 
-                if question_name == 'r2d2_experiment_id' and \
-                        question['default_value'] == 'defer_to_code':
-                    swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
-                    if swell_id == 'defer_to_code':
-                        swell_id = f'swell-{self.suite}'
-                        self.question_dictionary_model_ind['experiment_id'][
-                                'default_value'] = swell_id
-                    question['default_value'] = swell_id
-
     # ----------------------------------------------------------------------------------------------
 
     def override_with_external(self, suite_task: QuestionType) -> None:
