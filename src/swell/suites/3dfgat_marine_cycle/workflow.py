@@ -121,7 +121,7 @@ template_str = '''
             # Compress forecast on compute node, then store in R2D2 on login node
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
-            CleanCycle-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
+            SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
             # Clean up large files
