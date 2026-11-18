@@ -668,6 +668,18 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunCompressForecast = QuestionList(
+        list_name="RunCompressForecast",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediConvertStateSoca2ciceExecutable = QuestionList(
         list_name="RunJediConvertStateSoca2ciceExecutable",
         questions=[
@@ -964,18 +976,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    RunCompressForecast = QuestionList(
-        list_name="RunCompressForecast",
-        questions=[
-            window_questions,
-            qd.r2d2_experiment_id(),
-            qd.background_frequency(),
-            qd.horizontal_resolution(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     RunJediEdaExecutable = QuestionList(
         list_name="RunJediEdaExecutable",
         questions=[
@@ -985,6 +985,18 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_thinning_rej_fraction(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveAnalysis = QuestionList(
+        list_name="SaveAnalysis",
+        questions=[
+            window_questions,
+            qd.r2d2_experiment_id(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
         ]
     )
 

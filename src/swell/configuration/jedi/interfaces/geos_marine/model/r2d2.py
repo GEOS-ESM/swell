@@ -28,14 +28,15 @@ def r2d2(template_dict: Mapping) -> Mapping:
                         'file_extension': 'tar.gz',
                         'filename': f'{cycle_dir}/cice.res.{local_background_time}.nc'})
 
-    an_list = [{'file_type': 'ocn.incr',
+    an_list = [{'file_type': 'ocn.an',
                 'r2d2_model': 'mom6',
-                'filename': f'{cycle_dir}/mom6_increment.nc'}]
+                # 'filename': f'{cycle_dir}/mom6_increment.nc'}]
+                'filename': f'{cycle_dir}/ocn.{experiment_id}.an.{analysis_time_iso}.nc'}]
 
     if 'cice6' in template_dict['marine_models']:
-        an_list.append({'file_type': 'ice.incr',
+        an_list.append({'file_type': 'ice.an',
                         'r2d2_model': 'cice6',
-                        'filename': f'{cycle_dir}/ice.{experiment_id}.incr.{analysis_time_iso}.nc'})
+                        'filename': f'{cycle_dir}/ice.{experiment_id}.an.{analysis_time_iso}.nc'})
 
     r2d2 = {
         'fetch': {

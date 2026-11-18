@@ -84,7 +84,7 @@ class GetBackground(taskBase):
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        analysis_time_iso = self.da_window_params.analysis_time_iso()
+        analysis_time_iso, _ = self.da_window_params.analysis_time_iso()
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
