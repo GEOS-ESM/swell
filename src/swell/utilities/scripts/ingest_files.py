@@ -15,7 +15,7 @@ BLUE = "\033[94m"
 RESET = "\033[0m"
 
 try:
-    import r2d2
+    import swell.utilities.r2d2_utils as r2d2_utils
 
 except ImportError as e:
     raise ImportError(
@@ -74,7 +74,7 @@ def ingest_observation(filename, file_path, parts, dry_run=True):
         return True
 
     try:
-        r2d2.store(
+        r2d2_utils.store(
             item='observation',
             provider=provider,
             observation_type=obs_type,
@@ -131,7 +131,7 @@ def ingest_background(filename, file_path, parts, dry_run=True):
         return True
 
     try:
-        r2d2.store(
+        r2d2_utils.store(
             item='forecast',
             model='mom6',  # model,
             experiment='s2s',  # Use this for testing
@@ -213,7 +213,7 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
         return True
 
     try:
-        r2d2.store(
+        r2d2_utils.store(
             item='bias_correction',
             source_file=file_path,
             model=model,

@@ -10,11 +10,30 @@
 from datetime import datetime as dt
 from datetime import timedelta
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveBackground'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.dry_run(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -49,9 +68,11 @@ class SaveBackground(taskBase):
         The Cylc cycle point must be the forecast initialization time,
         e.g. ``2025-10-02T09:00:00Z``.
         """
+        from r2d2 import store
 
-        # Load R2D2 credentials
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         dry_run = self.config.dry_run(True)
         if dry_run:

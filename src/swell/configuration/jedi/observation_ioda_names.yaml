@@ -307,6 +307,66 @@ ioda instrument names:
     full name: CTD Salinity (In-situ)
     provider : nnja
     inst type: conventional
+  - ioda name: insitu_temp_profile_wod_apb
+    full name: APB Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_drb
+    full name: Drifting Buoy Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_drb
+    full name: Drifting Buoy Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_gld
+    full name: Glider Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_gld
+    full name: Glider Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_mbt
+    full name: MBT Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_mrb
+    full name: Moored Buoy Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_mrb
+    full name: Moored Buoy Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_osd
+    full name: OSD Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_osd
+    full name: OSD Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_pfl
+    full name: Profiling Float Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_pfl
+    full name: Profiling Float Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_uor
+    full name: UOR Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_salt_profile_wod_uor
+    full name: UOR Salinity (In-situ)
+    provider : nnja
+    inst type: conventional
+  - ioda name: insitu_temp_profile_wod_xbt
+    full name: XBT Temperature (In-situ)
+    provider : nnja
+    inst type: conventional
   - ioda name: insitu_profile_pirata
     full name: PIRATA (In-situ)
     provider : odas
@@ -563,5 +623,13 @@ ioda instrument names:
     provider : esa
   - ioda name: omps_o3_nm_total
     full name: OMPS total column O3 (Nadir Mapper)
+    inst type: retrieval
+    provider : nasa
+  - ioda name: mls_o3_nrt
+    full name: Aura MLS O3 profile (near-real-time v5)
+    inst type: retrieval
+    provider : nasa
+  - ioda name: mls_o3_res
+    full name: Aura MLS O3 profile (research, v5 by default or v6)
     inst type: retrieval
     provider : nasa
