@@ -24,6 +24,7 @@ class hofx4D(OopsConfig):
             'geometry': self.interface_model('geometry'),
             'initial condition': self.interface_model('background'),
             'observations': {
+                'obs data container': 'OSDF',
                 'get values': self.interface_model('getvalues'),
                 'observers': self.special_observations()
             },
