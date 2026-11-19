@@ -99,13 +99,18 @@ template_str = '''
             GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
+            RunJediFgatExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
+            PrepareAnalysis-{{model_component}} => CleanCycle-{{model_component}}?
+
             # Run analysis diagnostics
-            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            {% if run_eva %}
+            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+            {% endif %}
 
             # Prepare analysis for next forecast
-            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediPostprocSoca2ciceExecutable-{{model_component}}
             RunJediPostprocSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
@@ -123,10 +128,6 @@ template_str = '''
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
-
-            # Clean up large files
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
-            CleanCycle-{{model_component}}?
         {% endfor %}
         """
         {% endfor %}

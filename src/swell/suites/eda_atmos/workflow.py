@@ -106,8 +106,10 @@ template_str = '''
             # CleanupEda directory
             SP2-{{model_component}} => CleanEda-{{model_component}}
 
+            {% if run_eva %}
             # EvaIncrement
-            SP2-{{model_component}} => EvaIncrement-{{model_component}}
+            SP2-{{model_component}} => EvaIncrement-{{model_component}} => CleanEda-{{model_component}} 
+            {% endif %}
 
         {% endif %}
         {% endfor %}

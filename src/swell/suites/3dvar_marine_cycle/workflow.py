@@ -96,13 +96,17 @@ template_str = '''
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
+            PrepareAnalysis-{{model_component}} => CleanCycle-{{model_component}}?
+
             # Run analysis diagnostics
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            {% if run_eva %}
+            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+            {% endif %}
 
             # Prepare analysis for next forecast
-            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediPostprocSoca2ciceExecutable-{{model_component}}
             # RunJediPostprocSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
