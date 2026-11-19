@@ -10,10 +10,26 @@
 
 import os
 
-from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'BuildJedi'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = 'PT3H'
+        self.slurm = {}
+        self.questions = [
+            qd.bundles(),
+            qd.jedi_build_method()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,10 +38,14 @@ class BuildJedi(taskBase):
 
     def execute(self) -> None:
 
+        from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
+
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
         swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
+
+        from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
         # Get paths to build and source
         # -----------------------------
