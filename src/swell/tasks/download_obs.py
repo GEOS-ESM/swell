@@ -42,7 +42,30 @@ import isodate
 import requests
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities import s3 as swell_s3
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'DownloadObs'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
+        self.questions = [
+            qd.dry_run(),
+            qd.obs_to_download(),
+            qd.window_length(),
+            qd.download_obs_config_overrides()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class DownloadObs(taskBase):

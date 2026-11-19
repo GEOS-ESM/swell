@@ -1,9 +1,7 @@
 ## Adding questions
 
 ### Overview
-Questions in swell are classes that are used to store information for parameters. This includes information such as default value, expected type, meaning, and conditions for relevance. They are used during experiment creation to fill out parameters in `experiment.yaml`, and template `flow.cylc`. Upon task execution, they are used to determine which parameters are available to the task's config.
-
-Questions for swell are stored as dataclass instances, in the file `src/swell/utilities/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
+Questions for swell are stored as dataclass instances, in the file `src/swell/configuration/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
 
 ```python
 @dataclass
@@ -19,7 +17,6 @@ class SwellQuestion:
     ask_question: bool = False
     options: Optional[str] = None
 ```
-
 Arguments:
 - default_value: default value for the answer
 - question_name: name of the question (should usually match the class).
@@ -33,19 +30,20 @@ Arguments:
 
 An example question class:
 ```python
-@dataclass
-class existing_jedi_build_directory(TaskQuestion):
-    default_value: str = "defer_to_platform"
-    question_name: str = "existing_jedi_build_directory"
-    ask_question: bool = True
-    # Need construct lists and dictionaries using this constructor method because
-    # dataclass fields cannot be initialized to mutable types.
-    # https://docs.python.org/3/library/dataclasses.html#mutable-default-values
-    depends: Dict = mutable_field({
-        "jedi_build_method": "use_existing"
-    })
-    prompt: str = "What is the path to the existing JEDI build directory?"
-    widget_type: WidgetType = WidgetType.STRING
+    @dataclass
+    class existing_jedi_build_directory(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "existing_jedi_build_directory"
+        ask_question: bool = True
+        # Need construct lists and dictionaries using this constructor method because
+        # dataclass fields cannot be initialized to mutable types.
+        # https://docs.python.org/3/library/dataclasses.html#mutable-default-values
+        depends: Dict = mutable_field({
+            "jedi_build_method": "use_existing"
+        })
+        })
+        prompt: str = "What is the path to the existing JEDI build directory?"
+        widget_type: WidgetType = WidgetType.STRING
 ```
 Calling `existing_jedi_build_directory()` creates an object matching the default values for the class. The specific values `defer_to_platform`, `defer_to_model`, and `defer_to_code` are special values that will be substituted as follows, depending on the `platform` and `model`: 
 - defer_to_platform: src/swell/deployment/platforms/<platform>
