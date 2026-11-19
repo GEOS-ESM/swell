@@ -11,12 +11,49 @@
 import glob
 import os
 from ruamel.yaml import YAML
-from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.netcdf_files import combine_files_without_groups
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.run_jedi_executables import run_executable
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'RunJediHofxExecutable'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.task_time_limit = 'PT40M'
+        self.slurm = {}
+        self.questions = [
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.save_geovals(),
+            qd.total_processors(),
+            qd.comparison_log_type('ensemblehofx'),
+            qd.mock_experiment()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -25,11 +62,13 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members: Optional[list] = None) -> None:
+    def execute(self, ensemble_members: list | None = None) -> None:
 
         # Jedi application name
         # ---------------------
         jedi_application = 'hofx'
+
+        from swell.utilities.netcdf_files import combine_files_without_groups
 
         # Parse configuration
         # -------------------
@@ -41,6 +80,7 @@ class RunJediHofxExecutable(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         save_geovals = self.config.save_geovals(False)
+        marine_models = self.config.marine_models(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -77,6 +117,7 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         self.jedi_rendering.add_key('npx', self.config.npx(None))
         self.jedi_rendering.add_key('npy', self.config.npy(None))
+        self.jedi_rendering.add_key('marine_models', marine_models)
 
         # Observations
         # ------------
@@ -95,6 +136,13 @@ class RunJediHofxExecutable(taskBase):
         # -----
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
+
+        # Use GEOS utility to generate states for marine model
+        # -----------------------------------
+        if marine_models is not None:
+            states = self.geos.states_generator(self.config.background_frequency(), window_length,
+                                                window_begin_iso, self.get_model(), marine_models)
+            self.jedi_rendering.add_dynamic_key('states', states)
 
         # Get the JEDI interface metadata
         # -------------------------------
@@ -213,7 +261,6 @@ class RunJediHofxExecutable(taskBase):
                 jedi_config_dict = \
                     self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                          window_type,
-                                                         observations,
                                                          jedi_forecast_model)
 
                 # Continue with the yaml edits below some of which need to be
@@ -260,7 +307,7 @@ class RunJediHofxExecutable(taskBase):
         observations: list,
         jedi_config_dict: dict,
         window_begin: str,
-        mem: Optional[str] = None
+        mem: str | None = None
     ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will

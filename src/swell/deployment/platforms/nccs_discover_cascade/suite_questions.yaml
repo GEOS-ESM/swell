@@ -1,2 +1,0 @@
-experiment_root:
-  default_value: /discover/nobackup/${USER}/SwellExperiments

@@ -11,7 +11,28 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+import swell.configuration.question_defaults as qd
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.datetime_util import datetime_formats
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetEnsemble'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
+        self.questions = [
+            qd.path_to_ensemble(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.background_experiment(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
