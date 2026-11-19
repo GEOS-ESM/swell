@@ -103,6 +103,7 @@ class Workflow_r2d2_ingest(CylcWorkflow):
                     task.scheduling_name = f'DownloadObs-{obs}-{model}'
                     task.script = (f'swell task DownloadObs $config -d $datetime -m {model}'
                                    f' -a {obs}')
+                    task.additional_values = {'inherit': f'DownloadObs-{model}'}
                     workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
             if task.base_name == 'ConvertObsToIoda':
                 model = task.model
@@ -110,6 +111,7 @@ class Workflow_r2d2_ingest(CylcWorkflow):
                     task.scheduling_name = f'ConvertObsToIoda-{obs}-{model}'
                     task.script = (f'swell task ConvertObsToIoda $config -d $datetime -m {model}'
                                    f' -a {obs}')
+                    task.additional_values = {'inherit': f'ConvertObsToIoda-{model}'}
                     workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
             if task.base_name == 'IngestObs':
                 model = task.model
@@ -117,6 +119,7 @@ class Workflow_r2d2_ingest(CylcWorkflow):
                     task.scheduling_name = f'IngestObs-{obs}-{model}'
                     task.script = (f'swell task IngestObs $config -d $datetime -m {model}'
                                    f' -a {obs}')
+                    task.additional_values = {'inherit': f'IngestObs-{model}'}
                     workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
 
         return workflow_str
