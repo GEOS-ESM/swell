@@ -20,19 +20,13 @@ suite_name = 'forecast_coupled_geos'
 forecast_geos_tier1 = QuestionList(
     questions=[
         all_suites,
-        qd.cycle_times(),
-        qd.final_cycle_point(),
-        qd.start_cycle_point(),
-        qd.start_cycle_point("2021-06-20T00:00:00Z"),
-        qd.final_cycle_point("2021-06-21T00:00:00Z"),
+        qd.start_cycle_point("2021-07-02T12:00:00Z"),
+        qd.final_cycle_point("2021-07-03T12:00:00Z"),
         qd.cycle_times([
-            "T00",
-            "T06",
             "T12",
-            "T18"
         ]),
         qd.geos_build_method("use_existing"),
-        qd.forecast_duration("PT6H"),
+        qd.forecast_duration("P1D"),
     ],
 )
 
