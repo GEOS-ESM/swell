@@ -12,12 +12,30 @@ import os
 from ruamel.yaml import YAML
 import glob
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.comparisons import comparison_tags, experiment_ids
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaComparisonIncrement'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.marine_models(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -38,6 +56,9 @@ class EvaComparisonIncrement(taskBase):
         return window_type, window_length
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        from eva.eva_driver import eva
 
         model = self.get_model()
 
