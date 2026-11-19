@@ -13,7 +13,36 @@ from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 
+# --------------------------------------------------------------------------------------------------
+
+
+task_name = 'RunJediPostprocSoca2ciceExecutable'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.task_time_limit = True
+        self.slurm = {}
+        self.questions = [
+            qd.analysis_variables(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.comparison_log_type('postproc_soca2cice'),
+            qd.mock_experiment()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

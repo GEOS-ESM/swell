@@ -1,0 +1,24 @@
+# Aura MLS Ozone (O3) research ("RES", v5 or v6) — IODA converter configuration
+# Converter: mls_o3_nc2ioda.py (ioda-converters, compo; must be available either
+#            in `converter_path`, set in suite_config.py, or in jedi_bundle/build/bin/)
+#
+# Invocation (one call per cycle, all daily files passed together):
+#   python3 <jedi_bundle>/build/bin/mls_o3_nc2ioda.py
+#       -i <day1.he5> <day2.he5>
+#       -o <cycle_dir>/ioda/mls_o3_res/mls_o3_res_YYYYMMDDHH.nc4
+#       --mls-version v5
+#       --window-begin <DA window begin> --window-end <DA window end>
+
+converter_script: mls_o3_nc2ioda.py
+
+# Output filename template (must be the same as
+# source in ingest_observations/mls_o3_res.yaml)
+output_filename_template: "mls_o3_res_%Y%m%d%H.nc4"
+
+# {mls_version} is the `mls_version` key of download_observations/mls_o3_res.yaml
+# (v5 by default, v6 with a download_obs_config_overrides entry);
+# {window_begin} and {window_end} are replaced by the DA window bounds
+extra_flags:
+  --mls-version: "{mls_version}"
+  --window-begin: "{window_begin}"
+  --window-end: "{window_end}"
