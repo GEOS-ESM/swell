@@ -11,6 +11,7 @@
 import subprocess
 import os
 import sys
+from collections.abc import Mapping
 
 from swell.deployment.platforms.platforms import SwellPlatform
 from swell.utilities.logger import Logger
@@ -18,7 +19,7 @@ from swell.utilities.logger import Logger
 # --------------------------------------------------------------------------------------------------
 
 
-def configure_cylc_environment(append_dict: dict = {}) -> dict:
+def configure_cylc_environment(append_dict: dict = {}) -> Mapping:
     ''' Unset the path containing Swell's cylc entry point, and set
         the environment according to the specified dictionary '''
 

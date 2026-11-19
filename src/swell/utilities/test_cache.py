@@ -7,15 +7,13 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from typing import Optional
-
 import os
 from ruamel.yaml import YAML
 
 # --------------------------------------------------------------------------------------------------
 
 
-def get_test_cache() -> Optional[str]:
+def get_test_cache() -> str | None:
     test_settings_file = os.path.expanduser('~/.swell/swell-test.yaml')
     if os.path.exists(test_settings_file):
         yaml = YAML(typ='safe')
