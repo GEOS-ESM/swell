@@ -154,13 +154,20 @@ def prepare_config(
         assert os.path.exists(slurm)
         with open(slurm, "r") as slurmfile:
             slurm_dict = yaml.load(slurmfile)
-        # Ensure that SLURM dict is _only_ used for SLURM directives.
+        # Ensure that SLURM dict is _only_ used for SLURM directives and the geos_cf MPI layout.
         slurm_invalid_keys = set(slurm_dict.keys()).difference({
             "slurm_directives_global",
-            "slurm_directives_tasks"
+            "slurm_directives_tasks",
+            "geos_cf_mpi"
         })
         if slurm_invalid_keys:
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
+        if "geos_cf_mpi" in slurm_dict:
+            from swell.configuration.jedi.interfaces.geos_cf.slurm import validate_overrides
+            try:
+                validate_overrides(slurm_dict["geos_cf_mpi"])
+            except ValueError as error:
+                logger.abort(str(error))
         experiment_dict = {**experiment_dict, **slurm_dict}
 
     # Register the experiment in R2D2

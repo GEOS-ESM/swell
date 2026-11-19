@@ -40,8 +40,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.npx_proc(),
             qd.npy_proc(),
-            qd.npx(),
-            qd.npy(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
         ]

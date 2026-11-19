@@ -17,42 +17,10 @@ import xarray as xr
 import yaml
 
 from swell.configuration.jedi.interfaces.geos_cf.model.shared import (
-    forecast_collections, forecast_history)
+    boundary_conditions_tag, forecast_collections, forecast_history)
+from swell.configuration.jedi.interfaces.geos_cf.slurm import FACES, mpi_settings
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
-
-# --------------------------------------------------------------------------------------------------
-
-# HPC/model-tuning parameters for AGCM.rc and gcm_run_geoscf.j that do not follow a simple formula
-# from the cube-sphere resolution (PE layout, SLURM node count, boundary condition tile
-# directory). AGCM_IM (cube-face edge length) and AGCM_JM (= 6 * AGCM_IM) are derived directly
-# from the resolution string and are not included here. The I/O server is disabled by default
-# (IOSERVER_NODES: 0, NUM_BACKEND_PES: 2, hardcoded directly in AGCM.rc) and is not tuned here.
-#
-# NX/NY/sbatch_nodes/sbatch_time below are validated against real 12h (two 6h segment) background
-# runs on discover (Milan nodes, 108 tasks/node): NX*NY PEs always divides evenly into
-# sbatch_nodes*108 with no wasted fraction, which is the densest clean packing achievable for each
-# resolution. sbatch_time includes ~20-25% margin over the observed wall time of that validated
-# run. This is the single source of truth for the GEOS-CF forecast resource requirements: it is
-# used to render AGCM.rc/gcm_run_geoscf.j and to check that the nodes requested for the
-# RunForecast task in flow.cylc (set through the SLURM configuration) are sufficient.
-RESOLUTION_TUNING = {
-    'c90': {
-        'nx': 9, 'ny': 36,
-        'sbatch_nodes': 3, 'sbatch_time': '01:30:00',
-        'bcrslv': 'CF0090x6C_DE2880xPE1440',
-    },
-    'c180': {
-        'nx': 18, 'ny': 72,
-        'sbatch_nodes': 12, 'sbatch_time': '01:40:00',
-        'bcrslv': 'CF0180x6C_DE2880xPE1440',
-    },
-    'c360': {
-        'nx': 36, 'ny': 144,
-        'sbatch_nodes': 48, 'sbatch_time': '02:15:00',
-        'bcrslv': 'CF0360x6C_DE2880xPE1440',
-    },
-}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -157,9 +125,9 @@ class PrepForecastCf(taskBase):
 
     def check_runforecast_nodes(self) -> None:
         """Abort if the nodes requested for RunForecast in flow.cylc are fewer than the nodes
-        required by the selected resolution (RESOLUTION_TUNING['sbatch_nodes'])."""
+        required by the selected resolution (GCM_MPI)."""
 
-        required_nodes = RESOLUTION_TUNING[self.resolution]['sbatch_nodes']
+        required_nodes = mpi_settings('gcm', self.resolution, self.config.geos_cf_mpi())['nodes']
         model = self.get_model()
 
         cylc_file = os.path.join(self.experiment_path(), self.experiment_id() + '-suite',
@@ -337,15 +305,15 @@ class PrepForecastCf(taskBase):
         self.replace_string(agcm_rc, '>>>SWELL_FC6H_H<<<', f'{weHH}0000')
 
         # AGCM_IM/AGCM_JM follow the cube-sphere resolution directly (e.g. 'c90' -> 90, JM = 6*IM);
-        # the rest of the HPC/model-tuning parameters come from RESOLUTION_TUNING.
-        if resolution not in RESOLUTION_TUNING:
-            raise ValueError(f'Unsupported horizontal resolution: {resolution}')
-        tuning = RESOLUTION_TUNING[resolution]
+        # the rest of the HPC/model-tuning parameters come from the GCM_MPI table (with the
+        # experiment overrides), whose layout is per cube face while AGCM.rc takes the layout over
+        # the whole globe (NY = 6 * ny).
+        tuning = mpi_settings('gcm', resolution, self.config.geos_cf_mpi())
         agcm_im = int(resolution.lstrip('c'))
         agcm_jm = agcm_im * 6
 
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NX<<<', str(tuning['nx']))
-        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NY<<<', str(tuning['ny']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NY<<<', str(tuning['ny'] * FACES))
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_IM<<<', str(agcm_im))
         self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_JM<<<', str(agcm_jm))
 
@@ -422,14 +390,16 @@ class PrepForecastCf(taskBase):
         shutil.copy(gcm_run_src, gcm_run_dst)
         self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
-        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', str(tuning['sbatch_nodes']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', str(tuning['nodes']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NTASKS_PER_NODE<<<',
+                            str(tuning['ntasks_per_node']))
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_TIME<<<', tuning['sbatch_time'])
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_JOBNAME<<<', f'gcm_cf_{resolution}')
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_CONSTRAINT<<<',
                             self.geos_cf_sbatch_constraint)
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_ACCOUNT<<<', self.geos_cf_sbatch_account)
         self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_QOS<<<', self.geos_cf_sbatch_qos)
-        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', tuning['bcrslv'])
+        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', boundary_conditions_tag(resolution))
         os.chmod(gcm_run_dst, 0o755)
 
         # Update CAP.rc with forecast length

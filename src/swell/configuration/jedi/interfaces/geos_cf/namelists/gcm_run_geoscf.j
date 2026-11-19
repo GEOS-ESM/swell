@@ -4,7 +4,7 @@
 #                     Batch Parameters for Run Job
 #######################################################################
 #SBATCH --time=>>>SWELL_SBATCH_TIME<<<
-#SBATCH --nodes=>>>SWELL_SBATCH_NODES<<< --ntasks-per-node=108
+#SBATCH --nodes=>>>SWELL_SBATCH_NODES<<< --ntasks-per-node=>>>SWELL_SBATCH_NTASKS_PER_NODE<<<
 #SBATCH --job-name=>>>SWELL_SBATCH_JOBNAME<<<
 #SBATCH --output=CFv2_gcm_%j
 #SBATCH --constraint=>>>SWELL_SBATCH_CONSTRAINT<<<
@@ -86,7 +86,7 @@ endif
 
 @ MODEL_NPES = $NX * $NY
 
-set NCPUS_PER_NODE = 108
+set NCPUS_PER_NODE = >>>SWELL_SBATCH_NTASKS_PER_NODE<<<
 set NUM_MODEL_NODES=`echo "scale=1;($MODEL_NPES / $NCPUS_PER_NODE)" | bc | awk 'function ceil(x, y){y=int(x); return(x>y?y+1:y)} {print ceil($1)}'`
 
 if ( $NCPUS != NULL ) then

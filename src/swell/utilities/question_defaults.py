@@ -1507,8 +1507,7 @@ class QuestionDefaults():
         question_name: str = "npx_proc"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere",
-            "geos_cf"
+            "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
         widget_type: WType = WType.INTEGER
@@ -1521,36 +1520,9 @@ class QuestionDefaults():
         question_name: str = "npy_proc"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere",
-            "geos_cf"
+            "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class npx(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "npx"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "What is the number of grid points in the x-direction on each cube face?"
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class npy(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "npy"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "What is the number of grid points in the y-direction on each cube face?"
         widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------

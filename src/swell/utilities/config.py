@@ -64,6 +64,10 @@ class Config():
         self.__final_cycle_point__ = experiment_dict.get('final_cycle_point')
         self.__suite_to_run__ = experiment_dict.get('suite_to_run')
 
+        # Optional per-experiment overrides of the geos_cf MPI tables (from 'swell create -s')
+        self.__geos_cf_mpi__ = experiment_dict.get('geos_cf_mpi')
+        self.geos_cf_mpi = self.get('geos_cf_mpi')
+
         # Create getter methods for suite-level variables so they can be used without
         # adding them to task_questions
         for suite_var in ['experiment_root', 'experiment_id', 'platform',

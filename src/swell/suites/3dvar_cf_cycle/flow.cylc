@@ -150,7 +150,7 @@
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit_by_model"][model_component]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}

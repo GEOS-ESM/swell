@@ -55,24 +55,6 @@ vertical_resolution:
   options:
   - 72
 
-npx:
-  default_value: 91
-  options:
-  - 91
-  - 361
-
-npy:
-  default_value: 91
-  options:
-  - 91
-  - 361
-
-npx_proc:
-  default_value: 2
-
-npy_proc:
-  default_value: 2
-
 
 obs_provider:
   default_value: 

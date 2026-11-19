@@ -48,6 +48,30 @@ RESOLUTION_GRIDS = {
 OPTIONAL_COLLECTION_TYPES = ('chm', 'met')
 
 
+def cube_sphere_npx(resolution: str) -> int:
+    """Number of grid-cell corners (npx = npy) on a cube face for the given resolution.
+
+    The JEDI geometry (outer and inner/minimization) is tied to the forecast resolution, so
+    that backgrounds, the B matrix and increments are always on the same grid as the GCM.
+    c90 -> 91, c180 -> 181, c360 -> 361.
+    """
+
+    if resolution not in RESOLUTION_GRIDS:
+        raise ValueError(f'Unsupported horizontal resolution: {resolution}. '
+                         f'Choose from: {list(RESOLUTION_GRIDS)}')
+    return int(resolution.lstrip('c')) + 1
+
+
+def boundary_conditions_tag(resolution: str) -> str:
+    """Name of the boundary conditions (BCS) tile set of the forecast, e.g. 'c90' ->
+    'CF0090x6C_DE2880xPE1440' (cube-sphere tiles on the 2880x1440 ocean grid)."""
+
+    if resolution not in RESOLUTION_GRIDS:
+        raise ValueError(f'Unsupported horizontal resolution: {resolution}. '
+                         f'Choose from: {list(RESOLUTION_GRIDS)}')
+    return f"CF{int(resolution.lstrip('c')):04d}x6C_DE2880xPE1440"
+
+
 def forecast_collections(resolution: str, additional_collections: list = None) -> Mapping:
     """Build the HISTORY.rc collection names for a given cube-sphere resolution.
 

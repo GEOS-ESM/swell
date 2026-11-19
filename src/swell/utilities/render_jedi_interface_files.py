@@ -102,6 +102,7 @@ class JediConfigRendering():
             'gsibec_nlons',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
+            'geos_cf_mpi',
             'horizontal_resolution',
             'local_background_time',
             'local_background_time_iso',
@@ -120,8 +121,6 @@ class JediConfigRendering():
             'mom6_iau',
             'npx_proc',
             'npy_proc',
-            'npx',
-            'npy',
             'number_of_iterations',
             'obs_filenames',
             'packet_ensemble_members',
@@ -322,6 +321,14 @@ class JediConfigRendering():
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'interfaces', model_component,
                                    f'{model_component}.yaml')
+
+        # The geos_cf MPI layout follows from the horizontal resolution and is not a question
+        if model_component == 'geos_cf' and 'horizontal_resolution' in self.__template_dict__:
+            from swell.configuration.jedi.interfaces.geos_cf.slurm import mpi_settings
+            resolution = self.__template_dict__['horizontal_resolution']
+            jedi_mpi = mpi_settings('jedi', resolution, self.__template_dict__.get('geos_cf_mpi'))
+            self.__template_dict__['npx_proc'] = jedi_mpi['nx']
+            self.__template_dict__['npy_proc'] = jedi_mpi['ny']
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

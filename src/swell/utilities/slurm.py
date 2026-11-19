@@ -115,6 +115,7 @@ def prepare_scheduling_dict(
 
     scheduling_dict = {}
     for slurm_task in slurm_tasks:
+        interface_limits = {}
         # Priority order (first = highest priority)
         # 1. Task-specific directives from experiment
         #    (experiment_task_directives[slurm_task]["all"])
@@ -171,6 +172,13 @@ def prepare_scheduling_dict(
                     task_defaults[slurm_task],
                     model_component
                 )
+            # Scheduling provided by the model interface (e.g. resolution dependent resources)
+            interface_scheduling = model_interface_scheduling(model_component, slurm_task,
+                                                              experiment_dict)
+            model_directives = {
+                **model_directives,
+                **interface_scheduling.get('directives', {})
+            }
             model_directives = {
                 **model_directives,
                 **user_globals,
@@ -189,13 +197,38 @@ def prepare_scheduling_dict(
                 )
             validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
+            interface_limits[model_component] = interface_scheduling.get('execution_time_limit')
 
         # Default execution time limit for everthing is PT1H
         x = 'PT20M'
         if slurm_task in experiment_task_directives.keys():
             x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
         scheduling_dict[slurm_task]['execution_time_limit'] = x
+
+        # Execution time limit per model component. A model interface can set it (e.g. from the
+        # resolution), unless the time limit was set for the task in the experiment dict.
+        experiment_sets_limit = slurm_task in experiment_task_directives and \
+            'execution_time_limit' in experiment_task_directives[slurm_task]
+        scheduling_dict[slurm_task]['execution_time_limit_by_model'] = {
+            model_component: x if experiment_sets_limit or limit is None else limit
+            for model_component, limit in interface_limits.items()
+        }
     return scheduling_dict
+
+
+def model_interface_scheduling(model_component: str, slurm_task: str,
+                               experiment_dict: dict) -> dict:
+    # A model interface can provide its own scheduling for a task (SLURM 'directives' and
+    # 'execution_time_limit') through task_scheduling(slurm_task, experiment_dict) in
+    # interfaces/<model_component>/slurm.py
+    module_name = f'swell.configuration.jedi.interfaces.{model_component}.slurm'
+    try:
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError as err:
+        if err.name is None or not module_name.startswith(err.name):
+            raise err
+        return {}
+    return module.task_scheduling(slurm_task, experiment_dict)
 
 
 def add_directives(target_dict: dict, input_dict: dict, key: str) -> dict:

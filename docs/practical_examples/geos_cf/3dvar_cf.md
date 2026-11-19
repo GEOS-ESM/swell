@@ -68,14 +68,6 @@ models:
     # What is the horizontal resolution for the forecast model and backgrounds?
     horizontal_resolution: c90
 
-    # Number of grid points on the cubed-sphere face, in x and y.
-    npx: 91
-    npy: 91
-
-    # Processor layout for the cubed-sphere face, in x and y.
-    npx_proc: 2
-    npy_proc: 2
-
     # What is the vertical resolution for the forecast model and background?
     vertical_resolution: 72
 
@@ -131,6 +123,37 @@ swell launch /path/to/your/experiments/3dvar_cf_test/3dvar_cf_test-suite
 Executing this command will launch the experiment and bring up the TUI.
 
 ## What runs
+
+The JEDI geometry (including the minimization geometry) follows `horizontal_resolution`, and so do
+its MPI layout and the SLURM resources of `RunJediVariationalExecutable` and `RunJediHofxExecutable`:
+
+| `horizontal_resolution` | `npx`/`npy` | layout | MPI tasks | SLURM nodes x tasks per node |
+|-------------------------|-------------|--------|-----------|------------------------------|
+| `c90`                   | 91          | 3x3    | 54        | 1 x 54                       |
+| `c180`                  | 181         | 4x4    | 96        | 1 x 96                       |
+| `c360`                  | 361         | 8x8    | 384       | 4 x 96                       |
+
+The BUMP_NICAS files are specific to the geometry resolution and layout, and are staged from
+`<swell_static_files>/jedi/interfaces/geos_cf/nicas/layout_<x>x<y>x6/`, e.g. `layout_3x3x6` for
+`c90`.
+
+The defaults are defined in the `JEDI_MPI` (JEDI) and `GCM_MPI` (forecast) tables of
+`src/swell/configuration/jedi/interfaces/geos_cf/slurm.py`. Each entry has `nx`, `ny` (layout per
+cube face; MPI tasks = 6 x `nx` x `ny`), `nodes`, `ntasks_per_node` and `sbatch_time`. Any of these
+can be overridden per experiment with the SLURM file passed to `swell create -s`:
+
+```yaml
+geos_cf_mpi:
+  jedi: {nx: 3, ny: 3, nodes: 1, ntasks_per_node: 54, sbatch_time: '00:45:00'}
+  gcm: {nodes: 96, ntasks_per_node: 54}
+```
+
+The experiment has a single `horizontal_resolution`, so the overrides are given per component
+(`gcm`, `jedi`) and merged over the table entry of that resolution; any subset of the fields can
+be given. `nx` and `ny` must divide the number of cells along a
+cube face edge (e.g. 90), and `nodes` x `ntasks_per_node` must be at least 6 x `nx` x `ny`. Changing
+the JEDI layout requires the matching NICAS directory. `slurm_directives_tasks` still applies on top
+of these values, but only changes the SLURM request and not the MPI layout.
 
 For each cycle and each `model_component` (only `geos_cf` in this suite), the following tasks run, after
 `CloneJedi` and `BuildJedi`/`BuildJediByLinking` have completed:
