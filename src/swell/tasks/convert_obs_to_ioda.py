@@ -20,7 +20,31 @@ import sys
 import yaml
 from datetime import datetime
 
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'ConvertObsToIoda'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.is_cycling = True
+        self.questions = [
+            qd.converter_path(),
+            qd.dry_run(),
+            qd.obs_to_download(),
+            qd.download_obs_config_overrides(),
+            qd.window_length()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class ConvertObsToIoda(taskBase):
