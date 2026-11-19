@@ -14,8 +14,33 @@ import tarfile
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.compress import compress_file
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 
 # --------------------------------------------------------------------------------------------------
+
+task_name = 'RunCompressForecast'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.task_time_limit = True
+        self.slurm = {}
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution()
+        ]
+
+# --------------------------------------------------------------------------------------------------
+
 
 """Create compressed marine forecast archives for GEOS marine components."""
 

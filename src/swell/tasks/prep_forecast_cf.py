@@ -18,10 +18,42 @@ import yaml
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import (
     FORECAST_COLLECTIONS, forecast_history)
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
 from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
+task_name = 'PrepForecastCf'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = True
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.additional_forecast_collections(),
+            qd.analysis_variables(),
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.geos_cf_install_dir(),
+            qd.geos_cf_rc_dir(),
+            qd.horizontal_resolution(),
+            qd.iau(),
+            qd.inc_template(),
+            qd.met_replay_exp(),
+            qd.met_replay_root(),
+            qd.window_length(),
+            qd.rst_experiment()
+        ]
+
+
+# --------------------------------------------------------------------------------------------------
 
 class PrepForecastCf(taskBase):
 
