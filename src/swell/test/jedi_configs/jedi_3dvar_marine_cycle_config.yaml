@@ -69,6 +69,7 @@ cost function:
         ksshts:
           nlayers: 2
   observations:
+    obs data container: OSDF
     get values:
     observers:
     - obs space:
@@ -683,12 +684,8 @@ variational:
           date: '2021-07-01T09:00:00Z'
           exp: experiment_id
           type: incr
-final:
-  diagnostics:
-    departures: oman
-  prints:
-    frequency: PT3H
 output:
-  datadir: ./
-  exp: experiment_id
-  type: an
+  analysis:
+    datadir: ./
+    exp: experiment_id
+    type: an
