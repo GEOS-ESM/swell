@@ -45,7 +45,7 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        window_begin = self.da_window_params.window_begin(window_length)  # dto
+        window_begin = self.da_window_params.window_begin(window_length)
         background_time = self.da_window_params.background_time(background_time_offset)
 
         # Create templates dictionary

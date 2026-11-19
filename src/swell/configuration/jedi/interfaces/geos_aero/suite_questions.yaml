@@ -1,0 +1,3 @@
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  options: ['T00', 'T06', 'T12', 'T18']
