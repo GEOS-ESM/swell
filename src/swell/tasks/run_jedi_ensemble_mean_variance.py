@@ -46,7 +46,7 @@ class Setup(TaskSetup):
             qd.observing_system_records_path(),
             qd.analysis_variables(),
             qd.ensemble_num_members(),
-            qd.ensmeanvariance(),
+            qd.ensmeanvariance_spec(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.observations(),
