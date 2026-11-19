@@ -8,19 +8,20 @@
 # --------------------------------------------------------------------------------------------------
 
 import isodate
-import netCDF4 as nc
 import numpy as np
 import os
-import r2d2
 import shutil
+from collections.abc import Iterator
 import yaml
-from typing import Union
 from concurrent.futures import ThreadPoolExecutor
-
 from datetime import timedelta, datetime as dt
+
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+from swell.utilities.r2d2_utils import get_r2d2_model_name, load_r2d2_credentials
 from swell.utilities import s3 as swell_s3
-from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
@@ -30,6 +31,30 @@ _DEDUP_TOL_TIME_S = 1     # seconds
 _DEDUP_TOL_DEPTH_M = 0.01    # meters (insitu only)
 
 # ----------------------------------------------------------------------------------------------
+
+task_name = 'GetObservations'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.cycling_varbc(),
+            qd.fetch_obs_from_public_s3(),
+            qd.obs_experiment(),
+            qd.observation_providers(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+            qd.cache_fetch()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 def run_r2d2_fetch(r2d2_dict: dict) -> None:
@@ -44,6 +69,8 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     These values will be popped from the dictionary before running the fetch command
     """
+
+    import r2d2
 
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
     cycle_dir = r2d2_dict.pop('cycle_dir')
@@ -93,12 +120,11 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     # Change the permissions
     os.chmod(target_file, 0o644)
 
-
 # --------------------------------------------------------------------------------------------------
 
 
 def _resolve_s3_key(client, bucket: str, key_template: str,
-                    filename_pattern: Union[str, None], when: dt) -> str:
+                    filename_pattern: str | None, when: dt) -> str:
     """Resolve one key template to a concrete S3 object key for a sub-window.
 
     By default this is exact-key mode: the template fully determines the key, so no
@@ -519,7 +545,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict: dict) -> Union[None, int]:
+    def get_tlapse_files(self, observation_dict: dict) -> Iterator[int | None]:
 
         # Function to locate instances of tlapse in the obs operator config
 
@@ -620,7 +646,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_external_s3_config(self, observation: str) -> Union[dict, None]:
+    def get_external_s3_config(self, observation: str) -> dict | None:
         """Return the public-S3 fetch config for an observation, or None.
 
         Looks for ``fetch_observations_s3/<observation>.yaml`` in the experiment's
@@ -659,6 +685,7 @@ class GetObservations(taskBase):
     # Get the target data from the netcdf file
     # ----------------------------------------
     def get_data(self, input_file: str, group: str, var_name: str) -> object:
+        import netCDF4 as nc
         with nc.Dataset(input_file, 'r') as ds:
             return ds[group][var_name][:]
 
@@ -754,6 +781,8 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
+
+        import netCDF4 as nc
 
         # Reduce the list of input files to only those that exist
         # -------------------------------------------------------------

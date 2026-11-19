@@ -145,16 +145,6 @@ vertical_localization_method:
   options:
   - Vertical localization
 
-marine_models:
-  default_value:
-  - mom6
-  - cice6
-  options:
-  - mom6
-  - cice6
-  - bgc
-  - ww3
-
 minimizer:
   default_value: RPCG
   options:
