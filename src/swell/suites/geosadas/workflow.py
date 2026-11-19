@@ -38,38 +38,41 @@ template_str = '''
 
             # Build JEDI source code by linking
             BuildJediByLinking?
-
+            {% for model_component in model_components %}
             # Stage JEDI static files
-            CloneJedi => StageJedi
+            CloneJedi => StageJedi-{{model_component}}
+            {% endfor %}
 
             # Clone geos ana for generating observing system records
             CloneGeosMksi
         """
 
         T00 = """
+            {% for model_component in model_components %}
             # Generate satellite channel records
-            CloneGeosMksi[^] => GenerateObservingSystemRecords
+            CloneGeosMksi[^] => GenerateObservingSystemRecords-{{model_component}}
 
             # Get and convert bias correction coefficients
-            GetGsiBc => GsiBcToIoda
+            GetGsiBc-{{model_component}} => GsiBcToIoda-{{model_component}}
 
             # Get and convert ncdiags
-            GetGsiNcdiag => GsiNcdiagToIoda
+            GetGsiNcdiag-{{model_component}} => GsiNcdiagToIoda-{{model_component}}
 
             # Get background
-            GetGeosAdasBackground
+            GetGeosAdasBackground-{{model_component}}
 
             # Run Jedi variational executable
-            GenerateObservingSystemRecords => RenderJediObservations
-            BuildJediByLinking[^]  => RunJediVariationalExecutable
-            StageJedi[^] => RunJediVariationalExecutable
-            GsiBcToIoda => RunJediVariationalExecutable
-            GsiNcdiagToIoda => RunJediVariationalExecutable
-            GetGeosAdasBackground => RenderJediObservations
-            RenderJediObservations => RunJediVariationalExecutable
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
+            BuildJediByLinking[^]?  => RunJediVariationalExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            GsiBcToIoda-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GsiNcdiagToIoda-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetGeosAdasBackground-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Clean cycle
-            RunJediVariationalExecutable => CleanCycle
+            RunJediVariationalExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% endfor %}
         """
 
 # --------------------------------------------------------------------------------------------------
