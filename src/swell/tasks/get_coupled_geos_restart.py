@@ -11,7 +11,28 @@ import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_attributes import task_attributes
+from swell.tasks.base.task_setup import TaskSetup
+from swell.configuration import question_defaults as qd
 from swell.utilities.file_system_operations import copy_to_dst_dir
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetCoupledGeosRestart'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.geos_homdir(),
+            qd.geos_expdir_different(),
+            qd.geos_expdir(),
+            qd.initial_restarts_method()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

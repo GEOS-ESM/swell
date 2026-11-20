@@ -10,9 +10,9 @@
 from ruamel.yaml import YAML
 from typing import Callable
 
-from swell.tasks.task_questions import TaskQuestions as task_questions
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.logger import Logger
-from swell.suites.all_suites import AllSuites
+from swell.suites.base.suite_attributes import suite_configs
 
 
 # --------------------------------------------------------------------------------------------------
@@ -97,12 +97,15 @@ class Config():
             model_config = {}
 
         if 'models' in experiment_dict.keys():
+            all_model_configs = experiment_dict['models']
+        else:
+            all_model_configs = {}
 
-            # Add a dictionary tracking all model-dependent values
-            setattr(self, f'__all_model_configs__', experiment_dict['models'])
+        # Add a dictionary tracking all model-dependent values
+        setattr(self, f'__all_model_configs__', all_model_configs)
 
-            # Add a method to access the model-dependent dictionary
-            setattr(self, f'all_model_configs', self.get('all_model_configs'))
+        # Add a method to access the model-dependent dictionary
+        setattr(self, f'all_model_configs', self.get('all_model_configs'))
 
         # Remove the model specific part from the full config
         if 'models' in experiment_dict.keys():
@@ -123,7 +126,7 @@ class Config():
         # -------------------------------------------------------------------------
 
         # Check for suite questions
-        suite_questions = AllSuites.get_config(
+        suite_questions = suite_configs.get_config(
                 self.__suite_to_run__).get_all_question_names('suite')
         question_list = []
 
@@ -133,8 +136,8 @@ class Config():
                 question_list.append(question)
 
         # Find the questions associated with the task
-        if task_name in task_questions.get_all():
-            question_list.extend(task_questions[task_name].value.get_all_question_names())
+        task_class = getattr(task_attributes, task_name)
+        question_list.extend(task_class().question_list.get_all_question_names())
 
         # Loop through the experiment dictionary
         for exp_key, exp_val in experiment_dict.items():
@@ -177,7 +180,7 @@ class Config():
                 self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
                                       f'this variable was not created. Ensure that the variable ' +
                                       f'is in the experiment configuration and specified in ' +
-                                      f'the question list for the task (task_questions.py).')
+                                      f'the question list for the task (TaskSetup class)')
             else:
                 return default
         return variable_not_found

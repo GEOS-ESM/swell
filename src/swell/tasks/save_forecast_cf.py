@@ -10,14 +10,33 @@
 
 import isodate
 import os
-from r2d2 import store
 
-
+import swell.configuration.question_defaults as qd
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import r2d2
 from swell.configuration.jedi.interfaces.geos_cf.model.shared import forecast_filename
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveForecastCf'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.horizontal_resolution(),
+            qd.window_length(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -35,6 +54,7 @@ class SaveForecastCf(taskBase):
         """
 
         # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        from r2d2 import store
         r2d2_server = self.config.r2d2_server(default=None)
         load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 

@@ -63,10 +63,10 @@ import glob
 import copy
 import datetime as dt
 from shutil import copyfile
-from typing import Union, Optional, Any
+from abc import ABC, abstractmethod
 
 
-def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
+def get_file_handler(config: list, **kwargs) -> StageFileHandler | GetDataFileHandler:
     """Factory for determining the file handler type for retrieving data.
 
        This method uses a heuristic algorithm to determine the staging
@@ -104,17 +104,17 @@ def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataF
 # ------------------------------------------------------------------------------
 
 
-class FileHandler(object):
+class FileHandler(ABC):
 
     def __init__(self, config: list, **kwargs) -> None:
 
-        self.listing = []
+        self.listing: list = []
         self.config = copy.deepcopy(config)
         self.strict = kwargs.get('strict', True)
 
 # ------------------------------------------------------------------------------
 
-    def is_ready(self, fc: Optional[FileCollection] = None) -> bool:
+    def is_ready(self, fc: FileCollection | None = None) -> bool:
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
 
@@ -156,7 +156,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------
 
-    def get(self, fc: Optional[FileCollection] = None) -> None:
+    def get(self, fc: FileCollection | None = None) -> None:
         """Retrieves the files in the specified file collection.
 
            Parameters
@@ -224,6 +224,12 @@ class FileHandler(object):
             raise ValueError('File exists where link expected: "' + dst + '"')
         if not os.path.isfile(dst):
             os.symlink(src, dst)
+
+# ---------------------------------------------------------------------------
+
+    @abstractmethod
+    def list(self, force: bool = False) -> list:
+        return []
 
 # ---------------------------------------------------------------------------
 
@@ -341,7 +347,7 @@ class GetDataFileHandler(FileHandler):
                         srcfile = args[0]
 
                     filelist = glob.glob(srcfile)
-                    found = found or filelist
+                    found = found or len(filelist) > 0
 
                     for srcfile in filelist:
 
@@ -374,11 +380,11 @@ class GetDataFileHandler(FileHandler):
 
 class FileCollection(object):
 
-    def __init__(self, config: dict[Any, Any]) -> None:
+    def __init__(self, config: dict) -> None:
 
         self.config = copy.deepcopy(config)
 
-        self.listing = []
+        self.listing: list = []
         self.link = config.get('link', False)
         self.min_count = config.get('min_count', 1)
         self.min_age = config.get('min_age', 0)
