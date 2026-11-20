@@ -25,7 +25,7 @@ def comp_variance_output(template_dict: Mapping) -> Mapping:
             'filetype': 'cube sphere history',
             'provider': 'geos',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_variance}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            'filename': f'{prefix_output_variance}.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
             'field io names': []
         }
     elif grid_type == 'latlon':
@@ -33,7 +33,7 @@ def comp_variance_output(template_dict: Mapping) -> Mapping:
             'filetype': 'auxgrid',
             'gridtype': 'latlon',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_variance}.ll.',
+            'filename': f'{prefix_output_variance}.eta.',
             'field io names': []
         }
 
