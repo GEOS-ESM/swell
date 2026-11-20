@@ -43,7 +43,7 @@ _3dvar_atmos_tier1 = QuestionList(
         qd.gsibec_nlons("144"),
         qd.vertical_resolution("72"),
         qd.observations([
-            "abi_g16",
+            # "abi_g16",
             "abi_g18",
             "aircraft_temperature",
             "aircraft_wind",
