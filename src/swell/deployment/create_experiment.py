@@ -9,22 +9,20 @@
 
 
 import copy
-import datetime
 import io
 import os
 import shutil
 import sys
 from ruamel.yaml import YAML
-from typing import Optional
 
-from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
+from swell.utilities.dictionary import add_comments_to_dictionary, dict_get, update_dict
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
-from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
+from swell.suites.base.suite_attributes import suite_configs, workflows
 from swell.utilities.check_da_params import check_da_params
 
 
@@ -38,6 +36,7 @@ def clone_config(
     platform: str,
     advanced: bool
 ) -> str:
+
     # Create a logger
     logger = get_logger('SwellCloneExperiment')
 
@@ -49,6 +48,8 @@ def clone_config(
     with open(configuration, 'r') as f:
         yaml = YAML()
         override_dict = yaml.load(f)
+
+    suite_config = override_dict['suite_to_run']
 
     # Check that override_dict has a suite key and get the suite name
     if 'suite_to_run' not in override_dict:
@@ -63,7 +64,13 @@ def clone_config(
     override_dict['experiment_id'] = experiment_id
 
     # First create the configuration for the experiment.
-    return prepare_config(suite, method, override_dict['platform'], override_dict, advanced)
+    return prepare_config(suite,
+                          suite_config=suite_config,
+                          method=method,
+                          platform=override_dict['platform'],
+                          override=override_dict,
+                          advanced=advanced,
+                          slurm=None)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -76,7 +83,7 @@ def prepare_config(
     platform: str,
     override: dict,
     advanced: bool,
-    slurm: str
+    slurm: str | None
 ) -> str:
 
     # Create a logger
@@ -98,40 +105,22 @@ def prepare_config(
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
                                                                platform, method, override)
 
-    # Ask questions as the suite gets configured
-    # ------------------------------------------
-    experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
-    # Add the datetime to the dictionary
-    # ----------------------------------
-    experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
-    comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
-
-    # Add the platform the dictionary
-    # -------------------------------
-    experiment_dict['platform'] = platform
-    comment_dict['platform'] = 'Computing platform to run the experiment'
-
-    # Add the suite_to_run to the dictionary
+    # Retrieved the answered suite questions
     # --------------------------------------
-    experiment_dict['suite_to_run'] = suite
-    comment_dict['suite_to_run'] = 'Record of the suite being executed'
-
-    # Add the model components to the dictionary
-    # ------------------------------------------
-    if 'models' in experiment_dict:
-        experiment_dict['model_components'] = list(experiment_dict['models'].keys())
-        comment_dict['model_components'] = 'List of models in this experiment'
+    suite_dict = prepare_config_and_suite.experiment_dict.copy()
 
     # Overrides for comparison suites
-    if 'start_cycle_point' in experiment_dict:
-        start_cycle_point = experiment_dict['start_cycle_point']
-        final_cycle_point = experiment_dict['final_cycle_point']
-        if experiment_dict['start_cycle_point'] is None:
-            config_list = experiment_dict['comparison_experiment_paths']
+    if 'start_cycle_point' in suite_dict:
+        start_cycle_point = suite_dict['start_cycle_point']
+        final_cycle_point = suite_dict['final_cycle_point']
+        if 'comparison_experiment_paths' in suite_dict and \
+                suite_dict['start_cycle_point'] is None:
+            config_list = suite_dict['comparison_experiment_paths']
             if isinstance(config_list, dict):
                 config_list = list(config_list.values())
-            for model in experiment_dict['model_components']:
-                cycle_times = experiment_dict['models'][model]['cycle_times']
+            for model in suite_dict['model_components']:
+                cycle_times = suite_dict['models'][model]['cycle_times']
+
                 start_cycle_point, final_cycle_point, cycle_times = check_da_params(
                         config_list,
                         model,
@@ -139,36 +128,84 @@ def prepare_config(
                         final_cycle_point,
                         cycle_times)
 
-                experiment_dict['start_cycle_point'] = start_cycle_point
-                experiment_dict['final_cycle_point'] = final_cycle_point
-                experiment_dict['models'][model]['cycle_times'] = cycle_times
+                suite_dict['start_cycle_point'] = start_cycle_point
+                suite_dict['final_cycle_point'] = final_cycle_point
+                suite_dict['models'][model]['cycle_times'] = cycle_times
 
-    # Expand experiment dict with SLURM overrides.
-    # NOTE: This is a bit of a hack. We should really either commit to using a
-    # separate file and pass it around everywhere, or commit fully to keeping
-    # everything in `experiment.yaml` and support it through the Questionary
-    # infrastructure.
-    # ----------------------------------
-    if slurm is not None:
-        logger.info(f"Reading SLURM directives from {slurm}.")
-        assert os.path.exists(slurm)
-        with open(slurm, "r") as slurmfile:
-            slurm_dict = yaml.load(slurmfile)
-        # Ensure that SLURM dict is _only_ used for SLURM directives.
-        slurm_invalid_keys = set(slurm_dict.keys()).difference({
-            "slurm_directives_global",
-            "slurm_directives_tasks"
-        })
-        if slurm_invalid_keys:
-            logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
-        experiment_dict = {**experiment_dict, **slurm_dict}
+    # Resolve cycle times for models
+    # ------------------------------
+    if 'models' in suite_dict and 'start_cycle_point' in suite_dict:
+        model_components = suite_dict['models']
+
+        # Since cycle times are used, the render_dictionary will need to include cycle_times
+        # If there are different model components then process each to gather cycle times
+        if len(model_components) > 0 and all('cycle_times' in suite_dict['models'][model]
+                                             for model in model_components):
+            cycle_times = []
+            for model_component in model_components:
+                cycle_times_mc = suite_dict['models'][model_component]['cycle_times']
+                cycle_times = list(set(cycle_times + cycle_times_mc))
+            cycle_times.sort()
+
+            cycle_times_dict_list = []
+            for cycle_time in cycle_times:
+                cycle_time_dict = {}
+                cycle_time_dict['cycle_time'] = cycle_time
+                for model_component in model_components:
+                    cycle_time_dict[model_component] = False
+                    if cycle_time in suite_dict['models'][model_component]['cycle_times']:
+                        cycle_time_dict[model_component] = True
+                cycle_times_dict_list.append(cycle_time_dict)
+
+            suite_dict['cycle_times'] = cycle_times_dict_list
+
+        # Otherwise check that suite_dict has cycle_times
+        elif 'cycle_times' in suite_dict:
+
+            cycle_times = list(set(suite_dict['cycle_times']))
+            cycle_times.sort()
+            suite_dict['cycle_times'] = cycle_times
+
+    # Get the slurm defaults from the user and platform
+    # -------------------------------------------------
+    slurm_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
+
+    # Initialize the workflow
+    # -----------------------
+    workflow_class = workflows.get(suite)
+    workflow = workflow_class(suite_dict, slurm_dict)
+
+    # Get the list of tasks from the workflow's graph
+    # -----------------------------------------------
+    model_ind_tasks, model_dep_tasks = workflow.get_independent_and_model_tasks()
+
+    # Set the tasks to be used in preparing the suite
+    # -----------------------------------------------
+    prepare_config_and_suite.model_independent_tasks = model_ind_tasks
+    prepare_config_and_suite.model_dependent_tasks = model_dep_tasks
+
+    # Ask the task questions
+    # ----------------------
+    experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
+    if 'start_cycle_point' in suite_dict:
+        experiment_dict['start_cycle_point'] = suite_dict['start_cycle_point']
+        experiment_dict['final_cycle_point'] = suite_dict['final_cycle_point']
+
+    # Update dict with cycle times
+    # ----------------------------
+    workflow_dict = update_dict(experiment_dict, suite_dict)
+    workflow.experiment_dict = workflow_dict
+
+    # Finalize the workflow by adding the runtime section, and get the contents
+    # -------------------------------------------------------------------------
+    workflow_string = workflow.get_workflow_string()
 
     # Register the experiment in R2D2
     # -------------------------------
     if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
             and not experiment_dict['skip_r2d2']:
 
-        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, \
+        from swell.utilities.r2d2_utils import load_r2d2_credentials, load_r2d2_module, \
                 unique_r2d2_id, experiment_exists
 
         load_r2d2_module(logger, platform)
@@ -218,7 +255,7 @@ def prepare_config(
     # Return path to dictionary file
     # ------------------------------
 
-    return experiment_dict_string_comments
+    return experiment_dict_string_comments, workflow_string
 
 
 # --------------------------------------------------------------------------------------------------
@@ -236,7 +273,7 @@ def create_experiment_directory(
 
     # Get the base name of the suite
     # ------------------------------
-    suite = AllSuites.base_suite(suite_config)
+    suite = suite_configs.base_suite(suite_config)
 
     # Create a logger
     # ---------------
@@ -251,8 +288,8 @@ def create_experiment_directory(
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, suite_config, method, platform,
-                                         override, advanced, slurm)
+    experiment_dict_str, workflow_str = prepare_config(suite, suite_config, method, platform,
+                                                       override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------
@@ -280,13 +317,8 @@ def create_experiment_directory(
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
 
-    # At this point we need to write the complete suite file with all templates resolved. Call the
-    # function to build the scheduling dictionary, combine with the experiment dictionary,
-    # resolve the templates and write the suite file to the experiment suite directory.
-    # --------------------------------------------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict,
-                              platform, exp_path)
+    with open(os.path.join(exp_suite_path, 'flow.cylc'), 'w') as file:
+        file.write(workflow_str)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
@@ -346,7 +378,7 @@ def copy_eva_files(
 def copy_platform_files(
     logger: Logger,
     exp_suite_path: str,
-    platform: Optional[str] = None
+    platform: str | None = None
 ) -> None:
 
     # Copy platform related files to the suite directory
@@ -384,6 +416,8 @@ def template_modules_file(
         # Swell bin path
         # --------------
         swell_bin_path = shutil.which("swell")
+        if swell_bin_path is None:
+            raise ModuleNotFoundError(f'Could not find swell executable')
         swell_bin_path = os.path.split(swell_bin_path)[0]
 
         # Swell lib path
@@ -419,7 +453,6 @@ def template_modules_file(
         # ------------------
         with open(modules_file, 'w') as modules_file_open:
             modules_file_open.write(modules_file_str)
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -470,143 +503,6 @@ def create_modules_csh(
         with open(modules_file+'-csh', 'w') as modules_file_open:
             for modules_file_line in modules_file_lines:
                 modules_file_open.write(modules_file_line)
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def prepare_cylc_suite_jinja2(
-    logger: Logger,
-    swell_suite_path: str,
-    exp_suite_path: str,
-    experiment_dict: dict,
-    platform: str,
-    experiment_path: str
-) -> None:
-
-    # Open suite file from swell
-    # --------------------------
-    with open(os.path.join(swell_suite_path, 'flow.cylc'), 'r') as file:
-        suite_file = file.read()
-
-    # Copy the experiment dictionary to the rendering dictionary
-    # ----------------------------------------------------------
-    render_dictionary = copy.deepcopy(experiment_dict)
-
-    # Add experiment path to the rendering dictionary
-    # ----------------------------------------------------
-    render_dictionary['experiment_path'] = experiment_path
-
-    # Get unique list of cycle times with model flags to render dictionary
-    # --------------------------------------------------------------------
-
-    # Convenience - fetch model_components prior to search for 'cycle_times' and 'ensemble_*'
-    model_components = dict_get(logger, experiment_dict, 'model_components', [])
-
-    # Check if 'cycle_times' appears anywhere in the suite_file
-    if 'cycle_times' in suite_file:
-
-        # Since cycle times are used, the render_dictionary will need to include cycle_times
-        # If there are different model components then process each to gather cycle times
-        if len(model_components) > 0:
-            cycle_times = []
-            for model_component in model_components:
-                cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
-                cycle_times = list(set(cycle_times + cycle_times_mc))
-            cycle_times.sort()
-
-            cycle_times_dict_list = []
-            for cycle_time in cycle_times:
-                cycle_time_dict = {}
-                cycle_time_dict['cycle_time'] = cycle_time
-                for model_component in model_components:
-                    cycle_time_dict[model_component] = False
-                    if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
-                        cycle_time_dict[model_component] = True
-                cycle_times_dict_list.append(cycle_time_dict)
-
-            render_dictionary['cycle_times'] = cycle_times_dict_list
-
-        # Otherwise check that experiment_dict has cycle_times
-        elif 'cycle_times' in experiment_dict:
-
-            cycle_times = list(set(experiment_dict['cycle_times']))
-            cycle_times.sort()
-            render_dictionary['cycle_times'] = cycle_times
-
-        else:
-
-            # Otherwise use logger to abort
-            logger.abort('The suite file required cycle_times but there are no model components ' +
-                         'to gather them from or they are not provided in the experiment ' +
-                         'dictionary.')
-
-    # Check if 'ensemble_hofx_strategy' appears anywhere in suite_file
-    ensemble_list = ['ensemble_'+s for s in ['num_members', 'hofx_strategy', 'hofx_packets']]
-    ensemble_list = ensemble_list + ['skip_ensemble_hofx']
-    for ensemble_aspect in ensemble_list:
-        if ensemble_aspect in suite_file:
-            if len(model_components) == 0:
-                logger.abort(f'The suite file required {ensemble_aspect} ' +
-                             'there are no model components to gather them from or ' +
-                             'they are not provided in the experiment dictionary.')
-            for model_component in model_components:
-                render_dictionary[ensemble_aspect] = \
-                    experiment_dict['models'][model_component][ensemble_aspect]
-
-    # Cycling VarBC exception (only for geos_atmosphere)
-    if 'cycling_varbc' in suite_file:
-        if 'geos_atmosphere' in model_components:
-            render_dictionary['cycling_varbc'] = \
-                experiment_dict['models']['geos_atmosphere']['cycling_varbc']
-        else:
-            logger.abort('The suite file required cycling_varbc but ' +
-                         'geos_atmosphere is not in the model components.')
-
-    # Marine model toggles (only for geos_marine)
-    if 'marine_models' in suite_file:
-        if 'geos_marine' in model_components:
-            render_dictionary['marine_models'] = \
-                experiment_dict['models']['geos_marine']['marine_models']
-        else:
-            logger.abort('The suite file required marine_models but ' +
-                         'geos_marine is not in the model components.')
-
-    render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
-
-    # Set some specific values for:
-    # ------------------------------
-    # run time (note: these overwrite defaults above)
-    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
-    render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
-    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT10M'
-    render_dictionary['scheduling']['RunJediVariationalExecutable'][
-            'execution_time_limit'] = 'PT40M'
-    render_dictionary['scheduling']['RunGeos']['execution_time_limit'] = 'PT30M'
-    render_dictionary['scheduling']['RunJediLocalEnsembleDaExecutable'][
-            'execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediObsfiltersExecutable'][
-            'execution_time_limit'] = 'PT5M'
-    render_dictionary['scheduling']['EvaObservations'][
-            'execution_time_limit'] = 'PT30M'
-
-    # Set jinja templated string to use upon runtime
-    # ----------------------------------------------
-    render_dictionary['scheduling']['stall_timeout'] = """\
-    {% if environ.get('SWELL_CYLC_TIMEOUT') %}
-    [[events]]
-    stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
-    {% endif %}"""
-
-    # Render the template
-    # -------------------
-    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary,
-                                            allow_unresolved=True)
-
-    # Write suite file to experiment
-    # ------------------------------
-    with open(os.path.join(exp_suite_path, 'flow.cylc'), 'w') as file:
-        file.write(new_suite_file)
 
 
 # --------------------------------------------------------------------------------------------------
