@@ -96,11 +96,11 @@ class RunJediVariationalExecutable(taskBase):
         stddev_scale_factors = self.config.get_key_for_model('stddev_scale_factors',
                                                              self.get_model(), {})
         bump_nicas_data_directory = self.config.get_key_for_model(
-            'bump_nicas_data_directory', self.get_model(), 'defer_to_model')
+            'bump_nicas_data_directory', self.get_model(), None)
         bump_nicas_files_prefix = self.config.get_key_for_model(
-            'bump_nicas_files_prefix', self.get_model(), 'defer_to_model')
+            'bump_nicas_files_prefix', self.get_model(), None)
         bump_nicas_group_name = self.config.get_key_for_model(
-            'bump_nicas_group_name', self.get_model(), 'defer_to_model')
+            'bump_nicas_group_name', self.get_model(), None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------

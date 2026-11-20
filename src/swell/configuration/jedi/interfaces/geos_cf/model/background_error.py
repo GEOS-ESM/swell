@@ -30,7 +30,7 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
     """
     def _override(key: str, default: str) -> str:
         value = template_dict.get(key)
-        return value if value and value != 'defer_to_model' else default
+        return value if value else default
 
     data_directory = _override('bump_nicas_data_directory', f"{template_dict['cycle_dir']}/")
     if not data_directory.endswith('/'):

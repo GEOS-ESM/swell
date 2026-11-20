@@ -46,9 +46,9 @@ _3dvar_cf_tier1 = QuestionList(
             "volume_mixing_ratio_of_no2": 0.25,
             "volume_mixing_ratio_of_co": 0.25,
             }),
-        qd.bump_nicas_data_directory('defer_to_model'),
-        qd.bump_nicas_files_prefix('defer_to_model'),
-        qd.bump_nicas_group_name('defer_to_model'),
+        qd.bump_nicas_data_directory(),
+        qd.bump_nicas_files_prefix(),
+        qd.bump_nicas_group_name(),
         qd.analysis_variables([
             "volume_mixing_ratio_of_o3",
             "volume_mixing_ratio_of_no2",
