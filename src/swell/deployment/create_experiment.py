@@ -191,6 +191,12 @@ def prepare_config(
         experiment_dict['start_cycle_point'] = suite_dict['start_cycle_point']
         experiment_dict['final_cycle_point'] = suite_dict['final_cycle_point']
 
+    # Carry any geos_cf MPI layout overrides (from the SLURM file passed with -s) into the
+    # experiment dict, so they are persisted in experiment.yaml and available to tasks at runtime.
+    # -------------------------------------------------------------------------------------------
+    if slurm_dict.get('geos_cf_mpi') is not None:
+        experiment_dict['geos_cf_mpi'] = slurm_dict['geos_cf_mpi']
+
     # Update dict with cycle times
     # ----------------------------
     workflow_dict = update_dict(experiment_dict, suite_dict)

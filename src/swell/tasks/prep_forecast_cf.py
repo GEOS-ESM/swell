@@ -9,14 +9,16 @@
 
 import math
 import os
+import re
 import shutil
 
 import isodate
 import xarray as xr
 import yaml
 
-from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import (
-    FORECAST_COLLECTIONS, forecast_history)
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import (
+    boundary_conditions_tag, forecast_collections, forecast_history, increment_template_name)
+from swell.configuration.jedi.interfaces.geos_cf.slurm import FACES, mpi_settings
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
@@ -45,7 +47,7 @@ class Setup(TaskSetup):
             qd.geos_cf_rc_dir(),
             qd.horizontal_resolution(),
             qd.iau(),
-            qd.inc_template(),
+            qd.inc_template_dir(),
             qd.met_replay_exp(),
             qd.met_replay_root(),
             qd.window_length(),
@@ -90,6 +92,9 @@ class PrepForecastCf(taskBase):
 
         self.geos_cf_rc_dir = self.config.geos_cf_rc_dir()
         self.geos_cf_install_dir = self.config.geos_cf_install_dir()
+        self.geos_cf_sbatch_constraint = self.config.geos_cf_sbatch_constraint()
+        self.geos_cf_sbatch_account = self.config.geos_cf_sbatch_account()
+        self.geos_cf_sbatch_qos = self.config.geos_cf_sbatch_qos()
 
         self.namelists_dir = os.path.join(self.experiment_config_path(),
                                           'jedi', 'interfaces', 'geos_cf', 'namelists')
@@ -144,6 +149,43 @@ class PrepForecastCf(taskBase):
         self.logger.info('Copying and updating GEOS-CF namelist/RC files')
         self.prepare_namelists()
 
+        # Section 5: Check the nodes requested for RunForecast are sufficient
+        # --------------------------------------------------------------------
+        self.check_runforecast_nodes()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def check_runforecast_nodes(self) -> None:
+        """Abort if the nodes requested for RunForecast in flow.cylc are fewer than the nodes
+        required by the selected resolution (GCM_MPI)."""
+
+        required_nodes = mpi_settings('gcm', self.resolution, self.config.geos_cf_mpi())['nodes']
+        model = self.get_model()
+
+        cylc_file = os.path.join(self.experiment_path(), self.experiment_id() + '-suite',
+                                 'flow.cylc')
+        with open(cylc_file, 'r') as f:
+            content = f.read()
+
+        # Isolate the RunForecast section (up to the next [[task]] header) and read its nodes
+        section = re.search(rf'\[\[\s*RunForecast-{model}\s*\]\]([\s\S]*?)(?=\n\s*\[\[[^\[]|\Z)',
+                            content)
+        node_match = re.search(r'--nodes\s*=\s*(\d+)', section.group(1)) if section else None
+        if node_match is None:
+            self.logger.warning(f'Could not ascertain the number of nodes assigned to '
+                                f'`RunForecast-{model}` in flow.cylc. Please check that at least '
+                                f'{required_nodes} nodes are requested.')
+            return
+
+        cylc_nodes = int(node_match.group(1))
+        if cylc_nodes < required_nodes:
+            self.logger.abort(f'Insufficient number of nodes requested for RunForecast at '
+                              f'resolution {self.resolution}. Needed: ({required_nodes}), '
+                              f'Requested: ({cylc_nodes}). Please set `nodes` for RunForecast in '
+                              'the slurm file: https://geos-esm.github.io/swell/#/'
+                              'configuration_reference/slurm_configuration?id=slurm-configuration')
+        self.logger.info(f'RunForecast requests {cylc_nodes} nodes (required: {required_nodes})')
+
     # ----------------------------------------------------------------------------------------------
 
     def replace_string(self, filename: str, string1: str, string2: str) -> None:
@@ -159,7 +201,9 @@ class PrepForecastCf(taskBase):
     def create_geos_cf_increments(self) -> None:
         """Convert JEDI increment files to GEOS-CF format using the increment template."""
 
-        inc_template = self.config.inc_template()
+        # The template is on the grid of the forecast, so it follows the horizontal resolution
+        inc_template = os.path.join(self.config.inc_template_dir(),
+                                    increment_template_name(self.resolution))
 
         tstring_date = (self.parse_andate.strftime('%Y-%m-%d') + ' ' +
                         self.parse_andate.strftime('%H:%M:%S'))
@@ -176,6 +220,9 @@ class PrepForecastCf(taskBase):
         if not os.path.exists(jedifile):
             self.logger.info(f'Increment file {jedifile} not found, skipping increment creation')
             return
+
+        self.logger.assert_abort(os.path.exists(inc_template), f'Increment template '
+                                 f'{inc_template} not found for resolution {self.resolution}.')
 
         inc = xr.open_dataset(jedifile)
         template_ds = xr.open_dataset(inc_template)
@@ -276,7 +323,7 @@ class PrepForecastCf(taskBase):
             if os.path.exists(src):
                 shutil.copy(src, scratch_dir)
 
-        shutil.copy(os.path.join(namelists_dir, f'AGCM_{resolution}.rc'),
+        shutil.copy(os.path.join(namelists_dir, 'AGCM.rc'),
                     os.path.join(scratch_dir, 'AGCM.rc'))
 
         # Update AGCM.rc placeholders
@@ -294,31 +341,54 @@ class PrepForecastCf(taskBase):
         self.replace_string(agcm_rc, '>>>SWELL_FC6H_DATE<<<', f'{weYYYY}{weMM}{weDD}')
         self.replace_string(agcm_rc, '>>>SWELL_FC6H_H<<<', f'{weHH}0000')
 
+        # AGCM_IM/AGCM_JM follow the cube-sphere resolution directly (e.g. 'c90' -> 90, JM = 6*IM);
+        # the rest of the HPC/model-tuning parameters come from the GCM_MPI table (with the
+        # experiment overrides), whose layout is per cube face while AGCM.rc takes the layout over
+        # the whole globe (NY = 6 * ny).
+        tuning = mpi_settings('gcm', resolution, self.config.geos_cf_mpi())
+        agcm_im = int(resolution.lstrip('c'))
+        agcm_jm = agcm_im * 6
+
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NX<<<', str(tuning['nx']))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_NY<<<', str(tuning['ny'] * FACES))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_IM<<<', str(agcm_im))
+        self.replace_string(agcm_rc, '>>>SWELL_GEOSCF_AGCM_JM<<<', str(agcm_jm))
+
         # Update HISTORY.rc placeholders
         # ------------------------------
         history_src = os.path.join(namelists_dir, 'HISTORY.rc')
         history_dst = os.path.join(scratch_dir, 'HISTORY.rc')
         shutil.copy(history_src, history_dst)
-        history = forecast_history(self.additional_forecast_collections)
+
+        # Collection names are always computed for bkg/chm/met (so every attribute block in the
+        # file is fully substituted), but only the enabled ones are actually listed under
+        # COLLECTIONS: so GEOS only writes those out. The chm/met lat-lon output grid always
+        # follows the forecast's cube-sphere horizontal_resolution.
+        all_file_types = ['bkg', 'chm', 'met']
+        history = forecast_history(resolution, self.additional_forecast_collections)
+        all_names = forecast_collections(resolution, all_file_types)
+
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_EXPID<<<',
                             history['expid'])
-
-        # Every collection name is substituted in the attribute blocks below, but only the enabled
-        # ones are listed under COLLECTIONS: so that GEOS only writes those out.
         collection_placeholders = {
             'bkg': '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
             'chm': '>>>SWELL_GEOSCF_FORECAST_CHM_COLLECTION<<<',
             'met': '>>>SWELL_GEOSCF_FORECAST_MET_COLLECTION<<<',
         }
         for file_type, placeholder in collection_placeholders.items():
-            self.replace_string(history_dst, placeholder, FORECAST_COLLECTIONS[file_type])
+            self.replace_string(history_dst, placeholder, all_names[file_type])
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
                             history['template'])
 
-        collections_list = '\n             '.join(f"'{name}'"
-                                                  for name in history['collections'].values())
+        enabled_names = [all_names[file_type] for file_type in history['collections']]
+        collections_list = '\n             '.join(f"'{name}'" for name in enabled_names)
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_COLLECTIONS_LIST<<<',
                             collections_list)
+
+        grid = history['grid']
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_GRID_LABEL<<<', grid['grid_label'])
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_IM_WORLD<<<', str(grid['im']))
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_JM_WORLD<<<', str(grid['jm']))
 
         freq_dur = isodate.parse_duration(self.forecast_output_frequency)
         freq_total_secs = int(freq_dur.total_seconds())
@@ -352,24 +422,21 @@ class PrepForecastCf(taskBase):
 
         # Copy and configure gcm_run.j
         # -----------------------------
-        if resolution == 'c90':
-            sbatch_nodes = '8'
-            bcrslv = 'CF0090x6C_DE2880xPE1440'
-        elif resolution == 'c360':
-            sbatch_nodes = '32'
-            bcrslv = 'CF0360x6C_DE2880xPE1440'
-        else:
-            raise ValueError(
-                f'Unsupported horizontal resolution for gcm_run_geoscf.j: {resolution}'
-            )
-
         gcm_run_src = os.path.join(namelists_dir, 'gcm_run_geoscf.j')
         gcm_run_dst = os.path.join(scratch_dir, 'gcm_run_geoscf.j')
         shutil.copy(gcm_run_src, gcm_run_dst)
         self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
-        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', sbatch_nodes)
-        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', bcrslv)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NODES<<<', str(tuning['nodes']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_NTASKS_PER_NODE<<<',
+                            str(tuning['ntasks_per_node']))
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_TIME<<<', tuning['sbatch_time'])
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_JOBNAME<<<', f'gcm_cf_{resolution}')
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_CONSTRAINT<<<',
+                            self.geos_cf_sbatch_constraint)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_ACCOUNT<<<', self.geos_cf_sbatch_account)
+        self.replace_string(gcm_run_dst, '>>>SWELL_SBATCH_QOS<<<', self.geos_cf_sbatch_qos)
+        self.replace_string(gcm_run_dst, '>>>SWELL_BCRSLV<<<', boundary_conditions_tag(resolution))
         os.chmod(gcm_run_dst, 0o755)
 
         # Update CAP.rc with forecast length
@@ -380,7 +447,7 @@ class PrepForecastCf(taskBase):
         fc_mm = (sub_day_secs % 3600) // 60
         fc_ss = sub_day_secs % 60
         fc_len_geoscf = f'{fc_days} {fc_hh:02d}{fc_mm:02d}{fc_ss:02d}'
-        cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
+        cap_src = os.path.join(namelists_dir, 'CAP.rc')
         cap_dst = os.path.join(scratch_dir, 'CAP.rc')
         shutil.copy(cap_src, cap_dst)
         self.replace_string(cap_dst, '>>>SWELL_FC_LENGTH<<<', fc_len_geoscf)

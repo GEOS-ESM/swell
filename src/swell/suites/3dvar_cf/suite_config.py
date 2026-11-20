@@ -61,6 +61,7 @@ _3dvar_cf_tier1 = QuestionList(
     ]
 )
 
+
 suite_configs.register(suite_name, '3dvar_cf_tier1', _3dvar_cf_tier1)
 
 # --------------------------------------------------------------------------------------------------

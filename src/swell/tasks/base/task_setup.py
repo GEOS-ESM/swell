@@ -297,13 +297,31 @@ class TaskSetup(ABC):
 
     # --------------------------------------------------------------------------------------------------
 
-    def generate_task_slurm_dict(self, slurm_external: Mapping) -> Mapping:
+    def model_interface_scheduling(self, experiment_dict: Mapping) -> dict:
+        '''Scheduling ('directives' and 'execution_time_limit') that the task's model interface
+        provides for this task, e.g. resolution-dependent resources (see
+        swell.utilities.slurm.model_interface_scheduling). Returns an empty dict if the task is
+        not model-dependent or the model has no such scheduling.
+        '''
+
+        if self.model is None:
+            return {}
+
+        from swell.utilities.slurm import model_interface_scheduling
+        return model_interface_scheduling(self.model, self.base_name, experiment_dict)
+
+    # --------------------------------------------------------------------------------------------------
+
+    def generate_task_slurm_dict(self, slurm_external: Mapping,
+                                 experiment_dict: Mapping | None = None) -> Mapping:
         '''Take the external slurm dictionary and merge it with the task's parameters
         to get the dict that will be output in the runtime section
 
         Arguments:
         slurm_external: dictionary from `utilities/slurm.py` with defaults from the
                         platform and user.
+        experiment_dict: experiment dictionary, used to resolve model-interface scheduling
+                         (e.g. resolution-dependent resources). Optional.
 
         Returns:
         Finalized dictionary of slurm defaults for the task.
@@ -325,9 +343,15 @@ class TaskSetup(ABC):
             if self.scheduling_name in task_directives:
                 slurm_task = task_directives[self.scheduling_name]
 
+        interface_directives = {}
+        if experiment_dict is not None:
+            interface_directives = self.model_interface_scheduling(experiment_dict).get(
+                'directives', {})
+
         slurm_dict = {'job-name': self.scheduling_name,
                       **self.resolve_model(slurm_globals),
                       **self.resolve_model(slurm_dict),
+                      **interface_directives,
                       **self.resolve_model(slurm_task)}
 
         return slurm_dict
@@ -383,6 +407,12 @@ class TaskSetup(ABC):
         if self.task_time_limit is not None:
             runtime_dict['execution time limit'] = self.task_time_limit
 
+        # The model interface can override the execution time limit (e.g. resolution-dependent)
+        interface_time_limit = self.model_interface_scheduling(experiment_dict).get(
+            'execution_time_limit')
+        if interface_time_limit is not None:
+            runtime_dict['execution time limit'] = interface_time_limit
+
         # Set the retry if this task needs it
         if self.retry:
             runtime_dict['execution retry delays'] = self.retry
@@ -397,7 +427,7 @@ class TaskSetup(ABC):
         # Specify the slurm dictionary with defaults from user and global settings
         if self.slurm is not None:
 
-            slurm_dict = self.generate_task_slurm_dict(slurm_external)
+            slurm_dict = self.generate_task_slurm_dict(slurm_external, experiment_dict)
 
             slurm_section_dict = {}
             for key, value in slurm_dict.items():

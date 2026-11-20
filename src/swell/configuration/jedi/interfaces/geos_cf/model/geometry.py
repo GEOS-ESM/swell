@@ -8,16 +8,20 @@
 
 from collections.abc import Mapping
 
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import cube_sphere_npx
+from swell.configuration.jedi.interfaces.geos_cf.slurm import mpi_settings
+
 # --------------------------------------------------------------------------------------------------
 
 
 def geometry(template_dict: Mapping) -> Mapping:
 
-    npx_proc = template_dict['npx_proc']
-    npy_proc = template_dict['npy_proc']
+    horizontal_resolution = template_dict['horizontal_resolution']
 
-    npx = template_dict['npx']
-    npy = template_dict['npy']
+    jedi_mpi = mpi_settings('jedi', horizontal_resolution, template_dict.get('geos_cf_mpi'))
+    npx_proc, npy_proc = jedi_mpi['nx'], jedi_mpi['ny']
+
+    npx = npy = cube_sphere_npx(horizontal_resolution)
 
     vertical_resolution = template_dict['vertical_resolution']
 
