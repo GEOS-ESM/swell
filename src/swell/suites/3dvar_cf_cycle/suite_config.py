@@ -90,9 +90,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.forecast_length('PT12H'),
             qd.forecast_output_frequency('PT3H'),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
-            qd.inc_template(
-                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'
-                'handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
+            qd.inc_template_dir(
+                '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/handle_inc'
                 ),
             qd.geos_cf_install_dir(
                 '/discover/nobackup/projects/gmao/geos_cf_dev/GEOS-CF3-dev/'

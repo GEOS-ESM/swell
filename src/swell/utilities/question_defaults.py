@@ -1217,14 +1217,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class inc_template(TaskQuestion):
+    class inc_template_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "inc_template"
+        question_name: str = "inc_template_dir"
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the GEOS-CF increment template NetCDF file?"
+        prompt: str = ("What is the path to the directory with the GEOS-CF increment template "
+                       "NetCDF files (one per horizontal_resolution)?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

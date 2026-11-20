@@ -90,6 +90,17 @@ def forecast_collections(resolution: str, additional_collections: list = None) -
     return collections
 
 
+def increment_template_name(resolution: str) -> str:
+    """File name of the GEOS-CF increment template for the resolution, e.g. 'c90' ->
+    'GEOSCF_inctmplt_C90x90x6_v72.nc4'. It provides the grid and the layout of the forecast's IAU
+    increment file, so it must be on the forecast resolution."""
+
+    if resolution not in RESOLUTION_GRIDS:
+        raise ValueError(f'Unsupported horizontal resolution: {resolution}. '
+                         f'Choose from: {list(RESOLUTION_GRIDS)}')
+    return f"GEOSCF_inctmplt_{RESOLUTION_GRIDS[resolution]['cube_tag']}_v72.nc4"
+
+
 def forecast_history(resolution: str, additional_collections: list = None) -> Mapping:
 
     return {

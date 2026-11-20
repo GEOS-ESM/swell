@@ -17,7 +17,7 @@ import xarray as xr
 import yaml
 
 from swell.configuration.jedi.interfaces.geos_cf.model.shared import (
-    boundary_conditions_tag, forecast_collections, forecast_history)
+    boundary_conditions_tag, forecast_collections, forecast_history, increment_template_name)
 from swell.configuration.jedi.interfaces.geos_cf.slurm import FACES, mpi_settings
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
@@ -169,7 +169,9 @@ class PrepForecastCf(taskBase):
     def create_geos_cf_increments(self) -> None:
         """Convert JEDI increment files to GEOS-CF format using the increment template."""
 
-        inc_template = self.config.inc_template()
+        # The template is on the grid of the forecast, so it follows the horizontal resolution
+        inc_template = os.path.join(self.config.inc_template_dir(),
+                                    increment_template_name(self.resolution))
 
         tstring_date = (self.parse_andate.strftime('%Y-%m-%d') + ' ' +
                         self.parse_andate.strftime('%H:%M:%S'))
@@ -186,6 +188,9 @@ class PrepForecastCf(taskBase):
         if not os.path.exists(jedifile):
             self.logger.info(f'Increment file {jedifile} not found, skipping increment creation')
             return
+
+        self.logger.assert_abort(os.path.exists(inc_template), f'Increment template '
+                                 f'{inc_template} not found for resolution {self.resolution}.')
 
         inc = xr.open_dataset(jedifile)
         template_ds = xr.open_dataset(inc_template)
