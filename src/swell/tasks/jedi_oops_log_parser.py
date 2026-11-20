@@ -9,9 +9,27 @@
 
 
 import os
-import subprocess
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'JediOopsLogParser'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.parser_options(),
+            qd.comparison_log_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,14 +45,15 @@ class JediOopsLogParser(taskBase):
 
         log_type = self.config.comparison_log_type()
 
-        # Build the command
-        command = ['fgrep', '"Residual norm"'] + [
-                os.path.join(cycle_dir, f'jedi_{log_type}_log.log')]
-        command = ' '.join(command)
+        log_path = os.path.join(cycle_dir, f'jedi_{log_type}_log.log')
 
-        # Run the fgrep command
-        output = subprocess.run(command, capture_output=True, text=True, shell=True, check=True)
-        results = output.stdout
+        with open(log_path, 'r') as f:
+            lines = f.readlines()
+
+        results = []
+        for line in lines:
+            if 'Residual norm' in line:
+                results.append(line.strip())
 
         # Write the output file
         with open(output_file, 'w') as f:
@@ -42,7 +61,7 @@ class JediOopsLogParser(taskBase):
             f.write(f'Model: {model}\n')
             f.write(f'Cycle: {cycle_time}\n\n')
             f.write(f'RESULTS:\n')
-            f.write(results)
+            f.write('\n'.join(results))
 
     def execute(self) -> None:
 

@@ -14,7 +14,32 @@ import subprocess
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import previous_bias_file
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetObsNotInR2d2'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.mail_events = ['submit-failed']
+        self.questions = [
+            qd.ioda_locations_not_in_r2d2(),
+            qd.window_length(),
+            qd.observations(),
+            qd.crtm_coeff_dir(),
+            qd.background_time_offset(),
+            qd.observing_system_records_path(),
+            qd.cycling_varbc()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

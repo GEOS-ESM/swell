@@ -11,7 +11,7 @@ import os
 import unittest
 import tempfile
 
-from swell.suites.all_suites import get_suites
+from swell.suites.base.suite_attributes import workflows
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.utilities.logger import get_logger
 from swell.utilities.test_cache import get_test_cache
@@ -29,7 +29,7 @@ class SuiteCreationTest(unittest.TestCase):
 
         '''
 
-        suites = get_suites()
+        suites = workflows.all()
 
         self.logger = get_logger('SuiteCreationTest')
 
@@ -61,11 +61,11 @@ class SuiteCreationTest(unittest.TestCase):
             experiment_yaml_str = f.read()
 
         if 'defer_to_model' in experiment_yaml_str:
-            raise AssertionError(f'Improperly filled template, `defer_to_model`'
+            raise AssertionError(f'Improperly filled template for {suite}, `defer_to_model`'
                                  'present in experiment yaml')
 
         if 'defer_to_platform' in experiment_yaml_str:
-            raise AssertionError(f'Improperly filled template, `defer_to_platform`'
-                                 'present in experiment.yaml')
+            raise AssertionError(f'Improperly filled template for {suite}, `defer_to_platform`'
+                                 'present in experiment yaml')
 
 # --------------------------------------------------------------------------------------------------

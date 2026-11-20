@@ -10,11 +10,30 @@
 from datetime import datetime as dt
 from datetime import timedelta
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveBackground'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.dry_run(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -41,7 +60,7 @@ class SaveBackground(taskBase):
         - ``background_source_path``: strftime path template, e.g.
           ``/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/
           GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4``
-        - ``background_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
+        - ``background_experiment``: R2D2 experiment name (default ``geos_cf_oper``)
         - ``horizontal_resolution``: R2D2 resolution string (default ``c360``)
         - ``store_as_symlink``: if ``True`` (default), register files as symlinks
           in R2D2 rather than copying them
@@ -49,9 +68,11 @@ class SaveBackground(taskBase):
         The Cylc cycle point must be the forecast initialization time,
         e.g. ``2025-10-02T09:00:00Z``.
         """
+        from r2d2 import store
 
-        # Load R2D2 credentials
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         dry_run = self.config.dry_run(True)
         if dry_run:
@@ -71,7 +92,7 @@ class SaveBackground(taskBase):
 
         model = self.get_model()
         source_template = self.config.background_source_path()
-        experiment = self.config.background_experiment('geos_cf_v2')
+        experiment = self.config.background_experiment('geos_cf_oper')
         resolution = self.config.horizontal_resolution('c360')
         store_as_symlink = self.config.store_as_symlink(True)
 

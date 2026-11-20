@@ -15,12 +15,34 @@ import os
 import yaml
 from datetime import datetime
 
-import requests
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-import r2d2
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'IngestObs'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.dry_run(),
+            qd.obs_to_ingest(),
+            qd.window_length(),
+            qd.store_as_symlink(),
+            qd.observation_providers(),
+            # qd.window_offset(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class IngestObs(taskBase):
@@ -82,6 +104,11 @@ class IngestObs(taskBase):
 
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
+
+        # Per-observation provider overrides from the experiment configuration.
+        # Values here take precedence over the defaults in
+        # observation_ioda_names.yaml.
+        self.observation_providers = self.config.observation_providers(default={})
 
         # Get window parameters
         window_length = self.config.window_length()
@@ -157,12 +184,17 @@ class IngestObs(taskBase):
         r2d2_datastore: str | None = None,
         store_as_symlink: bool = False,
     ) -> tuple[list[str], list[tuple[str, str]]]:
+
+        import r2d2
+        import requests
+
         """Process a single observation configuration file."""
         ingested = []
         failed = []
 
         provider = get_provider_for_observation(
-            obs_name, self.ioda_names_list, self.logger)
+            obs_name, self.ioda_names_list, self.logger,
+            provider_overrides=self.observation_providers)
 
         acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 
@@ -218,7 +250,7 @@ class IngestObs(taskBase):
                     provider=provider,
                     observation_type=obs_name,
                     file_extension=os.path.splitext(
-                        target_file)[1][1:],  # 'nc' from '.nc'
+                        target_file)[1][1:],  # e.g. '.nc4'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file,

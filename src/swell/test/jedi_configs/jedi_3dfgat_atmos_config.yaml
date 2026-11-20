@@ -2,7 +2,7 @@ cost function:
   cost type: 4D-Var
   jb evaluation: false
   time window:
-    begin: '2023-10-09T21:00:00Z'
+    begin: '2025-12-29T21:00:00Z'
     length: PT6H
     bound to include: begin
   geometry:
@@ -39,7 +39,7 @@ cost function:
       rain_water: qr
       snow_water: qs
       mole_fraction_of_ozone_in_air: o3ppmv
-      geopotential_height_times_gravity_at_surface: phis
+      geopotential_at_surface: phis
       initial_mass_fraction_of_large_scale_cloud_condensate: qls
       initial_mass_fraction_of_convective_cloud_condensate: qcn
       convective_cloud_area_fraction: cfcn
@@ -76,13 +76,13 @@ cost function:
   - rain_water
   - snow_water
   - mole_fraction_of_ozone_in_air
-  - geopotential_height_times_gravity_at_surface
+  - geopotential_at_surface
   - fraction_of_ocean
   - fraction_of_lake
   - fraction_of_ice
   - skin_temperature_at_surface
   background:
-    datetime: '2023-10-09T21:00:00Z'
+    datetime: '2025-12-29T21:00:00Z'
     filetype: cube sphere history
     provider: geos
     compute edge pressure from surface pressure: true
@@ -103,7 +103,7 @@ cost function:
     - rain_water
     - snow_water
     - mole_fraction_of_ozone_in_air
-    - geopotential_height_times_gravity_at_surface
+    - geopotential_at_surface
     - initial_mass_fraction_of_large_scale_cloud_condensate
     - initial_mass_fraction_of_convective_cloud_condensate
     - convective_cloud_area_fraction
@@ -174,7 +174,7 @@ cost function:
       - fraction_of_ocean
       - fraction_of_lake
       - fraction_of_ice
-      - geopotential_height_times_gravity_at_surface
+      - geopotential_at_surface
       - skin_temperature_at_surface
     linear variable change:
       linear variable change name: Control2Analysis
@@ -192,12 +192,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/abi_g18.20231009T210000Z.nc4
+            obsfile: cycle_dir/abi_g18.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.abi_g18.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.abi_g18.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -226,16 +226,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/abi_g18.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/abi_g18.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/abi_g18.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/abi_g18.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/abi_g18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/abi_g18.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/abi_g18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/abi_g18.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             var_name: sensorScanPosition
@@ -256,11 +256,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/abi_g18.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/abi_g18.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/abi_g18.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/abi_g18.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -366,7 +366,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: abi_g18
+              sensor: infrared
       - filter: Perform Action
         filter variables:
         - name: brightnessTemperature
@@ -579,7 +579,7 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/aircraft_temperature.20231009T210000Z.nc4
+            obsfile: cycle_dir/aircraft_temperature.20251229T210000Z.nc4
             missing file action: warn
           obsgrouping:
             group variables:
@@ -590,14 +590,14 @@ cost function:
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.aircraft_temperature.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.aircraft_temperature.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
         - airTemperature
       obs bias:
-        input file: cycle_dir/aircraft_temperature.20231009T150000Z.acftbias
-        output file: cycle_dir/aircraft_temperature.20231009T210000Z.acftbias
+        input file: cycle_dir/aircraft_temperature.20251229T150000Z.acftbias
+        output file: cycle_dir/aircraft_temperature.20251229T210000Z.acftbias
         bc by record: true
         variational bc:
           predictors:
@@ -615,7 +615,7 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/aircraft_temperature.20231009T150000Z.acftbias_cov
+            input file: cycle_dir/aircraft_temperature.20251229T150000Z.acftbias_cov
             inflation:
               ratio: 1.005
               ratio for small dataset: 2.0
@@ -977,7 +977,7 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/aircraft_wind.20231009T210000Z.nc4
+            obsfile: cycle_dir/aircraft_wind.20251229T210000Z.nc4
             missing file action: warn
           obsgrouping:
             group variables:
@@ -988,7 +988,7 @@ cost function:
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.aircraft_wind.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.aircraft_wind.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -1358,12 +1358,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/airs_aqua.20231009T210000Z.nc4
+            obsfile: cycle_dir/airs_aqua.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.airs_aqua.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.airs_aqua.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -1392,16 +1392,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/airs_aqua.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/airs_aqua.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/airs_aqua.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/airs_aqua.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/airs_aqua.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/airs_aqua.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/airs_aqua.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/airs_aqua.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -1418,11 +1418,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/airs_aqua.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/airs_aqua.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/airs_aqua.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/airs_aqua.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/airs_aqua_119_jedi_rcov.nc4
@@ -1772,7 +1772,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: airs_aqua
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -2465,12 +2465,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsr2_gcom-w1.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsr2_gcom-w1.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsr2_gcom-w1.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsr2_gcom-w1.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -2511,16 +2511,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsr2_gcom-w1.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsr2_gcom-w1.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsr2_gcom-w1.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsr2_gcom-w1.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsr2_gcom-w1.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsr2_gcom-w1.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             var_name: sensorScanPosition
@@ -2541,11 +2541,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsr2_gcom-w1.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsr2_gcom-w1.20251229T210000Z.satbias_cov.nc4
       obs filters:
       - filter: Bounds Check
         filter variables:
@@ -2781,12 +2781,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_aqua.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_aqua.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_aqua.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_aqua.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -2815,8 +2815,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_aqua.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_aqua.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -2826,9 +2826,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_aqua.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_aqua.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_aqua.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_aqua.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -2845,11 +2845,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_aqua.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_aqua.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -2915,7 +2915,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_aqua
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -2982,7 +2982,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_aqua
+                sensor: microwave
             error parameter vector: *id007
             obserr_bound_max:
             - 4.5
@@ -3036,12 +3036,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_metop-b.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_metop-b.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -3070,8 +3070,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_metop-b.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_metop-b.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -3081,9 +3081,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_metop-b.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_metop-b.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -3100,11 +3100,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_metop-b.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_metop-b.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -3170,7 +3170,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_metop-b
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3237,7 +3237,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_metop-b
+                sensor: microwave
             error parameter vector: *id008
             obserr_bound_max:
             - 4.5
@@ -3291,12 +3291,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_metop-c.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_metop-c.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -3325,8 +3325,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_metop-c.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_metop-c.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -3336,9 +3336,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_metop-c.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_metop-c.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -3355,11 +3355,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_metop-c.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_metop-c.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -3425,7 +3425,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_metop-c
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3492,7 +3492,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_metop-c
+                sensor: microwave
             error parameter vector: *id009
             obserr_bound_max:
             - 4.5
@@ -3546,12 +3546,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_n15.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_n15.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_n15.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_n15.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -3580,8 +3580,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_n15.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_n15.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_n15.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -3591,9 +3591,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_n15.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n15.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_n15.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n15.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -3610,11 +3610,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_n15.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_n15.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_n15.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_n15.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -3680,7 +3680,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n15
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -3747,7 +3747,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n15
+                sensor: microwave
             error parameter vector: *id010
             obserr_bound_max:
             - 4.5
@@ -3801,12 +3801,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_n18.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_n18.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -3835,8 +3835,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_n18.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_n18.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_n18.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -3846,9 +3846,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n18.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n18.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -3865,11 +3865,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_n18.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_n18.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_n18.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_n18.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -3935,7 +3935,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n18
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4002,7 +4002,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n18
+                sensor: microwave
             error parameter vector: *id011
             obserr_bound_max:
             - 4.5
@@ -4056,12 +4056,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/amsua_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/amsua_n19.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.amsua_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.amsua_n19.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -4090,8 +4090,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/amsua_n19.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/amsua_n19.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/amsua_n19.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -4101,9 +4101,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/amsua_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n19.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/amsua_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/amsua_n19.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -4120,11 +4120,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/amsua_n19.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/amsua_n19.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/amsua_n19.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/amsua_n19.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -4190,7 +4190,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: amsua_n19
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4257,7 +4257,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: amsua_n19
+                sensor: microwave
             error parameter vector: *id012
             obserr_bound_max:
             - 4.5
@@ -4311,12 +4311,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/atms_n20.20231009T210000Z.nc4
+            obsfile: cycle_dir/atms_n20.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.atms_n20.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.atms_n20.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -4345,8 +4345,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/atms_n20.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/atms_n20.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/atms_n20.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -4356,9 +4356,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/atms_n20.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_n20.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/atms_n20.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_n20.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -4375,11 +4375,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/atms_n20.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/atms_n20.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/atms_n20.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/atms_n20.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -4452,7 +4452,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_n20
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4519,7 +4519,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_n20
+                sensor: microwave
             error parameter vector: *id013
             obserr_bound_max:
             - 4.5
@@ -4580,12 +4580,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/atms_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/atms_n21.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.atms_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.atms_n21.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -4614,8 +4614,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/atms_n21.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/atms_n21.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/atms_n21.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/atms_n21.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -4625,9 +4625,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/atms_n21.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_n21.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/atms_n21.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_n21.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -4644,11 +4644,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/atms_n21.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/atms_n21.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/atms_n21.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/atms_n21.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -4721,7 +4721,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_n21
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -4788,7 +4788,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_n21
+                sensor: microwave
             error parameter vector: *id014
             obserr_bound_max:
             - 4.5
@@ -4849,12 +4849,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/atms_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/atms_npp.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.atms_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.atms_npp.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -4883,8 +4883,8 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/atms_npp.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/atms_npp.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/atms_npp.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
@@ -4894,9 +4894,9 @@ cost function:
             clwdif_ch314: 2
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/atms_npp.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_npp.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/atms_npp.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/atms_npp.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -4913,11 +4913,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/atms_npp.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/atms_npp.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/atms_npp.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/atms_npp.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -4990,7 +4990,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: atms_npp
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -5057,7 +5057,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: atms_npp
+                sensor: microwave
             error parameter vector: *id015
             obserr_bound_max:
             - 4.5
@@ -5118,12 +5118,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/avhrr3_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/avhrr3_metop-b.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.avhrr3_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.avhrr3_metop-b.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -5152,16 +5152,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/avhrr3_metop-b.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_metop-b.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/avhrr3_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-b.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/avhrr3_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-b.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -5178,11 +5178,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/avhrr3_metop-b.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/avhrr3_metop-b.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -5249,7 +5249,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_metop-b
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -5387,12 +5387,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/avhrr3_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/avhrr3_metop-c.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.avhrr3_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.avhrr3_metop-c.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -5421,16 +5421,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/avhrr3_metop-c.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/avhrr3_metop-c.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/avhrr3_metop-c.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_metop-c.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/avhrr3_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-c.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/avhrr3_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-c.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -5447,11 +5447,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/avhrr3_metop-c.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/avhrr3_metop-c.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/avhrr3_metop-c.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/avhrr3_metop-c.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -5518,7 +5518,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_metop-c
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -5656,12 +5656,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/avhrr3_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/avhrr3_n18.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.avhrr3_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.avhrr3_n18.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -5690,16 +5690,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/avhrr3_n18.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_n18.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_n18.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_n18.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -5716,11 +5716,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/avhrr3_n18.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/avhrr3_n18.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -5787,7 +5787,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_n18
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -5925,12 +5925,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/avhrr3_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/avhrr3_n19.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.avhrr3_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.avhrr3_n19.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -5959,16 +5959,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/avhrr3_n19.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_n19.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/avhrr3_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_n19.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/avhrr3_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_n19.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -5985,11 +5985,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/avhrr3_n19.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/avhrr3_n19.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -6056,7 +6056,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_n19
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -6194,12 +6194,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/cris-fsr_n20.20231009T210000Z.nc4
+            obsfile: cycle_dir/cris-fsr_n20.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.cris-fsr_n20.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.cris-fsr_n20.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -6228,16 +6228,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/cris-fsr_n20.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/cris-fsr_n20.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/cris-fsr_n20.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_n20.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/cris-fsr_n20.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_n20.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -6254,11 +6254,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/cris-fsr_n20.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/cris-fsr_n20.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/cris-fsr_108_jedi_rcov.nc4
@@ -6758,7 +6758,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_n20
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -7752,12 +7752,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/cris-fsr_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/cris-fsr_n21.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.cris-fsr_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.cris-fsr_n21.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -7786,16 +7786,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/cris-fsr_n21.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/cris-fsr_n21.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/cris-fsr_n21.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/cris-fsr_n21.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/cris-fsr_n21.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_n21.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/cris-fsr_n21.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_n21.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -7812,11 +7812,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/cris-fsr_n21.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/cris-fsr_n21.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/cris-fsr_n21.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/cris-fsr_n21.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/cris-fsr_108_jedi_rcov.nc4
@@ -8316,7 +8316,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_n21
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -9310,12 +9310,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/cris-fsr_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/cris-fsr_npp.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.cris-fsr_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.cris-fsr_npp.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -9344,16 +9344,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/cris-fsr_npp.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/cris-fsr_npp.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/cris-fsr_npp.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_npp.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/cris-fsr_npp.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/cris-fsr_npp.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -9370,11 +9370,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/cris-fsr_npp.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/cris-fsr_npp.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/cris-fsr_108_jedi_rcov.nc4
@@ -9874,7 +9874,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: cris-fsr_npp
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -10868,12 +10868,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/gmi_gpm.20231009T210000Z.nc4
+            obsfile: cycle_dir/gmi_gpm.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.gmi_gpm.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.gmi_gpm.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -10914,28 +10914,28 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/gmi_gpm.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/gmi_gpm.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: cloudWaterContent
             sensor: GMI_GPM
             ch37v: 6
             ch37h: 7
             order: 2
-            tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
           - name: cloudWaterContent
             sensor: GMI_GPM
             ch37v: 6
             ch37h: 7
-            tlapse: cycle_dir/gmi_gpm.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/gmi_gpm.20251229T150000Z.tlapse.txt
           - name: sensorScanAngle
             var_name: sensorScanPosition
             order: 4
@@ -10955,11 +10955,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/gmi_gpm.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/gmi_gpm.20251229T210000Z.satbias_cov.nc4
       obs filters:
       - filter: Bounds Check
         filter variables:
@@ -11342,7 +11342,7 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/gps.20231009T210000Z.nc4
+            obsfile: cycle_dir/gps.20251229T210000Z.nc4
             missing file action: warn
           obsgrouping:
             group variables:
@@ -11352,7 +11352,7 @@ cost function:
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.gps.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.gps.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -11560,12 +11560,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/iasi_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/iasi_metop-b.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.iasi_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.iasi_metop-b.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -11594,16 +11594,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/iasi_metop-b.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/iasi_metop-b.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/iasi_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/iasi_metop-b.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/iasi_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/iasi_metop-b.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -11620,11 +11620,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/iasi_metop-b.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/iasi_metop-b.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/iasi_metop_141_jedi_rcov.nc4
@@ -12311,7 +12311,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: iasi_metop-b
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -13674,12 +13674,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/iasi_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/iasi_metop-c.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.iasi_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.iasi_metop-c.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -13708,16 +13708,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/iasi_metop-c.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/iasi_metop-c.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/iasi_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/iasi_metop-c.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/iasi_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/iasi_metop-c.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -13734,11 +13734,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/iasi_metop-c.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/iasi_metop-c.20251229T210000Z.satbias_cov.nc4
       obs error:
         covariance model: cross variable covariances
         input file: fv3-jedi/rcov/iasi_metop_141_jedi_rcov.nc4
@@ -14425,7 +14425,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: iasi_metop-c
+              sensor: infrared
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -15788,12 +15788,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/mhs_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/mhs_metop-b.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.mhs_metop-b.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.mhs_metop-b.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -15834,16 +15834,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/mhs_metop-b.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/mhs_metop-b.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/mhs_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_metop-b.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/mhs_metop-b.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_metop-b.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -15860,11 +15860,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/mhs_metop-b.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/mhs_metop-b.20251229T210000Z.satbias_cov.nc4
       obs filters:
       - filter: Bounds Check
         filter variables:
@@ -16056,7 +16056,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_metop-b
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -16102,7 +16102,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-b
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16182,7 +16182,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-b
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16235,12 +16235,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/mhs_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/mhs_metop-c.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.mhs_metop-c.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.mhs_metop-c.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -16281,16 +16281,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/mhs_metop-c.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/mhs_metop-c.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/mhs_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_metop-c.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/mhs_metop-c.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_metop-c.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -16307,11 +16307,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/mhs_metop-c.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/mhs_metop-c.20251229T210000Z.satbias_cov.nc4
       obs filters:
       - filter: Bounds Check
         filter variables:
@@ -16503,7 +16503,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_metop-c
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -16549,7 +16549,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-c
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16629,7 +16629,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_metop-c
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -16682,12 +16682,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/mhs_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/mhs_n19.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.mhs_n19.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.mhs_n19.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -16728,16 +16728,16 @@ cost function:
           - 996.0
           - 1170.0
       obs bias:
-        input file: cycle_dir/mhs_n19.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/mhs_n19.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/mhs_n19.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/mhs_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_n19.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/mhs_n19.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/mhs_n19.20251229T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -16754,11 +16754,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/mhs_n19.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/mhs_n19.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/mhs_n19.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/mhs_n19.20251229T210000Z.satbias_cov.nc4
       obs filters:
       - filter: Bounds Check
         filter variables:
@@ -16950,7 +16950,7 @@ cost function:
             name: ObsFunction/ObsErrorFactorTopoRad
             channels: None
             options:
-              sensor: mhs_n19
+              sensor: microwave
               channels: None
       - filter: BlackList
         filter variables:
@@ -16996,7 +16996,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_n19
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -17076,7 +17076,7 @@ cost function:
               channels: None
               options:
                 channels: None
-                sensor: mhs_n19
+                sensor: microwave
             obserr_function:
               name: ObsFunction/ObsErrorModelRamp
               channels: None
@@ -17129,12 +17129,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/mls55_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/mls55_aura.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.mls55_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.mls55_aura.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17172,12 +17172,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/omieff_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/omieff_aura.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.omieff_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.omieff_aura.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17234,12 +17234,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/ompslpnc_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/ompslpnc_n21.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.ompslpnc_n21.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.ompslpnc_n21.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17268,12 +17268,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/ompslpnc_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/ompslpnc_npp.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.ompslpnc_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.ompslpnc_npp.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17302,12 +17302,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/ompsnm_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/ompsnm_npp.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.ompsnm_npp.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.ompsnm_npp.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17354,7 +17354,7 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/pibal.20231009T210000Z.nc4
+            obsfile: cycle_dir/pibal.20251229T210000Z.nc4
             missing file action: warn
           obsgrouping:
             group variables:
@@ -17365,7 +17365,7 @@ cost function:
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.pibal.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.pibal.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17689,12 +17689,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/satwind.20231009T210000Z.nc4
+            obsfile: cycle_dir/satwind.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.satwind.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.satwind.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -18705,12 +18705,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/scatwind.20231009T210000Z.nc4
+            obsfile: cycle_dir/scatwind.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.scatwind.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.scatwind.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -18944,12 +18944,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/sfcship.20231009T210000Z.nc4
+            obsfile: cycle_dir/sfcship.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.sfcship.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.sfcship.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -19883,12 +19883,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/sfc.20231009T210000Z.nc4
+            obsfile: cycle_dir/sfc.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.sfc.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.sfc.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -20211,7 +20211,7 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/sondes.20231009T210000Z.nc4
+            obsfile: cycle_dir/sondes.20251229T210000Z.nc4
             missing file action: error
           obsgrouping:
             group variables:
@@ -20222,7 +20222,7 @@ cost function:
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.sondes.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.sondes.20251229T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -21122,12 +21122,12 @@ cost function:
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/ssmis_f17.20231009T210000Z.nc4
+            obsfile: cycle_dir/ssmis_f17.20251229T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.ssmis_f17.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.ssmis_f17.20251229T210000Z.nc4
         simulated variables:
         - brightnessTemperature
         channels: None
@@ -21156,16 +21156,16 @@ cost function:
           EndianType: little_endian
           CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       obs bias:
-        input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/ssmis_f17.20251229T150000Z.satbias.nc4
+        output file: cycle_dir/ssmis_f17.20251229T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/ssmis_f17.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/ssmis_f17.20251229T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/ssmis_f17.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/ssmis_f17.20251229T150000Z.tlapse.txt
           - name: cosineOfLatitudeTimesOrbitNode
           - name: sineOfLatitude
           - name: emissivityJacobian
@@ -21188,11 +21188,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/ssmis_f17.20251229T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/ssmis_f17.20251229T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -21932,7 +21932,7 @@ variational:
             rain_water: qr
             snow_water: qs
             mole_fraction_of_ozone_in_air: o3ppmv
-            geopotential_height_times_gravity_at_surface: phis
+            geopotential_at_surface: phis
             skin_temperature_at_surface: ts
             air_pressure_at_surface: ps
 final:

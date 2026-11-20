@@ -1,10 +1,10 @@
 import tempfile
 from ruamel.yaml import YAML
 import random
+import os
 
 from pathlib import Path
 from datetime import datetime
-from importlib import resources
 from enum import Enum
 
 from swell.deployment.create_experiment import create_experiment_directory
@@ -18,21 +18,11 @@ class TestSuite(Enum):
 
 
 def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, test_config: dict):
-    suite_overrides_file = (resources.files("swell") /
-                            "test" /
-                            "suite_tests" /
-                            "build_jedi-tier1.yaml")
-
-    with suite_overrides_file.open("r") as f:
-        yaml = YAML(typ='safe')
-        suite_overrides = yaml.load(f)
-
     experiment_id = experiment_id_root + "build_jedi"
 
     override = {
         "experiment_id": experiment_id,
         "experiment_root": str(test_dir),
-        **suite_overrides
     }
 
     if "override" in test_config:
@@ -40,20 +30,16 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
 
     experiment_dir = test_dir / experiment_id
     experiment_dir.mkdir(parents=True, exist_ok=True)
-    override_yml = experiment_dir / "override.yaml"
-
-    with open(override_yml, "w") as f:
-        yaml.dump(override, f)
 
     create_experiment_directory(
-        "build_jedi", None, "defaults", platform,
-        str(override_yml), False, None
+        "build_jedi", method="defaults", platform=platform,
+        override=override, advanced=False, slurm=None, skip_r2d2=True
     )
 
-    suite_path = str(experiment_dir / f"{experiment_id}-suite")
-    log_path = str(experiment_dir / "log")
+    suite_path = os.path.join(experiment_dir, f"{experiment_id}-suite")
+    log_path = os.path.join(experiment_dir, "log")
 
-    launch_experiment(suite_path, True, log_path)
+    launch_experiment(suite_path, no_detach=True, log_path=log_path, cylc_timeout=None)
 
     return experiment_dir
 
@@ -67,8 +53,9 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     experiment_id = f"{experiment_id_root}{suite}"
 
     # Get test directory from `~/.swell/swell-test.yaml`
+    testdir = Path(tempfile.TemporaryDirectory().name).expanduser()
     test_config = {
-        "test_root": Path(tempfile.TemporaryDirectory().name)
+        "test_root": testdir.name
     }
     yaml = YAML(typ='safe')
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
@@ -82,11 +69,10 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     except Exception as err:
         raise err
 
-    testdir = Path(test_config["test_root"]).expanduser()
-    testdir.mkdir(exist_ok=True, parents=True)
+    testdir.mkdir(exist_ok=True)
 
     print(f"Testing suite: {suite}")
-    print(f"Test directory: {testdir}")
+    print(f"Test directory: {testdir.name}")
     print(f"Experiment ID: {experiment_id}")
 
     override = {
@@ -118,7 +104,8 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
            and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
            and 'existing_jedi_build_directory' in test_config):
-            jedi_dir = build_jedi_for_tier2(testdir, experiment_id_root, platform, test_config)
+            jedi_dir = build_jedi_for_tier2(str(testdir), experiment_id_root,
+                                            platform, test_config)
 
             tier2_override = {"jedi_build_method": "use_existing",
                               "existing_jedi_source_directory": f"{jedi_dir}/jedi_bundle/source",
@@ -129,17 +116,13 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
             if suite == "build_jedi":
                 return None
 
-    override_yml = experiment_dir / "override.yaml"
-    with open(override_yml, "w") as f:
-        yaml.dump(override, f)
-
     # Suites are currently set up to use tier2 defaults, this setting
     # may need to be changed in the future
     suite_config = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
 
     create_experiment_directory(
         suite_config, "defaults", platform,
-        str(override_yml), False, None
+        override, advanced=False, slurm=None, skip_r2d2=True
     )
 
     # TODO: Check some stuff about the experiment directory
@@ -147,23 +130,6 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     suite_path = str(experiment_dir / f"{experiment_id}-suite")
     log_path = str(experiment_dir / "log")
 
-    launch_experiment(suite_path, True, log_path)
+    launch_experiment(suite_path, no_detach=True, log_path=log_path, cylc_timeout=None)
 
     # TODO: Check the outputs
-
-
-if __name__ == "__main__":
-    from argparse import ArgumentParser
-
-    parser = ArgumentParser(description="Swell suite tests")
-    parser.add_argument("suites", nargs="+",
-                        help="Suite(s) to run (or `all` to run all suites)")
-
-    args = parser.parse_args()
-    if args.suites == ["all"]:
-        suites = ("3dvar_marine", "hofx", "3dvar_atmos")
-    else:
-        suites = args.suites
-
-    for suite in suites:
-        run_suite(suite)

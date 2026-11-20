@@ -11,10 +11,28 @@
 import os
 from ruamel.yaml import YAML
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaIncrement'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.marine_models(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,6 +40,9 @@ from swell.utilities.jinja2 import template_string_jinja2
 class EvaIncrement(taskBase):
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        from eva.eva_driver import eva
 
         # Get the model and window type
         # -----------------------------
@@ -50,8 +71,8 @@ class EvaIncrement(taskBase):
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
-        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
-            self.config.window_length(), self.config.window_type(), dto=True)
+        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time_dto(
+            self.config.window_length(), self.config.window_type())
         local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path
@@ -66,7 +87,7 @@ class EvaIncrement(taskBase):
         # For now we are only plotting the first one
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-        if self.suite_name() == 'localensembleda':
+        if self.suite_name().startswith('localensembleda'):
             incr_file = f'geos.mean-inc.{local_bkg_time}.nc4'
         elif self.suite_name().startswith('eda_') and 'atmos' in self.suite_name():
             incr_file = f'eda.mean-inc.{local_bkg_time}.nc4'
@@ -86,6 +107,15 @@ class EvaIncrement(taskBase):
             if 'cice6' in marine_models:
                 # sea-ice increment is optional
                 ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+                ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+                eva_override['ice_increment_file_path'] = ice_increment_file_path
+
+        # TODO: Yet another exception, need to handle this better
+        if self.suite_name() == 'letkf_marine':
+            incr_file = f'ocn.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
+
+            if 'cice6' in marine_models:
+                ice_incr_file = f'ice.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
                 ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
                 eva_override['ice_increment_file_path'] = ice_increment_file_path
 

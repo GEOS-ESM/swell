@@ -9,9 +9,9 @@
 
 import os
 from ruamel.yaml import YAML
-from typing import Union, Optional, Any
 from importlib import import_module
 from collections.abc import Mapping
+from typing import Any
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -28,9 +28,9 @@ class JediConfigRendering():
         logger: Logger,
         experiment_root: str,
         experiment_id: str,
-        cycle_dir: Optional[str],
-        cycle_time: Optional[Datetime],
-        jedi_interface: Optional[str] = None
+        cycle_dir: str | None,
+        cycle_time: Datetime | None,
+        jedi_interface: str | None = None
     ) -> None:
 
         # Keep a copy of the logger
@@ -102,9 +102,6 @@ class JediConfigRendering():
             'gsibec_nlons',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
-            'horizontal_localization_lengthscale',
-            'horizontal_localization_max_nobs',
-            'horizontal_localization_method',
             'horizontal_resolution',
             'local_background_time',
             'local_background_time_iso',
@@ -115,6 +112,7 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_ensemble_increments',
             'local_ensemble_save_posterior_mean',
             'local_ensemble_save_posterior_mean_increment',
+            'local_ensemble_do_posterior_observer',
             'local_ensemble_solver',
             'local_ensemble_use_linear_observer',
             'marine_models',
@@ -130,15 +128,23 @@ class JediConfigRendering():
             'perhost',
             'saber_central_block',
             'saber_outer_block',
+            'stddev_scale_factors',
             'skip_ensemble_hofx',
             'swell_static_files',
             'start_cycle_point',
+            'suite_to_run',
             'total_processors',
+            'horizontal_localization_lengthscale',
+            'horizontal_localization_max_nobs',
+            'horizontal_localization_method',
+            'horizontal_resolution',
             'vertical_localization_apply_log_transform',
             'vertical_localization_function',
             'vertical_localization_ioda_vertical_coord',
             'vertical_localization_ioda_vertical_coord_group',
             'vertical_localization_lengthscale',
+            'vertical_localization_unit',
+            'vertical_localization_frac_retained_variance',
             'vertical_localization_method',
             'vertical_resolution',
             'window_begin',
@@ -209,8 +215,8 @@ class JediConfigRendering():
     # Prepare path to oops file and call rendering
     def render_oops_file(self,
                          config_name: str,
-                         window_type: Optional[str] = None,
-                         jedi_forecast_model: Optional[str] = None) -> dict:
+                         window_type: str | None = None,
+                         jedi_forecast_model: str | None = None) -> dict:
 
         # Import the module
         module = import_module(f'swell.configuration.jedi.oops.{config_name}')
@@ -301,7 +307,7 @@ class JediConfigRendering():
 
     # Prepare path to interface metadata file and call rendering
 
-    def render_interface_meta(self, model_component_in: Union[str, dict, None] = None) -> dict:
+    def render_interface_meta(self, model_component_in: str | dict | None = None) -> dict:
 
         # Optionally open a different model interface
         model_component = self.jedi_interface

@@ -7,10 +7,34 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import r2d2
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveObsDiags'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.retry = '2 * PT30S'
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+            qd.marine_models()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,6 +46,9 @@ class SaveObsDiags(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        import r2d2
 
         # Load R2D2 credentials
         # ---------------------
@@ -53,6 +80,9 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -82,14 +112,14 @@ class SaveObsDiags(taskBase):
 
             # Store to R2D2
             # ---------------
-
+            failed_to_store = []
             try:
                 store_kwargs = dict(
                     item='feedback',
                     experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
-                    window_length='PT6H',
+                    window_length=window_length,
                     window_start=window_begin,
                     source_file=obs_path_file,
                     member=-9999,
@@ -98,8 +128,13 @@ class SaveObsDiags(taskBase):
                     store_kwargs['data_store'] = r2d2_datastore
                 r2d2.store(**store_kwargs)
                 self.logger.info(f'Successfully stored feedback file for {observation}')
-
             except Exception as e:
                 self.logger.info(f'Failed to store feedback file for {observation}: {str(e)}')
                 # Don't abort - continue with other observations
+                failed_to_store.append(observation)
                 continue
+
+        # If all do not succeed - cause failure
+        # -------------------------------------
+        if len(failed_to_store):
+            self.logger.abort('Storing to R2D2 failed for the following obs: {failed_to_store}')
