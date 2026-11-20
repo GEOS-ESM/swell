@@ -22322,6 +22322,8 @@ variational:
             geopotential_at_surface: phis
             skin_temperature_at_surface: ts
             air_pressure_at_surface: ps
+  prints:
+    frequency: PT3H
 output:
   analysis:
     filetype: cube sphere history

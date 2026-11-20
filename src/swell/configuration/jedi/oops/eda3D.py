@@ -53,6 +53,9 @@ class eda3D(OopsConfig):
                     },
                     'online diagnostics': self.interface_model('eda_varincrement1')
                 }],
+                'prints': {
+                    'frequency': 'PT3H'
+                }
             },
             'output': {
                 'analysis': self.interface_model('eda_analysis')

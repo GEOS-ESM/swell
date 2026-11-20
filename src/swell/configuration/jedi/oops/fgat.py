@@ -45,6 +45,9 @@ class fgat(OopsConfig):
                      'diagnostics': {'departures': 'ombg'},
                      'online diagnostics': self.interface_model('varincrement1')}
                 ],
+                'prints': {
+                    'frequency': 'PT3H'
+                }
             },
             'output': {
                 'analysis': self.interface_model('analysis')

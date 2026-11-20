@@ -307,6 +307,8 @@ variational:
           datapath: ./
           filename: experiment_id.increment-iter1.
           field io names: *id001
+  prints:
+    frequency: PT3H
 output:
   analysis:
     filetype: cube sphere history
