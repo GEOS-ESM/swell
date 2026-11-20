@@ -87,7 +87,7 @@ template_str = '''
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
-            {% if not skip_r2d2 %}
+            {% if store_r2d2 %}
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
             SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
@@ -96,8 +96,7 @@ template_str = '''
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}?
+            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}

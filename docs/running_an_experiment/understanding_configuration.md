@@ -46,7 +46,7 @@ Several options configure broad categories of behavior:
 - `-p/--platform` selects which platform defaults provide paths, accounts, and resources.
 - `-s/--slurm` applies [SLURM directives](../configuration_reference/slurm_configuration.md)
   globally, per task, or per task and model combination.
-- `-k/--skip-r2d2` disables R2D2 registration and storage for the experiment.
+- `-k/--skip-store-r2d2` disables R2D2 registration and storage for the experiment.
 
 These options are useful for settings that apply across the workflow. Experiment-specific values
 should normally remain in an override file.

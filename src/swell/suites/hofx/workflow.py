@@ -68,9 +68,6 @@ template_str = '''
             # Get background, provide a way to get background directly from GEOS experiment
             GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
-            # Get observations
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
@@ -79,14 +76,14 @@ template_str = '''
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            fetch_obs-{{model_component}} => RenderJediObservations-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
-            {% if not skip_r2d2 %}
+            {% if store_r2d2 %}
             # Save observations
             RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
@@ -152,8 +149,12 @@ class Workflow_hofx(CylcWorkflow):
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.GetBackgroundGeosExperiment(model=model))
             self.tasks.append(ta.GetBackground(model=model))
-            self.tasks.append(ta.GetObservations(model=model))
-            self.tasks.append(ta.GetObsNotInR2d2(model=model))
+            if self.experiment_dict['fetch_from_r2d2']:
+                self.tasks.append(ta.GetObservations(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
+            else:
+                self.tasks.append(ta.GetObsNotInR2d2(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediHofxExecutable(model=model))

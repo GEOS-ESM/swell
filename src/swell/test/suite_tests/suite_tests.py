@@ -33,7 +33,7 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
 
     create_experiment_directory(
         "build_jedi", method="defaults", platform=platform,
-        override=override, advanced=False, slurm=None, skip_r2d2=True
+        override=override, advanced=False, slurm=None, store_r2d2=True
     )
 
     suite_path = os.path.join(experiment_dir, f"{experiment_id}-suite")
@@ -122,7 +122,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
 
     create_experiment_directory(
         suite_config, "defaults", platform,
-        override, advanced=False, slurm=None, skip_r2d2=True
+        override, advanced=False, slurm=None, store_r2d2=False
     )
 
     # TODO: Check some stuff about the experiment directory

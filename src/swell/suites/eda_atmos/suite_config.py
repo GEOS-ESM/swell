@@ -25,6 +25,7 @@ eda_atmos_tier1 = QuestionList(
         qd.runahead_limit("P2"),
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_atmosphere']),
+        qd.fetch_from_r2d2(True)
     ],
     geos_atmosphere=[
         qd.cycle_times([

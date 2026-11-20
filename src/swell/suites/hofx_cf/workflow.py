@@ -82,7 +82,7 @@ template_str = '''
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
-            {% if not skip_r2d2 %}
+            {% if store_r2d2 %}
             # Save observations
             RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?

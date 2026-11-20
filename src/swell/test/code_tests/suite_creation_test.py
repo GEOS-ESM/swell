@@ -49,10 +49,10 @@ class SuiteCreationTest(unittest.TestCase):
 
         override_dict['experiment_id'] = experiment_id = f'{suite}-creation'
         override_dict['experiment_root'] = cache_location
-        override_dict['skip_r2d2'] = True
+        override_dict['store_r2d2'] = False
 
         create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
-                                    override_dict, advanced=False, slurm=None, skip_r2d2=True)
+                                    override_dict, advanced=False, slurm=None, store_r2d2=False)
 
         experiment_yaml = os.path.join(cache_location, experiment_id, f'{experiment_id}-suite',
                                        'experiment.yaml')
