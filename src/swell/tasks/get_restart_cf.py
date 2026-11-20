@@ -9,11 +9,32 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 
 import isodate
 import os
-import r2d2
+
+# ----------------------------------------------------------------------------------------------
+
+task_name = 'GetRestartCf'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.window_length(),
+            qd.rst_experiment(),
+            qd.rst_file_types(),
+            qd.horizontal_resolution(),
+            qd.r2d2_server()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -25,9 +46,14 @@ class GetRestartCf(taskBase):
 
         """
 
+        import r2d2
+
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         rst_file_types = self.config.rst_file_types()
 

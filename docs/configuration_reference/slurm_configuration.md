@@ -32,8 +32,7 @@ as `--no-requeue`, to an empty string. This is how Cylc represents a
 
 Platform-specific defaults are stored in
 `src/swell/deployment/platforms/<platform>/slurm.yaml`. For example, the NCCS
-Discover Cascade and SLES15 configurations set the appropriate `constraint`
-value. The user-wide file overrides these platform defaults without requiring
+Discover configurations set the appropriate `constraint` value. The user-wide file overrides these platform defaults without requiring
 you to modify files distributed with Swell.
 
 Swell validates directive names against its supported `sbatch` options, but it

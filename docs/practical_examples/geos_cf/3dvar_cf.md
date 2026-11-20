@@ -83,6 +83,13 @@ models:
     saber_central_block: bump_nicas
     saber_outer_block: stddev_bkg_scaled
 
+    # Per-variable scale factors applied to the background stddev in the stddev_bkg_scaled
+    # saber outer block. Must include an entry for every analysis variable.
+    stddev_scale_factors:
+      volume_mixing_ratio_of_o3: 0.25
+      volume_mixing_ratio_of_no2: 0.25
+      volume_mixing_ratio_of_co: 0.25
+
     # What are the analysis variables?
     analysis_variables:
     - volume_mixing_ratio_of_no2

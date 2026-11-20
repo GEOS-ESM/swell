@@ -6,6 +6,7 @@
            NY: 72
 
 IOSERVER_NODES: 0
+NUM_BACKEND_PES: 8
 
 
       AGCM_IM: 90
@@ -76,9 +77,9 @@ BERES_FILE_NAME: ExtData/g5gcm/gwd/newmfspectra40_dc25.nc
 # Ocean Model Configuration Parameters
 # ------------------------------------
       OGCM.GRID_TYPE: LatLon
-      OGCM.GRIDNAME: PE360x180-DE
-      OGCM.IM_WORLD: 360
-      OGCM.JM_WORLD: 180
+      OGCM.GRIDNAME: PE2880x1440-DE
+      OGCM.IM_WORLD: 2880
+      OGCM.JM_WORLD: 1440
       OGCM.LM: 34
 
         OGCM.POLE: 'PE'
@@ -252,17 +253,13 @@ RECORD_REF_TIME: >>>SWELL_FC6H_H<<< 120000
 #   ASSIMILATION_CYCLE:  nnnnnn       #  (Default: 21600)
 #   IAU_DIGITAL_FILTER:  YES or NO    #  (Default: YES  )
  
-# Typical MERRA-2 Regular REPLAY Configuration
-# --------------------------------------------
-    REPLAY_ANA_EXPID: >>>SWELL_FP_EXP<<< 
-    REPLAY_ANA_LOCATION: >>>SWELL_SCRATCHDIR<<<
+# Regular REPLAY Configuration (source set via met_replay_exp / met_replay_root)
+# --------------------------------------------------------------------------------
+    REPLAY_ANA_EXPID: >>>SWELL_REPLAY_EXPID<<<
+    REPLAY_ANA_LOCATION: >>>SWELL_REPLAY_LOCATION<<<
     REPLAY_MODE: Regular
-    REPLAY_FILE: >>>SWELL_FP_EXP<<<.ana.eta.%y4%m2%d2_%h200z.nc4
-
-    #REPLAY_ANA_EXPID:   d5294_geosit_jan18
-    #REPLAY_ANA_LOCATION: /home/dao_ops/d5294_geosit_jan18/run/.../archive
-    #REPLAY_MODE: Regular
-    #REPLAY_FILE: ana/Y%y4/M%m2/d5294_geosit_jan18.bkg.eta.%y4%m2%d2_%h200z.nc4
+    REPLAY_FILE: >>>SWELL_REPLAY_FILE<<<
+    REPLAY_FILE09: >>>SWELL_REPLAY_FILE09<<<
 
 #   4DIAU (recreate analysis tendency on the fly)
 #   ---------------------------------------------
