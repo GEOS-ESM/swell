@@ -9,6 +9,8 @@
 
 
 import click
+import shutil
+import os
 from ruamel.yaml import YAML
 from typing import Literal
 
@@ -24,6 +26,7 @@ from swell.utilities.scripts.utility_driver import get_utilities, utility_wrappe
 from swell.deployment.create_task_config import task_config_wrapper
 from swell.utilities.datetime_util import is_duration
 from swell.utilities.suite_utils import read_override_file
+from swell.swell_path import get_swell_path
 
 
 # --------------------------------------------------------------------------------------------------
@@ -374,6 +377,24 @@ def t2test(
     """
     run_suite(suite, platform, TestSuite.TIER2)
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+@swell_driver.command()
+@click.argument('suite_path')
+def copy_task_files(
+    suite_path: str
+) -> None:
+
+    # Copy the source tasks to an experiment path, which will be used by the suite
+    experiment_task_files = f'{suite_path}/../tasks/'
+    src_task_files = os.path.join(get_swell_path(), 'tasks')
+
+    print(f'Copying {src_task_files} to {experiment_task_files}')
+
+    shutil.rmtree(experiment_task_files, ignore_errors=True)
+    shutil.copytree(src_task_files, experiment_task_files)
 
 # --------------------------------------------------------------------------------------------------
 
