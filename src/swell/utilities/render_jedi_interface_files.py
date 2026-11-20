@@ -119,6 +119,8 @@ class JediConfigRendering():
             'marine_models',
             'minimizer',
             'mom6_iau',
+            'npx',
+            'npy',
             'npx_proc',
             'npy_proc',
             'number_of_iterations',

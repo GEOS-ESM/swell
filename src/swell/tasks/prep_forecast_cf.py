@@ -47,7 +47,7 @@ class Setup(TaskSetup):
             qd.geos_cf_rc_dir(),
             qd.horizontal_resolution(),
             qd.iau(),
-            qd.inc_template(),
+            qd.inc_template_dir(),
             qd.met_replay_exp(),
             qd.met_replay_root(),
             qd.window_length(),
