@@ -150,9 +150,11 @@ class Workflow_hofx(CylcWorkflow):
             self.tasks.append(ta.GetBackgroundGeosExperiment(model=model))
             self.tasks.append(ta.GetBackground(model=model))
             if self.experiment_dict['fetch_from_r2d2']:
-                self.tasks.append(ta.GetObservations(model=model, scheduling_name=f'fetch_obs-{model}'))
+                self.tasks.append(ta.GetObservations(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             else:
-                self.tasks.append(ta.GetObsNotInR2d2(model=model, scheduling_name=f'fetch_obs-{model}'))
+                self.tasks.append(ta.GetObsNotInR2d2(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediHofxExecutable(model=model))

@@ -69,7 +69,7 @@ template_str = '''
             {% if models[model_component]['cycling_varbc'] %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediEtkfSolver-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediEtkfSolver-{{model_component}}[-PT6H] => fetch_obs-{{model_component}}
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
@@ -193,9 +193,11 @@ class Workflow_localensembleda_2steps(CylcWorkflow):
             self.tasks.append(ta.CloneGeosMksi(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             if self.experiment_dict['fetch_from_r2d2']:
-                self.tasks.append(ta.GetObservations(model=model, scheduling_name=f'fetch_obs-{model}'))
+                self.tasks.append(ta.GetObservations(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             else:
-                self.tasks.append(ta.GetObsNotInR2d2(model=model, scheduling_name=f'fetch_obs-{model}'))
+                self.tasks.append(ta.GetObsNotInR2d2(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             self.tasks.append(ta.GetBackground(model=model))
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.GetEnsembleGeosExperiment(model=model))
