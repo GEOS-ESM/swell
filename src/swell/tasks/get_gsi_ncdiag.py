@@ -12,7 +12,25 @@ import glob
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetGsiNcdiag'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.path_to_gsi_nc_diags()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -41,7 +59,7 @@ class GetGsiNcdiag(taskBase):
         os.makedirs(gsi_diag_dir, 0o755, exist_ok=True)
 
         # Assert that some files were found
-        self.logger.assert_abort(len(gsi_diag_path_files) != 0 is not None, f'No ncdiag ' +
+        self.logger.assert_abort(len(gsi_diag_path_files) != 0, f'No ncdiag ' +
                                  f'files found in the source directory ' +
                                  f'\'{gsi_diag_path}\'')
 
