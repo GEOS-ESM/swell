@@ -12,10 +12,30 @@ import isodate
 import netCDF4 as nc
 import os
 import shutil
-from typing import Union
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'PrepareAnalysis'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.analysis_variables(),
+            qd.mom6_iau(),
+            qd.total_processors(),
+            qd.window_length(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -100,7 +120,7 @@ class PrepareAnalysis(taskBase):
 
     # ----------------------------------------------------------------------------------------
 
-    def at_cycledir(self, paths: Union[list, str] = []) -> str:
+    def at_cycledir(self, paths: list | str = []) -> str:
         """
         Get the absolute path to the model cycle directory for the given relative paths.
 

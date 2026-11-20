@@ -10,10 +10,27 @@
 
 import os
 
-from swell.utilities.build import link_path
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
 import subprocess
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'CloneSpoc'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.spoc_tag(),
+            qd.spoc_source_directory()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -37,6 +54,8 @@ class CloneSpoc(taskBase):
 
         spoc_tag = self.config.spoc_tag()
         spoc_source_directory = self.config.spoc_source_directory()
+
+        from swell.utilities.build import link_path
 
         # Link to spoc source directory, if specified
         # -------------------------------------------

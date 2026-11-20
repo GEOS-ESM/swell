@@ -13,6 +13,8 @@ from pathlib import Path
 import shutil
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 
 # --------------------------------------------------------------------------------------------------
 
@@ -71,6 +73,18 @@ obs_builder_dict = {
     # 'm2scr_n21_ompslp_nc': 'spoc_retrieval_ozone_ompslp.py',
     # 'disc_amsua_bufr': 'spoc_radiance_amsua_esamua.py'
 }
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'BufrToIoda'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+
 # --------------------------------------------------------------------------------------------------
 
 

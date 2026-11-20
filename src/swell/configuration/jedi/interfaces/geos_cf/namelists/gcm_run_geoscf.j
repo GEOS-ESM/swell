@@ -1,0 +1,595 @@
+#!/bin/csh -f
+
+#######################################################################
+#                     Batch Parameters for Run Job
+#######################################################################
+#SBATCH --time=00:40:00
+#SBATCH --nodes=>>>SWELL_SBATCH_NODES<<< --ntasks-per-node=108
+#SBATCH --job-name=CFv2rc1t13
+#SBATCH --output=CFv2_gcm_%j
+#SBATCH --constraint=mil
+#SBATCH --account=s2127
+
+
+#######################################################################
+#                         System Settings
+#######################################################################
+
+umask 022
+
+limit stacksize unlimited
+
+#######################################################################
+#           Architecture Specific Environment Variables
+#######################################################################
+
+setenv ARCH `uname`
+
+setenv SITE             NCCS
+setenv GEOSDIR          >>>SWELL_GEOSINSTALL<<<
+setenv GEOSBIN          $GEOSDIR/bin
+setenv GEOSETC          $GEOSDIR/etc
+setenv GEOSUTIL         $GEOSDIR
+
+source $GEOSBIN/g5_modules # super important, all the libs to run geos.exe, will do module purge 
+setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${BASEDIR}/${ARCH}/lib:${GEOSDIR}/lib
+
+setenv RUN_CMD "$GEOSBIN/esma_mpirun -np "
+
+setenv GCMVER `cat $GEOSETC/.AGCM_VERSION`
+echo   VERSION: $GCMVER
+
+#######################################################################
+#                 Create Experiment Sub-Directories
+#######################################################################
+echo "  Create Experiment Sub-Directories "
+setenv CYCLEDIR >>>SWELL_CYCLEDIR<<< # current_cycle
+setenv  SCRDIR  $CYCLEDIR
+
+#######################################################################
+#                   Set Experiment Run Parameters
+#######################################################################
+# read things from AGCM.rc, change only changing the res/config
+# nx ny has to be the same as number of requested cpus.
+# prepfc copies AGCM.rc from skylab/models/geos_cf/namelists to CYCLEDIR
+
+echo "Set Experiment Run Parameters"
+set       NX  = `grep '^\s*NX:'             $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set       NY  = `grep '^\s*NY:'             $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set  AGCM_IM  = `grep '^\s*AGCM_IM:'        $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set  AGCM_JM  = `grep '^\s*AGCM_JM:'        $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set  AGCM_LM  = `grep '^\s*AGCM_LM:'        $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set  OGCM_IM  = `grep '^\s*OGCM\.IM_WORLD:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set  OGCM_JM  = `grep '^\s*OGCM\.JM_WORLD:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
+
+
+# Calculate number of cores/nodes for IOSERVER
+# --------------------------------------------
+
+set USE_IOSERVER      = 1
+set NUM_OSERVER_NODES = `grep '^\s*IOSERVER_NODES:'  $CYCLEDIR/AGCM.rc | cut -d: -f2`
+set NUM_BACKEND_PES   = `grep '^\s*NUM_BACKEND_PES:' $CYCLEDIR/AGCM.rc | cut -d: -f2`
+
+if ( "$NUM_BACKEND_PES" == "" ) set NUM_BACKEND_PES = 2
+if ( $NUM_OSERVER_NODES == 0 ) set USE_IOSERVER = 0
+
+# Check for Over-Specification of CPU Resources
+# ---------------------------------------------
+if ($?SLURM_NTASKS) then
+   set  NCPUS = $SLURM_NTASKS
+else if ($?PBS_NODEFILE) then
+   set  NCPUS = `cat $PBS_NODEFILE | wc -l`
+else
+   set  NCPUS = NULL
+endif
+
+@ MODEL_NPES = $NX * $NY
+
+set NCPUS_PER_NODE = 108
+set NUM_MODEL_NODES=`echo "scale=1;($MODEL_NPES / $NCPUS_PER_NODE)" | bc | awk 'function ceil(x, y){y=int(x); return(x>y?y+1:y)} {print ceil($1)}'`
+
+if ( $NCPUS != NULL ) then
+
+   if ( $USE_IOSERVER == 1 ) then
+
+      @ TOTAL_NODES = $NUM_MODEL_NODES + $NUM_OSERVER_NODES
+
+      @ TOTAL_PES = $TOTAL_NODES * $NCPUS_PER_NODE
+
+      if( $TOTAL_PES > $NCPUS ) then
+         echo "CPU Resources are Over-Specified"
+         echo "--------------------------------"
+         echo "Allotted  NCPUs: $NCPUS"
+         echo "Requested NCPUs: $TOTAL_PES"
+         echo ""
+         echo "Specified NX: $NX"
+         echo "Specified NY: $NY"
+         echo ""
+         echo "Specified model nodes: $NUM_MODEL_NODES"
+         echo "Specified oserver nodes: $NUM_OSERVER_NODES"
+         echo "Specified cores per node: $NCPUS_PER_NODE"
+         exit
+      endif
+
+   else
+
+      @ TOTAL_PES = $MODEL_NPES
+
+      if( $TOTAL_PES > $NCPUS ) then
+         echo "CPU Resources are Over-Specified"
+         echo "--------------------------------"
+         echo "Allotted  NCPUs: $NCPUS"
+         echo "Requested NCPUs: $TOTAL_PES"
+         echo ""
+         echo "Specified NX: $NX"
+         echo "Specified NY: $NY"
+         echo ""
+         echo "Specified model nodes: $NUM_MODEL_NODES"
+         echo "Specified cores per node: $NCPUS_PER_NODE"
+         exit
+      endif
+
+   endif
+
+else
+   # This is for the desktop path
+
+   @ TOTAL_PES = $MODEL_NPES
+
+endif
+
+echo "finish Set Experiment Run Parameters"
+#######################################################################
+#   Move to Scratch Directory and Copy RC Files from Home Directory
+#######################################################################
+echo " Move to Scratch Directory and Copy RC Files from Home Directory "
+cd $SCRDIR 
+
+cp     $GEOSBIN/bundleParser.py .
+
+cat fvcore_layout.rc >> input.nml
+
+set END_DATE  = `grep '^\s*END_DATE:'     CAP.rc | cut -d: -f2`
+set NUM_SGMT  = `grep '^\s*NUM_SGMT:'     CAP.rc | cut -d: -f2`
+set FSEGMENT  = `grep '^\s*FCST_SEGMENT:' CAP.rc | cut -d: -f2`
+set USE_SHMEM = `grep '^\s*USE_SHMEM:'    CAP.rc | cut -d: -f2`
+
+#######################################################################
+#              Create HISTORY Collection Directories
+#######################################################################
+## all diag is written in colelction and then moved to holding outside scratch
+#echo "  Create HISTORY Collection Directories "
+#set collections = ''
+#foreach line ("`cat HISTORY.rc`")
+#   set firstword  = `echo $line | awk '{print $1}'`
+#   set firstchar  = `echo $firstword | cut -c1`
+#   set secondword = `echo $line | awk '{print $2}'`
+#
+#   if ( $firstword == "::" ) goto done
+#
+#   if ( $firstchar != "#" ) then
+#      set collection  = `echo $firstword | sed -e "s/'//g"`
+#      set collections = `echo $collections $collection`
+#      if ( $secondword == :: ) goto done
+#   endif
+#
+#   if ( $firstword == COLLECTIONS: ) then
+#      set collections = `echo $secondword | sed -e "s/'//g"`
+#   endif
+#end
+#
+#done:
+#   foreach collection ( $collections )
+#      echo "checking if $CYCLEDIR/$collection exists"
+#      if (! -e $CYCLEDIR/$collection )         mkdir $CYCLEDIR/$collection
+#      echo "checking if $CYCLEDIR/holding/$collection exists"
+#      if (! -e $CYCLEDIR/holding/$collection ) mkdir $CYCLEDIR/holding/$collection
+#   end
+
+#######################################################################
+#                        Link Boundary Datasets
+#######################################################################
+echo " Link Boundary Datasets"
+setenv BCSDIR    /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Ostia
+setenv SSTDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput/g5gcm/bcs/realtime/OSTIA_REYNOLDS/2880x1440/
+setenv CHMDIR    /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
+setenv BCRSLV    >>>SWELL_BCRSLV<<<
+setenv DATELINE  DC
+setenv EMISSIONS OPS_EMISSIONS
+
+setenv BCTAG `basename $BCSDIR`
+
+set             FILE = linkbcs
+/bin/rm -f     $FILE
+cat << _EOF_ > $FILE
+#!/bin/csh -f
+
+/bin/mkdir -p            ExtData
+/bin/ln    -sf $CHMDIR/* ExtData
+
+
+# Precip correction
+#/bin/ln -s /discover/nobackup/projects/gmao/share/gmao_ops/fvInput/merra_land/precip_CPCUexcludeAfrica-CMAP_corrected_MERRA/GEOSdas-2_1_4 ExtData/PCP
+
+ /bin/ln -sf $BCSDIR/$BCRSLV/${BCRSLV}-Pfafstetter.til  tile.data
+ if(     -e  $BCSDIR/$BCRSLV/${BCRSLV}-Pfafstetter.TIL) then
+ /bin/ln -sf $BCSDIR/$BCRSLV/${BCRSLV}-Pfafstetter.TIL  tile.bin
+ endif
+
+# DAS or REPLAY Mode (AGCM.rc:  pchem_clim_years = 1-Year Climatology)
+# --------------------------------------------------------------------
+#/bin/ln -sf $BCSDIR/Shared/pchem.species.Clim_Prod_Loss.z_721x72.nc4 species.data
+
+# CMIP-5 Ozone Data (AGCM.rc:  pchem_clim_years = 228-Years)
+# ----------------------------------------------------------
+/bin/ln -sf $BCSDIR/Shared/pchem.species.CMIP-5.1870-2097.z_91x72.nc4 species.data
+
+# S2S pre-industrial with prod/loss of stratospheric water vapor
+# (AGCM.rc:  pchem_clim_years = 3-Years,  and  H2O_ProdLoss: 1 )
+# --------------------------------------------------------------
+#/bin/ln -sf $BCSDIR/Shared/pchem.species.CMIP-6.wH2OandPL.1850s.z_91x72.nc4 species.data
+
+# MERRA-2 Ozone Data (AGCM.rc:  pchem_clim_years = 39-Years)
+# ----------------------------------------------------------
+#/bin/ln -sf $BCSDIR/Shared/pchem.species.CMIP-5.MERRA2OX.197902-201706.z_91x72.nc4 species.data
+
+/bin/ln -sf $BCSDIR/Shared/*bin .
+/bin/ln -sf $BCSDIR/Shared/*c2l*.nc4 .
+
+/bin/ln -sf $BCSDIR/$BCRSLV/visdf_${AGCM_IM}x${AGCM_JM}.dat visdf.dat
+/bin/ln -sf $BCSDIR/$BCRSLV/nirdf_${AGCM_IM}x${AGCM_JM}.dat nirdf.dat
+/bin/ln -sf $BCSDIR/$BCRSLV/vegdyn_${AGCM_IM}x${AGCM_JM}.dat vegdyn.data
+/bin/ln -sf $BCSDIR/$BCRSLV/lai_clim_${AGCM_IM}x${AGCM_JM}.data lai.data
+/bin/ln -sf $BCSDIR/$BCRSLV/green_clim_${AGCM_IM}x${AGCM_JM}.data green.data
+/bin/ln -sf $BCSDIR/$BCRSLV/ndvi_clim_${AGCM_IM}x${AGCM_JM}.data ndvi.data
+
+
+
+/bin/ln -sf $BCSDIR/$BCRSLV/topo_DYN_ave_${AGCM_IM}x${AGCM_JM}.data topo_dynave.data
+/bin/ln -sf $BCSDIR/$BCRSLV/topo_GWD_var_${AGCM_IM}x${AGCM_JM}.data topo_gwdvar.data
+/bin/ln -sf $BCSDIR/$BCRSLV/topo_TRB_var_${AGCM_IM}x${AGCM_JM}.data topo_trbvar.data
+
+
+if(     -e  $BCSDIR/$BCRSLV/Gnomonic_$BCRSLV.dat ) then
+/bin/ln -sf $BCSDIR/$BCRSLV/Gnomonic_$BCRSLV.dat .
+endif
+
+
+_EOF_
+
+
+ echo "/bin/ln -sf $SSTDIR"'/dataoceanfile_OSTIA_REYNOLDS_SST.2880x1440.$YEAR.data sst.data' >> $FILE
+ echo "/bin/ln -sf $SSTDIR"'/dataoceanfile_OSTIA_REYNOLDS_ICE.2880x1440.$YEAR.data fraci.data' >> $FILE
+ echo "/bin/ln -sf $SSTDIR"'/SEAWIFS_KPAR_mon_clim.2880x1440 SEAWIFS_KPAR_mon_clim.data' >> $FILE
+
+chmod +x linkbcs
+# Done in prep_forecast
+#cp  linkbcs $CYCLEDIR
+
+#######################################################################
+#                    Get Executable and RESTARTS
+#######################################################################
+echo " Get Executable and RESTARTS"
+cp $GEOSBIN/GEOSgcm.x .
+
+# Restarts are staged into $CYCLEDIR/scratch by getRSTGEOSCF ahead of time,
+# so no optional/bootstrap (+/-) restart handling is needed here.
+
+##################################################################
+######
+######         Perform multiple iterations of Model Run
+######
+##################################################################
+
+@ counter    = 1
+while ( $counter <= ${NUM_SGMT} )
+
+/bin/rm -f  EGRESS
+
+# Done in prep_forecast
+#cp -f $CYCLEDIR/CAP.rc .
+
+# To normalize whitespace
+/bin/mv CAP.rc CAP.rc.orig
+awk '{$1=$1};1' < CAP.rc.orig > CAP.rc
+
+# Set Time Variables for Current_(c), Ending_(e), and Segment_(s) dates
+# ---------------------------------------------------------------------
+set nymdc = `awk '{print $1}' cap_restart`
+set nhmsc = `awk '{print $2}' cap_restart`
+set nymde = `grep '^\s*END_DATE:' CAP.rc | cut -d: -f2 | awk '{print $1}'`
+set nhmse = `grep '^\s*END_DATE:' CAP.rc | cut -d: -f2 | awk '{print $2}'`
+set nymds = `grep '^\s*JOB_SGMT:' CAP.rc | cut -d: -f2 | awk '{print $1}'`
+set nhmss = `grep '^\s*JOB_SGMT:' CAP.rc | cut -d: -f2 | awk '{print $2}'`
+
+# Compute Time Variables at the Finish_(f) of current segment
+# -----------------------------------------------------------
+set nyear   = `echo $nymds | cut -c1-4`
+set nmonth  = `echo $nymds | cut -c5-6`
+set nday    = `echo $nymds | cut -c7-8`
+set nhour   = `echo $nhmss | cut -c1-2`
+set nminute = `echo $nhmss | cut -c3-4`
+set nsec    = `echo $nhmss | cut -c5-6`
+       @ dt = $nsec + 60 * $nminute + 3600 * $nhour + 86400 * $nday
+
+set nymdf = $nymdc
+set nhmsf = $nhmsc
+set date  = `$GEOSBIN/tick $nymdf $nhmsf $dt`
+set nymdf =  $date[1]
+set nhmsf =  $date[2]
+set year  = `echo $nymdf | cut -c1-4`
+set month = `echo $nymdf | cut -c5-6`
+set day   = `echo $nymdf | cut -c7-8`
+
+     @  month = $month + $nmonth
+while( $month > 12 )
+     @  month = $month - 12
+     @  year  = $year  + 1
+end
+     @  year  = $year  + $nyear
+     @ nymdf  = $year * 10000 + $month * 100 + $day
+
+if( $nymdf >  $nymde )    set nymdf = $nymde
+if( $nymdf == $nymde )    then
+    if( $nhmsf > $nhmse ) set nhmsf = $nhmse
+endif
+
+set yearc = `echo $nymdc | cut -c1-4`
+set yearf = `echo $nymdf | cut -c1-4`
+
+# For Non-Reynolds SST, Modify local CAP.rc Ending date if Finish time exceeds Current year boundary
+# --------------------------------------------------------------------------------------------------
+if( DE0360xPE0180 != DE0360xPE0180 ) then
+    if( $yearf > $yearc ) then
+       @ yearf = $yearc + 1
+       @ nymdf = $yearf * 10000 + 0101
+        set oldstring = `grep '^\s*END_DATE:' CAP.rc`
+        set newstring = "END_DATE: $nymdf $nhmsf"
+        /bin/mv CAP.rc CAP.tmp
+        cat CAP.tmp | sed -e "s?$oldstring?$newstring?g" > CAP.rc
+    endif
+endif
+
+# Which ExtData are we using
+set  EXTDATA2G_TRUE = `grep -i '^\s*USE_EXTDATA2G:\s*\.TRUE\.'    CAP.rc | wc -l`
+
+# Rename big ExtData files that are not needed
+# --------------------------------------------
+set            SC_TRUE = `grep -i '^\s*ENABLE_STRATCHEM:\s*\.TRUE\.'     GEOS_ChemGridComp.rc | wc -l`
+if (          $SC_TRUE == 0 && -e StratChem_ExtData.rc          ) /bin/mv          StratChem_ExtData.rc          StratChem_ExtData.rc.NOT_USED
+set           GMI_TRUE = `grep -i '^\s*ENABLE_GMICHEM:\s*\.TRUE\.'       GEOS_ChemGridComp.rc | wc -l`
+if (         $GMI_TRUE == 0 && -e GMI_ExtData.rc                ) /bin/mv                GMI_ExtData.rc                GMI_ExtData.rc.NOT_USED
+set           GCC_TRUE = `grep -i '^\s*ENABLE_GEOSCHEM:\s*\.TRUE\.'      GEOS_ChemGridComp.rc | wc -l`
+if (         $GCC_TRUE == 0 && -e GEOSCHEMchem_ExtData.rc       ) /bin/mv       GEOSCHEMchem_ExtData.rc       GEOSCHEMchem_ExtData.rc.NOT_USED
+set         CARMA_TRUE = `grep -i '^\s*ENABLE_CARMA:\s*\.TRUE\.'         GEOS_ChemGridComp.rc | wc -l`
+if (       $CARMA_TRUE == 0 && -e CARMAchem_GridComp_ExtData.rc ) /bin/mv CARMAchem_GridComp_ExtData.rc CARMAchem_GridComp_ExtData.rc.NOT_USED
+set           DNA_TRUE = `grep -i '^\s*ENABLE_DNA:\s*\.TRUE\.'           GEOS_ChemGridComp.rc | wc -l`
+if (         $DNA_TRUE == 0 && -e DNA_ExtData.rc                ) /bin/mv                DNA_ExtData.rc                DNA_ExtData.rc.NOT_USED
+set         ACHEM_TRUE = `grep -i '^\s*ENABLE_ACHEM:\s*\.TRUE\.'         GEOS_ChemGridComp.rc | wc -l`
+if (       $ACHEM_TRUE == 0 && -e GEOSachem_ExtData.rc          ) /bin/mv          GEOSachem_ExtData.rc          GEOSachem_ExtData.rc.NOT_USED
+set   GOCART_DATA_TRUE = `grep -i '^\s*ENABLE_GOCART_DATA:\s*\.TRUE\.'   GEOS_ChemGridComp.rc | wc -l`
+if ( $GOCART_DATA_TRUE == 0 && -e GOCARTdata_ExtData.rc         ) /bin/mv         GOCARTdata_ExtData.rc         GOCARTdata_ExtData.rc.NOT_USED
+
+# 1MOM and GFDL microphysics do not use WSUB_NATURE
+# -------------------------------------------------
+if ($EXTDATA2G_TRUE == 0 ) then
+   /bin/mv WSUB_ExtData.rc WSUB_ExtData.tmp
+   cat WSUB_ExtData.tmp | sed -e '/^WSUB_NATURE/ s#ExtData.*#/dev/null#' > WSUB_ExtData.rc
+else
+   /bin/mv WSUB_ExtData.yaml WSUB_ExtData.tmp
+   cat WSUB_ExtData.tmp | sed -e '/collection:/ s#WSUB_Wvar_positive_05hrdeg.*#/dev/null#' > WSUB_ExtData.yaml
+endif
+/bin/rm WSUB_ExtData.tmp
+
+
+
+# Generate the complete ExtData.rc
+# --------------------------------
+if(-e ExtData.rc )    /bin/rm -f   ExtData.rc
+set  extdata_files = `/bin/ls -1 *_ExtData.rc`
+
+# Switch to MODIS v6.1 data after Nov 2021
+if( $EXTDATA2G_TRUE == 0 ) then
+   set MODIS_Transition_Date = 20211101
+   if ( ${EMISSIONS} == OPS_EMISSIONS && ${MODIS_Transition_Date} <= $nymdc ) then
+       cat $extdata_files | sed 's|\(qfed2.emis_.*\).006.|\1.061.|g' > ExtData.rc
+   else
+   cat $extdata_files > ExtData.rc
+   endif
+endif
+
+if( $EXTDATA2G_TRUE == 1 ) then
+
+  $GEOSBIN/construct_extdata_yaml_list.py GEOS_ChemGridComp.rc
+  touch ExtData.rc
+
+endif
+
+# Move GOCART to use RRTMGP Bands
+# -------------------------------
+# UNCOMMENT THE LINES BELOW IF RUNNING RRTMGP
+#
+#set instance_files = `/bin/ls -1 *_instance*.rc`
+#foreach instance ($instance_files)
+#   /bin/mv $instance $instance.tmp
+#   cat $instance.tmp | sed -e '/RRTMG/ s#RRTMG#RRTMGP#' > $instance
+#   /bin/rm $instance.tmp
+#end
+
+# Link Boundary Conditions for Appropriate Date
+# ---------------------------------------------
+setenv YEAR $yearc
+./linkbcs
+
+if (! -e tile.bin) then
+$GEOSBIN/binarytile.x tile.data tile.bin
+endif
+
+# If running in dual ocean mode, link sst and fraci data here
+#set yy  = `cat cap_restart | cut -c1-4`
+#echo $yy
+#ln -sf $SSTDIR/dataoceanfile_MERRA2_SST.${OGCM_IM}x${OGCM_JM}.${yy}.data sst.data
+#ln -sf $SSTDIR/dataoceanfile_MERRA2_ICE.${OGCM_IM}x${OGCM_JM}.${yy}.data fraci.data
+
+#######################################################################
+#                    Check for Split Saltwater Restarts
+#######################################################################
+
+if ( (-e $SCRDIR/openwater_internal_rst) && (-e $SCRDIR/seaicethermo_internal_rst)) then
+  echo "Saltwater internal state is already split, good to go!"
+else
+  echo "openwater_internal_rst and seaicethermo_internal_rst were not found. Abort!"
+  exit 6
+endif
+
+# Test Openwater Restart for Number of tiles correctness
+# ------------------------------------------------------
+
+if ( -x $GEOSBIN/rs_numtiles.x ) then
+ 
+   set N_OPENW_TILES_EXPECTED = `grep '^\s*0' tile.data | wc -l`
+   set N_OPENW_TILES_FOUND = `$RUN_CMD 1 $GEOSBIN/rs_numtiles.x openwater_internal_rst | grep Total | awk '{print $NF}'`
+
+   echo $N_OPENW_TILES_EXPECTED
+   echo $N_OPENW_TILES_FOUND
+
+   if ( $N_OPENW_TILES_EXPECTED != $N_OPENW_TILES_FOUND ) then
+      echo "Error! Found $N_OPENW_TILES_FOUND tiles in openwater. Expect to find $N_OPENW_TILES_EXPECTED tiles."
+      echo "Your restarts are probably for a different ocean."
+      exit 7
+   endif
+
+endif
+
+# Check for MERRA2OX Consistency
+# ------------------------------
+
+# The MERRA2OX pchem file is only valid until 201706, so this is a first
+# attempt at a check to make sure you aren't using it and are past the date
+
+# Check for MERRA2OX by looking at AGCM.rc
+set PCHEM_CLIM_YEARS = `awk '/pchem_clim_years/ {print $2}' AGCM.rc`
+
+# If it is 39, we are using MERRA2OX
+if ( $PCHEM_CLIM_YEARS == 39 ) then
+
+   # Grab the date from cap_restart
+   set YEARMON = `cat cap_restart | cut -c1-6`
+
+   # Set a magic date
+   set MERRA2OX_END_DATE = "201706"
+
+   # String comparison seems to work here...
+   if ( $YEARMON > $MERRA2OX_END_DATE ) then
+      echo "You seem to be using MERRA2OX pchem species file, but your simulation date [${YEARMON}] is after 201706. This file is only valid until this time."
+      exit 2
+   endif
+endif
+
+# Environment variables for MPI, etc
+# ----------------------------------
+
+# OFI Provider Selection and Tuning
+setenv I_MPI_FABRICS shm:ofi                      # Use shared memory and OFI
+setenv I_MPI_OFI_PROVIDER psm3                    # Specify the PSM3 OFI provider
+setenv I_MPI_ADJUST_ALLREDUCE 12
+setenv I_MPI_ADJUST_GATHERV 3
+
+
+# Run bundleParser.py
+#---------------------
+python bundleParser.py
+
+# If REPLAY, link necessary forcing files
+# ---------------------------------------
+set  REPLAY_MODE = `grep '^\s*REPLAY_MODE:' AGCM.rc | cut -d: -f2`
+if( $REPLAY_MODE == 'Exact' | $REPLAY_MODE == 'Regular' ) then
+
+     set ANA_EXPID    = `grep '^\s*REPLAY_ANA_EXPID:'    AGCM.rc | cut -d: -f2`
+     set ANA_LOCATION = `grep '^\s*REPLAY_ANA_LOCATION:' AGCM.rc | cut -d: -f2`
+
+     set REPLAY_FILE        = `grep '^\s*REPLAY_FILE:'   AGCM.rc | cut -d: -f2`
+     set REPLAY_FILE09      = `grep '^\s*REPLAY_FILE09:' AGCM.rc | cut -d: -f2`
+     set REPLAY_FILE_TYPE   = `echo $REPLAY_FILE           | cut -d"/" -f1 | grep -v %`
+     set REPLAY_FILE09_TYPE = `echo $REPLAY_FILE09         | cut -d"/" -f1 | grep -v %`
+
+     # Modify GAAS_GridComp.rc and Link REPLAY files
+     # ---------------------------------------------
+     /bin/mv -f GAAS_GridComp.rc GAAS_GridComp.tmp
+     cat GAAS_GridComp.tmp | sed -e "s?aod/Y%y4/M%m2/${ANA_EXPID}.?aod/Y%y4/M%m2/${ANA_EXPID}.?g" > GAAS_GridComp.rc
+
+     /bin/ln -sf ${ANA_LOCATION}/aod .
+     /bin/ln -sf ${ANA_LOCATION}/${REPLAY_FILE_TYPE} .
+     /bin/ln -sf ${ANA_LOCATION}/${REPLAY_FILE09_TYPE} .
+
+     #link the actual FP files that were move to workdir
+     #temp changes as we will remove that .j script with jedi
+     # Done in prep_forecast
+     #/bin/ln -sf ${ANA_LOCATION}/${ANA_EXPID}.ana.eta.*.nc4 .
+
+
+endif
+
+# Establish safe default number of OpenMP threads
+# -----------------------------------------------
+setenv OMP_NUM_THREADS 1
+
+# Run GEOSgcm.x
+# -------------
+if( $USE_SHMEM == 1 ) $GEOSBIN/RmShmKeys_sshmpi.csh >& /dev/null
+
+if( $USE_IOSERVER == 1 ) then
+   set IOSERVER_OPTIONS = "--npes_model $MODEL_NPES --nodes_output_server $NUM_OSERVER_NODES"
+   set IOSERVER_EXTRA   = "--oserver_type multigroup --npes_backend_pernode $NUM_BACKEND_PES"
+else
+   set IOSERVER_OPTIONS = ""
+   set IOSERVER_EXTRA   = ""
+endif
+
+ $RUN_CMD $TOTAL_PES ./GEOSgcm.x $IOSERVER_OPTIONS $IOSERVER_EXTRA --logging_config 'logging.yaml'
+
+if( $USE_SHMEM == 1 ) $GEOSBIN/RmShmKeys_sshmpi.csh >& /dev/null
+
+# if something goes wrong EGRESS File wouldn't exist and rc will be -1
+if( -e EGRESS ) then
+   set rc = 0
+else
+   set rc = -1
+endif
+echo GEOSgcm Run Status: $rc
+if ( $rc == -1 ) exit -1
+
+#######################################################################
+#   Rename Final Checkpoints => Restarts for Next Segment and Archive
+#        Note: cap_restart contains the current NYMD and NHMS
+#######################################################################
+
+# saveRstGEOSCF task in ewok saves checkpoints as rst to R2D2 for next cycle
+
+#######################################################################
+#               Move HISTORY Files to Holding Directory
+#######################################################################
+
+# Move current files to /holding
+# ------------------------------
+#echo "Move current files to /holding"
+#cd $SCRDIR
+#foreach collection ( $collections )
+#   echo "Moving  $collection"
+#   /bin/mv `/bin/ls -1 *.${collection}.*` $CYCLEDIR/holding/$collection
+#end
+
+#######################################################################
+#                         Update Iteration Counter
+#######################################################################
+
+set enddate = `echo  $END_DATE | cut -c1-8`
+set capdate = `cat cap_restart | cut -c1-8`
+
+if ( $capdate < $enddate ) then
+@ counter = $counter    + 1
+else
+@ counter = ${NUM_SGMT} + 1
+endif
+
+end   # end of segment loop; remain in $SCRDIR

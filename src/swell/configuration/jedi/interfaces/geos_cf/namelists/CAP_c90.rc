@@ -13,7 +13,7 @@ END_DATE:     29990302 210000
 JOB_SGMT:     >>>SWELL_FC_LENGTH<<<
 # number of times you run the job/seg
 NUM_SGMT:     1
-HEARTBEAT_DT:       900
+HEARTBEAT_DT:       300
 
 USE_SHMEM: 0
 
