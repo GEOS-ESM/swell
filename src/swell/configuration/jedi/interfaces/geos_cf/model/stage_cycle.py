@@ -17,6 +17,7 @@ def stage_cycle(template_dict: Mapping) -> Mapping | list:
 
     cycle_dir = template_dict['cycle_dir']
     swell_static_files = template_dict['swell_static_files']
+    horizontal_resolution = template_dict['horizontal_resolution']
     jedi_mpi = mpi_settings('jedi', template_dict['horizontal_resolution'],
                             template_dict.get('geos_cf_mpi'))
     npx_proc, npy_proc = jedi_mpi['nx'], jedi_mpi['ny']
@@ -40,7 +41,7 @@ def stage_cycle(template_dict: Mapping) -> Mapping | list:
                 'directories': [
                     [
                         f'{swell_static_files}/jedi/interfaces/geos_cf/nicas/'
-                        f'layout_{npx_proc}x{npy_proc}x6/*',
+                        f'layout_{npx_proc}x{npy_proc}x6_{horizontal_resolution}/*',
                         f'{cycle_dir}/'
                     ]
                 ]

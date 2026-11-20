@@ -134,8 +134,8 @@ its MPI layout and the SLURM resources of `RunJediVariationalExecutable` and `Ru
 | `c360`                  | 361         | 8x8    | 384       | 4 x 96                       |
 
 The BUMP_NICAS files are specific to the geometry resolution and layout, and are staged from
-`<swell_static_files>/jedi/interfaces/geos_cf/nicas/layout_<x>x<y>x6/`, e.g. `layout_3x3x6` for
-`c90`.
+`<swell_static_files>/jedi/interfaces/geos_cf/nicas/layout_<x>x<y>x6_<horizontal_resolution>/`, e.g.
+`layout_3x3x6_c90` for `c90`.
 
 The defaults are defined in the `JEDI_MPI` (JEDI) and `GCM_MPI` (forecast) tables of
 `src/swell/configuration/jedi/interfaces/geos_cf/slurm.py`. Each entry has `nx`, `ny` (layout per

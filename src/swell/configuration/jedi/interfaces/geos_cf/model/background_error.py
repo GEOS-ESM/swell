@@ -26,7 +26,7 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
     for var in template_dict.get('analysis_variables', []):
         field_aliases.append({
             'in code': var,
-            'in file': 'fixedlevel_H_500_300_V_00_03'
+            'in file': 'fixedlevel_H_1600_850_V_00_03'
         })
 
     return {

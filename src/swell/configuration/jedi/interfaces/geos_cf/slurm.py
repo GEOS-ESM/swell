@@ -44,7 +44,8 @@ GCM_MPI = {
 
 # JEDI executions (variational, hofx): nx x ny is the 'layout' of the fv3-jedi geometry. nx and ny
 # must divide the number of cells along a face edge (90/180/360). BUMP_NICAS files are specific to
-# the geometry resolution and layout, and are staged from nicas/layout_<nx>x<ny>x6.
+# the geometry resolution and layout, and are staged from
+# nicas/layout_<nx>x<ny>x6_<horizontal_resolution>.
 # These are the layouts tested with standalone fv3jedi_var.x runs on discover.
 JEDI_MPI = {
     'c90':  {'nx': 3, 'ny': 3, 'nodes': 1, 'ntasks_per_node': 54, 'sbatch_time': '00:30:00'},
