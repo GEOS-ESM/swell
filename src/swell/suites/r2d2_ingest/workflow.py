@@ -48,17 +48,30 @@ template_str = '''
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
                 {% if download_convert_pipeline %}
-                DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}}
-                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{model_component}}
-                ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
+                {% for obs_to_download in models[model_component]['obs_to_download'] %}
+                DownloadObs-{{obs_to_download}}-{{model_component}} => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
+                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
+                {% endfor %}
+                {% for obs_to_ingest in models[model_component]['obs_to_ingest'] %}
+                {% if obs_to_ingest in models[model_component]['obs_to_download'] %}
+                ConvertObsToIoda-{{obs_to_ingest}}-{{model_component}} => IngestObs-{{obs_to_ingest}}-{{model_component}}
+                {% else %}
+                IngestObs-{{obs_to_ingest}}-{{model_component}}
+                {% endif %}
+                {% endfor %}
+
                 {% elif ingest_background_pipeline %}
                 SaveBackground-{{model_component}}
                 {% else %}
-                IngestObs-{{model_component}}
+                {% for observation in models[model_component]['obs_to_ingest'] %}
+                IngestObs-{{observation}}-{{model_component}}
+                {% endfor %}
                 {% endif %}
                 {% if not ingest_background_pipeline and
                       not models[model_component]["store_as_symlink"] %}
-                IngestObs-{{model_component}} => CleanCycle-{{model_component}}
+                {% for observation in models[model_component]['obs_to_ingest'] %}
+                IngestObs-{{observation}}-{{model_component}} => CleanCycle-{{model_component}}
+                {% endfor %}
                 {% endif %}
                 {% endfor %}
             """
@@ -93,6 +106,30 @@ class Workflow_r2d2_ingest(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+            if task.base_name == 'DownloadObs':
+                model = task.model
+                for obs in self.experiment_dict['models'][model]['obs_to_download']:
+                    task.scheduling_name = f'DownloadObs-{obs}-{model}'
+                    task.script = (f'swell task DownloadObs $config -d $datetime -m {model}'
+                                   f' -a {obs}')
+                    task.additional_values = {'inherit': f'DownloadObs-{model}'}
+                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
+            if task.base_name == 'ConvertObsToIoda':
+                model = task.model
+                for obs in self.experiment_dict['models'][model]['obs_to_download']:
+                    task.scheduling_name = f'ConvertObsToIoda-{obs}-{model}'
+                    task.script = (f'swell task ConvertObsToIoda $config -d $datetime -m {model}'
+                                   f' -a {obs}')
+                    task.additional_values = {'inherit': f'ConvertObsToIoda-{model}'}
+                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
+            if task.base_name == 'IngestObs':
+                model = task.model
+                for obs in self.experiment_dict['models'][model]['obs_to_ingest']:
+                    task.scheduling_name = f'IngestObs-{obs}-{model}'
+                    task.script = (f'swell task IngestObs $config -d $datetime -m {model}'
+                                   f' -a {obs}')
+                    task.additional_values = {'inherit': f'IngestObs-{model}'}
+                    workflow_str += task.runtime_string(self.experiment_dict, self.slurm_external)
 
         return workflow_str
 
@@ -103,10 +140,12 @@ class Workflow_r2d2_ingest(CylcWorkflow):
         self.tasks.append(ta.BuildJediByLinking())
         self.tasks.append(ta.BuildJedi())
         for model in self.experiment_dict['model_components']:
-            self.tasks.append(ta.DownloadObs(model=model))
+            if self.experiment_dict['download_convert_pipeline']:
+                self.tasks.append(ta.DownloadObs(model=model))
             self.tasks.append(ta.ConvertObsToIoda(model=model))
             self.tasks.append(ta.IngestObs(model=model))
-            self.tasks.append(ta.SaveBackground(model=model))
+            if self.experiment_dict['ingest_background_pipeline']:
+                self.tasks.append(ta.SaveBackground(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

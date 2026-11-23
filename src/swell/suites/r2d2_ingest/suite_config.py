@@ -20,7 +20,8 @@ suite_name = 'r2d2_ingest'
 r2d2_ingest = QuestionList(
     questions=[
         common,
-        qd.download_convert_pipeline(False)
+        qd.download_convert_pipeline(False),
+        qd.ingest_background_pipeline(False)
     ],
 )
 
