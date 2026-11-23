@@ -116,6 +116,7 @@ class taskBase(ABC):
         self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
                                                   self.__experiment_id__, cycle_dir,
                                                   self.__datetime__, self.__model__)
+        self.jedi_rendering.add_key('geos_cf_mpi', self.config.geos_cf_mpi())
 
         # Add methods to GEOS utils
         # --------------

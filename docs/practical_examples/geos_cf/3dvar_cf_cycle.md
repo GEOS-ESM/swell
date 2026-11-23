@@ -78,8 +78,9 @@ models:
     # How often should the forecast write output?
     forecast_output_frequency: PT3H
 
-    # Template increment file used to build the forecast's IAU input.
-    inc_template: /path/to/increment_template.nc4
+    # Directory with the increment templates used to build the forecast's IAU input. One file per
+    # horizontal_resolution, named GEOSCF_inctmplt_C<N>x<N>x6_v72.nc4
+    inc_template_dir: /path/to/increment_templates
 
     # Paths to the GEOS-CF install and run directories used to prepare/run the forecast.
     geos_cf_install_dir: /path/to/GEOSgcm/install

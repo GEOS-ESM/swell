@@ -143,7 +143,9 @@ def task_config_wrapper(task_name: str,
     if task.slurm is not None:
         # Construct the slurm defaults
         slurm_external_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
-        task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict)
+        if slurm_external_dict.get('geos_cf_mpi') is not None:
+            experiment_dict.setdefault('geos_cf_mpi', slurm_external_dict['geos_cf_mpi'])
+        task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict, experiment_dict)
 
         task_time_limit = task.task_time_limit
         if task_time_limit is not None:

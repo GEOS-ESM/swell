@@ -11,8 +11,8 @@ cost function:
       field table filename: cycle_dir/field_table_gmao
     akbk: cycle_dir/akbk72.nc4
     layout:
-    - 2
-    - 2
+    - 3
+    - 3
     npx: 91
     npy: 91
     npz: 72
@@ -54,11 +54,11 @@ cost function:
           files prefix: geos_cf
           alias:
           - in code: volume_mixing_ratio_of_o3
-            in file: fixedlevel_H_500_300_V_00_03
+            in file: fixedlevel_H_1600_850_V_00_03
           - in code: volume_mixing_ratio_of_no2
-            in file: fixedlevel_H_500_300_V_00_03
+            in file: fixedlevel_H_1600_850_V_00_03
           - in code: volume_mixing_ratio_of_co
-            in file: fixedlevel_H_500_300_V_00_03
+            in file: fixedlevel_H_1600_850_V_00_03
         drivers:
           multivariate strategy: univariate
           read local nicas: true
@@ -289,8 +289,8 @@ variational:
         field table filename: cycle_dir/field_table_gmao
       akbk: cycle_dir/akbk72.nc4
       layout:
-      - 2
-      - 2
+      - 3
+      - 3
       npx: 91
       npy: 91
       npz: 72
@@ -319,8 +319,8 @@ final:
         field table filename: cycle_dir/field_table_gmao
       akbk: cycle_dir/akbk72.nc4
       layout:
-      - 2
-      - 2
+      - 3
+      - 3
       npx: 91
       npy: 91
       npz: 72

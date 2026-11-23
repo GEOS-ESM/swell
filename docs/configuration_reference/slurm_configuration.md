@@ -89,6 +89,11 @@ slurm_directives_tasks:
       time: '01:30:00'
 ```
 
+The file can also define `geos_cf_mpi` to override the resolution-dependent MPI
+layout, node count, tasks per node and wall time of `geos_cf` (`gcm` for the
+forecast, `jedi` for the JEDI executables). See
+[3DVar for GEOS-CF](practical_examples/geos_cf/3dvar_cf.md) for the format.
+
 ## Configuration precedence
 
 For a model-specific task, Swell uses the first applicable value in this list

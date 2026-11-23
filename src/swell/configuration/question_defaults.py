@@ -387,7 +387,8 @@ class additional_forecast_collections(TaskQuestion):
         "geos_cf"
     ])
     prompt: str = ("Which optional lat-lon forecast diagnostic collections (chm, met) should "
-                   "be written and stored, in addition to the required bkg collection?")
+                   "be written and stored, in addition to the required bkg collection? "
+                   "These follow the same horizontal_resolution as the forecast.")
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
@@ -980,6 +981,48 @@ class geos_cf_rc_dir(TaskQuestion):
 
 
 @dataclass
+class geos_cf_sbatch_account(TaskQuestion):
+    default_value: str = "s1866"
+    question_name: str = "geos_cf_sbatch_account"
+    ask_question: bool = True
+    models: list[str] = mutable_field([
+        "geos_cf"
+    ])
+    prompt: str = "What SLURM '--account' should the GEOS-CF forecast job charge to?"
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class geos_cf_sbatch_constraint(TaskQuestion):
+    default_value: str = "mil"
+    question_name: str = "geos_cf_sbatch_constraint"
+    ask_question: bool = True
+    models: list[str] = mutable_field([
+        "geos_cf"
+    ])
+    prompt: str = "What SLURM '--constraint' should the GEOS-CF forecast job request?"
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class geos_cf_sbatch_qos(TaskQuestion):
+    default_value: str = "allnccs"
+    question_name: str = "geos_cf_sbatch_qos"
+    ask_question: bool = True
+    models: list[str] = mutable_field([
+        "geos_cf"
+    ])
+    prompt: str = "What SLURM '--qos' should the GEOS-CF forecast job request?"
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class geos_expdir(TaskQuestion):
     default_value: str = "/dev/null/"
     question_name: str = "geos_expdir"
@@ -1258,14 +1301,15 @@ class iau(TaskQuestion):
 
 
 @dataclass
-class inc_template(TaskQuestion):
+class inc_template_dir(TaskQuestion):
     default_value: str = "defer_to_platform"
-    question_name: str = "inc_template"
+    question_name: str = "inc_template_dir"
     ask_question: bool = True
     models: list[str] = mutable_field([
         "geos_cf"
     ])
-    prompt: str = "What is the path to the GEOS-CF increment template NetCDF file?"
+    prompt: str = ("What is the path to the directory with the GEOS-CF increment template "
+                   "NetCDF files (one per horizontal_resolution)?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------

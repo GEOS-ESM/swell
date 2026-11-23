@@ -71,14 +71,21 @@ def prepare_slurm_defaults_and_overrides(
         elif not isinstance(slurm_overrides, Mapping):
             raise TypeError("Slurm overrides is not of type Mapping")
 
-        # Ensure that SLURM dict is _only_ used for SLURM directives.
+        # Ensure that SLURM dict is _only_ used for SLURM directives and the geos_cf MPI layout.
         slurm_invalid_keys = set(slurm_overrides.keys()).difference({
             "slurm_directives_global",
-            "slurm_directives_tasks"
+            "slurm_directives_tasks",
+            "geos_cf_mpi"
         })
         if slurm_invalid_keys:
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
 
+        if "geos_cf_mpi" in slurm_overrides:
+            from swell.configuration.jedi.interfaces.geos_cf.slurm import validate_overrides
+            try:
+                validate_overrides(slurm_overrides["geos_cf_mpi"])
+            except ValueError as error:
+                logger.abort(str(error))
     else:
         slurm_overrides = {}
 
@@ -102,7 +109,32 @@ def prepare_slurm_defaults_and_overrides(
     if 'slurm_directives_tasks' in slurm_dict:
         for task in slurm_dict["slurm_directives_tasks"].keys():
             validate_directives(slurm_dict["slurm_directives_tasks"][task])
+
+    # geos_cf MPI layout/node overrides, passed through unvalidated here (validated above)
+    slurm_dict['geos_cf_mpi'] = slurm_overrides.get('geos_cf_mpi')
+
     return slurm_dict
+
+# --------------------------------------------------------------------------------------------------
+
+
+def model_interface_scheduling(model_component: str, slurm_task: str,
+                               experiment_dict: Mapping) -> dict:
+    """A model interface can provide its own scheduling for a task (SLURM 'directives' and
+    'execution_time_limit') through task_scheduling(slurm_task, experiment_dict) in
+    interfaces/<model_component>/slurm.py. Returns an empty dict if the model has no such module,
+    or if the task/model is not resolution-dependent."""
+
+    module_name = f'swell.configuration.jedi.interfaces.{model_component}.slurm'
+    try:
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError as err:
+        if err.name is None or not module_name.startswith(err.name):
+            raise err
+        return {}
+    if not hasattr(module, 'task_scheduling'):
+        return {}
+    return module.task_scheduling(slurm_task, experiment_dict)
 
 # --------------------------------------------------------------------------------------------------
 
