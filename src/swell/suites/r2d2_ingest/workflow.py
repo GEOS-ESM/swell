@@ -48,7 +48,7 @@ template_str = '''
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
                 {% if download_convert_pipeline %}
-               {% for obs_to_download in models[model_component]['obs_to_download'] %}
+                {% for obs_to_download in models[model_component]['obs_to_download'] %}
                 DownloadObs-{{obs_to_download}}-{{model_component}} => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
                 BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
                 {% endfor %}
@@ -69,7 +69,9 @@ template_str = '''
                 {% endif %}
                 {% if not ingest_background_pipeline and
                       not models[model_component]["store_as_symlink"] %}
-                IngestObs-{{model_component}} => CleanCycle-{{model_component}}
+                {% for observation in models[model_component]['obs_to_ingest'] %}
+                IngestObs-{{observation}}-{{model_component}} => CleanCycle-{{model_component}}
+                {% endfor %}
                 {% endif %}
                 {% endfor %}
             """
