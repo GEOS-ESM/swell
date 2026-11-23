@@ -96,13 +96,13 @@ template_str = '''
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            PrepareAnalysis-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => PrepareAnalysis-{{model_component}} => CleanCycle-{{model_component}}?
 
             # Run analysis diagnostics
             {% if run_eva %}
-            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
-            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
-            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
             {% endif %}
 
