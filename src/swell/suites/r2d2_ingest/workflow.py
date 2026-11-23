@@ -48,14 +48,18 @@ template_str = '''
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
                 {% if download_convert_pipeline %}
-                {% for obs_to_ingest in models[model_component]['obs_to_ingest'] %}
-                {% for obs_to_download in models[model_component]['obs_to_download'] %}
+               {% for obs_to_download in models[model_component]['obs_to_download'] %}
                 DownloadObs-{{obs_to_download}}-{{model_component}} => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
                 BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{obs_to_download}}-{{model_component}}
-                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{obs_to_ingest}}-{{model_component}}
+                {% endfor %}
+                {% for obs_to_ingest in models[model_component]['obs_to_ingest'] %}
+                {% if obs_to_ingest in models[model_component]['obs_to_download'] %}
                 ConvertObsToIoda-{{obs_to_ingest}}-{{model_component}} => IngestObs-{{obs_to_ingest}}-{{model_component}}
+                {% else %}
+                IngestObs-{{obs_to_ingest}}-{{model_component}}
+                {% endif %}
                 {% endfor %}
-                {% endfor %}
+
                 {% elif ingest_background_pipeline %}
                 SaveBackground-{{model_component}}
                 {% else %}
