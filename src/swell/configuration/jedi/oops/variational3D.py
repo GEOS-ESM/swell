@@ -28,6 +28,7 @@ class variational3D(OopsConfig):
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
                 'observations': {
+                    'obs data container': 'OSDF',
                     'get values': self.interface_model('getvalues'),
                     'observers': self.special_observations(),
                 }
@@ -46,21 +47,14 @@ class variational3D(OopsConfig):
                     'online diagnostics': self.interface_model('varincrement1')
                 }],
             },
-            'final': {
-                'diagnostics': {
-                    'departures': 'oman'
-                },
-                'prints': {
-                    'frequency': 'PT3H'
-                }
+            'output': {
+                'analysis': self.interface_model('analysis')
             },
-            'output': self.interface_model('analysis')
         }
 
         # TODO: Implement this more cleanly in the OOPS schema
         if self.jedi_interface == 'geos_cf':
-            oops['final']['increment'] = {'geometry': self.interface_model('geometry'),
-                                          'output': self.interface_model('increment_cs')}
+            oops['output']['increment'] = self.interface_model('increment_cs')
 
         return oops
 

@@ -98,6 +98,7 @@ initial condition:
     eastward_wind_at_surface: u10m
     northward_wind_at_surface: v10m
 observations:
+  obs data container: OSDF
   get values:
     variable change:
       variable change name: Model2GeoVaLs

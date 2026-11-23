@@ -31,6 +31,7 @@ class variational4D(OopsConfig):
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
                 'observations': {
+                    'obs data container': 'OSDF',
                     'get values': self.interface_model('getvalues'),
                     'observers': self.special_observations(),
                 }
@@ -51,17 +52,11 @@ class variational4D(OopsConfig):
                     },
                     'diagnostics': {'departures': 'ombg'},
                     'online diagnostics': self.interface_model('varincrement1')
-                }]
+                }],
             },
-            'final': {
-                'diagnostics': {
-                    'departures': 'oman'
-                },
-                'prints': {
-                    'frequency': 'PT3H'
-                }
+            'output': {
+                'analysis': self.interface_model('analysis')
             },
-            'output': self.interface_model('analysis')
         }
 
         return oops
