@@ -78,14 +78,16 @@ template_str = '''
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
+            {% if run_eva %}
             # EvaObservations
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}?
 
             # EvaJediLog
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}?
 
             # EvaIncrement
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}?
+            {% endif %}
 
             {% if not skip_r2d2 %}
             # Save observations
@@ -95,9 +97,7 @@ template_str = '''
             {% endif %}
 
             # Clean up large files
-            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => CleanCycle-{{model_component}}?
 
         {% endif %}
         {% endfor %}

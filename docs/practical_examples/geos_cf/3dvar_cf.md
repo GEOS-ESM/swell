@@ -53,6 +53,9 @@ check_for_obs: false
 # What is the path to the Swell Static files directory?
 swell_static_files: /discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles
 
+# Run Eva tasks to generate outputs for increments, observations, and JEDI log output (where applicable).
+run_eva: false
+
 # Configurations for the model components.
 models:
 
@@ -140,9 +143,9 @@ For each cycle and each `model_component` (only `geos_cf` in this suite), the fo
 - `StageJediCycle`: stage cycle-dependent files.
 - `RenderJediObservations`: render the JEDI observation configuration.
 - `RunJediVariationalExecutable`: run the JEDI 3DVar executable.
-- `EvaObservations`: generate observation-space diagnostic plots.
-- `EvaJediLog`: generate JEDI log (cost function/iteration) diagnostic plots.
-- `EvaIncrement`: generate analysis increment diagnostic plots.
+- `EvaObservations`: generate observation-space diagnostic plots. Only run if `run_eva` is enabled.
+- `EvaJediLog`: generate JEDI log (cost function/iteration) diagnostic plots. Only run if `run_eva` is enabled.
+- `EvaIncrement`: generate analysis increment diagnostic plots. Only run if `run_eva` is enabled.
 - `SaveObsDiags` (unless `skip_r2d2` is `true`): store the observation diagnostics in R2D2.
 - `CleanCycle`: remove large intermediate files matching `clean_patterns`.
 

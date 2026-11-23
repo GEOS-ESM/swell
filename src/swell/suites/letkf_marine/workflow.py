@@ -86,12 +86,12 @@ template_str = '''
                {% endif %}
             {% endif %}
 
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => CleanCycle-{{model_component}}
 
+            {% if run_eva %}
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
-
-            # Clean up large files
-            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}

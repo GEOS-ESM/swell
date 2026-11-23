@@ -285,6 +285,9 @@ optional. If `cice6` model is not active one should take out sea-ice related obs
 - `obs_provider`: For marine observations, two providers are used `odas` (GMAO) and `gdas_marine` (NOAA-EMC). R2D2 will
 scan Local and Shared (GMAO-wide) locations for these two providers.
 
+- `run_eva`: Sets whether or not to run Eva plotting tasks. Set to False in override file to save some
+execution time for the suite if plots are not needed.
+
 ### Making changes with `override.yaml`:
 
 If you would like to change any of these parameters, it is suggested to copy `experiment.yaml`

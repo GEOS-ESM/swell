@@ -78,6 +78,9 @@ existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/Jed
 # What is the path to the existing JEDI build directory?
 existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_08142026/build-intel-release/
 
+# Run Eva tasks to generate outputs for increments, observations, and JEDI log output (where applicable).
+run_eva: false
+
 # Configurations for the model components.
 models:
 
@@ -196,6 +199,7 @@ Currently, `IODA` output files are erased after the diagnostic plots (using EVA)
 `generate_yaml_and_exit`: When this key is `True`, the code will progress right before the execution
 and generate a JEDI Config YAML. This could be useful while debugging problems.
 
+`run_eva`: Sets whether or not to run Eva plotting tasks. Set to False in override file to save some execution time for the suite if plots are not needed.
 
 `marine_models`: JEDI/SOCA interface is designed to handle multiple marine model outputs. Currently in SWELL,
 `mom6` and `cice6` model interfaces are supported. `mom6` should always be active for `SOCA` however `cice6` is

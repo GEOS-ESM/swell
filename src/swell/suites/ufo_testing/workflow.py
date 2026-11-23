@@ -80,11 +80,12 @@ template_str = '''
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable
 
-            # EvaObservations
-            RunJediUfoTestsExecutable => EvaObservations
+            RunJediUfoTestsExecutable => CleanCycle
 
-            # Clean up large files
-            EvaObservations => CleanCycle
+            {% if run_eva %}
+            # EvaObservations
+            RunJediUfoTestsExecutable => EvaObservations => CleanCycle
+            {% endif %}
 
         """
         {% endfor %}

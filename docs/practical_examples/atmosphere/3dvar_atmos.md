@@ -31,6 +31,9 @@ the `${experiment_id}/${experiment_id}-suite` directory under your_swell_experim
 model_components:
 - geos_atmosphere
 
+# Run Eva tasks to generate outputs for increments, observations, and JEDI log output (where applicable).
+run_eva: false
+
 # Configurations for the model components.
 models:
 
@@ -210,6 +213,7 @@ A few important keywords from this file include
 
 `observations`:  the list of observations; you can override this observation list using override.yaml
 
+`run_eva`: chooses whether or not to run Eva plotting tasks. Set to False to speed up the suite if plots aren't needed.
 
 For example, for test purposes the simple override.yaml file below can be used to replace the full list of observations by a single obs type
 ```yaml

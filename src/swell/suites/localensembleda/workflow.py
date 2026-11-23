@@ -111,19 +111,19 @@ template_str = '''
                {% endif %}
             {% endif %}
 
-
+            {% if run_eva %}
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
             # EvaObservations
-            # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+
+            {% endif %}
+
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => CleanCycle-{{model_component}}
 
             # Save observations
-            # RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-
-            # Clean up large files
-            # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
-            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            # RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}

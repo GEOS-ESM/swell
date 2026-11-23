@@ -293,6 +293,18 @@ class r2d2_server(SuiteQuestion):
 
 
 @dataclass
+class run_eva(SuiteQuestion):
+    default_value: bool = True
+    question_name: str = "run_eva"
+    ask_question: bool = True
+    prompt: str = ("Run Eva tasks to generate outputs for increments, observations, and "
+                   "JEDI log output (where applicable).")
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class runahead_limit(SuiteQuestion):
     default_value: str = "P4"
     question_name: str = "runahead_limit"

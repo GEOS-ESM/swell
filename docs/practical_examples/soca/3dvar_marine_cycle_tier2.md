@@ -118,6 +118,9 @@ existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GE
 # How should initial GEOS restarts be obtained?
 initial_restarts_method: geos_expdir
 
+# Run Eva tasks to generate outputs for increments, observations, and JEDI log output (where applicable).
+run_eva: false
+
 # Configurations for the model components.
 models:
 
@@ -284,6 +287,8 @@ optional. If `cice6` model outputs are not used for analysis, one should take ou
 
 - `obs_provider`: For marine observations, two providers are used `odas` (GMAO) and `gdas_marine` (NOAA-EMC). R2D2 will
 scan Local and Shared (GMAO-wide) locations for these two providers.
+
+- `run_eva`: Sets whether or not to run Eva plotting tasks. Set to False in override file to save some execution time for the suite if plots are not needed.
 
 ### Making changes with `override.yaml`:
 

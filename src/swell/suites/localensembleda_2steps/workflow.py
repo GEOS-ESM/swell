@@ -111,19 +111,18 @@ template_str = '''
                {% endif %}
             {% endif %}
 
-
+            {% if run_eva %}
             # EvaIncrement
-            RunJediEtkfSolver-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediEtkfSolver-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
             # EvaObservations
-            RunJediEtkfSolver-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediEtkfSolver-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
+
+            RunJediEtkfSolver-{{model_component}} => CleanCycle-{{model_component}}
 
             # Save observations
-            # RunJediEtkfSolver-{{model_component}} => SaveObsDiags-{{model_component}}
-
-            # Clean up large files
-            # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
-            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            # RunJediEtkfSolver-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
