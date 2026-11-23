@@ -11,8 +11,8 @@ cost function:
       field table filename: cycle_dir/field_table_gmao
     akbk: cycle_dir/akbk72.nc4
     layout:
-    - 2
-    - 2
+    - 3
+    - 3
     npx: 91
     npy: 91
     npz: 72
@@ -289,8 +289,8 @@ variational:
         field table filename: cycle_dir/field_table_gmao
       akbk: cycle_dir/akbk72.nc4
       layout:
-      - 2
-      - 2
+      - 3
+      - 3
       npx: 91
       npy: 91
       npz: 72
@@ -319,8 +319,8 @@ final:
         field table filename: cycle_dir/field_table_gmao
       akbk: cycle_dir/akbk72.nc4
       layout:
-      - 2
-      - 2
+      - 3
+      - 3
       npx: 91
       npy: 91
       npz: 72
