@@ -121,9 +121,9 @@ For each cycle and each `model_component` (only `geos_cf` in this suite), the fo
 - `StageJediCycle`: stage cycle-dependent files.
 - `RenderJediObservations`: render the JEDI observation configuration.
 - `RunJediVariationalExecutable`: run the JEDI 3DVar executable.
-- `EvaObservations`: generate observation-space diagnostic plots.
-- `EvaJediLog`: generate JEDI log (cost function/iteration) diagnostic plots.
-- `EvaIncrement`: generate analysis increment diagnostic plots.
+- `EvaObservations`: generate observation-space diagnostic plots. Only run if `run_eva` is enabled.
+- `EvaJediLog`: generate JEDI log (cost function/iteration) diagnostic plots. Only run if `run_eva` is enabled.
+- `EvaIncrement`: generate analysis increment diagnostic plots. Only run if `run_eva` is enabled.
 - `SaveObsDiags` (unless `skip_r2d2` is `true`): store the observation diagnostics in R2D2.
 - `PrepForecastCf`: update RC files and create the forecast scratch directory from the analysis.
 - `GetRestartCf`: fetch the restart files (of the types in `rst_file_types`) from R2D2.

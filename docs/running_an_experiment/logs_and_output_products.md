@@ -36,7 +36,7 @@ Depending on the workflow, a cycle directory can contain:
 - JEDI executable output, such as `jedi_<application>_log.log`.
 - Staged background, observation, bias-correction, and restart files.
 - Analysis, increment, HofX, forecast, or converted-observation products.
-- EVA configuration, diagnostics, and plots under `eva/`.
+- EVA configuration, diagnostics, and plots under `eva/`, unless `run_eva` is set to False.
 - A `cycle_done_<timestamp>` marker after cycle cleanup completes.
 
 File names and expected products vary by suite and model. Use the appropriate
