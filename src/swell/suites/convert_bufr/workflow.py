@@ -43,6 +43,9 @@ template_str = '''
             # Clone JEDI source code
             CloneJedi
 
+            # Clone spoc
+            CloneSpoc
+
             # Clone GMAO_perllib
             CloneGmaoPerllib
 
@@ -63,9 +66,10 @@ template_str = '''
         {{cycle_time.cycle_time}} = """
         {% if cycle_time[model_component] %}
 
-            # Make sure GMAO_perllib, Mksi and JEDI are cloned and/or linked
+            # Make sure GMAO_perllib, Mksi, spoc and JEDI are cloned and/or linked
             CloneGmaoPerllib[^] => GetBufr-{{model_component}}
             CloneGeosMksi-{{model_component}}[^] => GetBufr-{{model_component}}
+            CloneSpoc[^] => BufrToIoda-{{model_component}}
             BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Convert BUFR to ioda
@@ -121,6 +125,7 @@ class Workflow_convert_bufr(CylcWorkflow):
         self.tasks.append(ta.BuildJediByLinking())
         self.tasks.append(ta.BuildJedi())
         self.tasks.append(ta.CloneGmaoPerllib())
+        self.tasks.append(ta.CloneSpoc())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.CloneGeosMksi(model=model))
