@@ -25,6 +25,7 @@ _3dfgat_atmos_tier1 = QuestionList(
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_atmosphere']),
         qd.runahead_limit("P2"),
+        qd.fetch_from_r2d2(False)
     ],
     geos_atmosphere=[
         qd.cycle_times([

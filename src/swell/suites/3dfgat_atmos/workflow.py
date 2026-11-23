@@ -71,12 +71,10 @@ template_str = '''
             # Get observations
             {% if models[model_component]['cycling_varbc'] %}
             # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => fetch_obs-{{model_component}}
             {% else %}
-
             # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
+            fetch_obs-{{model_component}}
             {% endif %}
 
             # Perform staging that is cycle dependent
@@ -87,7 +85,6 @@ template_str = '''
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
 
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -102,7 +99,7 @@ template_str = '''
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
-            {% if not skip_r2d2 %}            
+            {% if store_r2d2 %}
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}?
             SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
@@ -168,10 +165,14 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
             self.tasks.append(ta.CloneGeosMksi(model=model))
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.GetBackground(model=model))
-            self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
-            self.tasks.append(ta.GetObsNotInR2d2(model=model))
+            if self.experiment_dict['fetch_from_r2d2']:
+                self.tasks.append(ta.GetObservations(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
+            else:
+                self.tasks.append(ta.GetObsNotInR2d2(model=model,
+                                                     scheduling_name=f'fetch_obs-{model}'))
             self.tasks.append(ta.GetBackgroundGeosExperiment(model=model))
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))

@@ -90,20 +90,20 @@ template_str = '''
             RunForecast-{{model_component}} => SaveRestartCf-{{model_component}}
 
             # EvaObservations
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
 
             # EvaJediLog
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}} => CleanCycle-{{model_component}}
 
             # EvaIncrement
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
+            {% if store_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
-
-            # Clean up large files
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            SaveObsDiags-{{model_component}} & SaveForecastCf-{{model_component}} & SaveRestartCf-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveForecastCf-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveRestartCf-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}
