@@ -45,6 +45,7 @@ _3dvar_atmos_tier1 = QuestionList(
         qd.observations([
             "abi_g16",
             "abi_g18",
+            "abi_g19",
             "aircraft_temperature",
             "aircraft_wind",
             "airs_aqua",
