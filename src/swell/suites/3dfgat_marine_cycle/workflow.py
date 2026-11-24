@@ -121,6 +121,7 @@ template_str = '''
             # Compress forecast on compute node, then store in R2D2 on login node
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}? => MoveDaRestart-{{model_component}}
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
@@ -194,6 +195,7 @@ class Workflow_3dfgat_marine_cycle(CylcWorkflow):
                 self.tasks.append(ta.RunJediPostprocSoca2ciceExecutable(model=model))
             self.tasks.append(ta.RunCompressForecast(model=model))
             self.tasks.append(ta.SaveRestart(model=model))
+            self.tasks.append(ta.SaveAnalysis(model=model))
             self.tasks.append(ta.SaveForecast(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
             self.tasks.append(ta.CleanCycleSkipped(model=model))

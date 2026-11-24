@@ -16,6 +16,25 @@ from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
 
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveAnalysis'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.retry = '2 * PT30S'
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.r2d2_experiment_id(),
+            qd.marine_models(),
+            qd.horizontal_resolution(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -49,7 +68,7 @@ class SaveAnalysis(taskBase):
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_length)
-        self.background_experiment = self.experiment_id()
+        self.background_experiment = self.config.r2d2_experiment_id()
         self.horizontal_resolution = self.config.horizontal_resolution()
 
         # Load R2D2 credentials

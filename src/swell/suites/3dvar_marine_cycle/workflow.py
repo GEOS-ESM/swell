@@ -120,6 +120,7 @@ template_str = '''
             # Compress forecast on compute node, then store in R2D2 on login node
             LinkCoupledGeosOutput-{{model_component}} => RunCompressForecast-{{model_component}} => SaveForecast-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}? => CleanCycle-{{model_component}}?
+            RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}? => MoveDaRestart-{{model_component}}
             SaveObsDiags-{{model_component}}:fail? => CleanCycle-SKIPPED-{{model_component}}?
             {% endif %}
 
@@ -193,6 +194,7 @@ class Workflow_3dvar_marine_cycle(CylcWorkflow):
             self.tasks.append(ta.EvaJediLog(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.SaveAnalysis(model=model))
             self.tasks.append(ta.SaveForecast(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
             self.tasks.append(ta.CleanCycleSkipped(model=model))
