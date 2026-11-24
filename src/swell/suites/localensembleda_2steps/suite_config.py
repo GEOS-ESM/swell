@@ -116,7 +116,7 @@ localensembleda_2steps_tier1 = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, 'localensembleda_2steps_tier1', localensembleda_2steps_tier1)    
+suite_configs.register(suite_name, 'localensembleda_2steps_tier1', localensembleda_2steps_tier1)
 
 
 localensembleda_2steps_tier2 = QuestionList(
