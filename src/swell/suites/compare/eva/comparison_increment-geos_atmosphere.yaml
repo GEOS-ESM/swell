@@ -1,13 +1,13 @@
 datasets:
 - group: increment
   type: LatLon
-  filename: {{increment_file_path_1}}
-  name: experiment_increment_1
+  filename: {{increment_file_path_exp}}
+  name: experiment_increment_exp
   variables: [ps, ua, va, t, q, lat, lon]
 - group: increment
   type: LatLon
-  filename: {{increment_file_path_2}}
-  name: experiment_increment_2
+  filename: {{increment_file_path_ctl}}
+  name: experiment_increment_ctl
   variables: [ps, ua, va, t, q, lat, lon]
 
 graphics:
@@ -32,15 +32,15 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ps
+            variable: experiment_increment_exp::increment::ps
           label: PS increment 1
           colorbar: true
           cmap: 'bwr'
@@ -54,15 +54,15 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ps
+            variable: experiment_increment_ctl::increment::ps
           label: PS increment 2
           colorbar: true
           cmap: 'bwr'
@@ -77,15 +77,15 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ps_diff
+            variable: experiment_increment_exp::increment::ps_diff
           label: PS increment Diff
           colorbar: true
           cmap: 'bwr'
@@ -99,7 +99,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp000.png'
     plots:
       # Experiment 1
       - mapping:
@@ -108,16 +108,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Temperature Increment
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[71,...]'
           label: T increment (1000 hPa)
           colorbar: true
@@ -132,15 +132,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[71,...]'
           label: T increment (1000 hPa)
           colorbar: true
@@ -154,16 +154,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Temperature Increment Diff
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[71,...]'
           label: T increment (1000 hPa)
           colorbar: true
@@ -187,15 +187,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[62,...]'
           label: T increment (850 hPa)
           colorbar: true
@@ -210,15 +210,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[62,...]'
           label: T increment (850 hPa)
           colorbar: true
@@ -232,16 +232,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Temperature Increment Diff
-        add_title: '({{experiment_tag_1}}) - ({{experiment_id_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_id_ctl}})'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[62,...]'
           label: T increment (850 hPa)
           colorbar: true
@@ -265,15 +265,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[49,...]'
           label: T increment (500 hPa)
           colorbar: true
@@ -289,15 +289,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[49,...]'
           label: T increment (500 hPa)
           colorbar: true
@@ -313,15 +313,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[49,...]'
           label: T increment (500 hPa)
           colorbar: true
@@ -335,7 +335,7 @@ graphics:
       figure size: [20,10]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_ctl00.png'
     plots:
       # Experiment 1
       - mapping:
@@ -345,15 +345,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[42,...]'
           label: T increment (200 hPa)
           colorbar: true
@@ -369,15 +369,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[42,...]'
           label: T increment (200 hPa)
           colorbar: true
@@ -393,15 +393,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[42,...]'
           label: T increment (200 hPa)
           colorbar: true
@@ -416,7 +416,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp0.png'
     plots:
       # Experiment 1
       - mapping:
@@ -426,15 +426,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[24,...]'
           label: T increment (10 hPa)
           colorbar: true
@@ -450,15 +450,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[24,...]'
           label: T increment (10 hPa)
           colorbar: true
@@ -474,15 +474,15 @@ graphics:
         add_colorbar:
           label: Temperature Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[24,...]'
           label: T increment (10 hPa)
           colorbar: true
@@ -497,25 +497,25 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp.png'
     plots:
       # Experiment 1
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_colorbar:
           label: Temperature Increment
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t
+            variable: experiment_increment_exp::increment::t
             slices: '[14,...]'
           label: T increment (1 hPa)
           colorbar: true
@@ -528,18 +528,18 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_colorbar:
           label: Temperature Increment
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::t
+            variable: experiment_increment_ctl::increment::t
             slices: '[14,...]'
           label: T increment (1 hPa)
           colorbar: true
@@ -552,18 +552,18 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_colorbar:
           label: Temperature Increment Diff
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::t_diff
+            variable: experiment_increment_exp::increment::t_diff
             slices: '[14,...]'
           label: T increment (1 hPa)
           colorbar: true
@@ -578,7 +578,7 @@ graphics:
       figure size: [20,10]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp000.png'
     plots:
       # Experiment 1
       - mapping:
@@ -588,15 +588,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[71,...]'
           label: U increment (1000 hPa)
           colorbar: true
@@ -609,18 +609,18 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[71,...]'
           label: U increment (1000 hPa)
           colorbar: true
@@ -633,18 +633,18 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_colorbar:
           label: Zonal Wind Increment Diff
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[71,...]'
           label: U increment (1000 hPa)
           colorbar: true
@@ -668,15 +668,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[62,...]'
           label: U increment (850 hPa)
           colorbar: true
@@ -692,15 +692,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[62,...]'
           label: U increment (850 hPa)
           colorbar: true
@@ -713,18 +713,18 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_colorbar:
           label: Zonal Wind Increment diff
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[62,...]'
           label: U increment (850 hPa)
           colorbar: true
@@ -749,15 +749,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[49,...]'
           label: U increment (500 hPa)
           colorbar: true
@@ -773,15 +773,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[49,...]'
           label: U increment (500 hPa)
           colorbar: true
@@ -797,15 +797,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[49,...]'
           label: U increment (500 hPa)
           colorbar: true
@@ -820,7 +820,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_ctl00.png'
     plots:
       # Experiment 1
       - mapping:
@@ -830,15 +830,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[42,...]'
           label: U increment (200 hPa)
           colorbar: true
@@ -853,16 +853,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Zonal Wind Increment
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[42,...]'
           label: U increment (200 hPa)
           colorbar: true
@@ -877,16 +877,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Zonal Wind Increment Diff
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[42,...]'
           label: U increment (200 hPa)
           colorbar: true
@@ -901,7 +901,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp0.png'
     plots:
       # Experiment 1
       - mapping:
@@ -911,15 +911,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[24,...]'
           label: U increment (10 hPa)
           colorbar: true
@@ -934,16 +934,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Zonal Wind Increment
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[24,...]'
           label: U increment (10 hPa)
           colorbar: true
@@ -959,15 +959,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[24,...]'
           label: U increment (10 hPa)
           colorbar: true
@@ -982,7 +982,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp.png'
     plots:
       # Experiment 1
       - mapping:
@@ -992,15 +992,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua
+            variable: experiment_increment_exp::increment::ua
             slices: '[14,...]'
           label: U increment (1 hPa)
           colorbar: true
@@ -1016,15 +1016,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::ua
+            variable: experiment_increment_ctl::increment::ua
             slices: '[14,...]'
           label: U increment (1 hPa)
           colorbar: true
@@ -1040,15 +1040,15 @@ graphics:
         add_colorbar:
           label: Zonal Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::ua_diff
+            variable: experiment_increment_exp::increment::ua_diff
             slices: '[14,...]'
           label: U increment (1 hPa)
           colorbar: true
@@ -1063,7 +1063,7 @@ graphics:
       figure size: [20,10]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp000.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1072,16 +1072,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Meridional Wind Increment
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[71,...]'
           label: V increment (1000 hPa)
           colorbar: true
@@ -1097,15 +1097,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[71,...]'
           label: V increment (1000 hPa)
           colorbar: true
@@ -1120,16 +1120,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Meridional Wind Increment Diff
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[71,...]'
           label: V increment (1000 hPa)
           colorbar: true
@@ -1153,16 +1153,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Meridional Wind Increment
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[62,...]'
           label: V increment (850 hPa)
           colorbar: true
@@ -1178,15 +1178,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[62,...]'
           label: V increment (850 hPa)
           colorbar: true
@@ -1202,15 +1202,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[62,...]'
           label: V increment (850 hPa)
           colorbar: true
@@ -1235,15 +1235,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[49,...]'
           label: V increment (500 hPa)
           colorbar: true
@@ -1259,15 +1259,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[49,...]'
           label: V increment (500 hPa)
           colorbar: true
@@ -1283,15 +1283,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[49,...]'
           label: V increment (500 hPa)
           colorbar: true
@@ -1306,7 +1306,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_ctl00.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1316,15 +1316,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[42,...]'
           label: V increment (200 hPa)
           colorbar: true
@@ -1340,15 +1340,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[42,...]'
           label: V increment (200 hPa)
           colorbar: true
@@ -1365,15 +1365,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[42,...]'
           label: V increment (200 hPa)
           colorbar: true
@@ -1388,7 +1388,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp0.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1398,15 +1398,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[24,...]'
           label: V increment (10 hPa)
           colorbar: true
@@ -1421,16 +1421,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Meridional Wind Increment
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[24,...]'
           label: V increment (10 hPa)
           colorbar: true
@@ -1446,15 +1446,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff (1-2)
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[24,...]'
           label: V increment (10 hPa)
           colorbar: true
@@ -1469,7 +1469,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1479,15 +1479,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va
+            variable: experiment_increment_exp::increment::va
             slices: '[14,...]'
           label: V increment (1 hPa)
           colorbar: true
@@ -1503,15 +1503,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::va
+            variable: experiment_increment_ctl::increment::va
             slices: '[14,...]'
           label: V increment (1 hPa)
           colorbar: true
@@ -1527,15 +1527,15 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::va_diff
+            variable: experiment_increment_exp::increment::va_diff
             slices: '[14,...]'
           label: V increment (1 hPa)
           colorbar: true
@@ -1551,7 +1551,7 @@ graphics:
       figure size: [20,10]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp000.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1561,15 +1561,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q
+            variable: experiment_increment_exp::increment::q
             slices: '[71,...]'
           label: Q increment (1000 hPa)
           colorbar: true
@@ -1583,16 +1583,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Specific Humidity Increment
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::q
+            variable: experiment_increment_ctl::increment::q
             slices: '[71,...]'
           label: Q increment (1000 hPa)
           colorbar: true
@@ -1607,15 +1607,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q_diff
+            variable: experiment_increment_exp::increment::q_diff
             slices: '[71,...]'
           label: Q increment (1000 hPa)
           colorbar: true
@@ -1640,15 +1640,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q
+            variable: experiment_increment_exp::increment::q
             slices: '[62,...]'
           label: Q increment (850 hPa)
           colorbar: true
@@ -1664,15 +1664,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::q
+            variable: experiment_increment_ctl::increment::q
             slices: '[62,...]'
           label: Q increment (850 hPa)
           colorbar: true
@@ -1688,15 +1688,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q_diff
+            variable: experiment_increment_exp::increment::q_diff
             slices: '[62,...]'
           label: Q increment (850 hPa)
           colorbar: true
@@ -1721,15 +1721,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q
+            variable: experiment_increment_exp::increment::q
             slices: '[49,...]'
           label: Q increment (500 hPa)
           colorbar: true
@@ -1745,15 +1745,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::q
+            variable: experiment_increment_ctl::increment::q
             slices: '[49,...]'
           label: Q increment (500 hPa)
           colorbar: true
@@ -1769,15 +1769,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q_diff
+            variable: experiment_increment_exp::increment::q_diff
             slices: '[49,...]'
           label: Q increment (500 hPa)
           colorbar: true
@@ -1792,7 +1792,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_ctl00.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1802,15 +1802,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q
+            variable: experiment_increment_exp::increment::q
             slices: '[42,...]'
           label: Q increment (200 hPa)
           colorbar: true
@@ -1825,16 +1825,16 @@ graphics:
         add_map_features: ['coastline']
         add_colorbar:
           label: Specific Humidity Increment
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::q
+            variable: experiment_increment_ctl::increment::q
             slices: '[42,...]'
           label: Q increment (200 hPa)
           colorbar: true
@@ -1850,15 +1850,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q_diff
+            variable: experiment_increment_exp::increment::q_diff
             slices: '[42,...]'
           label: Q increment (200 hPa)
           colorbar: true
@@ -1873,7 +1873,7 @@ graphics:
       figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_exp0.png'
     plots:
       # Experiment 1
       - mapping:
@@ -1883,15 +1883,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q
+            variable: experiment_increment_exp::increment::q
             slices: '[24,...]'
           label: Q increment (10 hPa)
           colorbar: true
@@ -1907,15 +1907,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::increment::lon
+            variable: experiment_increment_ctl::increment::lon
           latitude:
-            variable: experiment_increment_2::increment::lat
+            variable: experiment_increment_ctl::increment::lat
           data:
-            variable: experiment_increment_2::increment::q
+            variable: experiment_increment_ctl::increment::q
             slices: '[24,...]'
           label: Q increment (10 hPa)
           colorbar: true
@@ -1931,15 +1931,15 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::increment::lon
+            variable: experiment_increment_exp::increment::lon
           latitude:
-            variable: experiment_increment_1::increment::lat
+            variable: experiment_increment_exp::increment::lat
           data:
-            variable: experiment_increment_1::increment::q_diff
+            variable: experiment_increment_exp::increment::q_diff
             slices: '[24,...]'
           label: Q increment (10 hPa)
           colorbar: true
@@ -1948,32 +1948,32 @@ graphics:
           vmax: *vmax_q_diff
 
 transforms:
-- equals: experiment_increment_1::increment::ps-experiment_increment_2::increment::ps
+- equals: experiment_increment_exp::increment::ps-experiment_increment_ctl::increment::ps
   for:
     variable: ps
-  new name: experiment_increment_1::increment::ps_diff
+  new name: experiment_increment_exp::increment::ps_diff
   transform: arithmetic
 
-- equals: experiment_increment_1::increment::t-experiment_increment_2::increment::t
+- equals: experiment_increment_exp::increment::t-experiment_increment_ctl::increment::t
   for:
     variable: t
-  new name: experiment_increment_1::increment::t_diff
+  new name: experiment_increment_exp::increment::t_diff
   transform: arithmetic
 
-- equals: experiment_increment_1::increment::ua-experiment_increment_2::increment::ua
+- equals: experiment_increment_exp::increment::ua-experiment_increment_ctl::increment::ua
   for:
     variable: ua
-  new name: experiment_increment_1::increment::ua_diff
+  new name: experiment_increment_exp::increment::ua_diff
   transform: arithmetic
 
-- equals: experiment_increment_1::increment::va-experiment_increment_2::increment::va
+- equals: experiment_increment_exp::increment::va-experiment_increment_ctl::increment::va
   for:
     variable: va
-  new name: experiment_increment_1::increment::va_diff
+  new name: experiment_increment_exp::increment::va_diff
   transform: arithmetic
 
-- equals: experiment_increment_1::increment::q-experiment_increment_2::increment::q
+- equals: experiment_increment_exp::increment::q-experiment_increment_ctl::increment::q
   for:
     variable: q
-  new name: experiment_increment_1::increment::q_diff
+  new name: experiment_increment_exp::increment::q_diff
   transform: arithmetic

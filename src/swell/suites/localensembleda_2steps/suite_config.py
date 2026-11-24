@@ -8,220 +8,215 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.suites.suite_questions import SuiteQuestions as sq
+from swell.utilities.swell_questions import QuestionList
+import swell.configuration.question_defaults as qd
+from swell.suites.base.suite_questions import common
+from swell.suites.base.suite_attributes import suite_configs
 
-from enum import Enum
 
+_suite = 'localensembleda_2steps'
+suite_name = _suite
 
 # --------------------------------------------------------------------------------------------------
 
-
-_suite = "localensembleda_2steps"
-
-
-class SuiteConfig(QuestionContainer, Enum):
-
-    # --------------------------------------------------------------------------------------------------
-
-    localensembleda_2steps_tier1 = QuestionList(
-        list_name=_suite,
-        questions=[
-            sq.marine,
-            qd.ensemble_hofx_packets(),
-            qd.ensemble_hofx_strategy(),
-            qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2023-10-10T12:00:00Z"),
-            qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_atmosphere']),
-        ],
-        geos_atmosphere=[
-            qd.horizontal_resolution('91'),
-            qd.background_experiment('x0050'),
-            qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x'),
-            qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                         'rtodling/archive/541/Milan'),
-            qd.npx_proc(4),
-            qd.npy_proc(4),
-            qd.perhost(48),
-            qd.npx_per_observer(1),
-            qd.npy_per_observer(1),
-            qd.cycle_times(['T00']),
-            qd.ensemble_num_members(3),
-            qd.skip_ensemble_hofx(True),
-            qd.local_ensemble_solver("Deterministic GETKF"),
-            qd.local_ensemble_use_linear_observer(True),
-            qd.vertical_localization_unit('logp'),
-            qd.vertical_localization_lengthscale(2.0),
-            qd.vertical_localization_frac_retained_variance(0.95),
-            qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(False),
-            qd.local_ensemble_save_posterior_mean_increment(False),
-            qd.local_ensemble_save_posterior_ensemble(True),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.local_ensemble_do_posterior_observer(False),
-            qd.obs_thinning_rej_fraction(0.98),
-            qd.observations([
-                "aircraft_temperature",
-                "aircraft_wind",
-                "amsr2_gcom-w1",
-                "amsua_aqua",
-                "amsua_metop-b",
-                "amsua_metop-c",
-                "amsua_n15",
-                "amsua_n18",
-                "amsua_n19",
-                "atms_n20",
-                "atms_npp",
-                "avhrr3_metop-b",
-                "avhrr3_n18",
-                "avhrr3_n19",
-                "gmi_gpm",
-                "gps",
-                "mhs_metop-b",
-                "mhs_metop-c",
-                "mhs_n19",
-                "mls55_aura",
-                "omi_aura",
-                "ompsnm_npp",
-                "pibal",
-                "satwind",
-                "scatwind",
-                "sfcship",
-                "sfc",
-                "sondes",
-                "ssmis_f17"
+localensembleda_2steps_tier1 = QuestionList(
+    questions=[
+        common,
+        qd.ensemble_hofx_packets(),
+        qd.ensemble_hofx_strategy(),
+        qd.skip_ensemble_hofx(),
+        qd.final_cycle_point("2023-10-10T12:00:00Z"),
+        qd.jedi_build_method("use_existing"),
+        qd.model_components(['geos_atmosphere']),
+    ],
+    geos_atmosphere=[
+        qd.horizontal_resolution('91'),
+        qd.background_experiment('x0050'),
+        qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
+                                       'rtodling/archive/Restarts/JEDI/541x'),
+        qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
+                                     'rtodling/archive/541/Milan'),
+        qd.npx_proc(4),
+        qd.npy_proc(4),
+        qd.perhost(48),
+        qd.npx_per_observer(1),
+        qd.npy_per_observer(1),
+        qd.cycle_times(['T00']),
+        qd.ensemble_num_members(3),
+        qd.skip_ensemble_hofx(True),
+        qd.local_ensemble_solver("Deterministic GETKF"),
+        qd.local_ensemble_use_linear_observer(True),
+        qd.vertical_localization_unit('logp'),
+        qd.vertical_localization_lengthscale(2.0),
+        qd.vertical_localization_frac_retained_variance(0.95),
+        qd.ensmean_only(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
+        qd.local_ensemble_save_posterior_ensemble_increments(False),
+        qd.local_ensemble_do_posterior_observer(False),
+        qd.obs_thinning_rej_fraction(0.98),
+        qd.observations([
+            "aircraft_temperature",
+            "aircraft_wind",
+            "amsr2_gcom-w1",
+            "amsua_aqua",
+            "amsua_metop-b",
+            "amsua_metop-c",
+            "amsua_n15",
+            "amsua_n18",
+            "amsua_n19",
+            "atms_n20",
+            "atms_npp",
+            "avhrr3_metop-b",
+            "avhrr3_n18",
+            "avhrr3_n19",
+            "gmi_gpm",
+            "gps",
+            "mhs_metop-b",
+            "mhs_metop-c",
+            "mhs_n19",
+            "mls55_aura",
+            "omi_aura",
+            "ompsnm_npp",
+            "pibal",
+            "satwind",
+            "scatwind",
+            "sfcship",
+            "sfc",
+            "sondes",
+            "ssmis_f17"
+        ]),
+        qd.window_length("PT6H"),
+        qd.window_type("3D"),
+        qd.change_vbc_to_sbc(False),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
             ]),
-            qd.window_length("PT6H"),
-            qd.window_type("3D"),
-            qd.change_vbc_to_sbc(False),
-            qd.ensmeanvariance_spec([
-                {"state": "bkg",
-                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "geos.prior.mean",
-                 "fn_output_variance": "geos.prior.variance",
-                 "grid_type": ['cs', 'latlon']},
-                {"state": "analysis",
-                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
-                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
-                 "grid_type": ['cs', 'latlon']},
-                ]),
-            qd.diffstates_spec({
-                "state1":
-                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state2":
-                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state_diff":
-                {"fn_output": f"analysis/mean/{_suite}.inc",
-                 "grid_type": ['cs', 'latlon']},
-                "state_type": "ensemble"
-                }),
-            qd.clean_patterns(['*.txt'])
-        ]
-    )
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
+        qd.clean_patterns(['*.txt'])
+    ]
+)
 
-    localensembleda_2steps_tier2 = QuestionList(
-        list_name=_suite,
-        questions=[
-            sq.marine,
-            qd.ensemble_hofx_packets(),
-            qd.ensemble_hofx_strategy(),
-            qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2023-10-10T12:00:00Z"),
-            qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_atmosphere']),
-        ],
-        geos_atmosphere=[
-            qd.cycle_times([
-                "T00",
+suite_configs.register(suite_name, 'localensembleda_2steps_tier1', localensembleda_2steps_tier1)    
+
+
+localensembleda_2steps_tier2 = QuestionList(
+    questions=[
+        common,
+        qd.ensemble_hofx_packets(),
+        qd.ensemble_hofx_strategy(),
+        qd.skip_ensemble_hofx(),
+        qd.final_cycle_point("2023-10-10T12:00:00Z"),
+        qd.jedi_build_method("use_existing"),
+        qd.model_components(['geos_atmosphere']),
+    ],
+    geos_atmosphere=[
+        qd.cycle_times([
+            "T00",
+        ]),
+        qd.horizontal_resolution('91'),
+        qd.background_experiment('x0050'),
+        qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
+                                       'rtodling/archive/Restarts/JEDI/541x'),
+        qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
+                                     'rtodling/archive/541/Milan'),
+        qd.npx_proc(4),
+        qd.npy_proc(4),
+        qd.npx_per_observer(1),
+        qd.npy_per_observer(1),
+        qd.perhost(48),
+        qd.window_length("PT6H"),
+        qd.window_type("3D"),
+        qd.change_vbc_to_sbc(False),
+        qd.ensemble_num_members(32),
+        qd.skip_ensemble_hofx(True),
+        qd.local_ensemble_solver("Deterministic GETKF"),
+        qd.local_ensemble_use_linear_observer(True),
+        qd.vertical_localization_unit('logp'),
+        qd.vertical_localization_lengthscale(2.0),
+        qd.vertical_localization_frac_retained_variance(0.95),
+        qd.ensmean_only(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
+        qd.local_ensemble_save_posterior_ensemble_increments(False),
+        qd.local_ensemble_do_posterior_observer(False),
+        qd.observations([
+            "aircraft_temperature",
+            "aircraft_wind",
+            "amsr2_gcom-w1",
+            "amsua_aqua",
+            "amsua_metop-b",
+            "amsua_metop-c",
+            "amsua_n15",
+            "amsua_n18",
+            "amsua_n19",
+            "atms_n20",
+            "atms_npp",
+            "avhrr3_metop-b",
+            "avhrr3_n18",
+            "avhrr3_n19",
+            "gmi_gpm",
+            "gps",
+            "mhs_metop-b",
+            "mhs_metop-c",
+            "mhs_n19",
+            "mls55_aura",
+            "omi_aura",
+            "ompsnm_npp",
+            "pibal",
+            "satwind",
+            "scatwind",
+            "sfcship",
+            "sfc",
+            "sondes",
+            "ssmis_f17"
+        ]),
+        qd.obs_thinning_rej_fraction(0.75),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
             ]),
-            qd.horizontal_resolution('91'),
-            qd.background_experiment('x0050'),
-            qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x'),
-            qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                         'rtodling/archive/541/Milan'),
-            qd.npx_proc(4),
-            qd.npy_proc(4),
-            qd.npx_per_observer(1),
-            qd.npy_per_observer(1),
-            qd.perhost(48),
-            qd.window_length("PT6H"),
-            qd.window_type("3D"),
-            qd.change_vbc_to_sbc(False),
-            qd.ensemble_num_members(32),
-            qd.skip_ensemble_hofx(True),
-            qd.local_ensemble_solver("Deterministic GETKF"),
-            qd.local_ensemble_use_linear_observer(True),
-            qd.vertical_localization_unit('logp'),
-            qd.vertical_localization_lengthscale(2.0),
-            qd.vertical_localization_frac_retained_variance(0.95),
-            qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(False),
-            qd.local_ensemble_save_posterior_mean_increment(False),
-            qd.local_ensemble_save_posterior_ensemble(True),
-            qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.local_ensemble_do_posterior_observer(False),
-            qd.observations([
-                "aircraft_temperature",
-                "aircraft_wind",
-                "amsr2_gcom-w1",
-                "amsua_aqua",
-                "amsua_metop-b",
-                "amsua_metop-c",
-                "amsua_n15",
-                "amsua_n18",
-                "amsua_n19",
-                "atms_n20",
-                "atms_npp",
-                "avhrr3_metop-b",
-                "avhrr3_n18",
-                "avhrr3_n19",
-                "gmi_gpm",
-                "gps",
-                "mhs_metop-b",
-                "mhs_metop-c",
-                "mhs_n19",
-                "mls55_aura",
-                "omi_aura",
-                "ompsnm_npp",
-                "pibal",
-                "satwind",
-                "scatwind",
-                "sfcship",
-                "sfc",
-                "sondes",
-                "ssmis_f17"
-            ]),
-            qd.obs_thinning_rej_fraction(0.75),
-            qd.ensmeanvariance_spec([
-                {"state": "bkg",
-                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "geos.prior.mean",
-                 "fn_output_variance": "geos.prior.variance",
-                 "grid_type": ['cs', 'latlon']},
-                {"state": "analysis",
-                 "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": f"analysis/mean/{_suite}.ana",
-                 "fn_output_variance": f"analysis/variance/{_suite}.ana",
-                 "grid_type": ['cs', 'latlon']},
-                ]),
-            qd.diffstates_spec({
-                "state1":
-                {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state2":
-                {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state_diff":
-                {"fn_output": f"analysis/mean/{_suite}.inc",
-                 "grid_type": ['cs', 'latlon']},
-                "state_type": "ensemble"
-                }),
-            qd.clean_patterns(['*.txt'])
-        ]
-    )
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
+        qd.clean_patterns(['*.txt'])
+    ]
+)
 # IR sensors:
 #                "airs_aqua",
 #                "cris-fsr_n20",
@@ -229,13 +224,15 @@ class SuiteConfig(QuestionContainer, Enum):
 #                "iasi_metop-b",
 #                "iasi_metop-c",
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register(suite_name, 'localensembleda_2steps_tier2', localensembleda_2steps_tier2)
 
-    localensembleda_2steps = QuestionList(
-        list_name=_suite,
-        questions=[
-            localensembleda_2steps_tier2
-        ]
-    )
 
-    # --------------------------------------------------------------------------------------------------
+localensembleda_2steps = QuestionList(
+    questions=[
+        localensembleda_2steps_tier2
+    ]
+)
+
+suite_configs.register(suite_name, 'localensembleda_2steps', localensembleda_2steps)
+
+# --------------------------------------------------------------------------------------------------

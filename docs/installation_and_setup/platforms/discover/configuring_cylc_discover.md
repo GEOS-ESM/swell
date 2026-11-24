@@ -13,10 +13,6 @@ Create a file called `$HOME/.cylc/flow/global.cylc` and fill it with the followi
   process pool size = 4
 
 [platforms]
-  [[nccs_discover_cascade]]
-    job runner = slurm
-    install target = localhost
-    hosts = localhost
   [[nccs_discover_sles15]]
     job runner = slurm
     install target = localhost

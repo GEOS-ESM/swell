@@ -9,11 +9,32 @@
 
 
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveForecast'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.r2d2_experiment_id(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+        ]
 
 
 # --------------------------------------------------------------------------------------------------
@@ -63,7 +84,9 @@ class SaveForecast(taskBase):
         self.window_length = self.config.window_length()
         self.horizontal_resolution = self.config.horizontal_resolution()
 
-        load_r2d2_credentials(self.logger, self.platform())
+        # Load R2D2 credentials, honoring any explicit r2d2_server selection
+        r2d2_server = self.config.r2d2_server(default=None)
+        load_r2d2_credentials(self.logger, self.platform(), r2d2_server=r2d2_server)
 
         self.local_background_time, self.local_background_time_dto = \
             self.da_window_params.local_background_time(self.window_length, window_type, dto=True)
@@ -96,6 +119,8 @@ class SaveForecast(taskBase):
             f'Storing {os.path.basename(archive_path)} ({file_type}) '
             f'step=PT00 '
             f'at {self.local_background_time_dto.strftime(datetime_formats["iso_format"])}')
+
+        from r2d2 import store
 
         store(
             item='forecast',

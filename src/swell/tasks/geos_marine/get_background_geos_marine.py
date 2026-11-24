@@ -10,10 +10,8 @@
 import os
 import tarfile
 
-import r2d2
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 
@@ -56,6 +54,8 @@ class GetBackground(taskBase):
             self.platform(),
             r2d2_server=self.config.r2d2_server(default=None),
         )
+
+        import r2d2
 
         r2d2_datastore = self.config.r2d2_datastore(default=None)
         marine_models = self.config.marine_models(None) or []
