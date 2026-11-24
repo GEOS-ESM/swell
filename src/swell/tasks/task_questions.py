@@ -596,6 +596,30 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    MoveEnsembleForecastRestarts = QuestionList(
+        list_name="MoveEnsembleForecastRestarts",
+        questions=[
+            qd.forecast_duration(),
+            qd.ensemble_num_members_suite()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    PrepCoupledEnsembleGeosRunDir = QuestionList(
+        list_name="PrepCoupledEnsembleGeosRunDir",
+        questions=[
+            swell_static_file_questions,
+            geos_gcm_questions,
+            qd.existing_geos_gcm_build_path(),
+            qd.forecast_duration(),
+            qd.mom6_iau_nhours(),
+            qd.ensemble_num_members_suite()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     PublishComparisons = QuestionList(
         list_name="PublishComparisons",
         questions=[

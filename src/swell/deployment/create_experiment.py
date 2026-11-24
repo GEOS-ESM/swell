@@ -541,13 +541,21 @@ def prepare_cylc_suite_jinja2(
     ensemble_list = ensemble_list + ['skip_ensemble_hofx']
     for ensemble_aspect in ensemble_list:
         if ensemble_aspect in suite_file:
-            if len(model_components) == 0:
+            # First check if the key exists at the top level of experiment_dict (suite-level key)
+            if ensemble_aspect in experiment_dict:
+                render_dictionary[ensemble_aspect] = experiment_dict[ensemble_aspect]
+            elif len(model_components) == 0:
                 logger.abort(f'The suite file required {ensemble_aspect} ' +
                              'there are no model components to gather them from or ' +
                              'they are not provided in the experiment dictionary.')
-            for model_component in model_components:
-                render_dictionary[ensemble_aspect] = \
-                    experiment_dict['models'][model_component][ensemble_aspect]
+            else:
+                for model_component in model_components:
+                    render_dictionary[ensemble_aspect] = \
+                        experiment_dict['models'][model_component][ensemble_aspect]
+
+    # Add forecast_duration to render dictionary if used in the suite file
+    if 'forecast_duration' in suite_file and 'forecast_duration' in experiment_dict:
+        render_dictionary['forecast_duration'] = experiment_dict['forecast_duration']
 
     # Cycling VarBC exception (only for geos_atmosphere)
     if 'cycling_varbc' in suite_file:
@@ -578,6 +586,7 @@ def prepare_cylc_suite_jinja2(
     render_dictionary['scheduling']['RunJediVariationalExecutable'][
             'execution_time_limit'] = 'PT40M'
     render_dictionary['scheduling']['RunGeos']['execution_time_limit'] = 'PT30M'
+    render_dictionary['scheduling']['RunGeosEns']['execution_time_limit'] = 'PT30M'
     render_dictionary['scheduling']['RunJediLocalEnsembleDaExecutable'][
             'execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['EvaObservations'][

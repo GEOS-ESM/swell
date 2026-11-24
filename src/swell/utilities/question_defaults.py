@@ -86,6 +86,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensemble_num_members_suite(SuiteQuestion):
+        default_value: int = 20
+        question_name: str = "ensemble_num_members"
+        ask_question: bool = True
+        prompt: str = "How many ensemble members?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class experiment_id(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "experiment_id"

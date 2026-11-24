@@ -82,6 +82,7 @@ def prepare_scheduling_dict(
         'RunCompressForecast',
         'RunGeos',
         'RunJediEdaExecutable',
+        'RunGeosEns',
         'RunJediEnsembleMeanVariance',
         'RunJediDiffstates',
         'RunJediConvertStateSoca2ciceExecutable',

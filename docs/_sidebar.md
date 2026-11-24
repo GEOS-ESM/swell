@@ -50,6 +50,7 @@
   - Background and Observation Ingestion
     - [Storing Observations and Backgrounds in R2D2](/practical_examples/r2d2/r2d2_ingest.md)
   - GEOS Model Runs
+    - [forecast_coupled_ensemble_geos](/practical_examples/cycling_geos/forecast_coupled_ensemble_geos.md)
     - [Coupled marine GEOS runs and workflow](/practical_examples/cycling_geos/coupled_marine_geos_runs.md)
   - Comparison and Evaluation
     - [Comparing Experiment Outputs](/practical_examples/generic_suites/comparison_workflows.md)
