@@ -10,7 +10,6 @@
 
 from datetime import datetime as dt
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
@@ -144,6 +143,8 @@ class SaveAnalysis(taskBase):
 
         self.logger.info(f'Storing {os.path.basename(source_file)} '
                          f'at {ana_dto.strftime(datetime_formats["iso_format"])}')
+
+        from r2d2 import store
 
         store(
             item='analysis',
