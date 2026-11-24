@@ -276,6 +276,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                                               'interfaces', self.get_model(),
                                                               'observations', 'localization')
 
+        jedi_config_dict['observations']['obs data container'] = 'OSDF'
         if localization_path.exists():
             for observer in jedi_config_dict['observations']['observers']:
 
@@ -291,7 +292,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 localization = [horizLoc]
                 observer.update({'obs localizations': localization})
                 observer['obs space'].update(
-                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                    {'redistribution': {'name': 'Halo', 'halo size': 1500.e3}})
 
         # bypass the writing HofX output netCDF files
         # -------------------------------------------
