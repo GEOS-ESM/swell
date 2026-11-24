@@ -11,8 +11,53 @@ import os
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.run_jedi_executables import run_executable
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'RunJediVariationalExecutable'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = 'PT40M'
+        self.is_cycling = True
+        self.model_dep = True
+        self.slurm = {'nodes': 3}
+        self.questions = [
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.analysis_variables(),
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.jedi_forecast_model(),
+            qd.minimizer(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.number_of_iterations(),
+            qd.total_processors(),
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+            qd.mock_experiment()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -50,6 +95,12 @@ class RunJediVariationalExecutable(taskBase):
         npy = self.config.npy(None)
         stddev_scale_factors = self.config.get_key_for_model('stddev_scale_factors',
                                                              self.get_model(), {})
+        bump_nicas_data_directory = self.config.get_key_for_model(
+            'bump_nicas_data_directory', self.get_model(), None)
+        bump_nicas_files_prefix = self.config.get_key_for_model(
+            'bump_nicas_files_prefix', self.get_model(), None)
+        bump_nicas_group_name = self.config.get_key_for_model(
+            'bump_nicas_group_name', self.get_model(), None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -74,6 +125,9 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block(None))
         self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block(None))
         self.jedi_rendering.add_key('stddev_scale_factors', stddev_scale_factors)
+        self.jedi_rendering.add_key('bump_nicas_data_directory', bump_nicas_data_directory)
+        self.jedi_rendering.add_key('bump_nicas_files_prefix', bump_nicas_files_prefix)
+        self.jedi_rendering.add_key('bump_nicas_group_name', bump_nicas_group_name)
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
