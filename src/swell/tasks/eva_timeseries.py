@@ -43,8 +43,8 @@ class EvaTimeseries(taskBase):
         # Compute window beginning time
         # -----------------------------
         window_begin = self.da_window_params.window_begin(window_length)
-        background_time = self.da_window_params.background_time(
-                self.config.background_time_offset())
+        # background_time = self.da_window_params.background_time(
+                # self.config.background_time_offset())
 
         ncdiag_experiments = self.config.ncdiag_experiments()
 
@@ -69,10 +69,13 @@ class EvaTimeseries(taskBase):
 
         # Create JEDI interface config templates dictionary
         # -------------------------------------------------
-        self.jedi_rendering.add_key('background_time', background_time)
+        # self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('window_length', window_length)
+
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
 
         # Get the model
         # -------------

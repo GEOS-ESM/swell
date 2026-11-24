@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import r2d2
 from swell.tasks.base.task_base import taskBase
-from r2d2 import fetch
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ class GetNcdiags(taskBase):
             r2d2_server=self.config.r2d2_server(default=None),
         )
 
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
+
         # Parse config
         # ------------
         ncdiag_experiments = self.config.ncdiag_experiments()
@@ -42,11 +44,14 @@ class GetNcdiags(taskBase):
         # --------------------------------------------
         window_begin = self.da_window_params.window_begin(window_length)
         background_time = self.da_window_params.background_time(background_time_offset)
-        self.jedi_rendering.add_key('window_begin', window_begin)
-        self.jedi_rendering.add_key('background_time', background_time)
 
         # Set the JEDI rendering parameters. Model specific ones have None as default
+        self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+
+        # Needed for localization templating
+        self.jedi_rendering.add_key('suite_to_run', self.config.suite_to_run())
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -60,7 +65,7 @@ class GetNcdiags(taskBase):
             # -------------------------------
             for observation in observations:
 
-                print(f"Fetching {observation} for {ncdiag_experiment}")
+                self.logger.info(f"Fetching {observation} for {ncdiag_experiment}")
                 # Load the observation dictionary
                 observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
@@ -76,11 +81,19 @@ class GetNcdiags(taskBase):
                 if self.get_model() == 'geos_marine':
                     name = observation
 
-                fetch(date=window_begin,
-                      provider='ncdiag',
-                      target_file=target_file,
-                      ignore_missing=True,
-                      time_window=window_length,
-                      obs_type=name,
-                      type='ob',
-                      experiment=ncdiag_experiment)
+                try:
+                    fetch_kwargs = dict(
+                        item='feedback',
+                        experiment=ncdiag_experiment,
+                        observation_type=name,
+                        file_extension='nc4',
+                        window_start=window_begin,
+                        window_length=window_length,
+                        target_file=target_file,
+                        member=-9999,
+                    )
+                    if r2d2_datastore:
+                        fetch_kwargs['data_store'] = r2d2_datastore
+                    r2d2.fetch(**fetch_kwargs)
+                except Exception as e:
+                    self.logger.info(f'Failed to fetch {target_file}: {str(e)}. Skipping.')
