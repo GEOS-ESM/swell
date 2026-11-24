@@ -100,12 +100,12 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time(self) -> Tuple[str, datetime.datetime]:
+    def analysis_time(self) -> tuple[str, datetime.datetime]:
         """Get the analysis time for the current cycle.
 
         Returns
         -------
-        Tuple[str, datetime.datetime]
+        tuple[str, datetime.datetime]
             A tuple containing the analysis time formatted as a string and the corresponding
             datetime object.
         """
@@ -115,12 +115,12 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time_iso(self) -> Tuple[str, datetime.datetime]:
+    def analysis_time_iso(self) -> tuple[str, datetime.datetime]:
         """Get the analysis time for the current cycle in ISO format.
 
         Returns
         -------
-        Tuple[str, datetime.datetime]
+        tuple[str, datetime.datetime]
             A tuple containing the analysis time formatted as an ISO string and the corresponding
             datetime object.
         """
