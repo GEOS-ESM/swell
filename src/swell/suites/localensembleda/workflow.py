@@ -111,9 +111,12 @@ template_str = '''
                {% endif %}
             {% endif %}
 
+            # bkg/ana : mean/variance
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
+            RunJediEnsembleMeanVariance-{{model_component}} => RunJediDiffstates-{{model_component}}
 
             # EvaIncrement
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediDiffstates-{{model_component}} => EvaIncrement-{{model_component}}
 
             # EvaObservations
             # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -200,6 +203,7 @@ class Workflow_localensembleda(CylcWorkflow):
             self.tasks.append(ta.RunJediObsfiltersExecutable(model=model))
             self.tasks.append(ta.RunJediLocalEnsembleDaExecutable(model=model))
             self.tasks.append(ta.RunJediEnsembleMeanVariance(model=model))
+            self.tasks.append(ta.RunJediDiffstates(model=model))
             if not self.experiment_dict['models'][model]['skip_ensemble_hofx']:
                 self.tasks.append(ta.RunJediHofxEnsembleExecutable(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))

@@ -10,16 +10,18 @@
 
 from swell.utilities.swell_questions import QuestionList
 import swell.configuration.question_defaults as qd
-from swell.suites.base.suite_questions import marine
+from swell.suites.base.suite_questions import common
 from swell.suites.base.suite_attributes import suite_configs
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = 'localensembleda'
+_suite = "localensembleda"
+suite_name = _suite
+
 
 localensembleda_tier1 = QuestionList(
     questions=[
-        marine,
+        common,
         qd.ensemble_hofx_packets(),
         qd.ensemble_hofx_strategy(),
         qd.skip_ensemble_hofx(),
@@ -43,9 +45,9 @@ localensembleda_tier1 = QuestionList(
         qd.local_ensemble_solver("Deterministic GETKF"),
         qd.local_ensemble_use_linear_observer(True),
         qd.ensmean_only(False),
-        qd.local_ensemble_save_posterior_mean(True),
-        qd.local_ensemble_save_posterior_mean_increment(True),
-        qd.local_ensemble_save_posterior_ensemble(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
         qd.local_ensemble_do_posterior_observer(False),
         qd.obs_thinning_rej_fraction(0.98),
@@ -54,17 +56,38 @@ localensembleda_tier1 = QuestionList(
         ]),
         qd.window_length("PT6H"),
         qd.window_type("3D"),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
+            ]),
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
         qd.clean_patterns(['*.txt'])
     ]
 )
 
 suite_configs.register(suite_name, 'localensembleda_tier1', localensembleda_tier1)
 
-# --------------------------------------------------------------------------------------------------
 
 localensembleda_tier2 = QuestionList(
     questions=[
-        marine,
+        common,
         qd.ensemble_hofx_packets(),
         qd.ensemble_hofx_strategy(),
         qd.skip_ensemble_hofx(),
@@ -83,14 +106,14 @@ localensembleda_tier2 = QuestionList(
         qd.npy_proc(4),
         qd.perhost(48),
         qd.cycle_times(['T00']),
-        qd.ensemble_num_members(16),
+        qd.ensemble_num_members(32),
         qd.skip_ensemble_hofx(True),
         qd.local_ensemble_solver("Deterministic GETKF"),
         qd.local_ensemble_use_linear_observer(True),
         qd.ensmean_only(False),
-        qd.local_ensemble_save_posterior_mean(True),
-        qd.local_ensemble_save_posterior_mean_increment(True),
-        qd.local_ensemble_save_posterior_ensemble(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
         qd.local_ensemble_do_posterior_observer(False),
         qd.obs_thinning_rej_fraction(0.75),
@@ -109,35 +132,56 @@ localensembleda_tier2 = QuestionList(
             "avhrr3_metop-b",
             "avhrr3_n18",
             "avhrr3_n19",
+            "gmi_gpm",
+            "gps",
+            "mhs_metop-b",
+            "mhs_metop-c",
+            "mhs_n19",
+            "mls55_aura",
+            "omi_aura",
+            "ompsnm_npp",
+            "pibal",
+            "satwind",
+            "scatwind",
+            "sfcship",
+            "sfc",
+            "sondes",
+            "ssmis_f17"
         ]),
         qd.window_length("PT6H"),
         qd.window_type("3D"),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
+            ]),
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
         qd.clean_patterns(['*.txt'])
     ]
 )
 
-# wait for oops 3342 to activate all non-IR-obs
+# IR sensors:
 #                "airs_aqua",
 #                "cris-fsr_n20",
 #                "cris-fsr_npp",
-#                "gmi_gpm",
-#                "gps",
 #                "iasi_metop-b",
 #                "iasi_metop-c",
-#                "mhs_metop-b",
-#                "mhs_metop-c",
-#                "mhs_n19",
-#                "mls55_aura",
-#                "omi_aura",
-#                "ompsnm_npp",
-#                "pibal",
-#                "satwind",
-#                "scatwind",
-#                "sfcship",
-#                "sfc",
-#                "sondes",
-#                "ssmis_f17"
-
 # --------------------------------------------------------------------------------------------------
 
 suite_configs.register(suite_name, 'localensembleda_tier2', localensembleda_tier2)

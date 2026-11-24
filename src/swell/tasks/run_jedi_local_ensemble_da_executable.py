@@ -11,6 +11,7 @@
 import os
 from importlib import resources
 from ruamel.yaml import YAML
+import subprocess
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -122,6 +123,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
+        ensemble_num_members = self.config.ensemble_num_members()
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
@@ -151,12 +153,13 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('suite_name', self.suite_name())
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
+        self.jedi_rendering.add_key('ensemble_num_members', ensemble_num_members)
 
         # Geometry
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
@@ -314,6 +317,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 
+        # create subdir
+        for imem in range(1, ensemble_num_members + 1):
+            mem_dir = f'analysis/mem{imem:003d}/'
+            xdir = os.path.join(self.cycle_dir(), mem_dir)
+            os.makedirs(xdir, exist_ok=True)
+        dir_list = ["analysis/mean", "analysis/variance"]
+        for j in dir_list:
+            xdir = os.path.join(self.cycle_dir(), j)
+            os.makedirs(xdir, exist_ok=True)
+
         # Get the JEDI interface metadata
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
@@ -332,6 +345,15 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
+        # explicit command
+        #
+        mpi_command = "mpirun"
+        if not (perhost is None or perhost == "None"):
+            mpi_command += f" -perhost {perhost}"
+        mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+        cmd = f"cd {self.cycle_dir()} \n"
+        cmd += mpi_command
+
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
@@ -343,13 +365,12 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                jedi_ensmeanvariance_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
             else:
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file, perhost=perhost)
+                # TODO: memory issue with IO write (ana+inc)
+                #   run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                #   jedi_config_file, output_log_file, perhost=perhost)
+                #
+                subprocess.run(cmd, shell=True, check=True)
         else:
-            mpi_command = "mpirun"
-            if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
