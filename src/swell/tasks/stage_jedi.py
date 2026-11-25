@@ -38,6 +38,7 @@ class Setup(TaskSetup):
             qd.gsibec_configuration(),
             qd.gsibec_nlats(),
             qd.gsibec_nlons(),
+            qd.gsibec_version(),
             qd.horizontal_resolution(),
             qd.vertical_resolution(),
         ]
@@ -97,6 +98,7 @@ class StageJedi(taskBase):
         self.jedi_rendering.add_key('gsibec_configuration', gsibec_configuration)
         self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
         self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
+        self.jedi_rendering.add_key('gsibec_version', self.config.gsibec_version('1.0.1'))
         self.jedi_rendering.add_key('saber_central_block', saber_central_block)
 
         # Open the stage configuration file

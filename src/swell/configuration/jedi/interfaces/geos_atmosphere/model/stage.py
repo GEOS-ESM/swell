@@ -20,14 +20,15 @@ def stage(template_dict: Mapping) -> Mapping:
     gsibec_nlons = template_dict['gsibec_nlons']
     gsibec_nlats = template_dict['gsibec_nlats']
     horizontal_resolution = template_dict['horizontal_resolution']
+    gsibec_version = template_dict.get('gsibec_version', '1.0.1')
 
     stage = {
         'link_files': {
             'directories': [
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/GEOS_CRTM_Surface/geos.crtmsrf.{horizontal_resolution}.nc4', f'{cycle_dir}/fv3-jedi/bkg/'],  # noqa
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/fv3files/*', f'{cycle_dir}/fv3-jedi/fv3files/'],  # noqa
-                [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/gsibec/1.0.1/gsi-coeffs-gmao-global-l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nc4', f'{cycle_dir}/fv3-jedi/gsibec/'],  # noqa
-                [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/gsibec//1.0.1/{gsibec_configuration}_l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nml', f'{cycle_dir}/fv3-jedi/gsibec/'],  # noqa
+                [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/gsibec/{gsibec_version}/gsi-coeffs-gmao-global-l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nc4', f'{cycle_dir}/fv3-jedi/gsibec/'],  # noqa
+                [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/gsibec/{gsibec_version}/{gsibec_configuration}_l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nml', f'{cycle_dir}/fv3-jedi/gsibec/'],  # noqa
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/rcov/1.0.0/*', f'{cycle_dir}/fv3-jedi/rcov/'],  # noqa
             ]
         }

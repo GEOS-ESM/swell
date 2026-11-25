@@ -1242,6 +1242,19 @@ class gsibec_nlons(TaskQuestion):
 
 
 @dataclass
+class gsibec_version(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "gsibec_version"
+    models: list[str] = mutable_field([
+        "geos_atmosphere"
+    ])
+    prompt: str = "Which version of the GSIBEC static files (gsibec/<version> directory)?"
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class horizontal_localization_lengthscale(TaskQuestion):
     default_value: str = "defer_to_model"
     question_name: str = "horizontal_localization_lengthscale"
