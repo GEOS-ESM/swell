@@ -15,6 +15,52 @@ from ruamel.yaml import YAML
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 from swell.utilities.yaml_utils import replace_string_value
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'RunJediEdaExecutable'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.slurm = {'ntasks-per-node': 126}
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.analysis_variables(),
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.jedi_forecast_model(),
+            qd.minimizer(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.number_of_iterations(),
+            qd.total_processors(),
+            qd.ensemble_num_members(),
+            qd.obs_pert_amplitude(),
+            qd.obs_thinning_rej_fraction(),
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

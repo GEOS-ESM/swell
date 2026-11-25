@@ -8,8 +8,32 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.file_system_operations import link_all_files_from_first_in_hierarchy_of_sources
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GenerateBClimatologyByLinking'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.background_error_model(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

@@ -1,17 +1,17 @@
 datasets:
 
-  - name: experiment_increment_1
+  - name: experiment_increment_exp
     type: SocaRestart
-    soca_filenames: {{increment_file_path_1}}
-    geometry_file: {{cycle_dir_1}}/INPUT/soca_gridspec.nc
+    soca_filenames: {{increment_file_path_exp}}
+    geometry_file: {{cycle_dir_exp}}/INPUT/soca_gridspec.nc
 
     variables: [Temp, Salt, ave_ssh]
     coordinate variables: [lon, lat]
 
-  - name: experiment_increment_2
+  - name: experiment_increment_ctl
     type: SocaRestart
-    soca_filenames: {{increment_file_path_2}}
-    geometry_file: {{cycle_dir_2}}/INPUT/soca_gridspec.nc
+    soca_filenames: {{increment_file_path_ctl}}
+    geometry_file: {{cycle_dir_ctl}}/INPUT/soca_gridspec.nc
 
     variables: [Temp, Salt, ave_ssh]
     coordinate variables: [lon, lat]
@@ -38,15 +38,15 @@ graphics:
         add_colorbar:
           label: SSH Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::ave_ssh
+            variable: experiment_increment_exp::SOCAVars::ave_ssh
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
@@ -61,15 +61,15 @@ graphics:
         add_colorbar:
           label: SSH Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::SOCAgrid::lon
+            variable: experiment_increment_ctl::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_2::SOCAgrid::lat
+            variable: experiment_increment_ctl::SOCAgrid::lat
           data:
-            variable: experiment_increment_2::SOCAVars::ave_ssh
+            variable: experiment_increment_ctl::SOCAVars::ave_ssh
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
@@ -84,15 +84,15 @@ graphics:
         add_colorbar:
           label: SSH Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::ave_ssh_diff
+            variable: experiment_increment_exp::SOCAVars::ave_ssh_diff
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
@@ -115,15 +115,15 @@ graphics:
         add_colorbar:
           label: SST Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::Temp
+            variable: experiment_increment_exp::SOCAVars::Temp
             slices: '[0,...]'
           label: SST increment
           colorbar: true
@@ -139,15 +139,15 @@ graphics:
         add_colorbar:
           label: SST Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::SOCAgrid::lon
+            variable: experiment_increment_ctl::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_2::SOCAgrid::lat
+            variable: experiment_increment_ctl::SOCAgrid::lat
           data:
-            variable: experiment_increment_2::SOCAVars::Temp
+            variable: experiment_increment_ctl::SOCAVars::Temp
             slices: '[0,...]'
           label: SST increment
           colorbar: true
@@ -163,15 +163,15 @@ graphics:
         add_colorbar:
           label: SST Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::Temp_diff
+            variable: experiment_increment_exp::SOCAVars::Temp_diff
             slices: '[0,...]'
           label: SST increment Diff
           colorbar: true
@@ -195,15 +195,15 @@ graphics:
         add_colorbar:
           label: SSS Increment
         add_grid:
-        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_title: '({{experiment_tag_exp}}) {{experiment_id_exp}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::Salt
+            variable: experiment_increment_exp::SOCAVars::Salt
             slices: '[0,...]'
           label: SSS increment
           colorbar: true
@@ -219,15 +219,15 @@ graphics:
         add_colorbar:
           label: SSS Increment
         add_grid:
-        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_title: '({{experiment_tag_ctl}}) {{experiment_id_ctl}}'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_2::SOCAgrid::lon
+            variable: experiment_increment_ctl::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_2::SOCAgrid::lat
+            variable: experiment_increment_ctl::SOCAgrid::lat
           data:
-            variable: experiment_increment_2::SOCAVars::Salt
+            variable: experiment_increment_ctl::SOCAVars::Salt
             slices: '[0,...]'
           label: SSS increment
           colorbar: true
@@ -243,15 +243,15 @@ graphics:
         add_colorbar:
           label: SSS Increment Diff
         add_grid:
-        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_title: '({{experiment_tag_exp}}) - ({{experiment_tag_ctl}})'
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment_1::SOCAgrid::lon
+            variable: experiment_increment_exp::SOCAgrid::lon
           latitude:
-            variable: experiment_increment_1::SOCAgrid::lat
+            variable: experiment_increment_exp::SOCAgrid::lat
           data:
-            variable: experiment_increment_1::SOCAVars::Salt_diff
+            variable: experiment_increment_exp::SOCAVars::Salt_diff
             slices: '[0,...]'
           label: SSS increment Diff
           colorbar: true
@@ -261,22 +261,22 @@ graphics:
 
 # ssh diff
 transforms:
-- equals: experiment_increment_1::SOCAVars::ave_ssh-experiment_increment_2::SOCAVars::ave_ssh
+- equals: experiment_increment_exp::SOCAVars::ave_ssh-experiment_increment_ctl::SOCAVars::ave_ssh
   for:
     variable: ave_ssh
-  new name: experiment_increment_1::SOCAVars::ave_ssh_diff
+  new name: experiment_increment_exp::SOCAVars::ave_ssh_diff
   transform: arithmetic
 
 # Temp diff
-- equals: experiment_increment_1::SOCAVars::Temp-experiment_increment_2::SOCAVars::Temp
+- equals: experiment_increment_exp::SOCAVars::Temp-experiment_increment_ctl::SOCAVars::Temp
   for:
     variable: Temp
-  new name: experiment_increment_1::SOCAVars::Temp_diff
+  new name: experiment_increment_exp::SOCAVars::Temp_diff
   transform: arithmetic
 
 # Salt diff
-- equals: experiment_increment_1::SOCAVars::Salt-experiment_increment_2::SOCAVars::Salt
+- equals: experiment_increment_exp::SOCAVars::Salt-experiment_increment_ctl::SOCAVars::Salt
   for:
     variable: Salt
-  new name: experiment_increment_1::SOCAVars::Salt_diff
+  new name: experiment_increment_exp::SOCAVars::Salt_diff
   transform: arithmetic
