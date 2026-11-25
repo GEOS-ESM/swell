@@ -162,6 +162,12 @@ gsibec_nlons:
   - '576'
   - '1152'
 
+gsibec_version:
+  default_value: 1.0.1
+  options:
+  - 1.0.1
+  - 1.0.2
+
 horizontal_resolution:
   default_value: '361'
   options:

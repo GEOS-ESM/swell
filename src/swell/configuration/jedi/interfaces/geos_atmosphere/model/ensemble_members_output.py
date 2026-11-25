@@ -15,11 +15,13 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 def ensemble_members_output(template_dict: Mapping) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']
+    suite_name = template_dict['suite_name']
 
     ensemble_members_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.analysis.mem%{{member}}%',
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath':  f'{cycle_dir}/analysis/' + 'mem%{member}%',
+        'filename': f'{suite_name}.' + 'ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'field io names': field_io_names_ensemble
     }
 

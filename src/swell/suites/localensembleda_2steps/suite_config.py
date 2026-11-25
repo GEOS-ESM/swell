@@ -13,7 +13,9 @@ import swell.configuration.question_defaults as qd
 from swell.suites.base.suite_questions import common
 from swell.suites.base.suite_attributes import suite_configs
 
-suite_name = 'localensembleda_2steps'
+
+_suite = 'localensembleda_2steps'
+suite_name = _suite
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,9 +50,9 @@ localensembleda_2steps_tier1 = QuestionList(
         qd.vertical_localization_lengthscale(2.0),
         qd.vertical_localization_frac_retained_variance(0.95),
         qd.ensmean_only(False),
-        qd.local_ensemble_save_posterior_mean(True),
-        qd.local_ensemble_save_posterior_mean_increment(True),
-        qd.local_ensemble_save_posterior_ensemble(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
         qd.local_ensemble_do_posterior_observer(False),
         qd.obs_thinning_rej_fraction(0.98),
@@ -88,13 +90,34 @@ localensembleda_2steps_tier1 = QuestionList(
         qd.window_length("PT6H"),
         qd.window_type("3D"),
         qd.change_vbc_to_sbc(False),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
+            ]),
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
         qd.clean_patterns(['*.txt'])
     ]
 )
 
 suite_configs.register(suite_name, 'localensembleda_2steps_tier1', localensembleda_2steps_tier1)
 
-# --------------------------------------------------------------------------------------------------
 
 localensembleda_2steps_tier2 = QuestionList(
     questions=[
@@ -107,6 +130,9 @@ localensembleda_2steps_tier2 = QuestionList(
         qd.model_components(['geos_atmosphere']),
     ],
     geos_atmosphere=[
+        qd.cycle_times([
+            "T00",
+        ]),
         qd.horizontal_resolution('91'),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
@@ -118,7 +144,9 @@ localensembleda_2steps_tier2 = QuestionList(
         qd.npx_per_observer(1),
         qd.npy_per_observer(1),
         qd.perhost(48),
-        qd.cycle_times(['T00']),
+        qd.window_length("PT6H"),
+        qd.window_type("3D"),
+        qd.change_vbc_to_sbc(False),
         qd.ensemble_num_members(32),
         qd.skip_ensemble_hofx(True),
         qd.local_ensemble_solver("Deterministic GETKF"),
@@ -127,12 +155,11 @@ localensembleda_2steps_tier2 = QuestionList(
         qd.vertical_localization_lengthscale(2.0),
         qd.vertical_localization_frac_retained_variance(0.95),
         qd.ensmean_only(False),
-        qd.local_ensemble_save_posterior_mean(True),
-        qd.local_ensemble_save_posterior_mean_increment(True),
-        qd.local_ensemble_save_posterior_ensemble(False),
+        qd.local_ensemble_save_posterior_mean(False),
+        qd.local_ensemble_save_posterior_mean_increment(False),
+        qd.local_ensemble_save_posterior_ensemble(True),
         qd.local_ensemble_save_posterior_ensemble_increments(False),
         qd.local_ensemble_do_posterior_observer(False),
-        qd.obs_thinning_rej_fraction(0.75),
         qd.observations([
             "aircraft_temperature",
             "aircraft_wind",
@@ -164,9 +191,29 @@ localensembleda_2steps_tier2 = QuestionList(
             "sondes",
             "ssmis_f17"
         ]),
-        qd.window_length("PT6H"),
-        qd.window_type("3D"),
-        qd.change_vbc_to_sbc(False),
+        qd.obs_thinning_rej_fraction(0.75),
+        qd.ensmeanvariance_spec([
+            {"state": "bkg",
+             "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": "geos.prior.mean",
+             "fn_output_variance": "geos.prior.variance",
+             "grid_type": ['cs', 'latlon']},
+            {"state": "analysis",
+             "fn_input": f"analysis/mem%mem%/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+             "fn_output_mean": f"analysis/mean/{_suite}.ana",
+             "fn_output_variance": f"analysis/variance/{_suite}.ana",
+             "grid_type": ['cs', 'latlon']},
+            ]),
+        qd.diffstates_spec({
+            "state1":
+            {"fn_input": "geos.prior.mean.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state2":
+            {"fn_input": f"analysis/mean/{_suite}.ana.ceta.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+            "state_diff":
+            {"fn_output": f"analysis/mean/{_suite}.inc",
+             "grid_type": ['cs', 'latlon']},
+            "state_type": "ensemble"
+            }),
         qd.clean_patterns(['*.txt'])
     ]
 )
@@ -179,7 +226,6 @@ localensembleda_2steps_tier2 = QuestionList(
 
 suite_configs.register(suite_name, 'localensembleda_2steps_tier2', localensembleda_2steps_tier2)
 
-# --------------------------------------------------------------------------------------------------
 
 localensembleda_2steps = QuestionList(
     questions=[

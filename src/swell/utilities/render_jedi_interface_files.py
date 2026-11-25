@@ -103,6 +103,7 @@ class JediConfigRendering():
             'gsibec_configuration',
             'gsibec_nlats',
             'gsibec_nlons',
+            'gsibec_version',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
             'horizontal_resolution',

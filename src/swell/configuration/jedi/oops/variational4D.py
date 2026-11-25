@@ -14,9 +14,23 @@ from swell.utilities.oops_config import OopsConfig
 class variational4D(OopsConfig):
 
     def render_oops(self):
+
+        # For GEOS atmosphere the Identity linear model must step with the PSEUDO model
+        # (background frequency), otherwise the TL/AD GetValues times do not match the
+        # trajectory. Other interfaces keep their established 1-hour step.
+        linear_model_tstep = 'PT1H'
+        cost_type = '4D-Var'
+        if self.jedi_interface == 'geos_atmosphere':
+            linear_model_tstep = self.template_dict.get('background_frequency', 'PT1H')
+            # PSEUDO model + Identity linear model is 3D-FGAT. With '4D-Var' the final
+            # trajectory is re-read from the background files, so the analysis states after
+            # the window begin and the O-A departures miss the increment; '3D-FGAT' adds the
+            # increment at every time of the window.
+            cost_type = '3D-FGAT'
+
         oops = {
             'cost function': {
-                'cost type': '4D-Var',
+                'cost type': cost_type,
                 'jb evaluation': False,
                 'time window': {
                     'begin': self.template_dict['window_begin_iso'],
@@ -47,7 +61,7 @@ class variational4D(OopsConfig):
                         'name': 'Identity',
                         'increment variables': self.template_dict['analysis_variables'],
                         'variable change': 'Identity',
-                        'tstep': 'PT1H'
+                        'tstep': linear_model_tstep
                     },
                     'diagnostics': {'departures': 'ombg'},
                     'online diagnostics': self.interface_model('varincrement1')

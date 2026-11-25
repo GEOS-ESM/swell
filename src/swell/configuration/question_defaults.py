@@ -349,6 +349,26 @@ class skip_ensemble_hofx(SuiteQuestion):
 
 
 @dataclass
+class skip_ensemble_statistics(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "skip_ensemble_statistics"
+    prompt: str = "Skip the ensemble mean/variance and mean increment (diffstates) tasks?"
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class skip_eva(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "skip_eva"
+    prompt: str = "Skip the Eva diagnostic plotting tasks?"
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class skip_r2d2(SuiteQuestion):
     default_value: bool = False
     question_name: str = "skip_r2d2"
@@ -1226,6 +1246,19 @@ class gsibec_nlons(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = "How many number of longitudes in GSIBEC grid?"
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class gsibec_version(TaskQuestion):
+    default_value: str = "defer_to_model"
+    question_name: str = "gsibec_version"
+    models: list[str] = mutable_field([
+        "geos_atmosphere"
+    ])
+    prompt: str = "Which version of the GSIBEC static files (gsibec/<version> directory)?"
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
