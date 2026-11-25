@@ -112,6 +112,9 @@ template_str = '''
             {% endif %}
 
 
+            {% if skip_eva %}
+            RunJediEtkfSolver-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
             # EvaIncrement
             RunJediEtkfSolver-{{model_component}} => EvaIncrement-{{model_component}}
 
@@ -124,6 +127,7 @@ template_str = '''
             # Clean up large files
             # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
             EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}

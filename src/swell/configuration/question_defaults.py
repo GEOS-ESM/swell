@@ -349,6 +349,16 @@ class skip_ensemble_hofx(SuiteQuestion):
 
 
 @dataclass
+class skip_ensemble_statistics(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "skip_ensemble_statistics"
+    prompt: str = "Skip the ensemble mean/variance and mean increment (diffstates) tasks?"
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class skip_eva(SuiteQuestion):
     default_value: bool = False
     question_name: str = "skip_eva"

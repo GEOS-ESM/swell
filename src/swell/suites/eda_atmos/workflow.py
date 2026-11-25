@@ -26,6 +26,8 @@ template_str = '''
     UTC mode = True
     allow implicit tasks = False
 
+{{stall_timeout}}
+
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
@@ -99,15 +101,22 @@ template_str = '''
             {% endfor %}
             {% endif %}
 
+            {% if skip_ensemble_statistics %}
+            EDA_end-{{model_component}} => SP2-{{model_component}}
+            {% else %}
             # bkg/ana : mean/variance
             EDA_end-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
             RunJediEnsembleMeanVariance-{{model_component}} => RunJediDiffstates-{{model_component}} => SP2-{{model_component}}
+            {% endif %}
 
-            # CleanupEda directory
+            # CleanupEda directory, then mark the cycle as done
             SP2-{{model_component}} => CleanEda-{{model_component}}
+            CleanEda-{{model_component}} => CleanCycle-{{model_component}}
 
+            {% if not skip_eva and not skip_ensemble_statistics %}
             # EvaIncrement
             SP2-{{model_component}} => EvaIncrement-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}

@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from datetime import datetime as dt
+import glob
 import isodate
 import os
 import tarfile
@@ -102,6 +103,14 @@ class GetEnsembleGeosExperiment(taskBase):
                                bkg_exp_start_dto.strftime('M%m'),
                                ens_tar_file)
 
+        # An unpacked copy of the archive (same name without .tar) is linked instead of
+        # extracted; this lets a running GEOS-ADAS cycle point at its live ensemble
+        # ------------------------------------------------------------------------
+        ens_unpacked = os.path.join(os.path.splitext(ens_tar)[0], 'ensbkgx')
+        if not os.path.exists(ens_tar) and os.path.isdir(ens_unpacked):
+            self.link_unpacked_ensemble(ens_unpacked)
+            return
+
         # Link the ensemble tar archive to the cycle directory
         # ------------------------------------------------------
         self.logger.info(' Linking GEOS-FP archive file: ' + ens_tar)
@@ -150,4 +159,39 @@ class GetEnsembleGeosExperiment(taskBase):
                         cycle_tar_file.extract(member_file, member_path)
                         eff_path = member_path.split('/')[-2:] + [ens_filename_jedi]
                         self.logger.info(f' Extracted and renamed file to: {"/".join(eff_path)}')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def link_unpacked_ensemble(self, ensbkgx_dir: str) -> None:
+
+        """Link <ensbkgx_dir>/memNNN/*.bkg_clcv.YYYYMMDD_HH00z.nc4 to
+        ebkg/memNNN/geos.memNNN.<ensemble_format date>.nc4 in the cycle directory.
+        """
+
+        member_dirs = sorted(glob.glob(os.path.join(ensbkgx_dir, 'mem[0-9][0-9][0-9]')))
+        self.logger.assert_abort(len(member_dirs) > 0,
+                                 f'No mem* directories found in {ensbkgx_dir}')
+
+        for member_dir in member_dirs:
+            member_num = os.path.basename(member_dir)[3:]
+            member_path = os.path.join(self.cycle_dir(), 'ebkg', f'mem{member_num}')
+            os.makedirs(member_path, exist_ok=True)
+
+            nlinked = 0
+            for member_file in sorted(os.listdir(member_dir)):
+                parts = member_file.split('.')
+                if len(parts) < 4 or parts[-3] != 'bkg_clcv':
+                    continue
+                member_date_dto = dt.strptime(parts[-2], '%Y%m%d_%H00z')
+                jedi_date = member_date_dto.strftime(datetime_formats["ensemble_format"])
+                target = os.path.join(member_path, f'geos.mem{member_num}.{jedi_date}.nc4')
+                if os.path.lexists(target):
+                    os.remove(target)
+                os.symlink(os.path.join(member_dir, member_file), target)
+                nlinked += 1
+
+            self.logger.assert_abort(nlinked > 0, f'No bkg_clcv files found in {member_dir}')
+            self.logger.info(f' Linked {nlinked} background(s) for member {member_num} '
+                             f'from {member_dir}')
+
 # --------------------------------------------------------------------------------------------------

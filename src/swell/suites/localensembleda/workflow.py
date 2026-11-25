@@ -111,12 +111,20 @@ template_str = '''
                {% endif %}
             {% endif %}
 
+            {% if skip_ensemble_statistics %}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
             # bkg/ana : mean/variance
             RunJediLocalEnsembleDaExecutable-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
             RunJediEnsembleMeanVariance-{{model_component}} => RunJediDiffstates-{{model_component}}
 
+            {% if skip_eva %}
+            RunJediDiffstates-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
             # EvaIncrement
             RunJediDiffstates-{{model_component}} => EvaIncrement-{{model_component}}
+            {% endif %}
+            {% endif %}
 
             # EvaObservations
             # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -126,7 +134,9 @@ template_str = '''
 
             # Clean up large files
             # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
+            {% if not skip_eva and not skip_ensemble_statistics %}
             EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
         {% endif %}
         {% endfor %}
