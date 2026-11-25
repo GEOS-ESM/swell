@@ -90,9 +90,12 @@ template_str = '''
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
 
+            # Observations must be in the cycle directory before they are rendered
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}}? => RenderJediObservations-{{model_component}}
+
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-
+            {% if not skip_eva %}
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
@@ -101,6 +104,7 @@ template_str = '''
 
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            {% endif %}
 
             {% if not skip_r2d2 %}            
             # Save observations
@@ -110,9 +114,13 @@ template_str = '''
             {% endif %}
 
             # Clean up large files
+            {% if skip_eva %}
+            RunJediVariationalExecutable-{{model_component}} => CleanCycle-{{model_component}}?
+            {% else %}
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
             EvaObservations-{{model_component}} =>
             CleanCycle-{{model_component}}?
+            {% endif %}
 
         {% endif %}
         {% endfor %}

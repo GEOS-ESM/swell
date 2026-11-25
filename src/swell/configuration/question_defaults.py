@@ -349,6 +349,16 @@ class skip_ensemble_hofx(SuiteQuestion):
 
 
 @dataclass
+class skip_eva(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "skip_eva"
+    prompt: str = "Skip the Eva diagnostic plotting tasks?"
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class skip_r2d2(SuiteQuestion):
     default_value: bool = False
     question_name: str = "skip_r2d2"
