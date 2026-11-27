@@ -11,7 +11,26 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.build import build_and_source_dirs, link_path
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+from swell.tasks.base.task_attributes import task_attributes
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'BuildJediByLinking'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.mail_events = ['submit-failed']
+        self.questions = [
+            qd.existing_jedi_build_directory(),
+            qd.existing_jedi_build_directory_pinned(),
+            qd.jedi_build_method()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -29,6 +48,8 @@ class BuildJediByLinking(taskBase):
         # Get the experiment/jedi_bundle directory
         swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
+
+        from swell.utilities.build import build_and_source_dirs, link_path
 
         # Get paths to build and source
         jedi_bundle_build_path, jedi_bundle_source_path = build_and_source_dirs(jedi_bundle_path)

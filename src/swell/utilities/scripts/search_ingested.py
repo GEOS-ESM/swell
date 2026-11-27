@@ -1,8 +1,8 @@
-import r2d2
+import swell.utilities.r2d2_utils as r2d2_utils
 
 # providers = ['gdas']
 # Search for all observations
-results = r2d2.search(
+results = r2d2_utils.search(
     item='observation',
     provider='odas',  # gdas # or None to see all providers
     observation_type='adt_cryosat2n'  # comment out to search only based on provider
