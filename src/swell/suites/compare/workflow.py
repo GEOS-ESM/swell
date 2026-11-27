@@ -120,7 +120,8 @@ class Workflow_compare(CylcWorkflow):
                 if 'number_of_iterations' in config_dict['models'][model]:
                     num_of_iterations = config_dict['models'][model]['number_of_iterations']
 
-                    self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
+                    self.experiment_dict['models'][model][
+                            'number_of_iterations'] = num_of_iterations
 
         self.tasks.append(ta.root())
         self.tasks.append(ta.PublishComparisons())
