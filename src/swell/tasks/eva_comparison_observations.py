@@ -183,7 +183,7 @@ class EvaComparisonObservations(taskBase):
             use_obs = use_obs_ctl and use_obs_exp
 
             if not use_obs:
-                return
+                continue
 
             # Split the full path into path and filename
             obs_path_file_ctl = observation_dict_ctl['obs space']['obsdataout']['engine']['obsfile']

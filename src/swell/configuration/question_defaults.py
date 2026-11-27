@@ -1349,7 +1349,7 @@ class ioda_fields_for_comparison(TaskQuestion):
         'ObsBias1/{variable}',
         'ObsValue/{variable}',
         'PreQC/{variable}',
-        'hofx/{variable}'
+        'hofx/{variable}',
         'hofx0/{variable}',
         'hofx1/{variable}',
         'oman/{variable}',

@@ -218,6 +218,10 @@ compare_hofx_cf = QuestionList(
         qd.comparison_log_type('hofx'),
         qd.ioda_fields_for_comparison(['hofx/{variable}']),
         qd.model_components(['geos_cf']),
+        qd.observations([
+            "tempo_no2_tropo",
+            "tropomi_s5p_no2_tropo",
+        ]),
     ]
 )
 
