@@ -46,9 +46,12 @@ template_str = '''
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            JediLogComparison-{{model_component}}? => Pass
+            CompareIodaObservations-{{model_component}}? & JediLogComparison-{{model_component}}[^]? => Pass
+
             JediLogComparison-{{model_component}}:fail? => comparison_fail?
-            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
+            {% if comparison_log_type is defined and comparison_log_type != "hofx" %}
+            CompareIncrement-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
+            {% endif %}
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}}? => PublishComparisons?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
         {% endif %}
@@ -114,9 +117,11 @@ class Workflow_compare(CylcWorkflow):
             with open(path, 'r') as f:
                 config_dict = yaml.safe_load(f)
             for model in self.experiment_dict['model_components']:
-                num_of_iterations = config_dict['models'][model]['number_of_iterations']
+                if 'number_of_iterations' in config_dict['models'][model]:
+                    num_of_iterations = config_dict['models'][model]['number_of_iterations']
 
-                self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
+                    self.experiment_dict['models'][model][
+                            'number_of_iterations'] = num_of_iterations
 
         self.tasks.append(ta.root())
         self.tasks.append(ta.PublishComparisons())
@@ -127,6 +132,8 @@ class Workflow_compare(CylcWorkflow):
             self.tasks.append(ta.EvaComparisonJediLog(model=model))
             self.tasks.append(ta.JediLogComparison(model=model))
             self.tasks.append(ta.PublishComparisons(model=model))
+            self.tasks.append(ta.CompareIncrement(model=model))
+            self.tasks.append(ta.CompareIodaObservations(model=model))
             self.tasks.append(Pass(model=model))
 
             for i, path in enumerate(paths):

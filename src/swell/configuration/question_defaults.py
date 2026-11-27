@@ -1336,6 +1336,33 @@ class initial_restarts_method(TaskQuestion):
 
 
 @dataclass
+class ioda_fields_for_comparison(TaskQuestion):
+    default_value: list[str] = mutable_field(['hofx'])
+    question_name: str = 'ioda_fields_for_comparison'
+    ask_question: bool = False
+    options: list[str] = mutable_field([
+        'EffectiveError0/{variable}',
+        'EffectiveError1/{variable}',
+        'EffectiveQC0/{variable}',
+        'EffectiveQC1/{variable}',
+        'ObsBias0/{variable}',
+        'ObsBias1/{variable}',
+        'ObsValue/{variable}',
+        'PreQC/{variable}',
+        'hofx/{variable}',
+        'hofx0/{variable}',
+        'hofx1/{variable}',
+        'oman/{variable}',
+        'ombg/{variable}'
+    ])
+    models: list[str] = mutable_field(['all_models'])
+    prompt: str = "List of IODA fields to run comparisons on for two experiments."
+    widget_type: WType = WType.STRING_CHECK_LIST
+
+# ------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class ioda_locations_not_in_r2d2(TaskQuestion):
     default_value: str = "defer_to_platform"
     question_name: str = "ioda_locations_not_in_r2d2"
